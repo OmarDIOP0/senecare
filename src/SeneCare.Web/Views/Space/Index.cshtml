@@ -56,9 +56,41 @@
             break;
 
         default:
+            var client = Model.Client!;
+            if (client.PropertyCount == 0)
+            {
+                <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Space_NoProperty_Title"], L["Space_NoProperty_Text"], EmptyIllustration.House, L["Property_Add"], "/logements/nouveau")' />
+            }
+
+            @* The request in progress comes first: it is what the customer opens the app for. *@
+            if (client.ActiveRequest is { } active)
+            {
+                <section aria-labelledby="en-cours-titre" class="grid gap-3">
+                    <h2 id="en-cours-titre" class="sc-sous-titre">@L["Space_InProgress"]</h2>
+                    <partial name="Ui/_InterventionCard" model='new InterventionCardModel(active.Number, active.Domain, active.Title, active.Status, active.Urgency, "/interventions/" + active.Id, active.AppointmentAt, active.Technician?.Name, active.Technician?.PhoneE164)' />
+                    <div class="sc-carte"><partial name="Ui/_Timeline" model="client.ActiveTimeline" /></div>
+                </section>
+            }
+
             <a href="/abonnement" data-tour="abonnement" class="sc-carte flex items-center gap-4 text-charbon no-underline">
                 <span class="grid size-12 place-items-center rounded-md bg-baobab-clair text-baobab"><sc-icon name="wallet" class="size-6" /></span>
-                <span class="flex-1"><span class="block font-bold">@L["Space_Subscription"]</span><span class="sc-texte-doux">@L["Space_Subscription_Text"]</span></span>
+                <span class="flex-1">
+                    <span class="block font-bold">@L["Space_Subscription"]</span>
+                    @if (client.Subscription is { } subscription)
+                    {
+                        <span class="mt-1 flex flex-wrap items-center gap-2">
+                            <span class="sc-badge @SubscriptionBadge(subscription.Status)">@L["SubscriptionStatus_" + subscription.Status]</span>
+                            @if (subscription.NextDueDate is { } due)
+                            {
+                                <span class="sc-texte-doux">@L["Subscription_NextDue", Formatting.ShortDate(new DateTimeOffset(due.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero))]</span>
+                            }
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="sc-texte-doux">@L["Space_Subscription_Text"]</span>
+                    }
+                </span>
                 <sc-icon name="chevron-right" class="text-charbon-doux" />
             </a>
             <aside class="sc-carte border-l-4 border-l-soleil" aria-labelledby="conseil-titre">
@@ -68,7 +100,25 @@
                 </h2>
                 <p class="mt-1">@(Model.IsRainySeason ? L["Space_Advice_Rain_Text"] : L["Space_Advice_PreRain_Text"])</p>
             </aside>
-            <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Space_Client_Empty_Title"], L["Space_Client_Empty_Text"], EmptyIllustration.Tools, L["Tab_Report"], "/signaler")' />
+            if (client.Neighborhood is { } hood)
+            {
+                <partial name="Ui/_NeighborhoodGauge" model="hood" />
+            }
+
+            if (client.ActiveRequest is null && client.PropertyCount > 0)
+            {
+                <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Space_Client_Empty_Title"], L["Space_Client_Empty_Text"], EmptyIllustration.Tools, L["Tab_Report"], "/signaler")' />
+            }
             break;
     }
 </div>
+
+@functions {
+    private static string SubscriptionBadge(SeneCare.Domain.Billing.SubscriptionStatus status) => status switch
+    {
+        SeneCare.Domain.Billing.SubscriptionStatus.Active => "bg-baobab-clair text-baobab",
+        SeneCare.Domain.Billing.SubscriptionStatus.PastDue => "bg-soleil text-charbon",
+        SeneCare.Domain.Billing.SubscriptionStatus.Suspended => "bg-laterite text-sur-accent",
+        _ => "bg-atlantique-clair text-atlantique",
+    };
+}

@@ -2,6 +2,9 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using SeneCare.Application.Properties;
+using SeneCare.Application.Requests;
+using SeneCare.Application.Subscriptions;
 using SeneCare.Application.Users;
 using SeneCare.Infrastructure.Identity;
 using SeneCare.Web.Infrastructure;
@@ -15,6 +18,9 @@ namespace SeneCare.Web.Controllers;
 public sealed class SpaceController(
     GetUserProfileHandler getProfile,
     TourProgressHandler tours,
+    PropertyQueries properties,
+    RequestQueries requests,
+    SubscriptionQueries subscriptions,
     IStringLocalizer<SharedResource> localizer,
     TimeProvider clock) : Controller
 {
@@ -37,7 +43,31 @@ public sealed class SpaceController(
             AccountName = profile.Memberships.Count > 0 ? profile.Memberships[0].AccountName : null,
             Month = Formatting.ToDakar(clock.GetUtcNow()).Month,
             TourJson = runTour ? TourJson(nav.TourKey) : null,
+            Client = nav.TourKey == TourKeys.Client ? await ClientHomeAsync(userId, cancellationToken) : null,
         });
+    }
+
+    /// <summary>Customer home: subscription, the request in progress with its timeline, neighborhood progress.</summary>
+    private async Task<ClientHomeModel> ClientHomeAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var homes = await properties.ListAsync(userId, cancellationToken);
+        var active = (await requests.ListAsync(userId, cancellationToken)).FirstOrDefault(r => r.IsOpen);
+        var timeline = active is null
+            ? []
+            : RequestTimeline.Build(
+                active.Status,
+                (await requests.DetailAsync(userId, active.Id, cancellationToken))?.History ?? [],
+                active.AppointmentAt,
+                localizer);
+
+        return new ClientHomeModel
+        {
+            PropertyCount = homes.Count,
+            Subscription = (await subscriptions.ListAsync(userId, cancellationToken)) is { Count: > 0 } subs ? subs[0] : null,
+            ActiveRequest = active,
+            ActiveTimeline = timeline,
+            Neighborhood = await subscriptions.NeighborhoodAsync(userId, cancellationToken),
+        };
     }
 
     /// <summary>Called by the tour script when the user finishes or skips it.</summary>
@@ -83,18 +113,6 @@ public sealed class SpaceController(
 [Authorize]
 public sealed class SectionsController : Controller
 {
-    [HttpGet("/interventions")]
-    public IActionResult Interventions() => Soon("interventions", "Tab_Interventions", EmptyIllustration.Tools);
-
-    [HttpGet("/logements")]
-    public IActionResult Properties() => Soon("logements", "Tab_Property", EmptyIllustration.House);
-
-    [HttpGet("/signaler")]
-    public IActionResult Report() => Soon("signaler", "Tab_Report", EmptyIllustration.Tools);
-
-    [HttpGet("/abonnement")]
-    public IActionResult Subscription() => Soon("espace", "Space_Subscription", EmptyIllustration.House);
-
     [HttpGet("/entreprise/sites")]
     [Authorize(Policy = Policies.OrganizationMember)]
     public IActionResult Sites() => Soon("sites", "Tab_Sites", EmptyIllustration.House);

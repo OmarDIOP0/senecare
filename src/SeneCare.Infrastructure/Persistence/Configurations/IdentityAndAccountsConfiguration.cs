@@ -21,7 +21,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         {
             b.ToTable("user_roles");
             b.WithOwner().HasForeignKey("user_id");
-            b.HasKey("user_id", nameof(UserRole.Role));
+            b.HasIndex("user_id", nameof(UserRole.Role)).IsUnique();
         });
 
         builder.OwnsMany(u => u.Consents, b =>
@@ -86,7 +86,11 @@ internal sealed class PropertyConfiguration : IEntityTypeConfiguration<Property>
     }
 }
 
-/// <summary>Shared mapping for collections of <see cref="MediaAttachment"/>.</summary>
+/// <summary>
+/// Shared mapping for collections of <see cref="MediaAttachment"/>. Owned collections use a generated
+/// key (EF default): with a natural composite key, items added to an already-saved owner were
+/// taken for existing rows (UPDATE of 0 rows). The natural key stays unique through an index.
+/// </summary>
 internal static class OwnedMedia
 {
     public static Action<OwnedNavigationBuilder<TOwner, MediaAttachment>> Configure<TOwner>(string table, string ownerKey)
@@ -95,7 +99,7 @@ internal static class OwnedMedia
         {
             b.ToTable(table);
             b.WithOwner().HasForeignKey(ownerKey);
-            b.HasKey(ownerKey, nameof(MediaAttachment.MediaFileId));
+            b.HasIndex(ownerKey, nameof(MediaAttachment.MediaFileId)).IsUnique();
         };
 }
 
@@ -107,5 +111,6 @@ internal sealed class MediaFileConfiguration : IEntityTypeConfiguration<MediaFil
         builder.Property(m => m.StorageKey).HasMaxLength(300);
         builder.Property(m => m.ContentType).HasMaxLength(100);
         builder.HasIndex(m => m.StorageKey).IsUnique();
+        builder.HasIndex(m => m.AccountId);
     }
 }

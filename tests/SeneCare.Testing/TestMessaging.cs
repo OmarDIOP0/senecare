@@ -59,6 +59,7 @@ public static class TestData
         ["RateLimits:Otp:PermitLimit"] = "10000",
         ["Database:MigrateOnStartup"] = "false",
         ["Database:SeedOnStartup"] = "false",
+        ["Storage:Root"] = Path.Combine(Path.GetTempPath(), "senecare-tests-uploads"),
     };
 
     private static readonly string HashKey = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));

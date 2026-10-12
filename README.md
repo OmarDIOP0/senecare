@@ -83,6 +83,17 @@ npm run assets:build
 - Onboarding `/bienvenue` (premier lancement, cookie `sc_bienvenue`) et visites guidées par rôle
   (progression enregistrée côté serveur, `users.completed_tours`).
 
+### Espace client (Phase 5)
+
+- `/logements` (carte Leaflet + OpenStreetMap, point de repère, photos) et carnet de santé `/logements/{id}`.
+- `/signaler` en 3 étapes (brouillon local, envoi hors ligne, note vocale), suivi `/interventions/{id}`.
+- `/abonnement` : statut, échéances, factures. Le paiement arrive en Phase 6 ; en développement,
+  le bouton « Activer (simulation) » débloque l'abonnement.
+- En développement, la page d'une demande propose un **simulateur** (créneaux, technicien en route,
+  sur place, fin d'intervention) pour tester tout le parcours avant le back-office (Phases 8–9).
+- Fichiers envoyés : `App_Data/uploads` (hors `wwwroot`, ignoré par Git), servis par `/fichiers/{id}`
+  uniquement aux personnes autorisées. Dossier configurable : `Storage:Root`.
+
 ### Tests
 
 ```bash

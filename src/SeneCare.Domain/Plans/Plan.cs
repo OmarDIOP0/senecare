@@ -43,7 +43,8 @@ public sealed class Plan : AggregateRoot
     {
         Code = Guard.Required(code, "plan.code", CodeMaxLength).ToUpperInvariant();
         Segment = segment;
-        _slaPolicies.AddRange(DefaultSlaPolicies);
+        // Own copies: a value object instance must never be shared between two plans (EF Core owned types).
+        _slaPolicies.AddRange(DefaultSlaPolicies.Select(p => p with { }));
         _includedDomains.AddRange(Enum.GetValues<ServiceDomain>());
         IsActive = true;
         Name = string.Empty;
@@ -119,6 +120,15 @@ public sealed class Plan : AggregateRoot
 
         _slaPolicies.RemoveAll(p => p.Urgency == urgency);
         _slaPolicies.Add(new PlanSlaPolicy(urgency, maxDelay));
+    }
+
+    /// <summary>Restores the specification delays for urgencies that have none (data repair, new urgencies).</summary>
+    public void EnsureDefaultSla()
+    {
+        foreach (var policy in DefaultSlaPolicies.Where(d => !_slaPolicies.Exists(p => p.Urgency == d.Urgency)))
+        {
+            _slaPolicies.Add(policy with { });
+        }
     }
 
     /// <summary>Max response delay for this urgency, or null when there is no SLA (planned work).</summary>

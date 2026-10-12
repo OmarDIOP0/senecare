@@ -11,6 +11,7 @@ using SeneCare.Infrastructure.Messaging;
 using SeneCare.Infrastructure.Persistence;
 using SeneCare.Infrastructure.Persistence.Seed;
 using SeneCare.Infrastructure.Security;
+using SeneCare.Infrastructure.Storage;
 
 namespace SeneCare.Infrastructure;
 
@@ -35,6 +36,9 @@ public static class DependencyInjection
         services.Configure<OtpOptions>(configuration.GetSection(OtpOptions.SectionName));
         services.Configure<SecurityOptions>(configuration.GetSection(SecurityOptions.SectionName));
         services.AddSingleton<ISecretHasher, HmacSecretHasher>();
+        services.AddScoped<IDocumentNumberGenerator, DocumentNumberGenerator>();
+        services.Configure<StorageOptions>(configuration.GetSection(StorageOptions.SectionName));
+        services.AddSingleton<IFileStorage, LocalFileStorage>();
 
         AddMessaging(services, configuration);
 

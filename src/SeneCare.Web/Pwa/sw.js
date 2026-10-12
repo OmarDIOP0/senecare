@@ -2,8 +2,9 @@
 // Hand-written (no Workbox build step): the whole strategy fits in this file.
 //
 //  - App shell (offline page, CSS, JS, fonts, icons): precached at install, cache-first.
-//  - Pages: network-first, falling back to the last copy, then to the offline page.
-//  - Data fragments (neighborhood search, GET /api): stale-while-revalidate.
+//  - Pages: network-first. Only pages the server marks « X-SeneCare-Offline: page » (e.g. the report
+//    form) are kept for offline use: personal pages are never stored by default (shared phones).
+//  - Public data fragments (neighborhood search): stale-while-revalidate.
 //  - Offline-capable forms: if a POST fails for lack of network, it is saved in the outbox
 //    and sent by Background Sync (or when a page sees the network come back).
 //  - Updates: the new worker waits until the user taps « Mettre à jour ».
@@ -62,7 +63,7 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(networkFirstPage(request));
   } else if (/^\/(css|js|lib|fonts|img)\//.test(url.pathname) || url.pathname === "/manifest.webmanifest") {
     event.respondWith(cacheFirst(request));
-  } else if (url.pathname.startsWith("/quartiers/") || url.pathname.startsWith("/api/")) {
+  } else if (url.pathname.startsWith("/quartiers/")) {
     event.respondWith(staleWhileRevalidate(request, event));
   }
 });
@@ -70,7 +71,10 @@ self.addEventListener("fetch", (event) => {
 async function networkFirstPage(request) {
   try {
     const response = await fetch(request);
-    if (response.ok && response.type === "basic" && !response.redirected) {
+    if (response.redirected && new URL(response.url).pathname.startsWith("/connexion")) {
+      // Session over: nothing personal stays for the next person using this phone.
+      await caches.delete(PAGES_CACHE);
+    } else if (response.ok && response.headers.get("X-SeneCare-Offline") === "page") {
       const cache = await caches.open(PAGES_CACHE);
       cache.put(request, response.clone());
     }

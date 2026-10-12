@@ -1,0 +1,91 @@
+@model SeneCare.Application.Properties.HealthBook
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "logements";
+    ViewData["Title"] = Model.Property.Name;
+    string Day(DateOnly d) => Formatting.ShortDate(new DateTimeOffset(d.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero));
+}
+
+<p class="sc-surtitre">@L["PropertyKind_" + Model.Property.Kind] · @Model.Property.Neighborhood</p>
+<h1 class="sc-titre mt-1">@Model.Property.Name</h1>
+@if (Model.Property.Landmark is not null)
+{
+    <p class="mt-2 flex items-start gap-2"><sc-icon name="map-pin" class="mt-1 size-4 text-laterite" /><span>@Model.Property.Landmark</span></p>
+}
+
+@if (Model.Location.PhotoIds.Count > 0)
+{
+    <ul class="mt-4 flex snap-x gap-2 overflow-x-auto">
+        @foreach (var photo in Model.Location.PhotoIds)
+        {
+            <li class="shrink-0 snap-start"><img src="/fichiers/@photo" alt="" loading="lazy" class="size-28 rounded-md object-cover" /></li>
+        }
+    </ul>
+}
+
+<div class="mt-4 flex flex-wrap gap-2">
+    <a href="/signaler?logement=@Model.Property.Id" class="sc-btn-primaire"><sc-icon name="plus" />@L["Tab_Report"]</a>
+    @if (Model.Location.Latitude is { } lat && Model.Location.Longitude is { } lng)
+    {
+        <a href="https://www.google.com/maps/search/?api=1&query=@lat.ToString(System.Globalization.CultureInfo.InvariantCulture),@lng.ToString(System.Globalization.CultureInfo.InvariantCulture)" class="sc-btn-secondaire" rel="noopener"><sc-icon name="navigation" />@L["Property_OpenMap"]</a>
+    }
+</div>
+
+<section class="mt-8" aria-labelledby="carnet-titre">
+    <div class="flex items-center gap-2">
+        <sc-icon name="history" class="size-6 text-laterite" />
+        <h2 id="carnet-titre" class="sc-sous-titre">@L["HealthBook_Title"]</h2>
+    </div>
+    <p class="sc-texte-doux mt-1">@L["HealthBook_Intro"]</p>
+
+    @if (Model.ActiveWarranties.Count > 0)
+    {
+        <h3 class="mt-6 font-bold">@L["HealthBook_Warranties"]</h3>
+        <ul class="mt-2 grid gap-2">
+            @foreach (var w in Model.ActiveWarranties)
+            {
+                <li class="sc-carte flex items-center gap-3 border-l-4 border-l-baobab py-3">
+                    <sc-icon name="shield-check" class="size-6 text-baobab" />
+                    <span class="flex-1"><strong>@L["Domain_" + w.Domain]</strong> · @w.Summary</span>
+                    <span class="text-sm text-charbon-doux">@L["HealthBook_Until", Day(w.WarrantyEndsOn!.Value)]</span>
+                </li>
+            }
+        </ul>
+    }
+
+    <h3 class="mt-6 font-bold">@L["HealthBook_NextChecks"]</h3>
+    <ul class="mt-2 grid gap-2 sm:grid-cols-3">
+        @foreach (var check in Model.NextChecks)
+        {
+            <li class="sc-carte py-3">
+                <span class="flex items-center gap-2 font-bold"><sc-icon name="@Formatting.Icon(check.Domain)" class="text-laterite" />@L[check.TitleKey]</span>
+                <span class="sc-texte-doux">@(check.DueOn is { } due ? Day(due) : L["HealthBook_ToPlan"])</span>
+            </li>
+        }
+    </ul>
+
+    <h3 class="mt-6 font-bold">@L["HealthBook_History"]</h3>
+    @if (Model.History.Count == 0)
+    {
+        <p class="sc-texte-doux mt-2">@L["HealthBook_Empty"]</p>
+    }
+    else
+    {
+        <ol class="mt-2 grid gap-2">
+            @foreach (var entry in Model.History)
+            {
+                <li class="sc-carte relative flex items-center gap-3 py-3">
+                    <span class="grid size-10 place-items-center rounded-md bg-laterite-clair text-laterite"><sc-icon name="@Formatting.Icon(entry.Domain)" /></span>
+                    <span class="flex-1">
+                        <a href="/interventions/@entry.RequestId" class="font-bold text-charbon no-underline after:absolute after:inset-0">@entry.Summary</a>
+                        <span class="block text-sm text-charbon-doux">@L["Domain_" + entry.Domain] · @Formatting.ShortDate(entry.CompletedAt) · @entry.Number</span>
+                    </span>
+                    @if (entry.Rating is { } rating)
+                    {
+                        <span class="flex items-center gap-1 text-sm font-bold" aria-label="@L["Rating_Label", rating]"><sc-icon name="star" class="size-4 fill-soleil text-soleil" />@rating</span>
+                    }
+                </li>
+            }
+        </ol>
+    }
+</section>

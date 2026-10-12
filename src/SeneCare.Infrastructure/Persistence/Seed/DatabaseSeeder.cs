@@ -118,6 +118,12 @@ public sealed partial class DatabaseSeeder(SeneCareDbContext db, TimeProvider cl
 
     private async Task SeedPlansAsync(CancellationToken cancellationToken)
     {
+        // Repair: early seeds shared the default SLA instances between plans, so some lost them.
+        foreach (var plan in await db.Plans.ToListAsync(cancellationToken))
+        {
+            plan.EnsureDefaultSla();
+        }
+
         var existing = await db.Plans.Select(p => p.Code).ToListAsync(cancellationToken);
         var missing = DefaultPlans().Where(p => !existing.Contains(p.Code)).ToList();
         db.Plans.AddRange(missing);

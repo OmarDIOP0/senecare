@@ -179,6 +179,7 @@ public class AuthFlowTests(WebAppFixture app)
 
         var signedOut = await client.SubmitAsync("/compte", "/deconnexion", new Dictionary<string, string>());
         Assert.Equal("/", signedOut.Location());
+        Assert.Equal("\"cache\", \"storage\"", Assert.Single(signedOut.Headers.GetValues("Clear-Site-Data")));
 
         var compte = await client.GetAsync(new Uri("/compte", UriKind.Relative));
         Assert.StartsWith("/connexion", compte.Location(), StringComparison.Ordinal);

@@ -1,0 +1,69 @@
+@model PropertyFormModel
+@using SeneCare.Domain.Accounts
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "logements";
+    ViewData["Title"] = L["Property_Add"];
+    var picker = new NeighborhoodPickerModel("NeighborhoodId", Model.NeighborhoodId, Model.NeighborhoodLabel);
+    var kinds = new[] { PropertyKind.House, PropertyKind.Villa, PropertyKind.Apartment };
+}
+@section Head {
+    @* Map assets only on this page (≈45 KB), never on the others. *@
+    <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" asp-append-version="true" />
+    <script src="~/lib/leaflet/leaflet.js" asp-append-version="true" defer></script>
+    <script src="~/js/map.js" asp-append-version="true" defer></script>
+}
+
+<h1 class="sc-titre">@L["Property_Add"]</h1>
+<p class="mt-2 text-charbon-doux">@L["Property_Add_Intro"]</p>
+
+<div asp-validation-summary="All" class="sc-error" role="alert"></div>
+
+<form method="post" enctype="multipart/form-data" class="mt-6 grid gap-6" novalidate>
+    <fieldset>
+        <legend class="sc-label">@L["Property_Kind"]</legend>
+        <div class="mt-2 grid grid-cols-3 gap-2">
+            @foreach (var kind in kinds)
+            {
+                <label class="sc-choix justify-center text-center"><input type="radio" asp-for="Kind" value="@kind" class="sr-only" />@L["PropertyKind_" + kind]</label>
+            }
+        </div>
+    </fieldset>
+
+    <div>
+        <label class="sc-label" asp-for="Name">@L["Property_Name"]</label>
+        <input asp-for="Name" class="sc-input" placeholder="@L["Property_Name_Placeholder"]" required />
+    </div>
+
+    <partial name="Ui/_NeighborhoodPicker" model="picker" />
+
+    <section aria-labelledby="carte-titre">
+        <h2 id="carte-titre" class="sc-label">@L["Property_Map"]</h2>
+        <p class="sc-aide">@L["Property_Map_Hint"]</p>
+        @* isolate: Leaflet layers (z-index 400+) stay below the tab bar. *@
+        <div class="isolate mt-2 overflow-hidden rounded-md border-2 border-ligne">
+            <div id="carte" class="h-64 bg-sable" data-map data-lat-input="Latitude" data-lng-input="Longitude"
+                 role="application" aria-label="@L["Property_Map"]"></div>
+        </div>
+        <button type="button" class="sc-btn-secondaire mt-2" data-map-locate data-text-locating="@L["Property_Locating"]" data-text-denied="@L["Property_Locate_Denied"]">
+            <sc-icon name="locate-fixed" />@L["Property_Locate"]
+        </button>
+        <input type="hidden" asp-for="Latitude" />
+        <input type="hidden" asp-for="Longitude" />
+    </section>
+
+    <div>
+        <label class="sc-label" asp-for="Landmark">@L["Property_Landmark"]</label>
+        <textarea asp-for="Landmark" rows="2" class="sc-input py-2" placeholder="@L["Property_Landmark_Placeholder"]"></textarea>
+        <p class="sc-aide">@L["Property_Landmark_Hint"]</p>
+    </div>
+
+    <div>
+        <label class="sc-label" asp-for="Details">@L["Property_Details"]</label>
+        <input asp-for="Details" class="sc-input" placeholder="@L["Property_Details_Placeholder"]" />
+    </div>
+
+    <partial name="Ui/_PhotoUploader" model='new PhotoUploaderModel("photos", L["Property_Photos"], 6)' />
+
+    <button type="submit" class="sc-btn-primaire">@L["Property_Save"]</button>
+</form>

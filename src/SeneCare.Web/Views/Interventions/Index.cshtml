@@ -1,0 +1,39 @@
+@model IReadOnlyList<SeneCare.Application.Requests.RequestSummary>
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "interventions";
+    ViewData["Title"] = L["Requests_Title"];
+    var open = Model.Where(r => r.IsOpen).ToList();
+    var closed = Model.Where(r => !r.IsOpen).ToList();
+}
+
+<h1 class="sc-titre">@L["Requests_Title"]</h1>
+
+@if (Model.Count == 0)
+{
+    <div class="mt-6">
+        <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Space_Client_Empty_Title"], L["Space_Client_Empty_Text"], EmptyIllustration.Tools, L["Tab_Report"], "/signaler")' />
+    </div>
+}
+
+@if (open.Count > 0)
+{
+    <h2 class="sc-sous-titre mt-6">@L["Requests_Open"]</h2>
+    <div class="mt-3 grid gap-3">
+        @foreach (var r in open)
+        {
+            <partial name="Ui/_InterventionCard" model='new InterventionCardModel(r.Number, r.Domain, r.Title, r.Status, r.Urgency, "/interventions/" + r.Id, r.AppointmentAt, r.Technician?.Name, r.Technician?.PhoneE164)' />
+        }
+    </div>
+}
+
+@if (closed.Count > 0)
+{
+    <h2 class="sc-sous-titre mt-8">@L["Requests_Closed"]</h2>
+    <div class="mt-3 grid gap-3">
+        @foreach (var r in closed)
+        {
+            <partial name="Ui/_InterventionCard" model='new InterventionCardModel(r.Number, r.Domain, r.Title, r.Status, r.Urgency, "/interventions/" + r.Id, r.AppointmentAt, r.Technician?.Name)' />
+        }
+    </div>
+}

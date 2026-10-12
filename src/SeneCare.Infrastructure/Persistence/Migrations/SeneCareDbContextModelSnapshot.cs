@@ -513,6 +513,10 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<Guid?>("AccountId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("account_id");
+
                     b.Property<string>("ContentType")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -545,6 +549,9 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_media_files");
+
+                    b.HasIndex("AccountId")
+                        .HasDatabaseName("ix_media_files_account_id");
 
                     b.HasIndex("StorageKey")
                         .IsUnique()
@@ -1250,6 +1257,11 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("account_id");
 
+                    b.Property<string>("ClientReference")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("client_reference");
+
                     b.Property<DateTimeOffset?>("CompletedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("completed_at");
@@ -1326,6 +1338,11 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("ReportedByUserId")
                         .HasDatabaseName("ix_service_requests_reported_by_user_id");
+
+                    b.HasIndex("AccountId", "ClientReference")
+                        .IsUnique()
+                        .HasDatabaseName("ix_service_requests_account_id_client_reference")
+                        .HasFilter("client_reference IS NOT NULL");
 
                     b.HasIndex("AccountId", "CreatedAt")
                         .HasDatabaseName("ix_service_requests_account_id_created_at");
@@ -1750,10 +1767,12 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                                 .HasColumnType("uuid")
                                 .HasColumnName("property_id");
 
-                            b1.Property<Guid>("MediaFileId")
+                            b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid")
-                                .HasColumnName("media_file_id");
+                                .HasColumnType("integer")
+                                .HasColumnName("id");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("Kind")
                                 .IsRequired()
@@ -1761,8 +1780,16 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                                 .HasColumnType("character varying(40)")
                                 .HasColumnName("kind");
 
-                            b1.HasKey("property_id", "MediaFileId")
+                            b1.Property<Guid>("MediaFileId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("media_file_id");
+
+                            b1.HasKey("property_id", "Id")
                                 .HasName("pk_property_photos");
+
+                            b1.HasIndex("property_id", "MediaFileId")
+                                .IsUnique()
+                                .HasDatabaseName("ix_property_photos_property_id_media_file_id");
 
                             b1.ToTable("property_photos", (string)null);
 
@@ -1929,10 +1956,12 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                                 .HasColumnType("uuid")
                                 .HasColumnName("control_point_id");
 
-                            b1.Property<Guid>("MediaFileId")
+                            b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid")
-                                .HasColumnName("media_file_id");
+                                .HasColumnType("integer")
+                                .HasColumnName("id");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("Kind")
                                 .IsRequired()
@@ -1940,7 +1969,16 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                                 .HasColumnType("character varying(40)")
                                 .HasColumnName("kind");
 
-                            b1.HasKey("control_point_id", "MediaFileId");
+                            b1.Property<Guid>("MediaFileId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("media_file_id");
+
+                            b1.HasKey("control_point_id", "Id")
+                                .HasName("pk_diagnostic_control_point_photos");
+
+                            b1.HasIndex("control_point_id", "MediaFileId")
+                                .IsUnique()
+                                .HasDatabaseName("ix_diagnostic_control_point_photos_control_point_id_media_file");
 
                             b1.ToTable("diagnostic_control_point_photos", (string)null);
 
@@ -2012,10 +2050,12 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                                 .HasColumnType("uuid")
                                 .HasColumnName("intervention_id");
 
-                            b1.Property<Guid>("MediaFileId")
+                            b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid")
-                                .HasColumnName("media_file_id");
+                                .HasColumnType("integer")
+                                .HasColumnName("id");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("Kind")
                                 .IsRequired()
@@ -2023,8 +2063,16 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                                 .HasColumnType("character varying(40)")
                                 .HasColumnName("kind");
 
-                            b1.HasKey("intervention_id", "MediaFileId")
+                            b1.Property<Guid>("MediaFileId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("media_file_id");
+
+                            b1.HasKey("intervention_id", "Id")
                                 .HasName("pk_intervention_photos");
+
+                            b1.HasIndex("intervention_id", "MediaFileId")
+                                .IsUnique()
+                                .HasDatabaseName("ix_intervention_photos_intervention_id_media_file_id");
 
                             b1.ToTable("intervention_photos", (string)null);
 
@@ -2126,10 +2174,12 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                                 .HasColumnType("uuid")
                                 .HasColumnName("operation_id");
 
-                            b1.Property<Guid>("MediaFileId")
+                            b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid")
-                                .HasColumnName("media_file_id");
+                                .HasColumnType("integer")
+                                .HasColumnName("id");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("Kind")
                                 .IsRequired()
@@ -2137,8 +2187,16 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                                 .HasColumnType("character varying(40)")
                                 .HasColumnName("kind");
 
-                            b1.HasKey("operation_id", "MediaFileId")
+                            b1.Property<Guid>("MediaFileId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("media_file_id");
+
+                            b1.HasKey("operation_id", "Id")
                                 .HasName("pk_greening_operation_photos");
+
+                            b1.HasIndex("operation_id", "MediaFileId")
+                                .IsUnique()
+                                .HasDatabaseName("ix_greening_operation_photos_operation_id_media_file_id");
 
                             b1.ToTable("greening_operation_photos", (string)null);
 
@@ -2168,17 +2226,29 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                                 .HasColumnType("uuid")
                                 .HasColumnName("plan_id");
 
-                            b1.Property<string>("Urgency")
-                                .HasMaxLength(40)
-                                .HasColumnType("character varying(40)")
-                                .HasColumnName("urgency");
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer")
+                                .HasColumnName("id");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
 
                             b1.Property<TimeSpan>("MaxDelay")
                                 .HasColumnType("interval")
                                 .HasColumnName("max_delay");
 
-                            b1.HasKey("plan_id", "Urgency")
+                            b1.Property<string>("Urgency")
+                                .IsRequired()
+                                .HasMaxLength(40)
+                                .HasColumnType("character varying(40)")
+                                .HasColumnName("urgency");
+
+                            b1.HasKey("plan_id", "Id")
                                 .HasName("pk_plan_sla_policies");
+
+                            b1.HasIndex("plan_id", "Urgency")
+                                .IsUnique()
+                                .HasDatabaseName("ix_plan_sla_policies_plan_id_urgency");
 
                             b1.ToTable("plan_sla_policies", (string)null);
 
@@ -2361,10 +2431,12 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                                 .HasColumnType("uuid")
                                 .HasColumnName("service_request_id");
 
-                            b1.Property<Guid>("MediaFileId")
+                            b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid")
-                                .HasColumnName("media_file_id");
+                                .HasColumnType("integer")
+                                .HasColumnName("id");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("Kind")
                                 .IsRequired()
@@ -2372,8 +2444,16 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                                 .HasColumnType("character varying(40)")
                                 .HasColumnName("kind");
 
-                            b1.HasKey("service_request_id", "MediaFileId")
+                            b1.Property<Guid>("MediaFileId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("media_file_id");
+
+                            b1.HasKey("service_request_id", "Id")
                                 .HasName("pk_service_request_attachments");
+
+                            b1.HasIndex("service_request_id", "MediaFileId")
+                                .IsUnique()
+                                .HasDatabaseName("ix_service_request_attachments_service_request_id_media_file_id");
 
                             b1.ToTable("service_request_attachments", (string)null);
 
@@ -2582,17 +2662,29 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                                 .HasColumnType("uuid")
                                 .HasColumnName("user_id");
 
-                            b1.Property<string>("Role")
-                                .HasMaxLength(40)
-                                .HasColumnType("character varying(40)")
-                                .HasColumnName("role");
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer")
+                                .HasColumnName("id");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
 
                             b1.Property<DateTimeOffset>("GrantedAt")
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("granted_at");
 
-                            b1.HasKey("user_id", "Role")
+                            b1.Property<string>("Role")
+                                .IsRequired()
+                                .HasMaxLength(40)
+                                .HasColumnType("character varying(40)")
+                                .HasColumnName("role");
+
+                            b1.HasKey("user_id", "Id")
                                 .HasName("pk_user_roles");
+
+                            b1.HasIndex("user_id", "Role")
+                                .IsUnique()
+                                .HasDatabaseName("ix_user_roles_user_id_role");
 
                             b1.ToTable("user_roles", (string)null);
 

@@ -66,7 +66,7 @@ internal sealed class PlanConfiguration : IEntityTypeConfiguration<Plan>
         {
             b.ToTable("plan_sla_policies");
             b.WithOwner().HasForeignKey("plan_id");
-            b.HasKey("plan_id", nameof(PlanSlaPolicy.Urgency));
+            b.HasIndex("plan_id", nameof(PlanSlaPolicy.Urgency)).IsUnique();
         });
     }
 }

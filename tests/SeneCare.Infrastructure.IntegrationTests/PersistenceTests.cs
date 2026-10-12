@@ -29,7 +29,9 @@ public class SeedTests(PostgresFixture fixture)
         Assert.Equal(["HOME", "ESSENTIEL", "PROFESSIONNEL", "PREMIUM"], plans.Select(p => p.Code));
         Assert.Equal(8_500, plans[0].MonthlyPrice.Amount);
         Assert.Equal(3_500_000, plans[3].MonthlyPrice.Amount);
-        Assert.Equal(TimeSpan.FromHours(4), plans[3].GetMaxDelay(Urgency.Critical));
+        // Regression: every plan keeps its own SLA (instances once shared between plans were lost).
+        Assert.All(plans, p => Assert.Equal(TimeSpan.FromHours(4), p.GetMaxDelay(Urgency.Critical)));
+        Assert.All(plans, p => Assert.Equal(3, p.SlaPolicies.Count));
     }
 
     [PostgresFact]

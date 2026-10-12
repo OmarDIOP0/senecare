@@ -22,6 +22,12 @@ writeFileSync(
 mkdirSync("wwwroot/lib", { recursive: true });
 copyFileSync("node_modules/htmx.org/dist/htmx.min.js", "wwwroot/lib/htmx.min.js");
 
+// Leaflet (map of the « Mes logements » form only).
+mkdirSync("wwwroot/lib/leaflet/images", { recursive: true });
+for (const file of ["leaflet.js", "leaflet.css", "images/marker-icon.png", "images/marker-icon-2x.png", "images/marker-shadow.png"]) {
+  copyFileSync(`node_modules/leaflet/dist/${file}`, `wwwroot/lib/leaflet/${file}`);
+}
+
 mkdirSync("wwwroot/fonts", { recursive: true });
 for (const [pkg, file] of [
   ["atkinson-hyperlegible", "atkinson-hyperlegible-latin-400-normal.woff2"],

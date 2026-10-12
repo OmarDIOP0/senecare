@@ -84,6 +84,28 @@ internal static partial class Browser
         return await client.PostAsync(new Uri(postUrl, UriKind.Relative), content);
     }
 
+    /// <summary>Multipart form (files) with the antiforgery token read from the page.</summary>
+    public static async Task<HttpResponseMessage> SubmitMultipartAsync(
+        this HttpClient client, string pageUrl, string postUrl, IEnumerable<KeyValuePair<string, string>> fields, IEnumerable<(string Name, string FileName, byte[] Content)> files)
+    {
+        var page = await client.GetStringAsync(new Uri(pageUrl, UriKind.Relative));
+        var token = AntiforgeryToken().Match(page);
+        Assert.True(token.Success, $"No antiforgery token on {pageUrl}");
+
+        using var content = new MultipartFormDataContent { { new StringContent(WebUtility.HtmlDecode(token.Groups[1].Value)), "__RequestVerificationToken" } };
+        foreach (var (name, value) in fields)
+        {
+            content.Add(new StringContent(value), name);
+        }
+
+        foreach (var (name, fileName, bytes) in files)
+        {
+            content.Add(new ByteArrayContent(bytes), name, fileName);
+        }
+
+        return await client.PostAsync(new Uri(postUrl, UriKind.Relative), content);
+    }
+
     /// <summary>Redirect target as a local path (cookie auth redirects are absolute URLs).</summary>
     public static string Location(this HttpResponseMessage response)
     {

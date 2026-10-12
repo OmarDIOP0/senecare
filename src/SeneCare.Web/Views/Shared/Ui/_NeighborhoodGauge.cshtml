@@ -1,0 +1,27 @@
+@model SeneCare.Application.Subscriptions.NeighborhoodProgress
+@using SeneCare.Domain.Neighborhoods
+@{
+    var active = Model.Status == NeighborhoodProgramStatus.Active;
+}
+@* « 347 / 500 voisins »: the neighborhood program gauge. *@
+<section class="sc-carte relative overflow-hidden" aria-labelledby="quartier-titre">
+    <div class="sc-motif sc-motif-bogolan absolute inset-x-0 top-0 h-2 text-baobab/40" aria-hidden="true"></div>
+    <div class="flex items-start gap-3 pt-1">
+        <span class="grid size-12 shrink-0 place-items-center rounded-md bg-baobab-clair text-baobab"><sc-icon name="sprout" class="size-6" /></span>
+        <div class="flex-1">
+            <p class="sc-surtitre text-baobab">@L["Hood_Program"]</p>
+            <h2 id="quartier-titre" class="font-display text-lg font-bold">@Model.Neighborhood</h2>
+            @if (active)
+            {
+                <p class="mt-1">@L["Hood_Active", Model.TreesPlanted]</p>
+            }
+            else
+            {
+                <p class="mt-1"><strong class="font-display text-2xl">@Model.Members</strong> <span class="text-charbon-doux">/ @L["Hood_Neighbors", Model.Threshold]</span></p>
+                <progress class="mt-2 h-3 w-full appearance-none overflow-hidden rounded-full [&::-moz-progress-bar]:bg-baobab [&::-webkit-progress-bar]:bg-baobab-clair [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-baobab"
+                          max="@Model.Threshold" value="@Model.Members" aria-label="@L["Hood_Program"]">@Model.Members / @Model.Threshold</progress>
+                <p class="sc-texte-doux mt-2">@L["Hood_Remaining", Math.Max(0, Model.Threshold - Model.Members)]</p>
+            }
+        </div>
+    </div>
+</section>

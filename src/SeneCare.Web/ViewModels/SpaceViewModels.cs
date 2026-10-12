@@ -18,4 +18,7 @@ public sealed class SpaceViewModel
 
     /// <summary>Guided tour configuration (JSON), or null when already seen.</summary>
     public string? TourJson { get; init; }
+
+    /// <summary>Customer data (household space only).</summary>
+    public ClientHomeModel? Client { get; init; }
 }

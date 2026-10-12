@@ -88,6 +88,9 @@ internal sealed class ServiceRequestConfiguration : IEntityTypeConfiguration<Ser
         builder.ToTable("service_requests");
         builder.Property(r => r.Number).HasMaxLength(32);
         builder.HasIndex(r => r.Number).IsUnique();
+        builder.Property(r => r.ClientReference).HasMaxLength(64);
+        // Offline replays: one request per phone-generated reference.
+        builder.HasIndex(r => new { r.AccountId, r.ClientReference }).IsUnique().HasFilter("client_reference IS NOT NULL");
         builder.Property(r => r.Description).HasMaxLength(ServiceRequest.DescriptionMaxLength);
         builder.Property(r => r.DisputeReason).HasMaxLength(Rating.CommentMaxLength);
         builder.HasOne<CustomerAccount>().WithMany().HasForeignKey(r => r.AccountId).OnDelete(DeleteBehavior.Restrict);

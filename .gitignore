@@ -487,3 +487,6 @@ node_modules/
 appsettings.*.local.json
 # Local secrets copy of appsettings.Example.json
 appsettings.Local.json
+
+# Uploaded files (local storage)
+App_Data/

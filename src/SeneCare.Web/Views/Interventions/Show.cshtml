@@ -1,0 +1,187 @@
+@model RequestPageModel
+@using SeneCare.Application.Development
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "interventions";
+    var d = Model.Detail;
+    var s = d.Summary;
+    ViewData["Title"] = s.Number;
+}
+
+<p class="sc-surtitre">@L["Domain_" + s.Domain] · @s.Number</p>
+<h1 class="sc-titre mt-1">@s.Title</h1>
+<p class="mt-1 text-sm text-charbon-doux">@s.PropertyName · @L["Request_SentOn", Formatting.ShortDateTime(s.CreatedAt)]</p>
+<div class="mt-3 flex flex-wrap gap-2">
+    <sc-status value="@s.Status" />
+    <sc-urgency value="@s.Urgency" />
+    @if (d.IsUnderWarranty)
+    {
+        <span class="sc-badge bg-baobab-clair text-baobab"><sc-icon name="shield-check" class="size-3.5" />@L["Request_UnderWarranty"]</span>
+    }
+</div>
+
+@if (d.SlaDeadline is { } deadline && s.IsOpen && s.Status is RequestStatus.Submitted or RequestStatus.UnderReview or RequestStatus.AppointmentProposed or RequestStatus.AppointmentConfirmed)
+{
+    <p class="mt-3 flex items-center gap-2 text-sm"><sc-icon name="clock" class="size-4 text-laterite" />@L["Request_Sla", Formatting.ShortDateTime(deadline)]</p>
+}
+
+@* ---- What the customer must do now ---- *@
+@if (d.CanChooseSlot)
+{
+    <section class="sc-carte mt-6 border-l-4 border-l-soleil" aria-labelledby="creneau-titre">
+        <h2 id="creneau-titre" class="sc-sous-titre">@L["Request_ChooseSlot"]</h2>
+        <form method="post" asp-action="ChooseSlot" asp-route-id="@s.Id" class="mt-3 grid gap-2">
+            @foreach (var slot in d.ProposedSlots)
+            {
+                <label class="sc-choix">
+                    <input type="radio" name="slot" value="@slot.Start.ToString("O", System.Globalization.CultureInfo.InvariantCulture)" required />
+                    <span class="font-bold">@Formatting.ShortDate(slot.Start)</span> @Formatting.Time(slot.Start) – @Formatting.Time(slot.End)
+                </label>
+            }
+            <button type="submit" class="sc-btn-primaire mt-2"><sc-icon name="calendar-check" />@L["Request_ConfirmSlot"]</button>
+        </form>
+    </section>
+}
+
+@if (s.Technician is { } tech && s.IsOpen)
+{
+    <section class="sc-carte mt-6" aria-labelledby="tech-titre">
+        <h2 id="tech-titre" class="font-bold">@L["Request_YourTechnician"]</h2>
+        <p class="mt-1 flex items-center gap-2"><sc-icon name="wrench" class="text-laterite" />@tech.Name</p>
+        <div class="mt-3 grid grid-cols-2 gap-2">
+            <a href="tel:@tech.PhoneE164" class="sc-btn-secondaire"><sc-icon name="phone" />@L["Card_Call"]</a>
+            <a href="https://wa.me/@tech.PhoneE164.TrimStart('+')" class="sc-btn-whatsapp" rel="noopener"><sc-icon name="message-circle" />WhatsApp</a>
+        </div>
+    </section>
+}
+
+@if (d.CanValidate)
+{
+    <section class="sc-carte mt-6 border-l-4 border-l-baobab" aria-labelledby="valider-titre">
+        <h2 id="valider-titre" class="sc-sous-titre">@L["Request_ValidateTitle"]</h2>
+        <p class="mt-1 text-charbon-doux">@L["Request_ValidateText"]</p>
+        <form method="post" asp-action="Validate" asp-route-id="@s.Id" class="mt-4 grid gap-4">
+            <fieldset>
+                <legend class="sc-label">@L["Rating_Question"]</legend>
+                <div class="mt-2 flex gap-1">
+                    @for (var star = 1; star <= 5; star++)
+                    {
+                        <label class="sc-choix size-12 justify-center px-0" title="@L["Rating_Label", star]">
+                            <input type="radio" name="score" value="@star" class="sr-only" required checked="@(star == 5)" />
+                            <span aria-hidden="true" class="font-display text-lg">@star</span><span class="sr-only">@L["Rating_Label", star]</span>
+                        </label>
+                    }
+                </div>
+            </fieldset>
+            <div>
+                <label class="sc-label" for="comment">@L["Rating_Comment"]</label>
+                <textarea id="comment" name="comment" rows="2" class="sc-input py-2"></textarea>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <button type="submit" class="sc-btn-primaire"><sc-icon name="check" />@L["Request_Validate"]</button>
+                <button type="button" class="sc-btn-danger" data-sheet-open="contester"><sc-icon name="flag" />@L["Request_Dispute"]</button>
+            </div>
+        </form>
+    </section>
+
+    <sc-sheet id="contester" title="@L["Request_Dispute"]">
+        <form method="post" asp-action="Dispute" asp-route-id="@s.Id" class="grid gap-3">
+            <label class="sc-label" for="reason">@L["Request_DisputeReason"]</label>
+            <textarea id="reason" name="reason" rows="3" class="sc-input py-2" required></textarea>
+            <button type="submit" class="sc-btn bg-laterite text-sur-accent">@L["Request_Dispute"]</button>
+        </form>
+    </sc-sheet>
+}
+
+@* ---- Follow-up ---- *@
+<section class="sc-carte mt-6" aria-labelledby="suivi-titre">
+    <h2 id="suivi-titre" class="sc-sous-titre">@L["Request_Tracking"]</h2>
+    <div class="mt-4">
+        @if (s.Status == RequestStatus.Cancelled)
+        {
+            <p class="flex items-center gap-2 font-bold"><sc-icon name="ban" class="text-charbon-doux" />@L["Request_CancelledText"]</p>
+        }
+        else
+        {
+            <partial name="Ui/_Timeline" model="Model.Timeline" />
+        }
+    </div>
+</section>
+
+<section class="mt-6" aria-labelledby="details-titre">
+    <h2 id="details-titre" class="sc-sous-titre">@L["Request_Details"]</h2>
+    <p class="mt-2 whitespace-pre-line">@d.Description</p>
+    @if (d.PhotoIds.Count > 0)
+    {
+        <ul class="mt-3 grid grid-cols-3 gap-2">
+            @foreach (var photo in d.PhotoIds)
+            {
+                <li><a href="/fichiers/@photo"><img src="/fichiers/@photo" alt="@L["Request_Photo"]" loading="lazy" class="aspect-square w-full rounded-md object-cover" /></a></li>
+            }
+        </ul>
+    }
+    @if (d.VoiceNoteId is { } voice)
+    {
+        <p class="sc-label mt-4">@L["Voice_Label"]</p>
+        <audio controls preload="none" src="/fichiers/@voice" class="mt-1 w-full"></audio>
+    }
+</section>
+
+@if (d.Report is not null)
+{
+    <section class="sc-carte mt-6" aria-labelledby="rapport-titre">
+        <h2 id="rapport-titre" class="sc-sous-titre">@L["Request_Report"]</h2>
+        <p class="mt-2">@d.Report</p>
+        @if (d.AfterPhotoIds.Count > 0)
+        {
+            <ul class="mt-3 grid grid-cols-3 gap-2">
+                @foreach (var photo in d.AfterPhotoIds)
+                {
+                    <li><img src="/fichiers/@photo" alt="@L["Request_AfterPhoto"]" loading="lazy" class="aspect-square w-full rounded-md bg-ligne object-cover" /></li>
+                }
+            </ul>
+        }
+        @if (d.WarrantyEndsOn is { } warranty)
+        {
+            <p class="mt-3 flex items-center gap-2 text-sm font-bold text-baobab"><sc-icon name="shield-check" class="size-4" />@L["HealthBook_Until", Formatting.ShortDate(new DateTimeOffset(warranty.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero))]</p>
+        }
+        @if (d.RatingScore is { } score)
+        {
+            <p class="mt-3 flex items-center gap-1 font-bold"><sc-icon name="star" class="size-4 fill-soleil text-soleil" />@L["Rating_Given", score] @d.RatingComment</p>
+        }
+        @if (d.DisputeReason is not null)
+        {
+            <p class="sc-alert mt-3 border-laterite bg-laterite-clair">@L["Request_DisputedText", d.DisputeReason]</p>
+        }
+    </section>
+}
+
+@if (d.CanCancel)
+{
+    <div class="mt-8">
+        <button type="button" class="sc-btn-discret" data-sheet-open="annuler">@L["Request_Cancel"]</button>
+    </div>
+    <sc-sheet id="annuler" title="@L["Request_Cancel"]">
+        <form method="post" asp-action="Cancel" asp-route-id="@s.Id" class="grid gap-3">
+            <label class="sc-label" for="cancel-reason">@L["Request_CancelReason"]</label>
+            <textarea id="cancel-reason" name="reason" rows="2" class="sc-input py-2"></textarea>
+            <button type="submit" class="sc-btn bg-laterite text-sur-accent">@L["Request_CancelConfirm"]</button>
+        </form>
+    </sc-sheet>
+}
+
+@if (Model.CanSimulate && s.IsOpen)
+{
+    @* Development only: plays the dispatcher and technician (Phases 8–9 bring the real tools). *@
+    <section class="mt-10 rounded-md border-2 border-dashed border-indigo/50 p-4" aria-label="Simulateur">
+        <p class="sc-surtitre text-indigo">Simulateur (développement)</p>
+        <div class="mt-3 flex flex-wrap gap-2">
+            @foreach (var step in Enum.GetValues<SimulationStep>())
+            {
+                <form method="post" asp-action="Simulate" asp-route-id="@s.Id" asp-route-step="@step">
+                    <button type="submit" class="sc-btn-secondaire min-h-10 text-sm">@L["Simulation_" + step]</button>
+                </form>
+            }
+        </div>
+    </section>
+}

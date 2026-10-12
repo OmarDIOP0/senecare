@@ -137,6 +137,10 @@ public sealed class AuthController(
     public async Task<IActionResult> SignOutUser()
     {
         await signInManager.SignOutAsync();
+
+        // Shared phones: the browser erases cached pages, offline queue and storage of this site,
+        // even if the service worker message never arrives.
+        Response.Headers["Clear-Site-Data"] = "\"cache\", \"storage\"";
         return LocalRedirect("/");
     }
 

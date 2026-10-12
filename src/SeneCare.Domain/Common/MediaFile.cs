@@ -9,7 +9,8 @@ public sealed class MediaFile : Entity
         ContentType = string.Empty;
     }
 
-    public MediaFile(string storageKey, string contentType, long sizeBytes, MediaKind kind, Guid uploadedByUserId, DateTimeOffset uploadedAt)
+    /// <param name="accountId">Customer account the file belongs to (access control); null for staff-only files.</param>
+    public MediaFile(string storageKey, string contentType, long sizeBytes, MediaKind kind, Guid uploadedByUserId, Guid? accountId, DateTimeOffset uploadedAt)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(storageKey);
         ArgumentException.ThrowIfNullOrWhiteSpace(contentType);
@@ -23,6 +24,7 @@ public sealed class MediaFile : Entity
         SizeBytes = sizeBytes;
         Kind = kind;
         UploadedByUserId = uploadedByUserId;
+        AccountId = accountId;
         UploadedAt = uploadedAt;
     }
 
@@ -35,6 +37,8 @@ public sealed class MediaFile : Entity
     public MediaKind Kind { get; private set; }
 
     public Guid UploadedByUserId { get; private set; }
+
+    public Guid? AccountId { get; private set; }
 
     public DateTimeOffset UploadedAt { get; private set; }
 }

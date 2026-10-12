@@ -238,4 +238,177 @@
   <data name="Tour_Admin_Dispatch_Text" xml:space="preserve"><value>Qualifiez l'urgence, proposez les créneaux et affectez les techniciens.</value></data>
   <data name="Account_Replay" xml:space="preserve"><value>Revoir la présentation</value></data>
   <data name="Account_ReplayTour" xml:space="preserve"><value>Revoir la visite guidée</value></data>
+  <data name="Property_Added" xml:space="preserve"><value>Logement enregistré.</value></data>
+  <data name="Property_Add" xml:space="preserve"><value>Ajouter mon logement</value></data>
+  <data name="Property_Add_Short" xml:space="preserve"><value>Ajouter</value></data>
+  <data name="Property_Add_Intro" xml:space="preserve"><value>Ces informations permettent au technicien de trouver votre logement du premier coup.</value></data>
+  <data name="Property_Kind" xml:space="preserve"><value>Type de logement</value></data>
+  <data name="PropertyKind_House" xml:space="preserve"><value>Maison</value></data>
+  <data name="PropertyKind_Villa" xml:space="preserve"><value>Villa</value></data>
+  <data name="PropertyKind_Apartment" xml:space="preserve"><value>Appartement</value></data>
+  <data name="PropertyKind_Office" xml:space="preserve"><value>Bureau</value></data>
+  <data name="PropertyKind_Shop" xml:space="preserve"><value>Boutique</value></data>
+  <data name="PropertyKind_Warehouse" xml:space="preserve"><value>Entrepôt</value></data>
+  <data name="PropertyKind_Other" xml:space="preserve"><value>Autre</value></data>
+  <data name="Property_Name" xml:space="preserve"><value>Nom du logement</value></data>
+  <data name="Property_Name_Placeholder" xml:space="preserve"><value>Ex. : Maison de Yoff, Villa des Almadies</value></data>
+  <data name="Property_Map" xml:space="preserve"><value>Position sur la carte</value></data>
+  <data name="Property_Map_Hint" xml:space="preserve"><value>Touchez la carte à l'emplacement de la maison, ou utilisez votre position si vous y êtes.</value></data>
+  <data name="Property_Locate" xml:space="preserve"><value>Utiliser ma position</value></data>
+  <data name="Property_Locating" xml:space="preserve"><value>Localisation…</value></data>
+  <data name="Property_Locate_Denied" xml:space="preserve"><value>Position indisponible. Touchez la carte à la place.</value></data>
+  <data name="Property_Landmark" xml:space="preserve"><value>Point de repère</value></data>
+  <data name="Property_Landmark_Placeholder" xml:space="preserve"><value>Ex. : derrière la mosquée, portail vert</value></data>
+  <data name="Property_Landmark_Hint" xml:space="preserve"><value>Ce que le technicien voit en arrivant : mosquée, boutique, école, couleur du portail…</value></data>
+  <data name="Property_Details" xml:space="preserve"><value>Précisions (facultatif)</value></data>
+  <data name="Property_Details_Placeholder" xml:space="preserve"><value>Ex. : immeuble B, 2e étage, porte de gauche</value></data>
+  <data name="Property_Photos" xml:space="preserve"><value>Photos du logement (facultatif)</value></data>
+  <data name="Property_Save" xml:space="preserve"><value>Enregistrer le logement</value></data>
+  <data name="Property_OpenMap" xml:space="preserve"><value>Itinéraire</value></data>
+  <data name="Properties_Title" xml:space="preserve"><value>Mes logements</value></data>
+  <data name="Properties_OpenRequests" xml:space="preserve"><value>{0} demande(s) en cours</value></data>
+  <data name="Space_NoProperty_Title" xml:space="preserve"><value>Ajoutez votre logement</value></data>
+  <data name="Space_NoProperty_Text" xml:space="preserve"><value>Adresse, point de repère et photos : nos techniciens trouveront votre maison du premier coup.</value></data>
+  <data name="Space_InProgress" xml:space="preserve"><value>En cours</value></data>
+  <data name="SubscriptionStatus_PendingRegistration" xml:space="preserve"><value>À activer</value></data>
+  <data name="SubscriptionStatus_Active" xml:space="preserve"><value>Actif</value></data>
+  <data name="SubscriptionStatus_PastDue" xml:space="preserve"><value>Paiement en retard</value></data>
+  <data name="SubscriptionStatus_Suspended" xml:space="preserve"><value>Suspendu</value></data>
+  <data name="SubscriptionStatus_Cancelled" xml:space="preserve"><value>Résilié</value></data>
+  <data name="Subscription_NextDue" xml:space="preserve"><value>Prochaine échéance : {0}</value></data>
+  <data name="Subscription_None" xml:space="preserve"><value>Votre abonnement est créé avec votre premier logement.</value></data>
+  <data name="Subscription_Monthly" xml:space="preserve"><value>Abonnement mensuel</value></data>
+  <data name="Subscription_Registration" xml:space="preserve"><value>Frais d'inscription</value></data>
+  <data name="Subscription_FirstPayment" xml:space="preserve"><value>Premier paiement</value></data>
+  <data name="Subscription_Period" xml:space="preserve"><value>Période en cours</value></data>
+  <data name="Subscription_NextDueLabel" xml:space="preserve"><value>Prochaine échéance</value></data>
+  <data name="Subscription_PendingText" xml:space="preserve"><value>Votre abonnement démarre dès le paiement de l'inscription et du premier mois, par Wave, Orange Money ou Free Money (bientôt disponible).</value></data>
+  <data name="Subscription_Invoices" xml:space="preserve"><value>Factures et reçus</value></data>
+  <data name="Subscription_NoInvoice" xml:space="preserve"><value>Aucune facture pour le moment.</value></data>
+  <data name="Subscription_DueOn" xml:space="preserve"><value>Échéance : {0}</value></data>
+  <data name="Subscription_Activated" xml:space="preserve"><value>Abonnement activé.</value></data>
+  <data name="InvoiceStatus_Draft" xml:space="preserve"><value>Brouillon</value></data>
+  <data name="InvoiceStatus_Issued" xml:space="preserve"><value>À payer</value></data>
+  <data name="InvoiceStatus_Paid" xml:space="preserve"><value>Payée</value></data>
+  <data name="InvoiceStatus_Overdue" xml:space="preserve"><value>En retard</value></data>
+  <data name="InvoiceStatus_Cancelled" xml:space="preserve"><value>Annulée</value></data>
+  <data name="Hood_Program" xml:space="preserve"><value>Programme Quartiers</value></data>
+  <data name="Hood_Neighbors" xml:space="preserve"><value>{0} voisins</value></data>
+  <data name="Hood_Remaining" xml:space="preserve"><value>Encore {0} voisins et nous plantons des arbres dans votre quartier.</value></data>
+  <data name="Hood_Active" xml:space="preserve"><value>Quartier actif : {0} arbres plantés à ce jour.</value></data>
+  <data name="Report_Title" xml:space="preserve"><value>Signaler un problème</value></data>
+  <data name="Report_Intro" xml:space="preserve"><value>Trois étapes, une minute. Sans réseau, votre signalement partira dès que la connexion revient.</value></data>
+  <data name="Report_Queued" xml:space="preserve"><value>Enregistré sur votre téléphone : envoi dès le retour du réseau.</value></data>
+  <data name="Report_DraftRestored" xml:space="preserve"><value>Votre brouillon a été restauré.</value></data>
+  <data name="Report_Property" xml:space="preserve"><value>Logement concerné</value></data>
+  <data name="Report_StepOf" xml:space="preserve"><value>Étape {0} sur {1}</value></data>
+  <data name="Report_Step1" xml:space="preserve"><value>Quel est le problème ?</value></data>
+  <data name="Report_Step2" xml:space="preserve"><value>Décrivez en quelques mots</value></data>
+  <data name="Report_Description" xml:space="preserve"><value>Ce qui se passe</value></data>
+  <data name="Report_Description_Placeholder" xml:space="preserve"><value>Ex. : l'eau coule sous l'évier de la cuisine depuis ce matin</value></data>
+  <data name="Report_Photos" xml:space="preserve"><value>Photos (conseillé)</value></data>
+  <data name="Report_Step3" xml:space="preserve"><value>C'est urgent ?</value></data>
+  <data name="Report_Urgency_Critical" xml:space="preserve"><value>Coupure de courant, court-circuit, grosse fuite : intervention en moins de 4 h.</value></data>
+  <data name="Report_Urgency_High" xml:space="preserve"><value>Gêne importante : intervention en moins de 24 h.</value></data>
+  <data name="Report_Urgency_Normal" xml:space="preserve"><value>À régler rapidement : intervention en moins de 72 h.</value></data>
+  <data name="Report_Urgency_Planned" xml:space="preserve"><value>Pas pressé : on planifie ensemble.</value></data>
+  <data name="Report_Slots" xml:space="preserve"><value>Vos disponibilités (facultatif)</value></data>
+  <data name="Report_Slots_Hint" xml:space="preserve"><value>Jusqu'à 3 demi-journées. Nous vous proposerons des créneaux.</value></data>
+  <data name="Slot_Morning" xml:space="preserve"><value>Matin, 8–12 h</value></data>
+  <data name="Slot_Afternoon" xml:space="preserve"><value>Après-midi, 14–18 h</value></data>
+  <data name="Report_Previous" xml:space="preserve"><value>Précédent</value></data>
+  <data name="Report_Next" xml:space="preserve"><value>Suivant</value></data>
+  <data name="Report_Send" xml:space="preserve"><value>Envoyer</value></data>
+  <data name="Report_Sent" xml:space="preserve"><value>Signalement {0} bien reçu. Nous l'analysons.</value></data>
+  <data name="Report_NoProperty_Title" xml:space="preserve"><value>Ajoutez d'abord votre logement</value></data>
+  <data name="Report_NoProperty_Text" xml:space="preserve"><value>Pour intervenir, nous avons besoin de l'adresse et d'un point de repère.</value></data>
+  <data name="Report_NoSubscription_Title" xml:space="preserve"><value>Activez votre abonnement</value></data>
+  <data name="Report_NoSubscription_Text" xml:space="preserve"><value>Le signalement est disponible dès que votre abonnement est actif.</value></data>
+  <data name="Voice_Label" xml:space="preserve"><value>Note vocale (facultatif)</value></data>
+  <data name="Voice_Hint" xml:space="preserve"><value>Plus simple que d'écrire ? Expliquez à voix haute, 1 minute maximum.</value></data>
+  <data name="Voice_Record" xml:space="preserve"><value>Enregistrer</value></data>
+  <data name="Voice_Stop" xml:space="preserve"><value>Arrêter</value></data>
+  <data name="Voice_Denied" xml:space="preserve"><value>Micro indisponible. Vous pouvez écrire à la place.</value></data>
+  <data name="Requests_Title" xml:space="preserve"><value>Mes interventions</value></data>
+  <data name="Requests_Open" xml:space="preserve"><value>En cours</value></data>
+  <data name="Requests_Closed" xml:space="preserve"><value>Terminées</value></data>
+  <data name="Request_SentOn" xml:space="preserve"><value>Signalé le {0}</value></data>
+  <data name="Request_UnderWarranty" xml:space="preserve"><value>Sous garantie</value></data>
+  <data name="Request_Sla" xml:space="preserve"><value>Intervention prévue avant le {0}</value></data>
+  <data name="Request_ChooseSlot" xml:space="preserve"><value>Choisissez votre créneau</value></data>
+  <data name="Request_ConfirmSlot" xml:space="preserve"><value>Confirmer ce créneau</value></data>
+  <data name="Request_YourTechnician" xml:space="preserve"><value>Votre technicien</value></data>
+  <data name="Request_ValidateTitle" xml:space="preserve"><value>L'intervention est terminée</value></data>
+  <data name="Request_ValidateText" xml:space="preserve"><value>Tout est en ordre ? Validez et donnez une note. Un souci ? Dites-le nous.</value></data>
+  <data name="Rating_Question" xml:space="preserve"><value>Votre note</value></data>
+  <data name="Rating_Label" xml:space="preserve"><value>{0} sur 5</value></data>
+  <data name="Rating_Comment" xml:space="preserve"><value>Un commentaire (facultatif)</value></data>
+  <data name="Rating_Given" xml:space="preserve"><value>Votre note : {0}/5</value></data>
+  <data name="Request_Validate" xml:space="preserve"><value>Valider l'intervention</value></data>
+  <data name="Request_Dispute" xml:space="preserve"><value>Contester</value></data>
+  <data name="Request_DisputeReason" xml:space="preserve"><value>Qu'est-ce qui ne va pas ?</value></data>
+  <data name="Request_Tracking" xml:space="preserve"><value>Suivi</value></data>
+  <data name="Request_CancelledText" xml:space="preserve"><value>Cette demande a été annulée.</value></data>
+  <data name="Request_Details" xml:space="preserve"><value>Détails</value></data>
+  <data name="Request_Photo" xml:space="preserve"><value>Photo du problème</value></data>
+  <data name="Request_Report" xml:space="preserve"><value>Rapport d'intervention</value></data>
+  <data name="Request_AfterPhoto" xml:space="preserve"><value>Photo après intervention</value></data>
+  <data name="Request_DisputedText" xml:space="preserve"><value>Contestation : {0}. Notre équipe revient vers vous.</value></data>
+  <data name="Request_Cancel" xml:space="preserve"><value>Annuler la demande</value></data>
+  <data name="Request_CancelReason" xml:space="preserve"><value>Pourquoi ? (facultatif)</value></data>
+  <data name="Request_CancelConfirm" xml:space="preserve"><value>Oui, annuler</value></data>
+  <data name="Request_SlotChosen" xml:space="preserve"><value>Créneau confirmé. Merci !</value></data>
+  <data name="Request_Validated" xml:space="preserve"><value>Merci pour votre note !</value></data>
+  <data name="Request_Disputed" xml:space="preserve"><value>Contestation envoyée. Nous vous recontactons.</value></data>
+  <data name="Request_Cancelled" xml:space="preserve"><value>Demande annulée.</value></data>
+  <data name="Simulation_Done" xml:space="preserve"><value>Simulation effectuée.</value></data>
+  <data name="Simulation_ProposeSlots" xml:space="preserve"><value>Proposer 3 créneaux</value></data>
+  <data name="Simulation_OnTheWay" xml:space="preserve"><value>Technicien en route</value></data>
+  <data name="Simulation_StartWork" xml:space="preserve"><value>Sur place</value></data>
+  <data name="Simulation_Complete" xml:space="preserve"><value>Terminer l'intervention</value></data>
+  <data name="Timeline_Received" xml:space="preserve"><value>Signalement reçu</value></data>
+  <data name="Timeline_Review" xml:space="preserve"><value>Analyse par notre équipe</value></data>
+  <data name="Timeline_Appointment" xml:space="preserve"><value>Rendez-vous</value></data>
+  <data name="Timeline_OnTheWay" xml:space="preserve"><value>Technicien en route</value></data>
+  <data name="Timeline_Work" xml:space="preserve"><value>Intervention</value></data>
+  <data name="Timeline_Validated" xml:space="preserve"><value>Validation</value></data>
+  <data name="Timeline_Note_Approval" xml:space="preserve"><value>En attente de validation par votre responsable.</value></data>
+  <data name="Timeline_Note_ChooseSlot" xml:space="preserve"><value>Choisissez un créneau.</value></data>
+  <data name="Timeline_Note_AppointmentOn" xml:space="preserve"><value>Le {0}.</value></data>
+  <data name="Timeline_Note_Working" xml:space="preserve"><value>Le technicien travaille chez vous.</value></data>
+  <data name="Timeline_Note_Validate" xml:space="preserve"><value>Validez l'intervention ou contestez-la.</value></data>
+  <data name="Timeline_Note_Disputed" xml:space="preserve"><value>Contestation en cours d'examen.</value></data>
+  <data name="HealthBook_Title" xml:space="preserve"><value>Carnet de santé</value></data>
+  <data name="HealthBook_Intro" xml:space="preserve"><value>Toutes les interventions sur ce logement : un vrai atout pour le louer ou le vendre.</value></data>
+  <data name="HealthBook_Warranties" xml:space="preserve"><value>Garanties en cours</value></data>
+  <data name="HealthBook_Until" xml:space="preserve"><value>Garanti jusqu'au {0}</value></data>
+  <data name="HealthBook_NextChecks" xml:space="preserve"><value>Prochains contrôles conseillés</value></data>
+  <data name="HealthBook_ToPlan" xml:space="preserve"><value>À planifier</value></data>
+  <data name="HealthBook_History" xml:space="preserve"><value>Historique</value></data>
+  <data name="HealthBook_Empty" xml:space="preserve"><value>Aucune intervention pour l'instant.</value></data>
+  <data name="Check_Waterproofing" xml:space="preserve"><value>Étanchéité avant l'hivernage</value></data>
+  <data name="Check_Electricity" xml:space="preserve"><value>Installation électrique</value></data>
+  <data name="Check_Plumbing" xml:space="preserve"><value>Plomberie</value></data>
+  <data name="Error_property_no_account" xml:space="preserve"><value>Votre compte n'est pas encore prêt. Terminez votre inscription.</value></data>
+  <data name="Error_address_neighborhood" xml:space="preserve"><value>Choisissez votre quartier dans la liste.</value></data>
+  <data name="Error_address_locate" xml:space="preserve"><value>Placez la maison sur la carte ou décrivez un point de repère.</value></data>
+  <data name="Error_property_name" xml:space="preserve"><value>Donnez un nom à ce logement.</value></data>
+  <data name="Error_property_too_many_photos" xml:space="preserve"><value>10 photos maximum.</value></data>
+  <data name="Error_media_type" xml:space="preserve"><value>Ce fichier n'est pas une photo ou une note vocale valide.</value></data>
+  <data name="Error_media_too_large" xml:space="preserve"><value>Fichier trop lourd.</value></data>
+  <data name="Error_media_empty" xml:space="preserve"><value>Fichier vide.</value></data>
+  <data name="Error_request_domain_required" xml:space="preserve"><value>Choisissez le type de problème.</value></data>
+  <data name="Error_request_urgency_required" xml:space="preserve"><value>Indiquez l'urgence.</value></data>
+  <data name="Error_request_description" xml:space="preserve"><value>Décrivez le problème en quelques mots.</value></data>
+  <data name="Error_request_property_required" xml:space="preserve"><value>Choisissez le logement concerné.</value></data>
+  <data name="Error_request_subscription_inactive" xml:space="preserve"><value>Votre abonnement n'est pas actif pour ce logement.</value></data>
+  <data name="Error_request_too_many_photos" xml:space="preserve"><value>6 photos maximum.</value></data>
+  <data name="Error_request_not_found" xml:space="preserve"><value>Demande introuvable.</value></data>
+  <data name="Error_appointment_unknown_slot" xml:space="preserve"><value>Choisissez un des créneaux proposés.</value></data>
+  <data name="Error_request_invalid_transition" xml:space="preserve"><value>Cette action n'est plus possible pour cette demande.</value></data>
+  <data name="Error_request_dispute_reason" xml:space="preserve"><value>Expliquez ce qui ne va pas.</value></data>
+  <data name="Error_rating_score" xml:space="preserve"><value>Choisissez une note de 1 à 5.</value></data>
+  <data name="Error_subscription_not_found" xml:space="preserve"><value>Abonnement introuvable.</value></data>
+  <data name="Error_subscription_already_active" xml:space="preserve"><value>Cet abonnement est déjà actif.</value></data>
+  <data name="Error_simulation_no_intervention" xml:space="preserve"><value>Envoyez d'abord le technicien.</value></data>
 </root>

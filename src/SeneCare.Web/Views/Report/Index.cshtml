@@ -1,0 +1,125 @@
+@model ReportPageModel
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "signaler";
+    ViewData["Title"] = L["Report_Title"];
+    var form = Model.Form;
+    var domains = Enum.GetValues<ServiceDomain>();
+    var urgencies = Enum.GetValues<Urgency>();
+}
+
+@section Head {
+    <script src="~/js/report.js" asp-append-version="true" defer></script>
+}
+
+<h1 class="sc-titre">@L["Report_Title"]</h1>
+
+@if (Model.Blocker is not null)
+{
+    var noProperty = Model.Blocker == "Report_NoProperty";
+    <div class="mt-6">
+        <partial name="Ui/_EmptyState" model='new EmptyStateModel(L[Model.Blocker + "_Title"], L[Model.Blocker + "_Text"], EmptyIllustration.House, noProperty ? L["Property_Add"] : L["Space_Subscription"], noProperty ? "/logements/nouveau" : "/abonnement")' />
+    </div>
+    return;
+}
+
+<p class="mt-2 text-charbon-doux">@L["Report_Intro"]</p>
+<div asp-validation-summary="All" class="sc-error" role="alert"></div>
+
+@* Offline: the page is kept on the phone and the form is queued (outbox) until the network is back. *@
+<form method="post" enctype="multipart/form-data" class="mt-6" novalidate
+      data-offline="queue" data-offline-message="@L["Report_Queued"]"
+      data-report-wizard data-draft-key="sc-brouillon-signalement" data-text-draft="@L["Report_DraftRestored"]">
+    <input type="hidden" name="ClientReference" value="@form.ClientReference" data-client-reference />
+
+    @if (Model.Properties.Count > 1)
+    {
+        <div class="mb-6">
+            <label class="sc-label" for="PropertyId">@L["Report_Property"]</label>
+            <select id="PropertyId" name="PropertyId" class="sc-input">
+                @foreach (var home in Model.Properties)
+                {
+                    <option value="@home.Id" selected="@(home.Id == form.PropertyId)">@home.Name — @home.Neighborhood</option>
+                }
+            </select>
+        </div>
+    }
+    else
+    {
+        <input type="hidden" name="PropertyId" value="@form.PropertyId" />
+    }
+
+    <p class="sc-surtitre" data-step-progress data-text="@L["Report_StepOf"]" aria-live="polite"></p>
+
+    <fieldset data-step class="mt-2">
+        <legend class="sc-sous-titre">@L["Report_Step1"]</legend>
+        <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            @foreach (var domain in domains)
+            {
+                <label class="sc-choix flex-col justify-center gap-2 py-4 text-center font-bold">
+                    <input type="radio" name="Domain" value="@domain" checked="@(form.Domain == domain)" class="sr-only" required />
+                    <span class="grid size-14 place-items-center rounded-full bg-laterite-clair text-laterite"><sc-icon name="@Formatting.Icon(domain)" class="size-7" /></span>
+                    @L["Domain_" + domain]
+                </label>
+            }
+        </div>
+    </fieldset>
+
+    <fieldset data-step class="mt-8">
+        <legend class="sc-sous-titre">@L["Report_Step2"]</legend>
+        <div class="mt-4">
+            <label class="sc-label" for="Description">@L["Report_Description"]</label>
+            <textarea id="Description" name="Description" rows="4" class="sc-input py-2" required
+                      placeholder="@L["Report_Description_Placeholder"]">@form.Description</textarea>
+        </div>
+        <div class="mt-5">
+            <partial name="Ui/_PhotoUploader" model='new PhotoUploaderModel("photos", L["Report_Photos"], 6)' />
+        </div>
+        <div class="mt-5" data-voice hidden data-text-record="@L["Voice_Record"]" data-text-stop="@L["Voice_Stop"]" data-text-denied="@L["Voice_Denied"]">
+            <span class="sc-label">@L["Voice_Label"]</span>
+            <p class="sc-aide">@L["Voice_Hint"]</p>
+            <div class="mt-2 flex flex-wrap items-center gap-3">
+                <button type="button" class="sc-btn-secondaire" data-voice-toggle><sc-icon name="mic" /><span>@L["Voice_Record"]</span></button>
+                <audio controls hidden data-voice-preview class="h-10"></audio>
+            </div>
+            <input type="file" name="voiceNote" accept="audio/*" class="sr-only" tabindex="-1" aria-hidden="true" data-voice-input />
+        </div>
+    </fieldset>
+
+    <fieldset data-step class="mt-8">
+        <legend class="sc-sous-titre">@L["Report_Step3"]</legend>
+        <div class="mt-4 grid gap-2">
+            @foreach (var urgency in urgencies)
+            {
+                <label class="sc-choix items-start py-3">
+                    <input type="radio" name="Urgency" value="@urgency" checked="@(form.Urgency == urgency || (form.Urgency is null && urgency == Urgency.Normal))" class="mt-1" required />
+                    <span>
+                        <span class="flex items-center gap-2 font-bold"><sc-urgency value="@urgency" /></span>
+                        <span class="mt-1 block text-sm text-charbon-doux">@L["Report_Urgency_" + urgency]</span>
+                    </span>
+                </label>
+            }
+        </div>
+
+        <fieldset class="mt-6">
+            <legend class="sc-label">@L["Report_Slots"]</legend>
+            <p class="sc-aide">@L["Report_Slots_Hint"]</p>
+            <div class="mt-2 grid grid-cols-2 gap-2" data-max-checked="3">
+                @foreach (var (start, end) in Model.SlotChoices)
+                {
+                    var value = start.ToString("O", System.Globalization.CultureInfo.InvariantCulture);
+                    <label class="sc-choix py-2 text-sm">
+                        <input type="checkbox" name="Slots" value="@value" checked="@form.Slots.Contains(start)" />
+                        <span><span class="block font-bold">@Formatting.ShortDate(start)</span>@(start.Hour < 12 ? L["Slot_Morning"] : L["Slot_Afternoon"])</span>
+                    </label>
+                }
+            </div>
+        </fieldset>
+    </fieldset>
+
+    <div class="sticky bottom-24 mt-8 flex gap-3 bg-sable/95 py-3 lg:bottom-0">
+        <button type="button" class="sc-btn-secondaire" data-step-prev hidden>@L["Report_Previous"]</button>
+        <button type="button" class="sc-btn-primaire flex-1" data-step-next hidden>@L["Report_Next"]</button>
+        <button type="submit" class="sc-btn-primaire flex-1" data-step-submit><sc-icon name="check" />@L["Report_Send"]</button>
+    </div>
+</form>

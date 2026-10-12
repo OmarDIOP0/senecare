@@ -1,8 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using SeneCare.Domain.Accounts;
+using SeneCare.Domain.Billing;
+using SeneCare.Domain.Common;
+using SeneCare.Domain.Interventions;
 using SeneCare.Domain.Locations;
+using SeneCare.Domain.Neighborhoods;
 using SeneCare.Domain.Plans;
 using SeneCare.Domain.Platform;
+using SeneCare.Domain.Requests;
+using SeneCare.Domain.Technicians;
 using SeneCare.Domain.Users;
 
 namespace SeneCare.Application.Abstractions;
@@ -29,6 +35,22 @@ public interface IApplicationDbContext
     DbSet<Commune> Communes { get; }
 
     DbSet<Neighborhood> Neighborhoods { get; }
+
+    DbSet<Subscription> Subscriptions { get; }
+
+    DbSet<Invoice> Invoices { get; }
+
+    DbSet<ServiceRequest> ServiceRequests { get; }
+
+    DbSet<Intervention> Interventions { get; }
+
+    DbSet<Technician> Technicians { get; }
+
+    DbSet<MediaFile> MediaFiles { get; }
+
+    DbSet<NeighborhoodProgram> NeighborhoodPrograms { get; }
+
+    DbSet<AppSetting> AppSettings { get; }
 
     DbSet<AuditLog> AuditLogs { get; }
 
@@ -73,4 +95,21 @@ public interface IAuthTokenService
     Task<AuthTokens?> RefreshAsync(string refreshToken, string? ipAddress, CancellationToken cancellationToken = default);
 
     Task RevokeAsync(string refreshToken, CancellationToken cancellationToken = default);
+}
+
+/// <summary>Human-readable document numbers from database sequences (« SC-2026-000123 »).</summary>
+public interface IDocumentNumberGenerator
+{
+    Task<string> NextServiceRequestNumberAsync(CancellationToken cancellationToken = default);
+
+    Task<string> NextInvoiceNumberAsync(CancellationToken cancellationToken = default);
+}
+
+/// <summary>Binary storage for photos, voice notes, signatures and PDFs (local disk now, object storage later).</summary>
+public interface IFileStorage
+{
+    /// <summary>Stores the content and returns its storage key.</summary>
+    Task<string> SaveAsync(Stream content, string extension, CancellationToken cancellationToken = default);
+
+    Task<Stream?> OpenReadAsync(string storageKey, CancellationToken cancellationToken = default);
 }

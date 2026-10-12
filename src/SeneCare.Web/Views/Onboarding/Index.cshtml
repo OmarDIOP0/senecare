@@ -1,0 +1,60 @@
+@model bool
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
+@* Welcome screens: horizontal swipe with CSS scroll-snap (no library). Model = replay from the profile. *@
+@{
+    Layout = null;
+    ViewData["Title"] = L["Onboarding_Title"];
+    var slides = new (EmptyIllustration Art, string Title, string Text, string Motif)[]
+    {
+        (EmptyIllustration.House, L["Onboarding_1_Title"], L["Onboarding_1_Text"], "sc-motif-wax"),
+        (EmptyIllustration.Phone, L["Onboarding_2_Title"], L["Onboarding_2_Text"], "sc-motif-manjak"),
+        (EmptyIllustration.Tools, L["Onboarding_3_Title"], L["Onboarding_3_Text"], "sc-motif-bogolan"),
+        (EmptyIllustration.Tree, L["Onboarding_4_Title"], L["Onboarding_4_Text"], "sc-motif-wax"),
+    };
+}
+<!DOCTYPE html>
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+<head>
+    <partial name="Ui/_Head" />
+</head>
+<body class="flex min-h-dvh flex-col">
+    <form method="post" asp-action="Finish" class="flex min-h-dvh flex-col" data-onboarding>
+        <input type="hidden" name="rejouer" value="@(Model ? "true" : "false")" />
+        <header class="flex items-center justify-between px-4 py-3">
+            <partial name="Ui/_Brand" />
+            <button type="submit" class="sc-btn-discret">@L["Onboarding_Skip"]</button>
+        </header>
+
+        <div class="flex flex-1 snap-x snap-mandatory overflow-x-auto overscroll-x-contain scroll-smooth [scrollbar-width:none]" data-onboarding-track tabindex="-1">
+            @for (var i = 0; i < slides.Length; i++)
+            {
+                var slide = slides[i];
+                <section id="ecran-@(i + 1)" class="flex w-full shrink-0 snap-center flex-col items-center justify-center px-6 pb-6 text-center"
+                         aria-roledescription="@L["Onboarding_Slide"]" aria-label="@L["Onboarding_SlideOf", i + 1, slides.Length]">
+                    <div class="relative grid w-full max-w-sm place-items-center rounded-xl bg-surface py-8">
+                        <div class="sc-motif @slide.Motif absolute inset-x-6 top-3 h-4 text-laterite/25" aria-hidden="true"></div>
+                        <partial name="Ui/_Illustration" model="slide.Art" view-data='new ViewDataDictionary(ViewData) { ["Class"] = "h-44 w-auto" }' />
+                    </div>
+                    <h1 class="sc-titre mt-8 max-w-sm text-balance">@slide.Title</h1>
+                    <p class="mt-3 max-w-sm text-lg text-charbon-doux">@slide.Text</p>
+                </section>
+            }
+        </div>
+
+        <footer class="flex flex-col items-center gap-5 px-6 pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+            <nav class="flex gap-2" aria-label="@L["Onboarding_Pagination"]">
+                @for (var i = 0; i < slides.Length; i++)
+                {
+                    <a href="#ecran-@(i + 1)" data-onboarding-dot="@i" aria-current="@(i == 0 ? "step" : null)"
+                       class="group grid size-6 place-items-center" aria-label="@L["Onboarding_SlideOf", i + 1, slides.Length]">
+                        <span class="block h-2.5 w-2.5 rounded-full bg-ligne transition-all duration-200 group-aria-[current=step]:w-7 group-aria-[current=step]:bg-laterite"></span>
+                    </a>
+                }
+            </nav>
+            @* Without JavaScript this simply finishes; app.js turns it into « Suivant » until the last screen. *@
+            <button type="submit" class="sc-btn-primaire w-full max-w-sm" data-onboarding-next
+                    data-text-next="@L["Onboarding_Next"]" data-text-start="@L["Onboarding_Start"]">@L["Onboarding_Start"]</button>
+        </footer>
+    </form>
+</body>
+</html>

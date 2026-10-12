@@ -8,7 +8,24 @@ namespace SeneCare.Web.Controllers;
 [AllowAnonymous]
 public sealed class HomeController : Controller
 {
-    public IActionResult Index() => View();
+    /// <summary>
+    /// Signed in → own space. First visit on this device → welcome screens. Otherwise the public home
+    /// (full public site in Phase 12).
+    /// </summary>
+    public IActionResult Index()
+    {
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            return LocalRedirect("/espace");
+        }
+
+        if (!Request.Cookies.ContainsKey(OnboardingController.CookieName))
+        {
+            return LocalRedirect("/bienvenue");
+        }
+
+        return View();
+    }
 
     [HttpGet("/confidentialite")]
     public IActionResult Privacy() => View();

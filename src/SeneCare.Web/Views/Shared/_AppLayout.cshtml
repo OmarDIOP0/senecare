@@ -1,0 +1,32 @@
+@* Signed-in space: compact header, role-based tab bar (bottom on mobile, left rail on desktop). *@
+@{
+    var nav = AppNavigation.For(User);
+    var active = ViewData["NavActive"] as string ?? "espace";
+}
+<!DOCTYPE html>
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+<head>
+    <partial name="Ui/_Head" />
+    @await RenderSectionAsync("Head", required: false)
+</head>
+<body class="min-h-dvh lg:pl-60">
+    <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-atlantique focus:px-4 focus:py-3 focus:text-sable">@L["Layout_SkipToContent"]</a>
+    <header class="sticky top-0 z-30 border-b border-ligne bg-sable/95 backdrop-blur">
+        <div class="mx-auto flex w-full max-w-screen-md items-center justify-between gap-2 px-4 py-2">
+            <div class="lg:invisible"><partial name="Ui/_Brand" /></div>
+            <div class="flex items-center gap-1">
+                <partial name="Ui/_AppStatus" />
+                <button type="button" class="sc-btn-icone" data-theme-toggle aria-label="@L["Theme_Toggle"]">
+                    <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" /></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+    <main id="contenu" class="mx-auto w-full max-w-screen-md px-4 pt-6 pb-32 lg:pb-12">
+        @RenderBody()
+    </main>
+    <partial name="Ui/_TabBar" model="new TabBarModel(nav, active)" />
+    <partial name="Ui/_Toasts" />
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

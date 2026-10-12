@@ -1,42 +1,44 @@
 @model TabBarModel
 @{
-    var tabs = new (AppTab Tab, string Url, string Icon, string Label)[]
+    var items = Model.Nav.Items;
+    var primary = Model.Nav.Primary;
+    // The central action sits in the middle of the bar on mobile; first on the desktop rail.
+    var middle = items.Count / 2;
+    var columns = (items.Count + (primary is null ? 0 : 1)) switch
     {
-        (AppTab.Home, "/", "house", L["Tab_Home"]),
-        (AppTab.Interventions, "/interventions", "clipboard-list", L["Tab_Interventions"]),
-        (AppTab.Property, "/logements", "building-2", L["Tab_Property"]),
-        (AppTab.Profile, "/compte", "circle-user", L["Tab_Profile"]),
+        3 => "grid-cols-3",
+        4 => "grid-cols-4",
+        _ => "grid-cols-5",
     };
-    // Mobile: fixed bottom bar with the « Signaler » button in the middle. Desktop (lg): left rail.
     var position = Model.Demo
         ? "relative"
         : "fixed inset-x-0 bottom-0 z-40 lg:inset-y-0 lg:right-auto lg:w-60";
 }
 <nav aria-label="@L["Tab_NavLabel"]" class="@position border-t border-ligne bg-surface pb-[env(safe-area-inset-bottom)] lg:border-t-0 lg:border-r">
     <div class="hidden px-6 pt-6 pb-4 lg:block"><partial name="Ui/_Brand" /></div>
-    <ul class="mx-auto grid max-w-md grid-cols-5 items-end lg:flex lg:max-w-none lg:flex-col lg:items-stretch lg:gap-1 lg:px-3">
-        @for (var i = 0; i < tabs.Length; i++)
+    <ul class="mx-auto grid @columns max-w-md items-end lg:flex lg:max-w-none lg:flex-col lg:items-stretch lg:gap-1 lg:px-3">
+        @for (var i = 0; i < items.Count; i++)
         {
-            if (i == 2)
+            if (i == middle && primary is not null)
             {
                 <li class="flex justify-center lg:order-first lg:mb-4 lg:block">
-                    <a href="/signaler" class="-mt-6 flex flex-col pb-2.5 items-center gap-1 text-xs font-bold text-laterite no-underline lg:mt-0 lg:flex-row lg:justify-center lg:gap-2 lg:rounded-md lg:bg-laterite lg:px-4 lg:py-3 lg:text-base lg:text-sur-accent">
+                    <a href="@primary.Url" data-tour="@primary.Tour" class="-mt-6 flex flex-col items-center gap-1 pb-2.5 text-xs font-bold text-laterite no-underline lg:mt-0 lg:flex-row lg:justify-center lg:gap-2 lg:rounded-md lg:bg-laterite lg:px-4 lg:py-3 lg:text-base lg:text-sur-accent">
                         <span class="grid size-14 place-items-center rounded-full bg-laterite text-sur-accent shadow-carte ring-4 ring-sable lg:size-auto lg:shadow-none lg:ring-0">
-                            <sc-icon name="plus" class="size-7 lg:size-5" />
+                            <sc-icon name="@primary.Icon" class="size-7 lg:size-5" />
                         </span>
-                        @L["Tab_Report"]
+                        @L[primary.LabelKey]
                     </a>
                 </li>
             }
 
-            var tab = tabs[i];
-            var active = tab.Tab == Model.Active;
+            var item = items[i];
+            var active = item.Key == Model.ActiveKey;
             <li>
-                <a href="@tab.Url" aria-current="@(active ? "page" : null)"
+                <a href="@item.Url" data-tour="@item.Tour" aria-current="@(active ? "page" : null)"
                    class="flex min-h-16 flex-col items-center justify-center gap-0.5 text-xs no-underline lg:min-h-cible lg:flex-row lg:justify-start lg:gap-3 lg:rounded-md lg:px-3 lg:text-base
                           @(active ? "font-bold text-laterite lg:bg-laterite-clair" : "text-charbon-doux hover:text-charbon")">
-                    <sc-icon name="@tab.Icon" class="size-6" />
-                    <span>@tab.Label</span>
+                    <sc-icon name="@item.Icon" class="size-6" />
+                    <span>@L[item.LabelKey]</span>
                     @if (active)
                     {
                         <span class="mt-0.5 h-1 w-6 rounded-full bg-laterite lg:hidden" aria-hidden="true"></span>

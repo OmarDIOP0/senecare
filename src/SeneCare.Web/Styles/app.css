@@ -219,8 +219,6 @@
   .sc-btn-whatsapp { @apply sc-btn bg-baobab text-sur-accent hover:opacity-90; }
   .sc-btn-icone { @apply inline-flex size-cible items-center justify-center rounded-full text-charbon hover:bg-ligne/60; }
 
-  /* Legacy names used by Phase 2 screens. */
-  .sc-btn-secondary { @apply sc-btn-secondaire; }
 
   /* ---- Forms ------------------------------------------------------------ */
   .sc-label { @apply block text-sm font-bold text-charbon; }

@@ -72,6 +72,17 @@ cd src/SeneCare.Web
 npm run assets:build
 ```
 
+### Application installable (PWA)
+
+- `manifest.webmanifest` (icônes générées par `npm run icons:build`, raccourcis Signaler / Mes interventions).
+- Service worker généré par `/sw.js` (modèle : `src/SeneCare.Web/Pwa/sw.js`) : coque en cache,
+  pages en « réseau d'abord », page `/hors-ligne`, bandeau « Nouvelle version disponible ».
+- Formulaires hors ligne : ajouter `data-offline="queue"` au `<form>` et son URL dans
+  `PwaController.OfflinePosts` ; l'envoi est mis en file (IndexedDB) et repart au retour du réseau.
+  Démo : section « Envoi hors ligne » de `/design`.
+- Onboarding `/bienvenue` (premier lancement, cookie `sc_bienvenue`) et visites guidées par rôle
+  (progression enregistrée côté serveur, `users.completed_tours`).
+
 ### Tests
 
 ```bash

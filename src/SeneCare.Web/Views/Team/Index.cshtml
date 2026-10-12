@@ -1,7 +1,10 @@
 @model TeamViewModel
 @using SeneCare.Domain.Accounts
 @{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "equipe";
     ViewData["Title"] = L["Team_Title"];
+    var invitePhone = new PhoneInputModel("Invite.Phone", Model.Invite.Phone, L["SignIn_PhoneLabel"], ViewData.ModelState["Invite.Phone"]?.Errors.FirstOrDefault()?.ErrorMessage);
 }
 
 <h1 class="text-2xl font-bold text-atlantique">@L["Team_Heading", Model.AccountName]</h1>
@@ -26,14 +29,7 @@
     <h2 id="invite-title" class="text-lg font-semibold">@L["Team_InviteHeading"]</h2>
     <p class="mt-1 text-sm">@L["Team_InviteIntro"]</p>
     <form method="post" class="mt-4 space-y-4" novalidate>
-        <div>
-            <label class="sc-label" for="Invite_Phone">@L["SignIn_PhoneLabel"]</label>
-            <div class="mt-1 flex items-stretch">
-                <span class="inline-flex items-center rounded-l-lg border border-r-0 border-charbon/30 bg-sable px-3 font-semibold" aria-hidden="true">+221</span>
-                <input asp-for="Invite.Phone" type="tel" inputmode="numeric" placeholder="77 123 45 67" class="sc-input mt-0 rounded-l-none" required />
-            </div>
-            <span asp-validation-for="Invite.Phone" class="sc-error" role="alert"></span>
-        </div>
+        <partial name="Ui/_PhoneInput" model="invitePhone" />
         <div>
             <label class="sc-label" asp-for="Invite.Role">@L["Team_RoleLabel"]</label>
             <select asp-for="Invite.Role" class="sc-input">
@@ -42,6 +38,6 @@
                 <option value="@AccountRole.Manager">@L["Role_Manager"]</option>
             </select>
         </div>
-        <button type="submit" class="sc-btn">@L["Team_InviteSubmit"]</button>
+        <button type="submit" class="sc-btn-primaire">@L["Team_InviteSubmit"]</button>
     </form>
 </section>

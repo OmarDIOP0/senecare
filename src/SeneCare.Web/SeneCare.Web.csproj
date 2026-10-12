@@ -14,6 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Service worker template, served by /sw.js with the current asset versions. -->
+    <EmbeddedResource Include="Pwa/sw.js" LogicalName="SeneCare.Web.Pwa.sw.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="package.json;package-lock.json" />
     <None Include="package.json;Styles\**" />
   </ItemGroup>

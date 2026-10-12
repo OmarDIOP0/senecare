@@ -1,0 +1,74 @@
+@model SpaceViewModel
+@using SeneCare.Application.Users
+@{
+    Layout = "_AppLayout";
+    ViewData["Title"] = L["Tab_Home"];
+    ViewData["NavActive"] = "espace";
+    var intro = Model.Space switch
+    {
+        TourKeys.Business => L["Space_Business_Intro", Model.AccountName ?? string.Empty],
+        TourKeys.Technician => L["Space_Tech_Intro"],
+        TourKeys.Admin => L["Space_Admin_Intro"],
+        _ => L["Space_Client_Intro"],
+    };
+}
+
+@* The guided tour reads this (not executed: type="application/json"). *@
+@if (Model.TourJson is not null)
+{
+    <script type="application/json" id="sc-tour">@Html.Raw(Model.TourJson)</script>
+    @Html.AntiForgeryToken()
+}
+
+<section class="relative overflow-hidden rounded-xl bg-atlantique px-5 py-6 text-sable">
+    <div class="sc-motif sc-motif-wax absolute -top-6 -right-6 size-40 text-sable/10" aria-hidden="true"></div>
+    @* The only emoji of the app, once, on the home greeting (CLAUDE.md §5). *@
+    <p class="relative font-display text-2xl font-bold">@(Model.FirstName is null ? L["Space_Hello"] : L["Space_HelloName", Model.FirstName]) 👋</p>
+    <p class="relative mt-1 text-sable/85">@intro</p>
+</section>
+
+<partial name="Ui/_InstallPrompt" />
+
+<div class="mt-6 grid gap-4">
+    @switch (Model.Space)
+    {
+        case TourKeys.Business:
+            <a href="/entreprise/diagnostics" data-tour="diagnostics" class="sc-carte flex items-center gap-4 text-charbon no-underline">
+                <span class="grid size-12 place-items-center rounded-md bg-indigo-clair text-indigo"><sc-icon name="calendar-check" class="size-6" /></span>
+                <span class="flex-1"><span class="block font-bold">@L["Space_Diagnostics"]</span><span class="sc-texte-doux">@L["Space_Diagnostics_Text"]</span></span>
+                <sc-icon name="chevron-right" class="text-charbon-doux" />
+            </a>
+            <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Space_Business_Empty_Title"], L["Space_Business_Empty_Text"], EmptyIllustration.House)' />
+            break;
+
+        case TourKeys.Technician:
+            <section class="sc-carte" aria-labelledby="missions-titre">
+                <h2 id="missions-titre" class="sc-sous-titre">@L["Space_Tech_Today"]</h2>
+                <p class="sc-texte-doux mt-1">@L["Space_Tech_None"]</p>
+                <button type="button" class="sc-btn-primaire mt-4" data-tour="demarrer" disabled>
+                    <sc-icon name="navigation" />@L["Space_Tech_Start"]
+                </button>
+            </section>
+            break;
+
+        case TourKeys.Admin:
+            <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Space_Admin_Empty_Title"], L["Space_Admin_Empty_Text"], EmptyIllustration.Tools, L["Tab_Dispatch"], "/admin/dispatch")' />
+            break;
+
+        default:
+            <a href="/abonnement" data-tour="abonnement" class="sc-carte flex items-center gap-4 text-charbon no-underline">
+                <span class="grid size-12 place-items-center rounded-md bg-baobab-clair text-baobab"><sc-icon name="wallet" class="size-6" /></span>
+                <span class="flex-1"><span class="block font-bold">@L["Space_Subscription"]</span><span class="sc-texte-doux">@L["Space_Subscription_Text"]</span></span>
+                <sc-icon name="chevron-right" class="text-charbon-doux" />
+            </a>
+            <aside class="sc-carte border-l-4 border-l-soleil" aria-labelledby="conseil-titre">
+                <p class="sc-surtitre text-charbon-doux">@L["Space_Advice"]</p>
+                <h2 id="conseil-titre" class="mt-1 font-display text-lg font-bold">
+                    @(Model.IsRainySeason ? L["Space_Advice_Rain_Title"] : L["Space_Advice_PreRain_Title"])
+                </h2>
+                <p class="mt-1">@(Model.IsRainySeason ? L["Space_Advice_Rain_Text"] : L["Space_Advice_PreRain_Text"])</p>
+            </aside>
+            <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Space_Client_Empty_Title"], L["Space_Client_Empty_Text"], EmptyIllustration.Tools, L["Tab_Report"], "/signaler")' />
+            break;
+    }
+</div>

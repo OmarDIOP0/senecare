@@ -23,11 +23,11 @@
         <fieldset>
             <legend class="sc-label">@L["Register_ProfileLabel"]</legend>
             <div class="mt-2 grid gap-3 sm:grid-cols-2">
-                <label class="flex min-h-16 items-start gap-3 rounded-lg border border-charbon/30 bg-white p-3">
+                <label class="sc-choix items-start py-3">
                     <input type="radio" asp-for="Profile" value="@AccountKind.Household" class="mt-1" />
                     <span><strong>@L["Register_ProfileHousehold"]</strong><br /><span class="text-sm text-charbon/70">@L["Register_ProfileHouseholdHint"]</span></span>
                 </label>
-                <label class="flex min-h-16 items-start gap-3 rounded-lg border border-charbon/30 bg-white p-3">
+                <label class="sc-choix items-start py-3">
                     <input type="radio" asp-for="Profile" value="@AccountKind.Business" class="mt-1" />
                     <span><strong>@L["Register_ProfileBusiness"]</strong><br /><span class="text-sm text-charbon/70">@L["Register_ProfileBusinessHint"]</span></span>
                 </label>
@@ -54,5 +54,5 @@
         </label>
     </section>
 
-    <button type="submit" class="sc-btn">@L["Register_Submit"]</button>
+    <button type="submit" class="sc-btn-primaire">@L["Register_Submit"]</button>
 </form>

@@ -97,6 +97,19 @@ public class UserTests
     }
 
     [Fact]
+    public void Tours_are_completed_once_and_can_be_reset()
+    {
+        var user = User.Register(PhoneNumber.Parse("77 123 45 67"), TestData.Now);
+
+        user.CompleteTour("client");
+        user.CompleteTour("client");
+        Assert.Single(user.CompletedTours);
+
+        user.ResetTour("client");
+        Assert.False(user.HasCompletedTour("client"));
+    }
+
+    [Fact]
     public void Roles_are_not_duplicated()
     {
         var user = User.Register(PhoneNumber.Parse("78 000 00 00"), TestData.Now);

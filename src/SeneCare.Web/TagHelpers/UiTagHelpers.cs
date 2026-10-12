@@ -31,7 +31,9 @@ public sealed class IconTagHelper(IFileVersionProvider versions) : TagHelper
         output.TagName = "svg";
         output.TagMode = TagMode.StartTagAndEndTag;
         var existingClass = output.Attributes["class"]?.Value?.ToString();
-        output.Attributes.SetAttribute("class", string.IsNullOrEmpty(existingClass) ? "size-5 shrink-0" : "shrink-0 " + existingClass);
+        // An SVG without explicit size renders at 300×150: default to 20 px unless a size-* class is given.
+        var hasSize = existingClass?.Split(' ').Any(c => c.StartsWith("size-", StringComparison.Ordinal) || c.Contains(":size-", StringComparison.Ordinal)) ?? false;
+        output.Attributes.SetAttribute("class", ("shrink-0 " + (hasSize ? string.Empty : "size-5 ") + existingClass).Trim());
         output.Attributes.SetAttribute("fill", "none");
         output.Attributes.SetAttribute("stroke", "currentColor");
         output.Attributes.SetAttribute("stroke-width", "2");

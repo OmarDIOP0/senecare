@@ -3,6 +3,8 @@
 @using SeneCare.Infrastructure.Identity
 @inject IAuthorizationService Authorization
 @{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "profil";
     ViewData["Title"] = L["Account_Title"];
     var canManageTeam = (await Authorization.AuthorizeAsync(User, Policies.OrganizationManager)).Succeeded;
 }
@@ -27,9 +29,16 @@
 
 @if (canManageTeam)
 {
-    <p class="mt-4"><a href="/entreprise/equipe" class="sc-btn-secondary">@L["Account_Team"]</a></p>
+    <p class="mt-4"><a href="/entreprise/equipe" class="sc-btn-secondaire">@L["Account_Team"]</a></p>
 }
 
-<form method="post" asp-controller="Auth" asp-action="SignOutUser" class="mt-8">
-    <button type="submit" class="sc-btn-secondary w-full">@L["Nav_SignOut"]</button>
+<div class="mt-8 grid gap-2 sm:grid-cols-2">
+    <a href="/bienvenue?rejouer=true" class="sc-btn-secondaire">@L["Account_Replay"]</a>
+    <form method="post" asp-controller="Space" asp-action="ReplayTour">
+        <button type="submit" class="sc-btn-secondaire w-full">@L["Account_ReplayTour"]</button>
+    </form>
+</div>
+
+<form method="post" asp-controller="Auth" asp-action="SignOutUser" class="mt-8" data-logout>
+    <button type="submit" class="sc-btn-secondaire w-full">@L["Nav_SignOut"]</button>
 </form>

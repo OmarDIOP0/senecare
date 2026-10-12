@@ -138,4 +138,104 @@
   <data name="Timeline_Done" xml:space="preserve"><value>étape terminée</value></data>
   <data name="Timeline_Current" xml:space="preserve"><value>étape en cours</value></data>
   <data name="Theme_Toggle" xml:space="preserve"><value>Changer de thème (clair / sombre)</value></data>
+  <data name="Nav_Space" xml:space="preserve"><value>Mon espace</value></data>
+  <data name="Tab_Dashboard" xml:space="preserve"><value>Tableau de bord</value></data>
+  <data name="Tab_Dispatch" xml:space="preserve"><value>Dispatch</value></data>
+  <data name="Tab_Missions" xml:space="preserve"><value>Missions</value></data>
+  <data name="Tab_Reports" xml:space="preserve"><value>Rapports</value></data>
+  <data name="Tab_Sites" xml:space="preserve"><value>Sites</value></data>
+  <data name="Tab_Team" xml:space="preserve"><value>Équipe</value></data>
+  <data name="Tab_Invoices" xml:space="preserve"><value>Factures</value></data>
+  <data name="Connection_Offline" xml:space="preserve"><value>Hors ligne</value></data>
+  <data name="Connection_Pending" xml:space="preserve"><value>{0} envoi(s) en attente</value></data>
+  <data name="Connection_Online" xml:space="preserve"><value>De retour en ligne</value></data>
+  <data name="Update_Available" xml:space="preserve"><value>Nouvelle version disponible</value></data>
+  <data name="Update_Apply" xml:space="preserve"><value>Mettre à jour</value></data>
+  <data name="Install_Title" xml:space="preserve"><value>Installer SeneCare sur votre téléphone</value></data>
+  <data name="Install_Text" xml:space="preserve"><value>Ouverture plus rapide, moins de données consommées, et signalement possible même sans réseau.</value></data>
+  <data name="Install_Button" xml:space="preserve"><value>Installer</value></data>
+  <data name="Install_Later" xml:space="preserve"><value>Plus tard</value></data>
+  <data name="Install_Ios_Title" xml:space="preserve"><value>Installer sur iPhone</value></data>
+  <data name="Install_Ios_Step1" xml:space="preserve"><value>Dans Safari, touchez le bouton « Partager » en bas de l'écran.</value></data>
+  <data name="Install_Ios_Step2" xml:space="preserve"><value>Choisissez « Sur l'écran d'accueil ».</value></data>
+  <data name="Install_Ios_Step3" xml:space="preserve"><value>Touchez « Ajouter » : SeneCare apparaît avec vos autres applications.</value></data>
+  <data name="Install_Ios_Ok" xml:space="preserve"><value>J'ai compris</value></data>
+  <data name="Offline_Title" xml:space="preserve"><value>Pas de connexion</value></data>
+  <data name="Offline_Text" xml:space="preserve"><value>Cette page n'est pas encore enregistrée sur votre téléphone. Vérifiez votre réseau ou votre forfait, puis réessayez.</value></data>
+  <data name="Offline_Pending" xml:space="preserve"><value>Votre demande est bien enregistrée sur votre téléphone. Elle partira automatiquement dès le retour du réseau.</value></data>
+  <data name="Offline_Retry" xml:space="preserve"><value>Réessayer</value></data>
+  <data name="Onboarding_Title" xml:space="preserve"><value>Bienvenue</value></data>
+  <data name="Onboarding_Skip" xml:space="preserve"><value>Passer</value></data>
+  <data name="Onboarding_Next" xml:space="preserve"><value>Suivant</value></data>
+  <data name="Onboarding_Start" xml:space="preserve"><value>Commencer</value></data>
+  <data name="Onboarding_Slide" xml:space="preserve"><value>écran</value></data>
+  <data name="Onboarding_SlideOf" xml:space="preserve"><value>Écran {0} sur {1}</value></data>
+  <data name="Onboarding_Pagination" xml:space="preserve"><value>Écrans de présentation</value></data>
+  <data name="Onboarding_1_Title" xml:space="preserve"><value>Votre bâtiment mérite qu'on en prenne soin</value></data>
+  <data name="Onboarding_1_Text" xml:space="preserve"><value>Électricité, plomberie, étanchéité, maçonnerie : SeneCare entretient votre maison ou vos locaux avant que les petites pannes ne deviennent des gros travaux.</value></data>
+  <data name="Onboarding_2_Title" xml:space="preserve"><value>Signalez en 30 secondes, même avec une photo</value></data>
+  <data name="Onboarding_2_Text" xml:space="preserve"><value>Une fuite, une coupure, une fissure ? Prenez une photo, décrivez en deux mots. Ça marche aussi sans réseau : l'envoi part dès que la connexion revient.</value></data>
+  <data name="Onboarding_3_Title" xml:space="preserve"><value>Nos techniciens interviennent et assurent le suivi</value></data>
+  <data name="Onboarding_3_Text" xml:space="preserve"><value>Vous choisissez le créneau, suivez le technicien en route et recevez le rapport avec les photos avant et après.</value></data>
+  <data name="Onboarding_4_Title" xml:space="preserve"><value>Ensemble, on reverdit votre quartier</value></data>
+  <data name="Onboarding_4_Text" xml:space="preserve"><value>Dès 500 voisins abonnés dans un même quartier, nous plantons des arbres et embellissons les rues tous les trois mois.</value></data>
+  <data name="Space_Hello" xml:space="preserve"><value>Nanga def</value></data>
+  <data name="Space_HelloName" xml:space="preserve"><value>Nanga def, {0}</value></data>
+  <data name="Space_Client_Intro" xml:space="preserve"><value>Votre maison est entre de bonnes mains. Un souci ? Touchez « Signaler ».</value></data>
+  <data name="Space_Business_Intro" xml:space="preserve"><value>Espace de {0} : vos sites, votre équipe et vos interventions.</value></data>
+  <data name="Space_Tech_Intro" xml:space="preserve"><value>Vos missions du jour, l'itinéraire et les rapports.</value></data>
+  <data name="Space_Admin_Intro" xml:space="preserve"><value>Suivi des demandes, des techniciens et des délais.</value></data>
+  <data name="Space_Subscription" xml:space="preserve"><value>Mon abonnement</value></data>
+  <data name="Space_Subscription_Text" xml:space="preserve"><value>Échéances, factures et reçus.</value></data>
+  <data name="Space_Advice" xml:space="preserve"><value>Conseil de saison</value></data>
+  <data name="Space_Advice_Rain_Title" xml:space="preserve"><value>C'est l'hivernage : surveillez la dalle et les gouttières</value></data>
+  <data name="Space_Advice_Rain_Text" xml:space="preserve"><value>Après chaque grosse pluie, regardez les plafonds et le haut des murs. Une tache d'humidité signalée tôt évite une infiltration coûteuse.</value></data>
+  <data name="Space_Advice_PreRain_Title" xml:space="preserve"><value>Préparez l'hivernage dès maintenant</value></data>
+  <data name="Space_Advice_PreRain_Text" xml:space="preserve"><value>Faites vérifier l'étanchéité de la terrasse et dégager les évacuations avant les premières pluies de juillet.</value></data>
+  <data name="Space_Client_Empty_Title" xml:space="preserve"><value>Rien à signaler pour le moment</value></data>
+  <data name="Space_Client_Empty_Text" xml:space="preserve"><value>Quand quelque chose ne va pas, un signalement suffit : nous nous occupons du reste.</value></data>
+  <data name="Space_Business_Empty_Title" xml:space="preserve"><value>Aucune demande en cours</value></data>
+  <data name="Space_Business_Empty_Text" xml:space="preserve"><value>Ajoutez vos sites et invitez votre équipe pour commencer.</value></data>
+  <data name="Space_Diagnostics" xml:space="preserve"><value>Diagnostics trimestriels</value></data>
+  <data name="Space_Diagnostics_Text" xml:space="preserve"><value>Planning et rapports de vos contrôles.</value></data>
+  <data name="Space_Tech_Today" xml:space="preserve"><value>Missions du jour</value></data>
+  <data name="Space_Tech_None" xml:space="preserve"><value>Aucune mission aujourd'hui. Elles apparaîtront ici dès leur affectation.</value></data>
+  <data name="Space_Tech_Start" xml:space="preserve"><value>Démarrer la mission</value></data>
+  <data name="Space_Admin_Empty_Title" xml:space="preserve"><value>Aucune demande en attente</value></data>
+  <data name="Space_Admin_Empty_Text" xml:space="preserve"><value>Les nouveaux signalements arriveront dans la file de dispatch.</value></data>
+  <data name="Soon_Title" xml:space="preserve"><value>Bientôt disponible</value></data>
+  <data name="Soon_Text" xml:space="preserve"><value>Cette partie de SeneCare est en préparation. Merci de votre patience.</value></data>
+  <data name="Soon_Back" xml:space="preserve"><value>Retour à mon espace</value></data>
+  <data name="Tour_Next" xml:space="preserve"><value>Suivant</value></data>
+  <data name="Tour_Done" xml:space="preserve"><value>C'est parti</value></data>
+  <data name="Tour_Skip" xml:space="preserve"><value>Passer la visite</value></data>
+  <data name="Tour_Progress" xml:space="preserve"><value>Étape {0} sur {1}</value></data>
+  <data name="Tour_Client_Report_Title" xml:space="preserve"><value>Signaler un problème</value></data>
+  <data name="Tour_Client_Report_Text" xml:space="preserve"><value>Toujours ici, au centre : une photo, deux mots, et nous prenons le relais.</value></data>
+  <data name="Tour_Client_Track_Title" xml:space="preserve"><value>Suivre vos interventions</value></data>
+  <data name="Tour_Client_Track_Text" xml:space="preserve"><value>Rendez-vous, technicien en route, rapport : tout se suit ici.</value></data>
+  <data name="Tour_Client_Subscription_Title" xml:space="preserve"><value>Votre abonnement</value></data>
+  <data name="Tour_Client_Subscription_Text" xml:space="preserve"><value>Échéances, factures et reçus, avec paiement par Wave ou Orange Money.</value></data>
+  <data name="Tour_Client_Property_Title" xml:space="preserve"><value>Votre logement</value></data>
+  <data name="Tour_Client_Property_Text" xml:space="preserve"><value>Adresse, point de repère et photos pour que le technicien trouve du premier coup.</value></data>
+  <data name="Tour_Business_Sites_Title" xml:space="preserve"><value>Vos sites</value></data>
+  <data name="Tour_Business_Sites_Text" xml:space="preserve"><value>Bureaux, boutiques, entrepôts : chaque site a son adresse et son historique.</value></data>
+  <data name="Tour_Business_Team_Title" xml:space="preserve"><value>Votre équipe</value></data>
+  <data name="Tour_Business_Team_Text" xml:space="preserve"><value>Invitez vos responsables de site et vos employés pour qu'ils signalent les pannes.</value></data>
+  <data name="Tour_Business_Diagnostics_Title" xml:space="preserve"><value>Diagnostics trimestriels</value></data>
+  <data name="Tour_Business_Diagnostics_Text" xml:space="preserve"><value>Tous les trois mois, un contrôle complet de vos sites, avec un rapport détaillé.</value></data>
+  <data name="Tour_Business_Invoices_Title" xml:space="preserve"><value>Factures</value></data>
+  <data name="Tour_Business_Invoices_Text" xml:space="preserve"><value>Vos factures et reçus, à télécharger en PDF.</value></data>
+  <data name="Tour_Tech_Missions_Title" xml:space="preserve"><value>Missions du jour</value></data>
+  <data name="Tour_Tech_Missions_Text" xml:space="preserve"><value>Triées par urgence et proximité, avec l'itinéraire.</value></data>
+  <data name="Tour_Tech_Start_Title" xml:space="preserve"><value>Démarrer</value></data>
+  <data name="Tour_Tech_Start_Text" xml:space="preserve"><value>Un geste pour passer « En route », puis « Sur place » et « En cours ».</value></data>
+  <data name="Tour_Tech_Report_Title" xml:space="preserve"><value>Rapports</value></data>
+  <data name="Tour_Tech_Report_Text" xml:space="preserve"><value>Check-list, photos avant/après et signature du client, même sans réseau.</value></data>
+  <data name="Tour_Admin_Dashboard_Title" xml:space="preserve"><value>Tableau de bord</value></data>
+  <data name="Tour_Admin_Dashboard_Text" xml:space="preserve"><value>Demandes, délais respectés, impayés et satisfaction en un coup d'œil.</value></data>
+  <data name="Tour_Admin_Dispatch_Title" xml:space="preserve"><value>File de dispatch</value></data>
+  <data name="Tour_Admin_Dispatch_Text" xml:space="preserve"><value>Qualifiez l'urgence, proposez les créneaux et affectez les techniciens.</value></data>
+  <data name="Account_Replay" xml:space="preserve"><value>Revoir la présentation</value></data>
+  <data name="Account_ReplayTour" xml:space="preserve"><value>Revoir la visite guidée</value></data>
 </root>

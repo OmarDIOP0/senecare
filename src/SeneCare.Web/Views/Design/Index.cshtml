@@ -30,6 +30,7 @@
         new("Intervention", TimelineState.Upcoming),
         new("Validation de votre part", TimelineState.Upcoming),
     };
+    var demoNav = new TabBarModel(AppNavigation.For(new System.Security.Claims.ClaimsPrincipal()), "interventions", Demo: true);
     var empties = new[]
     {
         new EmptyStateModel("Aucun logement pour l'instant", "Ajoutez votre maison pour que nos techniciens la trouvent du premier coup.", EmptyIllustration.House, "Ajouter mon logement", "#"),
@@ -193,11 +194,25 @@
         </sc-sheet>
     </section>
 
+    <section aria-labelledby="hors-ligne">
+        <h2 id="hors-ligne" class="sc-sous-titre">Envoi hors ligne</h2>
+        <p class="sc-texte-doux mt-1">Coupez le réseau (mode avion), envoyez, puis rétablissez : le message arrive tout seul.</p>
+        <form method="post" action="/design/test-hors-ligne" class="sc-carte mt-4 flex flex-wrap items-end gap-3"
+              data-offline="queue" data-offline-message="Enregistré sur le téléphone : envoi dès le retour du réseau.">
+            @Html.AntiForgeryToken()
+            <div class="min-w-48 flex-1">
+                <label class="sc-label" for="demo-message">Message</label>
+                <input id="demo-message" name="message" class="sc-input" value="Fuite sous l'évier" />
+            </div>
+            <button type="submit" class="sc-btn-primaire">Envoyer</button>
+        </form>
+    </section>
+
     <section aria-labelledby="navigation">
         <h2 id="navigation" class="sc-sous-titre">Barre d'onglets et bouton « Signaler »</h2>
         <p class="sc-texte-doux mt-1">Mobile : barre fixe en bas, bouton central toujours accessible. Ordinateur : colonne à gauche.</p>
         <div class="mx-auto mt-4 max-w-sm overflow-hidden rounded-xl border-2 border-ligne bg-sable pt-10">
-            <partial name="Ui/_TabBar" model="new TabBarModel(AppTab.Interventions, Demo: true)" />
+            <partial name="Ui/_TabBar" model="demoNav" />
         </div>
     </section>
 </div>

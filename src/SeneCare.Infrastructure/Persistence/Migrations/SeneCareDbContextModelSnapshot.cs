@@ -1448,6 +1448,11 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.PrimitiveCollection<string[]>("CompletedTours")
+                        .IsRequired()
+                        .HasColumnType("text[]")
+                        .HasColumnName("completed_tours");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");

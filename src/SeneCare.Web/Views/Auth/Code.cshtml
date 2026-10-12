@@ -20,13 +20,13 @@
                class="sc-input text-center text-2xl tracking-[0.4em]" aria-describedby="code-error" required autofocus />
         <span id="code-error" asp-validation-for="Code" class="sc-error" role="alert"></span>
     </div>
-    <button type="submit" class="sc-btn">@L["Code_Submit"]</button>
+    <button type="submit" class="sc-btn-primaire">@L["Code_Submit"]</button>
 </form>
 
 <div class="mt-6 flex flex-wrap gap-3">
     <form method="post" asp-action="Resend">
         <input type="hidden" name="channel" value="@Model.Channel" />
-        <button type="submit" class="sc-btn-secondary">@L["Code_Resend"]</button>
+        <button type="submit" class="sc-btn-secondaire">@L["Code_Resend"]</button>
     </form>
-    <a asp-action="SignIn" class="sc-btn-secondary">@L["Code_ChangeNumber"]</a>
+    <a asp-action="SignIn" class="sc-btn-secondaire">@L["Code_ChangeNumber"]</a>
 </div>

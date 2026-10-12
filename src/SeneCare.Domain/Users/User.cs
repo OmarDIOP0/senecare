@@ -36,6 +36,7 @@ public sealed class User : AggregateRoot
 
     private readonly List<UserRole> _roles = [];
     private readonly List<UserConsent> _consents = [];
+    private readonly List<string> _completedTours = [];
 
     private User()
     {
@@ -66,6 +67,23 @@ public sealed class User : AggregateRoot
     public IReadOnlyCollection<UserRole> Roles => _roles.AsReadOnly();
 
     public IReadOnlyCollection<UserConsent> Consents => _consents.AsReadOnly();
+
+    /// <summary>Guided tours already seen (stored server-side so they don't replay on another phone).</summary>
+    public IReadOnlyCollection<string> CompletedTours => _completedTours.AsReadOnly();
+
+    public bool HasCompletedTour(string tourKey) => _completedTours.Contains(tourKey, StringComparer.Ordinal);
+
+    public void CompleteTour(string tourKey)
+    {
+        var key = Guard.Required(tourKey, "tour.key", 40);
+        if (!HasCompletedTour(key))
+        {
+            _completedTours.Add(key);
+        }
+    }
+
+    /// <summary>« Revoir la visite guidée » from the profile.</summary>
+    public void ResetTour(string tourKey) => _completedTours.Remove(tourKey);
 
     /// <summary>Name given and personal-data consent active (law 2008-12).</summary>
     public bool IsProfileComplete => FullName is not null && HasActiveConsent(ConsentType.PersonalData);

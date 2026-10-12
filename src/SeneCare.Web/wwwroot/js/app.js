@@ -179,4 +179,257 @@
       ? uploader.dataset.emptyText ?? ""
       : `${files.length} / ${uploader.dataset.max} · ${kilobytes(total)}`;
   };
+
+  // ==========================================================================
+  // PWA
+  // ==========================================================================
+
+  // ---- Service worker + « Nouvelle version disponible » banner. ----
+  if ("serviceWorker" in navigator) {
+    let reloading = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (reloading) return;
+      reloading = true;
+      location.reload();
+    });
+
+    const offerUpdate = (worker) => {
+      const banner = document.querySelector("[data-update-banner]");
+      if (!banner || !navigator.serviceWorker.controller) return; // first install: nothing to update
+      banner.hidden = false;
+      banner.querySelector("[data-update-apply]").onclick = () => worker.postMessage({ type: "SKIP_WAITING" });
+    };
+
+    window.addEventListener("load", async () => {
+      const registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => null);
+      if (!registration) return;
+      if (registration.waiting) offerUpdate(registration.waiting);
+      registration.addEventListener("updatefound", () => {
+        const worker = registration.installing;
+        worker?.addEventListener("statechange", () => {
+          if (worker.state === "installed") offerUpdate(worker);
+        });
+      });
+    });
+
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      if (event.data?.type === "OUTBOX") showConnection(event.data.pending);
+    });
+  }
+
+  // ---- Connection indicator: offline / waiting to send / back online. Hidden when all is well. ----
+  const showConnection = async (pending) => {
+    const pill = document.querySelector("[data-connection]");
+    if (!pill) return;
+    const waiting = pending ?? (await self.scOutbox?.count().catch(() => 0)) ?? 0;
+    const set = (text, classes, icon) => {
+      pill.className = "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold " + classes;
+      pill.textContent = text;
+      if (icon) pill.prepend(icon);
+      pill.hidden = false;
+    };
+    if (!navigator.onLine) {
+      set(pill.dataset.textOffline, "bg-soleil text-charbon");
+    } else if (waiting > 0) {
+      set(pill.dataset.textPending.replace("{0}", waiting), "bg-atlantique-clair text-atlantique");
+    } else if (pill.dataset.wasOffline === "1") {
+      set(pill.dataset.textOnline, "bg-baobab-clair text-baobab");
+      setTimeout(() => (pill.hidden = true), 3000);
+    } else {
+      pill.hidden = true;
+    }
+    pill.dataset.wasOffline = navigator.onLine ? "" : "1";
+  };
+
+  const flushOutbox = async () => {
+    if (!self.scOutbox || !navigator.onLine) return showConnection();
+    const pending = await self.scOutbox.flush().catch(() => undefined);
+    showConnection(pending);
+  };
+
+  window.addEventListener("online", flushOutbox);
+  window.addEventListener("offline", () => showConnection());
+  document.addEventListener("DOMContentLoaded", () => {
+    flushOutbox(); // iPhone has no Background Sync: send what is waiting at every page load
+    if (new URLSearchParams(location.search).has("en-attente")) {
+      document.querySelector("[data-offline-pending]")?.removeAttribute("hidden");
+    }
+  });
+
+  // ---- Offline forms (data-offline="queue"): saved on the phone, sent when the network is back. ----
+  document.addEventListener("submit", async (event) => {
+    const form = event.target.closest("form[data-offline=queue]");
+    if (!form || navigator.onLine || !self.scOutbox) return; // online: normal submit (the worker catches failures)
+    event.preventDefault();
+    const fields = self.scOutbox.fromFormData(new FormData(form, event.submitter));
+    await self.scOutbox.add(new URL(form.action, location.href).pathname, fields, form.dataset.offlineLabel ?? "");
+    const registration = await navigator.serviceWorker?.ready.catch(() => null);
+    await registration?.sync?.register("sc-outbox").catch(() => {});
+    window.scToast(form.dataset.offlineMessage ?? "", "succes");
+    form.reset();
+    showConnection();
+  });
+
+  // ---- Signing out: forget cached personal pages and unsent forms on this phone. ----
+  document.addEventListener("submit", (event) => {
+    if (event.target.closest("form[data-logout]")) {
+      navigator.serviceWorker?.controller?.postMessage({ type: "SIGNED_OUT" });
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("[data-reload]")) location.reload();
+  });
+
+  // ---- « Installer l'application »: Android prompt, or the illustrated guide on iPhone. ----
+  const INSTALL_SNOOZE_MS = 14 * 24 * 3600 * 1000;
+  const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+  let installEvent = null;
+
+  const snoozed = () => {
+    try { return Date.now() - Number(localStorage.getItem("sc-install-later") ?? 0) < INSTALL_SNOOZE_MS; } catch { return false; }
+  };
+  const showInstall = () => {
+    if (standalone || snoozed()) return;
+    document.querySelectorAll("[data-install]").forEach((el) => (el.hidden = false));
+  };
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    installEvent = event;
+    showInstall();
+  });
+  document.addEventListener("DOMContentLoaded", () => {
+    if (isIos) showInstall();
+  });
+  document.addEventListener("click", async (event) => {
+    if (event.target.closest("[data-install-accept]")) {
+      if (installEvent) {
+        installEvent.prompt();
+        await installEvent.userChoice.catch(() => null);
+        installEvent = null;
+        document.querySelectorAll("[data-install]").forEach((el) => (el.hidden = true));
+      } else if (isIos) {
+        document.getElementById("installer-iphone")?.showModal();
+      }
+    }
+    if (event.target.closest("[data-install-dismiss]")) {
+      try { localStorage.setItem("sc-install-later", String(Date.now())); } catch { /* ignore */ }
+      document.querySelectorAll("[data-install]").forEach((el) => (el.hidden = true));
+    }
+  });
+  window.addEventListener("appinstalled", () => document.querySelectorAll("[data-install]").forEach((el) => (el.hidden = true)));
+
+  // ==========================================================================
+  // Welcome screens (swipe) and guided tour (coach marks)
+  // ==========================================================================
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector("[data-onboarding]");
+    if (!form) return;
+    const track = form.querySelector("[data-onboarding-track]");
+    const slides = [...track.children];
+    const dots = [...form.querySelectorAll("[data-onboarding-dot]")];
+    const next = form.querySelector("[data-onboarding-next]");
+    let current = 0;
+
+    const update = (index) => {
+      current = index;
+      dots.forEach((dot, i) => (i === index ? dot.setAttribute("aria-current", "step") : dot.removeAttribute("aria-current")));
+      next.textContent = index === slides.length - 1 ? next.dataset.textStart : next.dataset.textNext;
+    };
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.isIntersecting && update(slides.indexOf(e.target))),
+      { root: track, threshold: 0.6 },
+    );
+    slides.forEach((s) => observer.observe(s));
+    update(0);
+
+    const goTo = (index) => slides[index]?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", inline: "center", block: "nearest" });
+    next.addEventListener("click", (event) => {
+      if (current < slides.length - 1) {
+        event.preventDefault();
+        goTo(current + 1);
+      }
+    });
+    dots.forEach((dot, i) => dot.addEventListener("click", (event) => {
+      event.preventDefault();
+      goTo(i);
+    }));
+  });
+
+  // Coach marks: a spotlight on each target (data-tour) with a short explanation.
+  document.addEventListener("DOMContentLoaded", () => {
+    const config = document.getElementById("sc-tour");
+    if (!config) return;
+    const tour = JSON.parse(config.textContent);
+    const visible = (el) => el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== "hidden";
+    const steps = tour.steps
+      .map((step) => ({ ...step, element: [...document.querySelectorAll(`[data-tour="${step.target}"]`)].find(visible) }))
+      .filter((step) => step.element);
+    if (steps.length === 0) return;
+
+    const token = document.querySelector("input[name=__RequestVerificationToken]")?.value ?? "";
+    const finish = () => {
+      overlay.remove();
+      spotlight.remove();
+      bubble.remove();
+      document.removeEventListener("keydown", onKey);
+      const body = new FormData();
+      body.append("__RequestVerificationToken", token);
+      fetch(tour.completeUrl, { method: "POST", body, credentials: "same-origin" }).catch(() => {});
+    };
+    const onKey = (event) => event.key === "Escape" && finish();
+
+    const overlay = document.createElement("div");
+    overlay.className = "fixed inset-0 z-[60]";
+    const spotlight = document.createElement("div");
+    spotlight.className = "pointer-events-none fixed z-[61] rounded-lg ring-4 ring-soleil transition-all duration-200";
+    spotlight.style.boxShadow = "0 0 0 9999px rgb(21 18 14 / 0.6)";
+    const bubble = document.createElement("div");
+    bubble.className = "fixed inset-x-4 z-[62] mx-auto max-w-sm rounded-lg bg-surface p-4 text-charbon shadow-carte";
+    bubble.setAttribute("role", "dialog");
+    bubble.setAttribute("aria-modal", "true");
+    bubble.setAttribute("aria-labelledby", "sc-tour-title");
+    bubble.innerHTML = `
+      <p class="sc-surtitre" data-progress></p>
+      <h2 id="sc-tour-title" class="mt-1 font-display text-xl font-bold" tabindex="-1" data-title></h2>
+      <p class="mt-1" data-text></p>
+      <div class="mt-4 flex items-center justify-between gap-2">
+        <button type="button" class="sc-btn-discret" data-skip></button>
+        <button type="button" class="sc-btn bg-laterite text-sur-accent" data-next></button>
+      </div>`;
+    document.body.append(overlay, spotlight, bubble);
+
+    let index = 0;
+    const show = () => {
+      const step = steps[index];
+      step.element.scrollIntoView({ block: "center", behavior: "auto" });
+      const rect = step.element.getBoundingClientRect();
+      const pad = 6;
+      Object.assign(spotlight.style, {
+        top: `${rect.top - pad}px`, left: `${rect.left - pad}px`,
+        width: `${rect.width + pad * 2}px`, height: `${rect.height + pad * 2}px`,
+      });
+      const below = rect.top < innerHeight / 2;
+      bubble.style.top = below ? `${Math.min(rect.bottom + 16, innerHeight - 220)}px` : "";
+      bubble.style.bottom = below ? "" : `${innerHeight - rect.top + 16}px`;
+      bubble.querySelector("[data-progress]").textContent = tour.labels.progress.replace("{0}", index + 1).replace("{1}", steps.length);
+      bubble.querySelector("[data-title]").textContent = step.title;
+      bubble.querySelector("[data-text]").textContent = step.text;
+      bubble.querySelector("[data-skip]").textContent = tour.labels.skip;
+      bubble.querySelector("[data-next]").textContent = index === steps.length - 1 ? tour.labels.done : tour.labels.next;
+      bubble.querySelector("[data-title]").focus();
+    };
+    bubble.querySelector("[data-next]").addEventListener("click", () => {
+      index++;
+      if (index >= steps.length) finish();
+      else show();
+    });
+    bubble.querySelector("[data-skip]").addEventListener("click", finish);
+    document.addEventListener("keydown", onKey);
+    addEventListener("resize", () => steps[index] && show());
+    show();
+  });
 })();

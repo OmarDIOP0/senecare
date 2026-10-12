@@ -15,6 +15,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(u => u.PhoneNumber).IsUnique();
         builder.Property(u => u.FullName).HasMaxLength(User.NameMaxLength);
         builder.Property(u => u.Email).HasMaxLength(User.EmailMaxLength);
+        builder.PrimitiveCollection(u => u.CompletedTours);
 
         builder.OwnsMany(u => u.Roles, b =>
         {

@@ -20,6 +20,7 @@ public static class DependencyInjection
         services.AddScoped<GetUserProfileHandler>();
         services.AddScoped<GetTeamHandler>();
         services.AddScoped<SearchNeighborhoodsHandler>();
+        services.AddScoped<TourProgressHandler>();
 
         return services;
     }

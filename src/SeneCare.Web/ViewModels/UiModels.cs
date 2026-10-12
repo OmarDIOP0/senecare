@@ -36,17 +36,10 @@ public enum EmptyIllustration
     House = 1,
     Tools = 2,
     Tree = 3,
+    Phone = 4,
 }
 
 public sealed record EmptyStateModel(string Title, string Text, EmptyIllustration Illustration, string? ActionLabel = null, string? ActionUrl = null);
 
-public enum AppTab
-{
-    Home = 1,
-    Interventions = 2,
-    Property = 3,
-    Profile = 4,
-}
-
-/// <summary>Bottom tab bar (mobile) / side rail (desktop) with the central « Signaler » button.</summary>
-public sealed record TabBarModel(AppTab Active, bool Demo = false);
+/// <summary>Bottom tab bar (mobile) / side rail (desktop), with the central action (« Signaler »).</summary>
+public sealed record TabBarModel(SeneCare.Web.Infrastructure.AppNav Nav, string ActiveKey, bool Demo = false);

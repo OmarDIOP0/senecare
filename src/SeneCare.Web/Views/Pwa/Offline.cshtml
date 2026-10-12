@@ -1,0 +1,16 @@
+@model bool
+@* Precached by the service worker: shown when a page is not available offline. *@
+@{
+    ViewData["Title"] = L["Offline_Title"];
+}
+
+<section class="sc-carte flex flex-col items-center px-6 py-10 text-center">
+    <span class="grid size-16 place-items-center rounded-full bg-soleil-clair text-charbon"><sc-icon name="wifi-off" class="size-8" /></span>
+    <h1 class="sc-titre mt-4">@L["Offline_Title"]</h1>
+    <p class="mt-3 max-w-sm text-charbon-doux">@L["Offline_Text"]</p>
+
+    @* Shown when a form was saved to be sent later (the worker adds ?en-attente=1). *@
+    <p data-offline-pending @(Model ? "" : "hidden") class="sc-alert mt-6 text-left">@L["Offline_Pending"]</p>
+
+    <button type="button" class="sc-btn-primaire mt-6" data-reload>@L["Offline_Retry"]</button>
+</section>

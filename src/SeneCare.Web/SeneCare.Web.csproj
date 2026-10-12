@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SeneCare.Application\SeneCare.Application.csproj" />
+    <ProjectReference Include="..\SeneCare.Infrastructure\SeneCare.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="package.json;package-lock.json" />
+    <None Include="package.json;Styles\**" />
+  </ItemGroup>
+
+  <!--
+    Tailwind CSS: compiles Styles/app.css into wwwroot/css/app.css (minified) on every build
+    when views or styles changed. Requires Node.js; skip with -p:SkipTailwind=true.
+  -->
+  <Target Name="TailwindInstall" BeforeTargets="TailwindBuild" Condition="'$(SkipTailwind)' != 'true' And !Exists('node_modules')">
+    <Exec Command="npm ci" />
+  </Target>
+
+  <Target Name="TailwindBuild" BeforeTargets="BeforeBuild" Condition="'$(SkipTailwind)' != 'true'"
+          Inputs="@(Content -> WithMetadataValue('Extension', '.cshtml'));Styles\app.css;package.json"
+          Outputs="wwwroot\css\app.css">
+    <Exec Command="npm run css:build" />
+  </Target>
+
+</Project>

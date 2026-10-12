@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@source "../Views";
+@source "../Areas";
+
+/* Provisional tokens — the full design system (palette, typography, dark mode) comes in Phase 3. */
+@theme {
+  --color-laterite: #b5512a;
+  --color-atlantique: #12355b;
+  --color-baobab: #2f5d3a;
+  --color-sable: #f6efe4;
+  --color-charbon: #22201d;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-sable text-charbon antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-atlantique;
+  }
+}

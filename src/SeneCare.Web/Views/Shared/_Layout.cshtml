@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#12355b" />
+    <title>@ViewData["Title"] · @L["App_Name"]</title>
+    <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
+    @await RenderSectionAsync("Head", required: false)
+</head>
+<body class="min-h-dvh">
+    <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:m-2 focus:rounded focus:bg-atlantique focus:px-4 focus:py-3 focus:text-sable">@L["Layout_SkipToContent"]</a>
+    <main id="contenu" class="mx-auto w-full max-w-screen-md px-4 py-8">
+        @RenderBody()
+    </main>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

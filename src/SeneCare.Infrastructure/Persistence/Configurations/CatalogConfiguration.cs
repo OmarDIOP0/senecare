@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SeneCare.Domain.Locations;
 using SeneCare.Domain.Neighborhoods;
@@ -47,7 +47,7 @@ internal sealed class NeighborhoodConfiguration : IEntityTypeConfiguration<Neigh
         builder.Property(p => p.Name).HasMaxLength(Place.NameMaxLength);
         builder.HasOne<Commune>().WithMany().HasForeignKey(p => p.CommuneId).OnDelete(DeleteBehavior.Restrict);
         builder.HasIndex(p => new { p.CommuneId, p.Slug }).IsUnique();
-        // Fast Â« search a neighborhood Â» picker.
+        // Fast « search a neighborhood » picker.
         builder.HasIndex(p => p.Name);
     }
 }

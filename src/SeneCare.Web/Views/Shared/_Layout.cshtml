@@ -10,6 +10,19 @@
 </head>
 <body class="min-h-dvh">
     <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:m-2 focus:rounded focus:bg-atlantique focus:px-4 focus:py-3 focus:text-sable">@L["Layout_SkipToContent"]</a>
+    <header class="border-b border-charbon/10">
+        <nav class="mx-auto flex w-full max-w-screen-md items-center justify-between px-4 py-3">
+            <a href="/" class="text-lg font-bold text-atlantique">@L["App_Name"]</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a href="/compte" class="inline-flex min-h-12 items-center font-semibold text-atlantique">@L["Nav_Account"]</a>
+            }
+            else
+            {
+                <a href="/connexion" class="inline-flex min-h-12 items-center font-semibold text-atlantique">@L["Nav_SignIn"]</a>
+            }
+        </nav>
+    </header>
     <main id="contenu" class="mx-auto w-full max-w-screen-md px-4 py-8">
         @RenderBody()
     </main>

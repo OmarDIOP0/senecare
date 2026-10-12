@@ -13,4 +13,85 @@
   <data name="Error_Message" xml:space="preserve"><value>Nous n'avons pas pu traiter votre demande. Réessayez dans un instant.</value></data>
   <data name="Error_Reference" xml:space="preserve"><value>Référence</value></data>
   <data name="Error_BackHome" xml:space="preserve"><value>Revenir à l'accueil</value></data>
+  <data name="Common_Back" xml:space="preserve"><value>Retour</value></data>
+  <data name="Nav_SignIn" xml:space="preserve"><value>Se connecter</value></data>
+  <data name="Nav_Account" xml:space="preserve"><value>Mon compte</value></data>
+  <data name="Nav_SignOut" xml:space="preserve"><value>Se déconnecter</value></data>
+  <data name="SignIn_Title" xml:space="preserve"><value>Connexion</value></data>
+  <data name="SignIn_Heading" xml:space="preserve"><value>Connectez-vous avec votre numéro</value></data>
+  <data name="SignIn_Intro" xml:space="preserve"><value>Nous vous envoyons un code par SMS. Pas besoin de mot de passe.</value></data>
+  <data name="SignIn_PhoneLabel" xml:space="preserve"><value>Numéro de téléphone</value></data>
+  <data name="SignIn_PhoneHint" xml:space="preserve"><value>Numéro mobile sénégalais : 77, 78, 76, 70 ou 75</value></data>
+  <data name="SignIn_Channel" xml:space="preserve"><value>Recevoir le code par</value></data>
+  <data name="SignIn_ChannelSms" xml:space="preserve"><value>SMS</value></data>
+  <data name="SignIn_ChannelWhatsApp" xml:space="preserve"><value>WhatsApp</value></data>
+  <data name="SignIn_Submit" xml:space="preserve"><value>Recevoir mon code</value></data>
+  <data name="Code_Title" xml:space="preserve"><value>Code de vérification</value></data>
+  <data name="Code_Heading" xml:space="preserve"><value>Entrez le code reçu</value></data>
+  <data name="Code_SentTo" xml:space="preserve"><value>Code envoyé au +221 {0} par {1}. Il est valable 5 minutes.</value></data>
+  <data name="Code_Label" xml:space="preserve"><value>Code à 6 chiffres</value></data>
+  <data name="Code_Submit" xml:space="preserve"><value>Valider</value></data>
+  <data name="Code_Resend" xml:space="preserve"><value>Renvoyer le code</value></data>
+  <data name="Code_ChangeNumber" xml:space="preserve"><value>Changer de numéro</value></data>
+  <data name="Register_Title" xml:space="preserve"><value>Inscription</value></data>
+  <data name="Register_Heading" xml:space="preserve"><value>Bienvenue sur SeneCare</value></data>
+  <data name="Register_JoiningAs" xml:space="preserve"><value>Vous rejoignez {0}.</value></data>
+  <data name="Register_NameLabel" xml:space="preserve"><value>Votre nom complet</value></data>
+  <data name="Register_ProfileLabel" xml:space="preserve"><value>Vous inscrivez</value></data>
+  <data name="Register_ProfileHousehold" xml:space="preserve"><value>Ma maison</value></data>
+  <data name="Register_ProfileHouseholdHint" xml:space="preserve"><value>Maison, villa ou appartement</value></data>
+  <data name="Register_ProfileBusiness" xml:space="preserve"><value>Mon entreprise</value></data>
+  <data name="Register_ProfileBusinessHint" xml:space="preserve"><value>Bureaux, boutiques, entrepôts</value></data>
+  <data name="Register_CompanyLabel" xml:space="preserve"><value>Nom de l'entreprise</value></data>
+  <data name="Register_ConsentTitle" xml:space="preserve"><value>Vos données personnelles</value></data>
+  <data name="Register_ConsentText" xml:space="preserve"><value>SeneCare utilise votre numéro, votre nom et l'adresse de vos logements uniquement pour organiser et suivre les interventions. Ces données ne sont ni vendues ni partagées, sauf avec les techniciens qui interviennent chez vous. Vous pouvez demander à les consulter ou à les supprimer à tout moment (loi n° 2008-12 sur la protection des données personnelles).</value></data>
+  <data name="Register_ConsentCheckbox" xml:space="preserve"><value>J'accepte la politique de confidentialité</value></data>
+  <data name="Register_ConsentLink" xml:space="preserve"><value>Lire la politique de confidentialité</value></data>
+  <data name="Register_WhatsAppCheckbox" xml:space="preserve"><value>Je souhaite recevoir le suivi de mes interventions sur WhatsApp</value></data>
+  <data name="Register_Submit" xml:space="preserve"><value>Terminer l'inscription</value></data>
+  <data name="Account_Title" xml:space="preserve"><value>Mon compte</value></data>
+  <data name="Account_Name" xml:space="preserve"><value>Nom</value></data>
+  <data name="Account_Phone" xml:space="preserve"><value>Téléphone</value></data>
+  <data name="Account_Memberships" xml:space="preserve"><value>Mes espaces</value></data>
+  <data name="Account_Team" xml:space="preserve"><value>Gérer l'équipe</value></data>
+  <data name="Kind_Household" xml:space="preserve"><value>Maison</value></data>
+  <data name="Kind_Business" xml:space="preserve"><value>Entreprise</value></data>
+  <data name="Role_Owner" xml:space="preserve"><value>Propriétaire</value></data>
+  <data name="Role_Manager" xml:space="preserve"><value>Gestionnaire</value></data>
+  <data name="Role_SiteManager" xml:space="preserve"><value>Responsable de site</value></data>
+  <data name="Role_Reporter" xml:space="preserve"><value>Employé déclarant</value></data>
+  <data name="Team_Title" xml:space="preserve"><value>Équipe</value></data>
+  <data name="Team_Heading" xml:space="preserve"><value>Équipe de {0}</value></data>
+  <data name="Team_Members" xml:space="preserve"><value>Membres</value></data>
+  <data name="Team_InviteHeading" xml:space="preserve"><value>Inviter un employé</value></data>
+  <data name="Team_InviteIntro" xml:space="preserve"><value>Il recevra un lien par WhatsApp ou SMS, valable 7 jours.</value></data>
+  <data name="Team_RoleLabel" xml:space="preserve"><value>Rôle</value></data>
+  <data name="Team_InviteSubmit" xml:space="preserve"><value>Envoyer l'invitation</value></data>
+  <data name="Team_InviteSent" xml:space="preserve"><value>Invitation envoyée au {0}.</value></data>
+  <data name="Invitation_Title" xml:space="preserve"><value>Invitation</value></data>
+  <data name="Invitation_Heading" xml:space="preserve"><value>{0} vous invite sur SeneCare</value></data>
+  <data name="Invitation_Intro" xml:space="preserve"><value>Vous pourrez signaler les pannes de vos locaux et suivre les interventions.</value></data>
+  <data name="Invitation_Role" xml:space="preserve"><value>Votre rôle : {0}</value></data>
+  <data name="Invitation_Continue" xml:space="preserve"><value>Accepter et me connecter</value></data>
+  <data name="Invitation_Invalid" xml:space="preserve"><value>Cette invitation n'est plus valable. Demandez à votre gestionnaire de vous en envoyer une nouvelle.</value></data>
+  <data name="Invitation_Accepted" xml:space="preserve"><value>Vous avez rejoint {0}.</value></data>
+  <data name="AccessDenied_Title" xml:space="preserve"><value>Accès refusé</value></data>
+  <data name="AccessDenied_Text" xml:space="preserve"><value>Cette page n'est pas accessible avec votre compte.</value></data>
+  <data name="Privacy_Title" xml:space="preserve"><value>Politique de confidentialité</value></data>
+  <data name="Error_phone_invalid" xml:space="preserve"><value>Ce numéro n'est pas un mobile sénégalais valide (9 chiffres commençant par 77, 78, 76, 70 ou 75).</value></data>
+  <data name="Error_otp_cooldown" xml:space="preserve"><value>Patientez une minute avant de demander un nouveau code.</value></data>
+  <data name="Error_otp_too_many_requests" xml:space="preserve"><value>Trop de codes demandés pour ce numéro. Réessayez dans une heure.</value></data>
+  <data name="Error_otp_invalid" xml:space="preserve"><value>Code incorrect. Vérifiez le message et réessayez.</value></data>
+  <data name="Error_otp_too_many_attempts" xml:space="preserve"><value>Trop d'essais. Demandez un nouveau code.</value></data>
+  <data name="Error_otp_expired" xml:space="preserve"><value>Ce code a expiré. Demandez-en un nouveau.</value></data>
+  <data name="Error_user_inactive" xml:space="preserve"><value>Ce compte est désactivé. Contactez le service client.</value></data>
+  <data name="Error_registration_consent_required" xml:space="preserve"><value>Vous devez accepter la politique de confidentialité pour continuer.</value></data>
+  <data name="Error_registration_name_required" xml:space="preserve"><value>Indiquez votre nom.</value></data>
+  <data name="Error_registration_profile_required" xml:space="preserve"><value>Choisissez « Ma maison » ou « Mon entreprise ».</value></data>
+  <data name="Error_registration_company_required" xml:space="preserve"><value>Indiquez le nom de l'entreprise.</value></data>
+  <data name="Error_account_member_exists" xml:space="preserve"><value>Cette personne fait déjà partie de l'équipe.</value></data>
+  <data name="Error_invitation_expired" xml:space="preserve"><value>Cette invitation n'est plus valable.</value></data>
+  <data name="Error_invitation_wrong_phone" xml:space="preserve"><value>Cette invitation a été envoyée à un autre numéro. Connectez-vous avec ce numéro.</value></data>
+  <data name="Error_rate_limited" xml:space="preserve"><value>Trop de tentatives. Patientez quelques minutes.</value></data>
+  <data name="Error_generic" xml:space="preserve"><value>Une erreur est survenue. Réessayez.</value></data>
 </root>

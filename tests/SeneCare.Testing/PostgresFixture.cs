@@ -3,13 +3,14 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
 using SeneCare.Infrastructure.Persistence;
 using SeneCare.Infrastructure.Persistence.Seed;
+using Xunit;
 
-namespace SeneCare.Infrastructure.IntegrationTests;
+namespace SeneCare.Testing;
 
 /// <summary>
 /// Runs against a real local PostgreSQL. Set <c>SENECARE_TEST_DB</c> to a connection string of a user
-/// allowed to create databases (e.g. <c>Host=localhost;Username=postgres;Password=…</c>).
-/// Each test run creates a throw-away database and drops it at the end.
+/// allowed to create databases (e.g. <c>Host=localhost;Database=postgres;Username=senecare;Password=…</c>).
+/// Each fixture creates a throw-away database (migrated + seeded) and drops it at the end.
 /// Tests are skipped when the variable is not set (Testcontainers can replace this once Docker is available).
 /// </summary>
 public sealed class PostgresFixture : IAsyncLifetime
@@ -48,6 +49,7 @@ public sealed class PostgresFixture : IAsyncLifetime
             return;
         }
 
+        NpgsqlConnection.ClearAllPools();
         await using var db = CreateContext();
         await db.Database.EnsureDeletedAsync();
     }
@@ -57,12 +59,6 @@ public sealed class PostgresFixture : IAsyncLifetime
             .UseNpgsql(ConnectionString, npgsql => npgsql.MigrationsHistoryTable("__ef_migrations_history"))
             .UseSnakeCaseNamingConvention()
             .Options);
-}
-
-[CollectionDefinition(Name)]
-public sealed class PostgresTestGroup : ICollectionFixture<PostgresFixture>
-{
-    public const string Name = "postgres";
 }
 
 /// <summary>A fact that needs PostgreSQL; skipped with an explanation when it is not configured.</summary>

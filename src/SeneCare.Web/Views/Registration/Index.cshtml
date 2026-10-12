@@ -1,0 +1,58 @@
+@model RegistrationViewModel
+@using SeneCare.Domain.Accounts
+@{
+    ViewData["Title"] = L["Register_Title"];
+}
+
+<h1 class="text-2xl font-bold text-atlantique">@L["Register_Heading"]</h1>
+@if (Model.JoiningAccountName is not null)
+{
+    <p class="mt-2">@L["Register_JoiningAs", Model.JoiningAccountName]</p>
+}
+
+<div asp-validation-summary="All" class="sc-error" role="alert"></div>
+
+<form method="post" class="mt-6 space-y-6" novalidate>
+    <div>
+        <label class="sc-label" asp-for="FullName">@L["Register_NameLabel"]</label>
+        <input asp-for="FullName" autocomplete="name" class="sc-input" required />
+    </div>
+
+    @if (Model.JoiningAccountName is null)
+    {
+        <fieldset>
+            <legend class="sc-label">@L["Register_ProfileLabel"]</legend>
+            <div class="mt-2 grid gap-3 sm:grid-cols-2">
+                <label class="flex min-h-16 items-start gap-3 rounded-lg border border-charbon/30 bg-white p-3">
+                    <input type="radio" asp-for="Profile" value="@AccountKind.Household" class="mt-1" />
+                    <span><strong>@L["Register_ProfileHousehold"]</strong><br /><span class="text-sm text-charbon/70">@L["Register_ProfileHouseholdHint"]</span></span>
+                </label>
+                <label class="flex min-h-16 items-start gap-3 rounded-lg border border-charbon/30 bg-white p-3">
+                    <input type="radio" asp-for="Profile" value="@AccountKind.Business" class="mt-1" />
+                    <span><strong>@L["Register_ProfileBusiness"]</strong><br /><span class="text-sm text-charbon/70">@L["Register_ProfileBusinessHint"]</span></span>
+                </label>
+            </div>
+        </fieldset>
+
+        <div>
+            <label class="sc-label" asp-for="CompanyName">@L["Register_CompanyLabel"]</label>
+            <input asp-for="CompanyName" autocomplete="organization" class="sc-input" />
+        </div>
+    }
+
+    <section class="rounded-lg border border-charbon/20 bg-white p-4" aria-labelledby="consent-title">
+        <h2 id="consent-title" class="font-semibold">@L["Register_ConsentTitle"]</h2>
+        <p class="mt-2 text-sm">@L["Register_ConsentText"]</p>
+        <p class="mt-2 text-sm"><a href="/confidentialite" class="underline text-atlantique" target="_blank">@L["Register_ConsentLink"]</a></p>
+        <label class="mt-4 flex min-h-12 items-start gap-3">
+            <input type="checkbox" asp-for="AcceptsPrivacyPolicy" class="mt-1 size-5" />
+            <span>@L["Register_ConsentCheckbox"]</span>
+        </label>
+        <label class="mt-2 flex min-h-12 items-start gap-3">
+            <input type="checkbox" asp-for="AcceptsWhatsApp" class="mt-1 size-5" />
+            <span>@L["Register_WhatsAppCheckbox"]</span>
+        </label>
+    </section>
+
+    <button type="submit" class="sc-btn">@L["Register_Submit"]</button>
+</form>

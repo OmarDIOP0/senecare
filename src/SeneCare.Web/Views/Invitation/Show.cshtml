@@ -1,0 +1,25 @@
+@model InvitationViewModel
+@{
+    ViewData["Title"] = L["Invitation_Title"];
+}
+
+@if (Model.Invitation is { IsUsable: true } invitation)
+{
+    <h1 class="text-2xl font-bold text-atlantique">@L["Invitation_Heading", invitation.CompanyName]</h1>
+    <p class="mt-2">@L["Invitation_Intro"]</p>
+    <p class="mt-2 font-semibold">@L["Invitation_Role", L["Role_" + invitation.Role]]</p>
+
+    @if (TempData["flash.error"] is string flash)
+    {
+        <p class="sc-error" role="alert">@flash</p>
+    }
+
+    <form method="post" asp-action="Accept" asp-route-token="@Model.Token" class="mt-6">
+        <button type="submit" class="sc-btn">@L["Invitation_Continue"]</button>
+    </form>
+}
+else
+{
+    <h1 class="text-2xl font-bold text-atlantique">@L["Invitation_Title"]</h1>
+    <p class="mt-2">@L["Invitation_Invalid"]</p>
+}

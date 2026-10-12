@@ -11,6 +11,7 @@
     <Project Path="tests/SeneCare.Application.Tests/SeneCare.Application.Tests.csproj" />
     <Project Path="tests/SeneCare.Domain.Tests/SeneCare.Domain.Tests.csproj" />
     <Project Path="tests/SeneCare.Infrastructure.IntegrationTests/SeneCare.Infrastructure.IntegrationTests.csproj" />
+    <Project Path="tests/SeneCare.Testing/SeneCare.Testing.csproj" />
     <Project Path="tests/SeneCare.Web.IntegrationTests/SeneCare.Web.IntegrationTests.csproj" />
   </Folder>
 </Solution>

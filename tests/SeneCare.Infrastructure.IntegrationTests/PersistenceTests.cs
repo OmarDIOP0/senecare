@@ -8,6 +8,7 @@ using SeneCare.Domain.Requests;
 using SeneCare.Domain.Users;
 using SeneCare.Infrastructure.Persistence;
 using SeneCare.Infrastructure.Persistence.Seed;
+using SeneCare.Testing;
 
 namespace SeneCare.Infrastructure.IntegrationTests;
 
@@ -148,6 +149,28 @@ public class AggregatePersistenceTests(PostgresFixture fixture)
         Assert.Single(loadedSubscription.CoveredPropertyIds);
         Assert.Equal(1, loadedDiagnostic.AnomalyCount);
         Assert.Equal(new DateOnly(2026, 4, 1), loadedSubscription.PrepareRenewal(loadedDiagnostic).Start);
+    }
+
+    [PostgresFact]
+    public async Task Children_added_to_a_loaded_aggregate_are_inserted()
+    {
+        var manager = User.Register(UniquePhone(), Now);
+        var account = CustomerAccount.CreateBusiness("Keur Services", null, manager.Id, Now);
+        await using (var db = fixture.CreateContext())
+        {
+            db.AddRange(manager, account);
+            await db.SaveChangesAsync();
+        }
+
+        await using (var db = fixture.CreateContext())
+        {
+            var loaded = await db.CustomerAccounts.SingleAsync(a => a.Id == account.Id);
+            loaded.AddMember(Guid.CreateVersion7(), AccountRole.Reporter, [], Now);
+            await db.SaveChangesAsync();
+        }
+
+        await using var read = fixture.CreateContext();
+        Assert.Equal(2, (await read.CustomerAccounts.SingleAsync(a => a.Id == account.Id)).Members.Count);
     }
 
     private static PhoneNumber UniquePhone() =>

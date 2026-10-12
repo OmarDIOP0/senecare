@@ -114,7 +114,20 @@ en développement, utiliser les user-secrets :
 dotnet user-secrets --project src/SeneCare.Web set "ConnectionStrings:Default" "Host=localhost;Database=senecare;Username=senecare;Password=..."
 ```
 
-En production, utiliser des variables d'environnement (`ConnectionStrings__Default`, …).
+Clés obligatoires pour le site et l'API (même `Security:HashKey` pour les deux) :
+`Security:HashKey` (codes OTP, invitations, jetons) et `Jwt:SigningKey` (API), chacune
+32 octets aléatoires en base64, à ranger avec `dotnet user-secrets set`.
+
+En production, utiliser des variables d'environnement (`ConnectionStrings__Default`, `Security__HashKey`, …).
+
+## Connexion (téléphone + code)
+
+- Site : `/connexion` → code reçu → `/inscription` (nom, « Ma maison » / « Mon entreprise », consentement).
+- En développement, les SMS et WhatsApp ne partent pas : le message et son code s'affichent
+  dans les logs de la console (`[SMS → 77 …]`). Interdit en production.
+- Entreprise : le gestionnaire invite un employé depuis `/entreprise/equipe` (lien valable 7 jours).
+- API : `POST /api/v1/auth/otp`, `/auth/otp/verify` (jetons JWT + refresh), `/auth/refresh`,
+  `/auth/logout`, `/auth/register`, `GET /api/v1/me`.
 
 ## Langues
 

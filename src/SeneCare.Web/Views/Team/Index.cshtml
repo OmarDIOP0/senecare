@@ -1,0 +1,47 @@
+@model TeamViewModel
+@using SeneCare.Domain.Accounts
+@{
+    ViewData["Title"] = L["Team_Title"];
+}
+
+<h1 class="text-2xl font-bold text-atlantique">@L["Team_Heading", Model.AccountName]</h1>
+
+@if (TempData["flash.success"] is string invited)
+{
+    <p class="sc-alert mt-4" role="status">@L["Team_InviteSent", invited]</p>
+}
+
+<h2 class="mt-6 text-lg font-semibold">@L["Team_Members"]</h2>
+<ul class="mt-2 space-y-2">
+    @foreach (var member in Model.Members)
+    {
+        <li class="rounded-lg border border-charbon/20 bg-white px-4 py-3">
+            <strong>@(member.FullName ?? "—")</strong>
+            <span class="text-sm text-charbon/70">· +221 @member.Phone · @L["Role_" + member.Role]</span>
+        </li>
+    }
+</ul>
+
+<section class="mt-8" aria-labelledby="invite-title">
+    <h2 id="invite-title" class="text-lg font-semibold">@L["Team_InviteHeading"]</h2>
+    <p class="mt-1 text-sm">@L["Team_InviteIntro"]</p>
+    <form method="post" class="mt-4 space-y-4" novalidate>
+        <div>
+            <label class="sc-label" for="Invite_Phone">@L["SignIn_PhoneLabel"]</label>
+            <div class="mt-1 flex items-stretch">
+                <span class="inline-flex items-center rounded-l-lg border border-r-0 border-charbon/30 bg-sable px-3 font-semibold" aria-hidden="true">+221</span>
+                <input asp-for="Invite.Phone" type="tel" inputmode="numeric" placeholder="77 123 45 67" class="sc-input mt-0 rounded-l-none" required />
+            </div>
+            <span asp-validation-for="Invite.Phone" class="sc-error" role="alert"></span>
+        </div>
+        <div>
+            <label class="sc-label" asp-for="Invite.Role">@L["Team_RoleLabel"]</label>
+            <select asp-for="Invite.Role" class="sc-input">
+                <option value="@AccountRole.Reporter">@L["Role_Reporter"]</option>
+                <option value="@AccountRole.SiteManager">@L["Role_SiteManager"]</option>
+                <option value="@AccountRole.Manager">@L["Role_Manager"]</option>
+            </select>
+        </div>
+        <button type="submit" class="sc-btn">@L["Team_InviteSubmit"]</button>
+    </form>
+</section>

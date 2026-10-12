@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\SeneCare.Web\SeneCare.Web.csproj" />
+    <ProjectReference Include="..\SeneCare.Testing\SeneCare.Testing.csproj" />
   </ItemGroup>
 
   <ItemGroup>

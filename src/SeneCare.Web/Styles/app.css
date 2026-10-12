@@ -25,3 +25,30 @@
     @apply outline-2 outline-offset-2 outline-atlantique;
   }
 }
+
+/* Provisional form primitives for Phase 2 screens — replaced by the design system in Phase 3. */
+@layer components {
+  .sc-label {
+    @apply block text-sm font-semibold;
+  }
+
+  .sc-input {
+    @apply mt-1 block min-h-12 w-full rounded-lg border border-charbon/30 bg-white px-3 text-base;
+  }
+
+  .sc-btn {
+    @apply inline-flex min-h-12 w-full items-center justify-center rounded-lg bg-laterite px-5 font-semibold text-white;
+  }
+
+  .sc-btn-secondary {
+    @apply inline-flex min-h-12 items-center justify-center rounded-lg border border-atlantique px-5 font-semibold text-atlantique;
+  }
+
+  .sc-error {
+    @apply mt-2 text-sm font-medium text-laterite;
+  }
+
+  .sc-alert {
+    @apply mb-4 rounded-lg border-l-4 border-baobab bg-white px-4 py-3;
+  }
+}

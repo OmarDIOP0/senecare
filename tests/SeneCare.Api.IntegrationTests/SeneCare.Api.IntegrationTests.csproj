@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\SeneCare.Api\SeneCare.Api.csproj" />
+    <ProjectReference Include="..\SeneCare.Testing\SeneCare.Testing.csproj" />
   </ItemGroup>
 
   <ItemGroup>

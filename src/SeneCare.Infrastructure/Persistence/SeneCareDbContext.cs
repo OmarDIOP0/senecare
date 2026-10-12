@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using SeneCare.Application.Abstractions;
 using SeneCare.Domain.Accounts;
 using SeneCare.Domain.Billing;
 using SeneCare.Domain.Common;
@@ -11,16 +13,25 @@ using SeneCare.Domain.Platform;
 using SeneCare.Domain.Requests;
 using SeneCare.Domain.Technicians;
 using SeneCare.Domain.Users;
+using SeneCare.Infrastructure.Identity;
 using SeneCare.Infrastructure.Persistence.Converters;
 
 namespace SeneCare.Infrastructure.Persistence;
 
-public sealed class SeneCareDbContext(DbContextOptions<SeneCareDbContext> options) : DbContext(options)
+public sealed class SeneCareDbContext(DbContextOptions<SeneCareDbContext> options)
+    : IdentityUserContext<ApplicationUser, Guid>(options), IApplicationDbContext
 {
     public const string ServiceRequestNumberSequence = "service_request_number_seq";
     public const string InvoiceNumberSequence = "invoice_number_seq";
 
-    public DbSet<User> Users => Set<User>();
+    // « new »: the domain users hide Identity's DbSet<ApplicationUser> Users (still reachable as Set<ApplicationUser>()).
+    public new DbSet<User> Users => Set<User>();
+
+    public DbSet<OtpChallenge> OtpChallenges => Set<OtpChallenge>();
+
+    public DbSet<AccountInvitation> AccountInvitations => Set<AccountInvitation>();
+
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     public DbSet<CustomerAccount> CustomerAccounts => Set<CustomerAccount>();
 
@@ -69,17 +80,26 @@ public sealed class SeneCareDbContext(DbContextOptions<SeneCareDbContext> option
         configurationBuilder.Properties<string>().HaveMaxLength(500);
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        modelBuilder.HasSequence<long>(ServiceRequestNumberSequence);
-        modelBuilder.HasSequence<long>(InvoiceNumberSequence);
+        base.OnModelCreating(builder);
 
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(SeneCareDbContext).Assembly);
+        builder.HasSequence<long>(ServiceRequestNumberSequence);
+        builder.HasSequence<long>(InvoiceNumberSequence);
 
-        foreach (var entityType in modelBuilder.Model.GetEntityTypes()
-                     .Where(t => typeof(AggregateRoot).IsAssignableFrom(t.ClrType) && !t.IsOwned()))
+        builder.ApplyConfigurationsFromAssembly(typeof(SeneCareDbContext).Assembly);
+
+        foreach (var entityType in builder.Model.GetEntityTypes()
+                     .Where(t => typeof(Entity).IsAssignableFrom(t.ClrType) && !t.IsOwned()))
         {
-            modelBuilder.Entity(entityType.ClrType).Ignore(nameof(AggregateRoot.DomainEvents));
+            // Ids are created by the domain (GUID v7): a set key does not mean « already in the database »,
+            // so children added to a loaded aggregate (new member, appointment…) are inserted, not updated.
+            builder.Entity(entityType.ClrType).Property(nameof(Entity.Id)).ValueGeneratedNever();
+
+            if (typeof(AggregateRoot).IsAssignableFrom(entityType.ClrType))
+            {
+                builder.Entity(entityType.ClrType).Ignore(nameof(AggregateRoot.DomainEvents));
+            }
         }
     }
 }

@@ -1,0 +1,35 @@
+@model SeneCare.Application.Users.UserProfileDto
+@using Microsoft.AspNetCore.Authorization
+@using SeneCare.Infrastructure.Identity
+@inject IAuthorizationService Authorization
+@{
+    ViewData["Title"] = L["Account_Title"];
+    var canManageTeam = (await Authorization.AuthorizeAsync(User, Policies.OrganizationManager)).Succeeded;
+}
+
+<h1 class="text-2xl font-bold text-atlantique">@L["Account_Title"]</h1>
+
+<dl class="mt-4 space-y-2">
+    <div><dt class="text-sm text-charbon/70">@L["Account_Name"]</dt><dd class="font-semibold">@Model.FullName</dd></div>
+    <div><dt class="text-sm text-charbon/70">@L["Account_Phone"]</dt><dd class="font-semibold">+221 @Model.Phone</dd></div>
+</dl>
+
+<h2 class="mt-6 text-lg font-semibold">@L["Account_Memberships"]</h2>
+<ul class="mt-2 space-y-2">
+    @foreach (var membership in Model.Memberships)
+    {
+        <li class="rounded-lg border border-charbon/20 bg-white px-4 py-3">
+            <strong>@membership.AccountName</strong>
+            <span class="text-sm text-charbon/70">· @L["Kind_" + membership.Kind] · @L["Role_" + membership.Role]</span>
+        </li>
+    }
+</ul>
+
+@if (canManageTeam)
+{
+    <p class="mt-4"><a href="/entreprise/equipe" class="sc-btn-secondary">@L["Account_Team"]</a></p>
+}
+
+<form method="post" asp-controller="Auth" asp-action="SignOutUser" class="mt-8">
+    <button type="submit" class="sc-btn-secondary w-full">@L["Nav_SignOut"]</button>
+</form>

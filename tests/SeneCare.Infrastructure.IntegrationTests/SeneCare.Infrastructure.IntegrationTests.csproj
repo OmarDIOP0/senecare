@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\SeneCare.Infrastructure\SeneCare.Infrastructure.csproj" />
+    <ProjectReference Include="..\SeneCare.Testing\SeneCare.Testing.csproj" />
   </ItemGroup>
 
   <ItemGroup>

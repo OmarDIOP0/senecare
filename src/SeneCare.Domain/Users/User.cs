@@ -67,6 +67,12 @@ public sealed class User : AggregateRoot
 
     public IReadOnlyCollection<UserConsent> Consents => _consents.AsReadOnly();
 
+    /// <summary>Name given and personal-data consent active (law 2008-12).</summary>
+    public bool IsProfileComplete => FullName is not null && HasActiveConsent(ConsentType.PersonalData);
+
+    /// <summary>SENECARE staff (technician, admin roles), as opposed to customers.</summary>
+    public bool IsStaff => _roles.Exists(r => r.Role != PlatformRole.Customer);
+
     public static User Register(PhoneNumber phoneNumber, DateTimeOffset now, Guid? id = null)
     {
         ArgumentNullException.ThrowIfNull(phoneNumber);

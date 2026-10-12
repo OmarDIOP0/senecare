@@ -1,0 +1,35 @@
+@model SignInViewModel
+@using SeneCare.Domain.Users
+@{
+    ViewData["Title"] = L["SignIn_Title"];
+}
+
+<h1 class="text-2xl font-bold text-atlantique">@L["SignIn_Heading"]</h1>
+<p class="mt-2">@L["SignIn_Intro"]</p>
+
+<form method="post" asp-action="SignIn" class="mt-6 space-y-5" novalidate>
+    <div>
+        <label class="sc-label" for="Phone">@L["SignIn_PhoneLabel"]</label>
+        <div class="mt-1 flex items-stretch">
+            <span class="inline-flex items-center rounded-l-lg border border-r-0 border-charbon/30 bg-sable px-3 font-semibold" aria-hidden="true">+221</span>
+            <input asp-for="Phone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="77 123 45 67"
+                   class="sc-input mt-0 rounded-l-none" aria-describedby="phone-hint phone-error" required />
+        </div>
+        <p id="phone-hint" class="mt-1 text-sm text-charbon/70">@L["SignIn_PhoneHint"]</p>
+        <span id="phone-error" asp-validation-for="Phone" class="sc-error" role="alert"></span>
+    </div>
+
+    <fieldset>
+        <legend class="sc-label">@L["SignIn_Channel"]</legend>
+        <div class="mt-2 flex gap-3">
+            <label class="flex min-h-12 flex-1 items-center gap-2 rounded-lg border border-charbon/30 bg-white px-3">
+                <input type="radio" asp-for="Channel" value="@OtpChannel.Sms" /> @L["SignIn_ChannelSms"]
+            </label>
+            <label class="flex min-h-12 flex-1 items-center gap-2 rounded-lg border border-charbon/30 bg-white px-3">
+                <input type="radio" asp-for="Channel" value="@OtpChannel.WhatsApp" /> @L["SignIn_ChannelWhatsApp"]
+            </label>
+        </div>
+    </fieldset>
+
+    <button type="submit" class="sc-btn">@L["SignIn_Submit"]</button>
+</form>

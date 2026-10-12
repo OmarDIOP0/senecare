@@ -1,9 +1,11 @@
 using System.Globalization;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Microsoft.Extensions.WebEncoders;
 using SeneCare.Application;
 using SeneCare.Infrastructure;
+using SeneCare.Infrastructure.Persistence;
 using SeneCare.Web.Localization;
 using Serilog;
 
@@ -22,7 +24,7 @@ try
 
     builder.Services
         .AddApplication()
-        .AddInfrastructure();
+        .AddInfrastructure(builder.Configuration);
 
     // Emit French accents as-is (é, à…) instead of &#xE9; entities: lighter, readable pages.
     builder.Services.Configure<WebEncoderOptions>(options =>
@@ -35,9 +37,10 @@ try
         .AddDataAnnotationsLocalization(options =>
             options.DataAnnotationLocalizerProvider = (_, factory) => factory.Create(typeof(SharedResource)));
 
-    builder.Services.AddHealthChecks();
 
     var app = builder.Build();
+
+    await app.Services.InitializeDatabaseAsync(app.Configuration);
 
     if (!app.Environment.IsDevelopment())
     {
@@ -53,7 +56,9 @@ try
     app.UseAuthorization();
 
     app.MapStaticAssets();
-    app.MapHealthChecks("/health");
+    // Liveness (process up) and readiness (database reachable) probes.
+    app.MapHealthChecks("/health", new HealthCheckOptions { Predicate = check => !check.Tags.Contains(SeneCare.Infrastructure.DependencyInjection.ReadinessTag) });
+    app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains(SeneCare.Infrastructure.DependencyInjection.ReadinessTag) });
 
     app.MapControllerRoute(
             name: "areas",

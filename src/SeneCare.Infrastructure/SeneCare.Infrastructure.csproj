@@ -1,6 +1,29 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <!-- ASP.NET Core shared framework: configuration, health checks now; Identity in Phase 2. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- PostgreSQL provider for EF Core. -->
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <!-- snake_case tables/columns: PostgreSQL convention, avoids quoting identifiers in SQL. -->
+    <PackageReference Include="EFCore.NamingConventions" />
+    <!-- Readiness probe that checks the database connection. -->
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
+    <!-- Migrations tooling (design time only, not shipped). -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Persistence\Seed\senegal-locations.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SeneCare.Application\SeneCare.Application.csproj" />
   </ItemGroup>
 

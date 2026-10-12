@@ -1,0 +1,194 @@
+{
+  "_comment": "Référentiel initial : 14 régions, 46 départements, communes des principales villes. Une commune sans quartier listé reçoit un quartier portant son nom. Données à compléter et vérifier par l'admin (Phase 9).",
+  "regions": [
+    {
+      "name": "Dakar",
+      "departments": [
+        {
+          "name": "Dakar",
+          "communes": [
+            { "name": "Dakar-Plateau" },
+            { "name": "Médina" },
+            { "name": "Gueule Tapée-Fass-Colobane" },
+            { "name": "Fann-Point E-Amitié", "neighborhoods": [ "Fann Résidence", "Point E", "Amitié" ] },
+            { "name": "Gorée" },
+            { "name": "Biscuiterie" },
+            { "name": "Dieuppeul-Derklé" },
+            { "name": "HLM" },
+            { "name": "Grand Dakar" },
+            { "name": "Sicap-Liberté" },
+            { "name": "Hann Bel-Air", "neighborhoods": [ "Hann", "Bel-Air" ] },
+            { "name": "Mermoz-Sacré-Cœur", "neighborhoods": [ "Mermoz", "Sacré-Cœur", "Pyrotechnie" ] },
+            { "name": "Ouakam", "neighborhoods": [ "Ouakam", "Cité Avion", "Mamelles" ] },
+            { "name": "Ngor", "neighborhoods": [ "Ngor", "Almadies" ] },
+            { "name": "Yoff" },
+            { "name": "Grand Yoff" },
+            { "name": "Patte d'Oie" },
+            { "name": "Parcelles Assainies" },
+            { "name": "Cambérène" }
+          ]
+        },
+        {
+          "name": "Guédiawaye",
+          "communes": [
+            { "name": "Golf Sud" },
+            { "name": "Médina Gounass" },
+            { "name": "Ndiarème Limamoulaye" },
+            { "name": "Sam Notaire" },
+            { "name": "Wakhinane Nimzatt" }
+          ]
+        },
+        {
+          "name": "Pikine",
+          "communes": [
+            { "name": "Pikine Est" },
+            { "name": "Pikine Nord" },
+            { "name": "Pikine Ouest" },
+            { "name": "Dalifort" },
+            { "name": "Djiddah Thiaroye Kao" },
+            { "name": "Guinaw Rail Nord" },
+            { "name": "Guinaw Rail Sud" },
+            { "name": "Thiaroye Gare" },
+            { "name": "Thiaroye-sur-Mer" },
+            { "name": "Diamaguène Sicap Mbao" },
+            { "name": "Mbao" },
+            { "name": "Tivaouane Diacksao" }
+          ]
+        },
+        {
+          "name": "Keur Massar",
+          "communes": [
+            { "name": "Keur Massar Nord" },
+            { "name": "Keur Massar Sud" },
+            { "name": "Malika" },
+            { "name": "Yeumbeul Nord" },
+            { "name": "Yeumbeul Sud" },
+            { "name": "Jaxaay-Parcelles-Niakoul Rap" }
+          ]
+        },
+        {
+          "name": "Rufisque",
+          "communes": [
+            { "name": "Rufisque Est" },
+            { "name": "Rufisque Nord" },
+            { "name": "Rufisque Ouest" },
+            { "name": "Bargny" },
+            { "name": "Diamniadio" },
+            { "name": "Sébikotane" },
+            { "name": "Sendou" },
+            { "name": "Bambilor" },
+            { "name": "Sangalkam" },
+            { "name": "Yène" },
+            { "name": "Tivaouane Peulh-Niaga" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Thiès",
+      "departments": [
+        { "name": "Thiès", "communes": [ { "name": "Thiès Est" }, { "name": "Thiès Nord" }, { "name": "Thiès Ouest" }, { "name": "Pout" }, { "name": "Khombole" } ] },
+        { "name": "Mbour", "communes": [ { "name": "Mbour" }, { "name": "Saly Portudal" }, { "name": "Joal-Fadiouth" }, { "name": "Ngaparou" }, { "name": "Somone" }, { "name": "Popenguine-Ndayane" }, { "name": "Nguékhokh" }, { "name": "Thiadiaye" } ] },
+        { "name": "Tivaouane", "communes": [ { "name": "Tivaouane" }, { "name": "Mboro" }, { "name": "Mékhé" } ] }
+      ]
+    },
+    {
+      "name": "Diourbel",
+      "departments": [
+        { "name": "Diourbel", "communes": [ { "name": "Diourbel" } ] },
+        { "name": "Bambey", "communes": [ { "name": "Bambey" } ] },
+        { "name": "Mbacké", "communes": [ { "name": "Touba Mosquée" }, { "name": "Mbacké" } ] }
+      ]
+    },
+    {
+      "name": "Saint-Louis",
+      "departments": [
+        { "name": "Saint-Louis", "communes": [ { "name": "Saint-Louis" }, { "name": "Mpal" } ] },
+        { "name": "Dagana", "communes": [ { "name": "Dagana" }, { "name": "Richard-Toll" } ] },
+        { "name": "Podor", "communes": [ { "name": "Podor" } ] }
+      ]
+    },
+    {
+      "name": "Kaolack",
+      "departments": [
+        { "name": "Kaolack", "communes": [ { "name": "Kaolack" }, { "name": "Kahone" }, { "name": "Ndoffane" } ] },
+        { "name": "Guinguinéo", "communes": [ { "name": "Guinguinéo" } ] },
+        { "name": "Nioro du Rip", "communes": [ { "name": "Nioro du Rip" } ] }
+      ]
+    },
+    {
+      "name": "Ziguinchor",
+      "departments": [
+        { "name": "Ziguinchor", "communes": [ { "name": "Ziguinchor" } ] },
+        { "name": "Bignona", "communes": [ { "name": "Bignona" } ] },
+        { "name": "Oussouye", "communes": [ { "name": "Oussouye" } ] }
+      ]
+    },
+    {
+      "name": "Fatick",
+      "departments": [
+        { "name": "Fatick", "communes": [ { "name": "Fatick" } ] },
+        { "name": "Foundiougne", "communes": [ { "name": "Foundiougne" } ] },
+        { "name": "Gossas", "communes": [ { "name": "Gossas" } ] }
+      ]
+    },
+    {
+      "name": "Kaffrine",
+      "departments": [
+        { "name": "Kaffrine", "communes": [ { "name": "Kaffrine" } ] },
+        { "name": "Birkelane", "communes": [ { "name": "Birkelane" } ] },
+        { "name": "Koungheul", "communes": [ { "name": "Koungheul" } ] },
+        { "name": "Malem-Hodar", "communes": [ { "name": "Malem-Hodar" } ] }
+      ]
+    },
+    {
+      "name": "Kédougou",
+      "departments": [
+        { "name": "Kédougou", "communes": [ { "name": "Kédougou" } ] },
+        { "name": "Salémata", "communes": [ { "name": "Salémata" } ] },
+        { "name": "Saraya", "communes": [ { "name": "Saraya" } ] }
+      ]
+    },
+    {
+      "name": "Kolda",
+      "departments": [
+        { "name": "Kolda", "communes": [ { "name": "Kolda" } ] },
+        { "name": "Médina Yoro Foulah", "communes": [ { "name": "Médina Yoro Foulah" } ] },
+        { "name": "Vélingara", "communes": [ { "name": "Vélingara" } ] }
+      ]
+    },
+    {
+      "name": "Louga",
+      "departments": [
+        { "name": "Louga", "communes": [ { "name": "Louga" } ] },
+        { "name": "Kébémer", "communes": [ { "name": "Kébémer" } ] },
+        { "name": "Linguère", "communes": [ { "name": "Linguère" } ] }
+      ]
+    },
+    {
+      "name": "Matam",
+      "departments": [
+        { "name": "Matam", "communes": [ { "name": "Matam" }, { "name": "Ourossogui" } ] },
+        { "name": "Kanel", "communes": [ { "name": "Kanel" } ] },
+        { "name": "Ranérou-Ferlo", "communes": [ { "name": "Ranérou" } ] }
+      ]
+    },
+    {
+      "name": "Sédhiou",
+      "departments": [
+        { "name": "Sédhiou", "communes": [ { "name": "Sédhiou" } ] },
+        { "name": "Bounkiling", "communes": [ { "name": "Bounkiling" } ] },
+        { "name": "Goudomp", "communes": [ { "name": "Goudomp" } ] }
+      ]
+    },
+    {
+      "name": "Tambacounda",
+      "departments": [
+        { "name": "Tambacounda", "communes": [ { "name": "Tambacounda" } ] },
+        { "name": "Bakel", "communes": [ { "name": "Bakel" } ] },
+        { "name": "Goudiry", "communes": [ { "name": "Goudiry" } ] },
+        { "name": "Koumpentoum", "communes": [ { "name": "Koumpentoum" } ] }
+      ]
+    }
+  ]
+}

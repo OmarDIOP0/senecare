@@ -1,4 +1,5 @@
 using System.Globalization;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using SeneCare.Application;
 using SeneCare.Infrastructure;
 using Serilog;
@@ -18,10 +19,9 @@ try
 
     builder.Services
         .AddApplication()
-        .AddInfrastructure();
+        .AddInfrastructure(builder.Configuration);
 
     builder.Services.AddOpenApi("v1");
-    builder.Services.AddHealthChecks();
 
     var app = builder.Build();
 
@@ -33,7 +33,9 @@ try
     app.UseSerilogRequestLogging();
     app.UseHttpsRedirection();
 
-    app.MapHealthChecks("/health");
+    // Liveness (process up) and readiness (database reachable) probes.
+    app.MapHealthChecks("/health", new HealthCheckOptions { Predicate = check => !check.Tags.Contains(SeneCare.Infrastructure.DependencyInjection.ReadinessTag) });
+    app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains(SeneCare.Infrastructure.DependencyInjection.ReadinessTag) });
 
     // Every public endpoint lives under /api/v1 so a future v2 can coexist with the mobile app.
     var v1 = app.MapGroup("/api/v1");

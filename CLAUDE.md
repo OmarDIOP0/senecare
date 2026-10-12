@@ -76,6 +76,7 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
     → prépare la future app mobile native (Flutter/MAUI)
   - `tests/` : xUnit, tests unitaires Domain/Application, tests d'intégration
     avec Testcontainers PostgreSQL, Playwright pour les parcours clés
+    (sans Docker pour l'instant : tests d'intégration sur le PostgreSQL local via `SENECARE_TEST_DB`)
 - Pourquoi MVC + HTMX et pas un SPA lourd : rendu serveur rapide sur réseau faible,
   peu de JS, SEO pour les pages publiques. L'API sert la future app native.
 - Temps réel : SignalR (statut d'intervention, position technicien).

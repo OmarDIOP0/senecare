@@ -1,9 +1,8 @@
 using System.Net;
-using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace SeneCare.Web.IntegrationTests;
 
-public class HomePageTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+public class HomePageTests(SeneCareWebFactory factory) : IClassFixture<SeneCareWebFactory>
 {
     [Fact]
     public async Task Home_page_renders_in_french_by_default()

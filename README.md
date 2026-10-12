@@ -9,7 +9,7 @@ Le contexte produit et technique complet est dans [CLAUDE.md](CLAUDE.md).
 
 - [.NET SDK 10](https://dotnet.microsoft.com/download) (version figée dans `global.json`)
 - [Node.js](https://nodejs.org) 20+ (compilation Tailwind CSS)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (PostgreSQL, à partir de la Phase 1)
+- PostgreSQL 16+ installé localement (Docker optionnel : `docker compose up -d`)
 
 ## Structure
 
@@ -23,6 +23,9 @@ src/
 tests/
   SeneCare.Domain.Tests, SeneCare.Application.Tests
   SeneCare.Web.IntegrationTests, SeneCare.Api.IntegrationTests
+  SeneCare.Infrastructure.IntegrationTests (PostgreSQL réel)
+docs/
+  domain-model.md          modèle de domaine (diagrammes, règles métier)
 ```
 
 ## Démarrer
@@ -62,10 +65,45 @@ dotnet test SeneCare.slnx
 
 ### Base de données (PostgreSQL)
 
-```bash
-cp .env.example .env   # puis changer POSTGRES_PASSWORD
-docker compose up -d
+Une seule fois, dans `psql` (ou pgAdmin) connecté en `postgres` :
+
+```sql
+CREATE ROLE senecare LOGIN PASSWORD 'votre-mot-de-passe' CREATEDB;
+CREATE DATABASE senecare OWNER senecare;
 ```
+
+Puis donner la connexion au site (stockée hors du dépôt) :
+
+```bash
+dotnet user-secrets --project src/SeneCare.Web set "ConnectionStrings:Default" "Host=localhost;Database=senecare;Username=senecare;Password=votre-mot-de-passe"
+```
+
+En développement, le site applique les migrations et charge les données de référence
+(régions, départements, communes, quartiers, offres, paramètres) au démarrage
+(`Database:MigrateOnStartup` / `Database:SeedOnStartup`). Santé de la base : `/health/ready`.
+
+Migrations EF Core (outil local `dotnet-ef`, restauré par `dotnet tool restore`) :
+
+```bash
+dotnet ef migrations add NomDeLaMigration --project src/SeneCare.Infrastructure --startup-project src/SeneCare.Infrastructure --output-dir Persistence/Migrations
+```
+
+```bash
+dotnet ef database update --project src/SeneCare.Infrastructure --startup-project src/SeneCare.Infrastructure --connection "Host=localhost;Database=senecare;Username=senecare;Password=..."
+```
+
+### Tests de base de données
+
+Les tests `SeneCare.Infrastructure.IntegrationTests` créent une base temporaire, la migrent,
+la remplissent puis la suppriment. Ils sont ignorés si `SENECARE_TEST_DB` n'est pas défini
+(compte autorisé à créer des bases, par exemple le rôle `senecare` ci-dessus) :
+
+```powershell
+$env:SENECARE_TEST_DB = "Host=localhost;Database=postgres;Username=senecare;Password=..."
+dotnet test SeneCare.slnx
+```
+
+Avec Docker (optionnel) : `cp .env.example .env` puis `docker compose up -d`.
 
 ## Configuration et secrets
 

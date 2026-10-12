@@ -396,3 +396,13 @@ dotnet_naming_style.s_camelcase.required_suffix =
 dotnet_naming_style.s_camelcase.word_separator = 
 dotnet_naming_style.s_camelcase.capitalization = camel_case
 
+
+#### SeneCare analyzer adjustments ####
+[*.cs]
+# CA1716: names like "Property" clash with VB.NET keywords only; this C#-only codebase is not consumed from VB.
+dotnet_diagnostic.CA1716.severity = none
+
+# EF Core migrations are generated code: analyzers don't apply.
+[src/SeneCare.Infrastructure/Persistence/Migrations/*.cs]
+generated_code = true
+

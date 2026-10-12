@@ -2,53 +2,268 @@
 
 @source "../Views";
 @source "../Areas";
+@source "../TagHelpers";
+@source "../wwwroot/js";
 
-/* Provisional tokens — the full design system (palette, typography, dark mode) comes in Phase 3. */
+/* Dark mode follows the phone setting, or [data-theme] when the user chooses. */
+/* Self-hosted Google Fonts (latin subset). swap: text shows immediately with the fallback font. */
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/atkinson-hyperlegible-latin-700-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/bricolage-grotesque-latin-700-normal.woff2") format("woff2");
+}
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* ===========================================================================
+   SENECARE design tokens — « Made in Sénégal »
+   Source of truth = CSS variables below (light + dark). Tailwind utilities map onto them,
+   e.g. bg-laterite, text-charbon, border-ligne. Names are ASCII for Tailwind
+   (--laterite = « latérite » in CLAUDE.md).
+   =========================================================================== */
+:root {
+  /* Latérite — red/ochre earth: main accent, primary actions. AA on sable and with white text. */
+  --laterite: #a84b24;
+  --laterite-fonce: #8a3b1b;
+  --laterite-clair: #f3dccd;
+  /* Atlantique — deep ocean blue: trust, navigation, links. */
+  --atlantique: #12355b;
+  --atlantique-clair: #dbe6f1;
+  /* Baobab — deep green: success, environment, neighborhood program. */
+  --baobab: #2e5e3e;
+  --baobab-clair: #dcebdf;
+  /* Indigo teinture — dyed-cloth indigo: secondary information, scheduled items. */
+  --indigo: #2b2f6b;
+  --indigo-clair: #e1e2f2;
+  /* Soleil — alerts and moderate urgency (text on it stays charbon). */
+  --soleil: #e8a317;
+  --soleil-clair: #fbedc8;
+  /* Neutrals: sable replaces pure white; charbon is the text colour. */
+  --sable: #f7f1e6;
+  --surface: #fffcf6;
+  --ligne: #e3d7c3;
+  --charbon: #1f1b16;
+  --charbon-doux: #5b5248;
+  /* Text on filled accent colours (latérite, baobab, atlantique buttons and badges). */
+  --sur-accent: #ffffff;
+
+  --ombre: 0 1px 0 rgb(31 27 22 / 0.06), 0 2px 6px rgb(31 27 22 / 0.06);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) {
+    --laterite: #e0784a;
+    --laterite-fonce: #f09a70;
+    --laterite-clair: #4a2617;
+    --atlantique: #8fb4dd;
+    --atlantique-clair: #1c2b3c;
+    --baobab: #7cbf8f;
+    --baobab-clair: #1d3324;
+    --indigo: #a9adf0;
+    --indigo-clair: #262850;
+    --soleil: #f2b83b;
+    --soleil-clair: #43340f;
+    --sable: #15120e;
+    --surface: #211c16;
+    --ligne: #3a3229;
+    --charbon: #f3ebdd;
+    --charbon-doux: #c2b6a5;
+  --sur-accent: #15120e;
+    --sur-accent: #15120e;
+    --ombre: 0 1px 0 rgb(0 0 0 / 0.4);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme=dark] {
+  --laterite: #e0784a;
+  --laterite-fonce: #f09a70;
+  --laterite-clair: #4a2617;
+  --atlantique: #8fb4dd;
+  --atlantique-clair: #1c2b3c;
+  --baobab: #7cbf8f;
+  --baobab-clair: #1d3324;
+  --indigo: #a9adf0;
+  --indigo-clair: #262850;
+  --soleil: #f2b83b;
+  --soleil-clair: #43340f;
+  --sable: #15120e;
+  --surface: #211c16;
+  --ligne: #3a3229;
+  --charbon: #f3ebdd;
+  --charbon-doux: #c2b6a5;
+  --ombre: 0 1px 0 rgb(0 0 0 / 0.4);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-laterite: var(--laterite);
+  --color-laterite-fonce: var(--laterite-fonce);
+  --color-laterite-clair: var(--laterite-clair);
+  --color-atlantique: var(--atlantique);
+  --color-atlantique-clair: var(--atlantique-clair);
+  --color-baobab: var(--baobab);
+  --color-baobab-clair: var(--baobab-clair);
+  --color-indigo: var(--indigo);
+  --color-indigo-clair: var(--indigo-clair);
+  --color-soleil: var(--soleil);
+  --color-soleil-clair: var(--soleil-clair);
+  --color-sable: var(--sable);
+  --color-surface: var(--surface);
+  --color-ligne: var(--ligne);
+  --color-charbon: var(--charbon);
+  --color-charbon-doux: var(--charbon-doux);
+  --color-sur-accent: var(--sur-accent);
+  --shadow-carte: var(--ombre);
+}
+
 @theme {
-  --color-laterite: #b5512a;
-  --color-atlantique: #12355b;
-  --color-baobab: #2f5d3a;
-  --color-sable: #f6efe4;
-  --color-charbon: #22201d;
+  /* Display with character for titles, hyper-legible sans for text (low-end screens, sunlight). */
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --font-sans: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  /* Touch targets: 48px minimum everywhere. */
+  --spacing-cible: 3rem;
+
+  --ease-doux: cubic-bezier(0.2, 0, 0, 1);
+  --animate-shimmer: shimmer 1.4s linear infinite;
+  --animate-monte: monte 200ms var(--ease-doux);
+
+  @keyframes shimmer {
+    from { background-position: 150% 0; }
+    to { background-position: -50% 0; }
+  }
+
+  @keyframes monte {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
 }
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
-    @apply bg-sable text-charbon antialiased;
+    @apply bg-sable font-sans text-base leading-relaxed text-charbon antialiased;
+  }
+
+  h1, h2, h3 {
+    @apply font-display leading-tight tracking-tight text-balance;
   }
 
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-atlantique;
+    @apply outline-3 outline-offset-2 outline-atlantique;
+  }
+
+  a {
+    @apply text-atlantique underline-offset-4;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 1ms !important;
+    }
   }
 }
 
-/* Provisional form primitives for Phase 2 screens — replaced by the design system in Phase 3. */
+@utility sc-btn {
+  @apply inline-flex min-h-cible items-center justify-center gap-2 rounded-md px-5 font-bold no-underline
+    transition-[background-color,transform] duration-150 ease-doux active:scale-[0.98]
+    disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+@utility sc-btn-secondaire {
+  @apply sc-btn border-2 border-atlantique bg-transparent text-atlantique hover:bg-atlantique-clair;
+}
+
 @layer components {
-  .sc-label {
-    @apply block text-sm font-semibold;
-  }
+  /* ---- Typography ------------------------------------------------------- */
+  .sc-titre { @apply font-display text-3xl font-bold text-charbon sm:text-4xl; }
+  .sc-sous-titre { @apply font-display text-xl font-semibold text-charbon; }
+  .sc-surtitre { @apply text-xs font-bold tracking-[0.12em] text-laterite uppercase; }
+  .sc-texte-doux { @apply text-sm text-charbon-doux; }
 
+  /* ---- Buttons (min 48px): sc-btn and sc-btn-secondaire are @utility (below) so they can be composed. */
+  .sc-btn-primaire { @apply sc-btn w-full bg-laterite text-sur-accent hover:bg-laterite-fonce sm:w-auto; }
+  .sc-btn-discret { @apply sc-btn bg-transparent px-3 text-atlantique underline hover:bg-atlantique-clair; }
+  .sc-btn-danger { @apply sc-btn border-2 border-laterite bg-transparent text-laterite hover:bg-laterite-clair; }
+  .sc-btn-whatsapp { @apply sc-btn bg-baobab text-sur-accent hover:opacity-90; }
+  .sc-btn-icone { @apply inline-flex size-cible items-center justify-center rounded-full text-charbon hover:bg-ligne/60; }
+
+  /* Legacy names used by Phase 2 screens. */
+  .sc-btn-secondary { @apply sc-btn-secondaire; }
+
+  /* ---- Forms ------------------------------------------------------------ */
+  .sc-label { @apply block text-sm font-bold text-charbon; }
+  .sc-aide { @apply mt-1 text-sm text-charbon-doux; }
   .sc-input {
-    @apply mt-1 block min-h-12 w-full rounded-lg border border-charbon/30 bg-white px-3 text-base;
+    @apply mt-1 block min-h-cible w-full rounded-md border-2 border-ligne bg-surface px-3 text-base text-charbon
+      placeholder:text-charbon-doux/70 focus:border-atlantique focus:outline-none
+      aria-invalid:border-laterite;
+  }
+  .sc-error { @apply mt-2 flex items-center gap-1 text-sm font-bold text-laterite empty:hidden; }
+  .sc-choix {
+    @apply flex min-h-cible cursor-pointer items-center gap-3 rounded-md border-2 border-ligne bg-surface px-3 py-2
+      has-checked:border-laterite has-checked:bg-laterite-clair/60 has-focus-visible:outline-3 has-focus-visible:outline-atlantique;
+  }
+  .sc-choix input { @apply size-5 accent-laterite; }
+
+  /* ---- Surfaces ---------------------------------------------------------- */
+  .sc-carte { @apply rounded-lg border border-ligne bg-surface p-4 shadow-carte; }
+  .sc-alert { @apply mb-4 rounded-md border-l-4 border-baobab bg-baobab-clair px-4 py-3 text-charbon; }
+
+  /* ---- Badges ------------------------------------------------------------ */
+  .sc-badge { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold whitespace-nowrap; }
+
+  /* ---- Skeleton (instead of spinners) ----------------------------------- */
+  .sc-skeleton {
+    @apply animate-shimmer rounded-md;
+    background: linear-gradient(90deg, var(--ligne) 0%, var(--surface) 50%, var(--ligne) 100%) 0 0 / 200% 100%;
   }
 
-  .sc-btn {
-    @apply inline-flex min-h-12 w-full items-center justify-center rounded-lg bg-laterite px-5 font-semibold text-white;
+  /* ---- Motifs: SVG tiles used as masks, so they take any token colour ---- */
+  .sc-motif {
+    mask-repeat: repeat;
+    -webkit-mask-repeat: repeat;
+    background-color: currentColor;
   }
+  .sc-motif-wax { mask-image: url("/img/motifs/wax.svg"); -webkit-mask-image: url("/img/motifs/wax.svg"); }
+  .sc-motif-manjak { mask-image: url("/img/motifs/manjak.svg"); -webkit-mask-image: url("/img/motifs/manjak.svg"); }
+  .sc-motif-bogolan { mask-image: url("/img/motifs/bogolan.svg"); -webkit-mask-image: url("/img/motifs/bogolan.svg"); }
 
-  .sc-btn-secondary {
-    @apply inline-flex min-h-12 items-center justify-center rounded-lg border border-atlantique px-5 font-semibold text-atlantique;
+  /* ---- Bottom sheet (native <dialog>) ----------------------------------- */
+  .sc-sheet {
+    @apply m-0 mt-auto max-h-[85dvh] w-full max-w-none rounded-t-xl bg-surface p-0 text-charbon
+      open:animate-monte sm:m-auto sm:max-w-lg sm:rounded-xl;
   }
-
-  .sc-error {
-    @apply mt-2 text-sm font-medium text-laterite;
-  }
-
-  .sc-alert {
-    @apply mb-4 rounded-lg border-l-4 border-baobab bg-white px-4 py-3;
-  }
+  .sc-sheet::backdrop { background: rgb(21 18 14 / 0.55); }
 }

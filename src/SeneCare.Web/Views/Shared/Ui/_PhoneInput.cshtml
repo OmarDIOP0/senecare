@@ -1,0 +1,16 @@
+@model PhoneInputModel
+@{
+    var id = Model.Name.Replace('.', '_');
+}
+<div>
+    <label class="sc-label" for="@id">@Model.Label</label>
+    <div class="mt-1 flex items-stretch">
+        <span class="inline-flex items-center rounded-l-md border-2 border-r-0 border-ligne bg-sable px-3 font-bold text-charbon" aria-hidden="true">+221</span>
+        <input id="@id" name="@Model.Name" value="@Model.Value" type="tel" inputmode="numeric" autocomplete="tel-national"
+               placeholder="77 123 45 67" maxlength="16" data-phone
+               class="sc-input mt-0 rounded-l-none tracking-wide"
+               aria-invalid="@(Model.Error is null ? "false" : "true")" aria-describedby="@id-aide @id-erreur" />
+    </div>
+    <p id="@id-aide" class="sc-aide">@(Model.Hint ?? L["SignIn_PhoneHint"])</p>
+    <p id="@id-erreur" class="sc-error" role="alert">@Model.Error</p>
+</div>

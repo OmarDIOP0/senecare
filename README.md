@@ -57,6 +57,21 @@ cd src/SeneCare.Web
 npm run css:watch
 ```
 
+### Design system
+
+Guide vivant : http://localhost:5298/design (développement uniquement).
+
+- Tokens (couleurs clair/sombre, typo, rayons) : `src/SeneCare.Web/Styles/app.css`.
+- Composants : tag helpers `<sc-icon>`, `<sc-amount>`, `<sc-status>`, `<sc-urgency>`, `<sc-sheet>`
+  et partials `Views/Shared/Ui/_*.cshtml` (carte d'intervention, timeline, uploader, sélecteur de quartier…).
+- Icônes Lucide, polices et HTMX sont servis par le site (aucun CDN). Après avoir ajouté une icône
+  dans `Styles/icons.json` :
+
+```bash
+cd src/SeneCare.Web
+npm run assets:build
+```
+
 ### Tests
 
 ```bash

@@ -1,0 +1,7 @@
+@* Toast region. Server messages come from TempData; scripts call scToast(text, kind). *@
+<div id="sc-toasts" class="pointer-events-none fixed inset-x-0 bottom-24 z-50 flex flex-col items-center gap-2 px-4 lg:bottom-6" aria-live="polite">
+    @if (TempData["flash.toast"] is string toast)
+    {
+        <template data-toast="succes">@toast</template>
+    }
+</div>

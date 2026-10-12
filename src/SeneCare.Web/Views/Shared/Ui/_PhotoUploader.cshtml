@@ -1,0 +1,15 @@
+@model PhotoUploaderModel
+@{
+    var id = Model.Name.Replace('.', '_');
+}
+<div data-uploader data-max="@Model.MaxPhotos" data-max-bytes="307200"
+     data-working-text="@L["Uploader_Working"]" data-remove-text="@L["Uploader_Remove"]" data-empty-text="@L["Uploader_Hint", Model.MaxPhotos]">
+    <span class="sc-label" id="@id-label">@Model.Label</span>
+    <ul class="mt-2 grid grid-cols-3 gap-2 empty:hidden sm:grid-cols-4" data-previews aria-labelledby="@id-label"></ul>
+    <label class="mt-2 flex min-h-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border-2 border-dashed border-laterite/60 bg-laterite-clair/40 px-3 py-4 text-center font-bold text-laterite has-focus-visible:outline-3 has-focus-visible:outline-atlantique">
+        <sc-icon name="camera" class="size-7" />
+        <span>@L["Uploader_Add"]</span>
+        <input id="@id" name="@Model.Name" type="file" accept="image/*" multiple class="sr-only" data-uploader-input aria-describedby="@id-statut" />
+    </label>
+    <p id="@id-statut" class="sc-aide" data-uploader-status aria-live="polite">@L["Uploader_Hint", Model.MaxPhotos]</p>
+</div>

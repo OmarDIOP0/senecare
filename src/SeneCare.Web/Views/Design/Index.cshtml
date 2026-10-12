@@ -1,0 +1,203 @@
+@* Development-only style guide (/design). Sample content is illustrative; numbers are fictitious. *@
+@{
+    ViewData["Title"] = "Design system";
+    ViewData["Wide"] = true;
+    var now = DateTimeOffset.UtcNow;
+    var colors = new (string Token, string Css, string Role)[]
+    {
+        ("--laterite", "bg-laterite", "Accent, actions principales"),
+        ("--atlantique", "bg-atlantique", "Confiance, navigation, liens"),
+        ("--baobab", "bg-baobab", "Succès, environnement, quartiers"),
+        ("--indigo", "bg-indigo", "Information, planifié"),
+        ("--soleil", "bg-soleil", "Alerte, urgence modérée"),
+        ("--charbon", "bg-charbon", "Texte"),
+        ("--sable", "bg-sable", "Fond (remplace le blanc)"),
+        ("--surface", "bg-surface", "Cartes, champs"),
+        ("--ligne", "bg-ligne", "Bordures"),
+    };
+    var cards = new[]
+    {
+        new InterventionCardModel("SC-2026-000142", ServiceDomain.Plumbing, "Fuite sous l'évier de la cuisine", RequestStatus.OnTheWay, Urgency.High, "#", now.AddMinutes(25), "Moussa Diallo", "+221770000000"),
+        new InterventionCardModel("SC-2026-000139", ServiceDomain.Waterproofing, "Infiltration sur la dalle de la terrasse", RequestStatus.AppointmentProposed, Urgency.Normal, "#"),
+        new InterventionCardModel("SC-2026-000131", ServiceDomain.Electricity, "Coupure dans la chambre, le disjoncteur saute", RequestStatus.ValidatedByCustomer, Urgency.Critical, "#", now.AddDays(-6), "Awa Sarr"),
+    };
+    var timeline = new List<TimelineStep>
+    {
+        new("Signalement reçu", TimelineState.Done, now.AddHours(-20)),
+        new("Analysé par notre équipe", TimelineState.Done, now.AddHours(-18), "Fuite sur le flexible d'arrivée d'eau."),
+        new("Rendez-vous confirmé", TimelineState.Done, now.AddHours(-17)),
+        new("Technicien en route", TimelineState.Current, now.AddMinutes(-10), "Moussa arrive dans 25 min environ."),
+        new("Intervention", TimelineState.Upcoming),
+        new("Validation de votre part", TimelineState.Upcoming),
+    };
+    var empties = new[]
+    {
+        new EmptyStateModel("Aucun logement pour l'instant", "Ajoutez votre maison pour que nos techniciens la trouvent du premier coup.", EmptyIllustration.House, "Ajouter mon logement", "#"),
+        new EmptyStateModel("Rien à signaler", "Tout fonctionne ? Tant mieux. Pensez à vérifier la terrasse avant l'hivernage.", EmptyIllustration.Tools),
+        new EmptyStateModel("Votre quartier se mobilise", "Encore 153 voisins et nous plantons des arbres dans votre quartier.", EmptyIllustration.Tree, "Inviter mes voisins", "#"),
+    };
+}
+
+<header class="relative overflow-hidden rounded-xl bg-atlantique px-6 py-10 text-sable">
+    <div class="sc-motif sc-motif-manjak absolute inset-y-0 right-0 w-1/2 text-sable/10" aria-hidden="true"></div>
+    <p class="sc-surtitre text-soleil">SENECARE · design system</p>
+    <h1 class="relative mt-2 font-display text-4xl font-bold sm:text-5xl">Du plan à la réalité.</h1>
+    <p class="relative mt-3 max-w-lg text-sable/85">Vous signalez. Nous intervenons. Votre patrimoine est préservé.</p>
+    <button type="button" class="sc-btn relative mt-6 border-2 border-sable/60 text-sable hover:bg-sable/10" data-theme-toggle>Basculer clair / sombre</button>
+</header>
+
+<div class="mt-10 grid gap-12">
+    <section aria-labelledby="couleurs">
+        <h2 id="couleurs" class="sc-sous-titre">Couleurs</h2>
+        <ul class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            @foreach (var (token, css, role) in colors)
+            {
+                <li class="sc-carte p-0">
+                    <div class="@css h-16 rounded-t-lg border-b border-ligne"></div>
+                    <div class="p-3"><code class="text-sm font-bold">@token</code><p class="sc-texte-doux">@role</p></div>
+                </li>
+            }
+        </ul>
+    </section>
+
+    <section aria-labelledby="typo">
+        <h2 id="typo" class="sc-sous-titre">Typographie</h2>
+        <div class="sc-carte mt-4 space-y-3">
+            <p class="sc-surtitre">Surtitre · avant l'hivernage</p>
+            <p class="sc-titre">Votre maison est entre de bonnes mains</p>
+            <p class="sc-sous-titre">Bricolage Grotesque pour les titres</p>
+            <p>Atkinson Hyperlegible pour le texte : conçue pour être lue facilement, même en plein soleil sur un petit écran. Les chiffres 0 / O et 1 / l se distinguent bien : 10 000 FCFA, robinet n° 1.</p>
+            <p class="sc-texte-doux">Texte secondaire, contraste AA sur le fond sable.</p>
+        </div>
+    </section>
+
+    <section aria-labelledby="motifs">
+        <h2 id="motifs" class="sc-sous-titre">Motifs</h2>
+        <p class="sc-texte-doux mt-1">Tuiles SVG &lt; 1 Ko utilisées en masque : une seule couleur, celle du token. À utiliser avec parcimonie.</p>
+        <div class="mt-4 grid gap-3 sm:grid-cols-3">
+            <figure class="sc-carte"><div class="sc-motif sc-motif-wax h-24 rounded-md text-laterite/70"></div><figcaption class="mt-2 font-bold">Wax</figcaption></figure>
+            <figure class="sc-carte"><div class="sc-motif sc-motif-manjak h-24 rounded-md text-atlantique/70"></div><figcaption class="mt-2 font-bold">Tissage manjak</figcaption></figure>
+            <figure class="sc-carte"><div class="sc-motif sc-motif-bogolan h-24 rounded-md text-baobab/70"></div><figcaption class="mt-2 font-bold">Bogolan</figcaption></figure>
+        </div>
+    </section>
+
+    <section aria-labelledby="boutons">
+        <h2 id="boutons" class="sc-sous-titre">Boutons</h2>
+        <div class="sc-carte mt-4 flex flex-wrap items-center gap-3">
+            <button type="button" class="sc-btn-primaire"><sc-icon name="plus" />Signaler un problème</button>
+            <button type="button" class="sc-btn-secondaire"><sc-icon name="calendar-check" />Choisir ce créneau</button>
+            <button type="button" class="sc-btn-whatsapp"><sc-icon name="message-circle" />WhatsApp</button>
+            <button type="button" class="sc-btn-danger">Contester</button>
+            <button type="button" class="sc-btn-discret">Plus tard</button>
+            <button type="button" class="sc-btn-primaire" disabled>Envoi…</button>
+            <button type="button" class="sc-btn-icone" aria-label="Notifications"><sc-icon name="bell" class="size-6" /></button>
+        </div>
+    </section>
+
+    <section aria-labelledby="champs">
+        <h2 id="champs" class="sc-sous-titre">Champs</h2>
+        <form class="sc-carte mt-4 grid gap-5 sm:grid-cols-2" onsubmit="return false">
+            <div>
+                <label class="sc-label" for="demo-nom">Nom du logement</label>
+                <input id="demo-nom" class="sc-input" placeholder="Villa des Almadies" />
+                <p class="sc-aide">Un nom que vous reconnaîtrez facilement.</p>
+            </div>
+            <partial name="Ui/_PhoneInput" model='new PhoneInputModel("DemoPhone", "77 000 00 00", "Numéro de téléphone")' />
+            <div>
+                <label class="sc-label" for="demo-repere">Point de repère</label>
+                <textarea id="demo-repere" rows="2" class="sc-input py-2" aria-invalid="true" aria-describedby="demo-repere-err">derrière la</textarea>
+                <p id="demo-repere-err" class="sc-error" role="alert"><sc-icon name="triangle-alert" class="size-4" />Décrivez un repère visible : mosquée, boutique, portail…</p>
+            </div>
+            <partial name="Ui/_NeighborhoodPicker" model='new NeighborhoodPickerModel("DemoQuartier")' />
+            <fieldset class="sm:col-span-2">
+                <legend class="sc-label">Urgence</legend>
+                <div class="mt-2 grid gap-2 sm:grid-cols-4">
+                    <label class="sc-choix"><input type="radio" name="demo-urgence" />Critique</label>
+                    <label class="sc-choix"><input type="radio" name="demo-urgence" checked />Haute</label>
+                    <label class="sc-choix"><input type="radio" name="demo-urgence" />Normale</label>
+                    <label class="sc-choix"><input type="radio" name="demo-urgence" />Planifiée</label>
+                </div>
+            </fieldset>
+            <div class="sm:col-span-2">
+                <partial name="Ui/_PhotoUploader" model='new PhotoUploaderModel("DemoPhotos", "Photos du problème", 6)' />
+            </div>
+        </form>
+    </section>
+
+    <section aria-labelledby="badges">
+        <h2 id="badges" class="sc-sous-titre">Statuts, urgences, montants</h2>
+        <div class="sc-carte mt-4 space-y-4">
+            <div class="flex flex-wrap gap-2">
+                @foreach (var status in Enum.GetValues<RequestStatus>())
+                {
+                    <sc-status value="@status" />
+                }
+            </div>
+            <div class="flex flex-wrap gap-2">
+                @foreach (var urgency in Enum.GetValues<Urgency>())
+                {
+                    <sc-urgency value="@urgency" />
+                }
+            </div>
+            <dl class="grid grid-cols-2 gap-x-6 gap-y-1 sm:max-w-md">
+                <dt class="sc-texte-doux">Inscription</dt><dd class="text-right font-bold"><sc-amount value="10000" /></dd>
+                <dt class="sc-texte-doux">Abonnement mensuel</dt><dd class="text-right font-bold"><sc-amount value="8500" /></dd>
+                <dt class="sc-texte-doux">Premium (trimestre)</dt><dd class="text-right font-bold"><sc-amount value="10500000" /></dd>
+            </dl>
+        </div>
+    </section>
+
+    <section aria-labelledby="cartes" class="grid gap-6 lg:grid-cols-2">
+        <div>
+            <h2 id="cartes" class="sc-sous-titre">Cartes d'intervention</h2>
+            <div class="mt-4 space-y-3">
+                @foreach (var card in cards)
+                {
+                    <partial name="Ui/_InterventionCard" model="card" />
+                }
+                <partial name="Ui/_Skeleton" />
+            </div>
+        </div>
+        <div>
+            <h2 class="sc-sous-titre">Suivi</h2>
+            <div class="sc-carte mt-4">
+                <partial name="Ui/_Timeline" model="timeline" />
+            </div>
+        </div>
+    </section>
+
+    <section aria-labelledby="vides">
+        <h2 id="vides" class="sc-sous-titre">États vides</h2>
+        <div class="mt-4 grid gap-4 lg:grid-cols-3">
+            @foreach (var empty in empties)
+            {
+                <partial name="Ui/_EmptyState" model="empty" />
+            }
+        </div>
+    </section>
+
+    <section aria-labelledby="retours">
+        <h2 id="retours" class="sc-sous-titre">Toast et bottom sheet</h2>
+        <div class="sc-carte mt-4 flex flex-wrap gap-3">
+            <button type="button" class="sc-btn-secondaire" onclick="scToast('Signalement envoyé. Nous vous rappelons sous 24 h.')">Afficher un toast</button>
+            <button type="button" class="sc-btn-danger" onclick="scToast('Pas de réseau : votre signalement partira dès le retour de la connexion.', 'erreur')">Toast d'erreur</button>
+            <button type="button" class="sc-btn-secondaire" data-sheet-open="demo-sheet">Ouvrir le bottom sheet</button>
+        </div>
+        <sc-sheet id="demo-sheet" title="Choisir un créneau">
+            <div class="grid gap-2">
+                <label class="sc-choix"><input type="radio" name="demo-creneau" />mar. 13 oct. · 09:00 – 11:00</label>
+                <label class="sc-choix"><input type="radio" name="demo-creneau" />mar. 13 oct. · 15:00 – 17:00</label>
+                <label class="sc-choix"><input type="radio" name="demo-creneau" />mer. 14 oct. · 10:00 – 12:00</label>
+                <button type="button" class="sc-btn-primaire mt-2" data-sheet-close>Confirmer</button>
+            </div>
+        </sc-sheet>
+    </section>
+
+    <section aria-labelledby="navigation">
+        <h2 id="navigation" class="sc-sous-titre">Barre d'onglets et bouton « Signaler »</h2>
+        <p class="sc-texte-doux mt-1">Mobile : barre fixe en bas, bouton central toujours accessible. Ordinateur : colonne à gauche.</p>
+        <div class="mx-auto mt-4 max-w-sm overflow-hidden rounded-xl border-2 border-ligne bg-sable pt-10">
+            <partial name="Ui/_TabBar" model="new TabBarModel(AppTab.Interventions, Demo: true)" />
+        </div>
+    </section>
+</div>

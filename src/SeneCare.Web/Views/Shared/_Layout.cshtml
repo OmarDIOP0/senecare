@@ -2,30 +2,40 @@
 <html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#12355b" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f1e6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#15120e" media="(prefers-color-scheme: dark)" />
     <title>@ViewData["Title"] · @L["App_Name"]</title>
+    <link rel="preload" href="~/fonts/atkinson-hyperlegible-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
+    <script src="~/lib/htmx.min.js" asp-append-version="true" defer></script>
+    <script src="~/js/app.js" asp-append-version="true" defer></script>
     @await RenderSectionAsync("Head", required: false)
 </head>
 <body class="min-h-dvh">
-    <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:m-2 focus:rounded focus:bg-atlantique focus:px-4 focus:py-3 focus:text-sable">@L["Layout_SkipToContent"]</a>
-    <header class="border-b border-charbon/10">
-        <nav class="mx-auto flex w-full max-w-screen-md items-center justify-between px-4 py-3">
-            <a href="/" class="text-lg font-bold text-atlantique">@L["App_Name"]</a>
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <a href="/compte" class="inline-flex min-h-12 items-center font-semibold text-atlantique">@L["Nav_Account"]</a>
-            }
-            else
-            {
-                <a href="/connexion" class="inline-flex min-h-12 items-center font-semibold text-atlantique">@L["Nav_SignIn"]</a>
-            }
+    <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-atlantique focus:px-4 focus:py-3 focus:text-sable">@L["Layout_SkipToContent"]</a>
+    <header class="border-b border-ligne bg-sable">
+        <nav class="mx-auto flex w-full max-w-screen-lg items-center justify-between gap-2 px-4 py-2">
+            <partial name="Ui/_Brand" />
+            <div class="flex items-center gap-1">
+                <button type="button" class="sc-btn-icone" data-theme-toggle aria-label="@L["Theme_Toggle"]">
+                    <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" /></svg>
+                </button>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a href="/compte" class="inline-flex min-h-cible items-center px-2 font-bold">@L["Nav_Account"]</a>
+                }
+                else
+                {
+                    <a href="/connexion" class="inline-flex min-h-cible items-center px-2 font-bold">@L["Nav_SignIn"]</a>
+                }
+            </div>
         </nav>
     </header>
-    <main id="contenu" class="mx-auto w-full max-w-screen-md px-4 py-8">
+    <main id="contenu" class="mx-auto w-full @(ViewData["Wide"] is true ? "max-w-screen-lg" : "max-w-screen-md") px-4 py-8">
         @RenderBody()
     </main>
+    <partial name="Ui/_Toasts" />
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

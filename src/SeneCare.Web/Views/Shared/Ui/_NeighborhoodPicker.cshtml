@@ -1,0 +1,22 @@
+@model NeighborhoodPickerModel
+@{
+    var id = Model.Name.Replace('.', '_');
+    var hxVals = "{\"field\": \"" + id + "\"}";
+}
+<div data-picker="@id">
+    <label class="sc-label" for="@id-recherche">@L["Picker_NeighborhoodLabel"]</label>
+    <input type="hidden" name="@Model.Name" id="@id" value="@Model.SelectedId" />
+    <div class="relative mt-1">
+        <sc-icon name="search" class="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-charbon-doux" />
+        <input id="@id-recherche" type="search" name="q" autocomplete="off" spellcheck="false" value="@Model.SelectedLabel"
+               placeholder="@L["Picker_NeighborhoodPlaceholder"]" class="sc-input mt-0 pl-10"
+               role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="@id-resultats"
+               aria-describedby="@id-aide @id-erreur" aria-invalid="@(Model.Error is null ? "false" : "true")"
+               hx-get="/quartiers/recherche" hx-trigger="input changed delay:250ms, search" hx-sync="this:replace"
+               hx-target="#@id-resultats" hx-vals="@hxVals" />
+    </div>
+    <ul id="@id-resultats" role="listbox" aria-label="@L["Picker_NeighborhoodLabel"]"
+        class="mt-2 divide-y divide-ligne overflow-hidden rounded-md border-2 border-ligne bg-surface empty:hidden"></ul>
+    <p id="@id-aide" class="sc-aide">@L["Picker_NeighborhoodHint"]</p>
+    <p id="@id-erreur" class="sc-error" role="alert">@Model.Error</p>
+</div>

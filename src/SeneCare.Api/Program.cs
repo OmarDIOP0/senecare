@@ -16,10 +16,14 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Services.AddSerilog((services, configuration) => configuration
-        .ReadFrom.Configuration(builder.Configuration)
-        .ReadFrom.Services(services)
-        .Enrich.FromLogContext());
+    // preserveStaticLogger: the static bootstrap logger is never frozen, so several hosts can run
+    // in one process (integration tests). The app logs through ILogger<T> only.
+    builder.Services.AddSerilog(
+        (services, configuration) => configuration
+            .ReadFrom.Configuration(builder.Configuration)
+            .ReadFrom.Services(services)
+            .Enrich.FromLogContext(),
+        preserveStaticLogger: true);
 
     builder.Services
         .AddApplication()

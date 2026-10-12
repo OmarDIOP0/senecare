@@ -1,0 +1,21 @@
+@model IReadOnlyList<SeneCare.Application.Locations.NeighborhoodOption>
+@{
+    var field = ViewData["Field"] as string ?? string.Empty;
+}
+@if (Model.Count == 0 && Context.Request.Query["q"].ToString().Trim().Length >= 2)
+{
+    <li class="px-3 py-3 text-sm text-charbon-doux">@L["Picker_NoResult"]</li>
+}
+@foreach (var option in Model)
+{
+    <li role="option" aria-selected="false">
+        <button type="button" data-pick="@field" data-pick-id="@option.Id" data-pick-label="@option.Name (@option.Commune)"
+                class="flex min-h-cible w-full items-center gap-3 px-3 py-2 text-left text-charbon hover:bg-laterite-clair/60 focus-visible:bg-laterite-clair/60">
+            <sc-icon name="map-pin" class="size-5 text-laterite" />
+            <span>
+                <span class="font-bold">@option.Name</span>
+                <span class="block text-sm text-charbon-doux">@option.Context</span>
+            </span>
+        </button>
+    </li>
+}

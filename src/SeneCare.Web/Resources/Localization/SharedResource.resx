@@ -94,4 +94,48 @@
   <data name="Error_invitation_wrong_phone" xml:space="preserve"><value>Cette invitation a été envoyée à un autre numéro. Connectez-vous avec ce numéro.</value></data>
   <data name="Error_rate_limited" xml:space="preserve"><value>Trop de tentatives. Patientez quelques minutes.</value></data>
   <data name="Error_generic" xml:space="preserve"><value>Une erreur est survenue. Réessayez.</value></data>
+  <data name="Common_Close" xml:space="preserve"><value>Fermer</value></data>
+  <data name="Common_Loading" xml:space="preserve"><value>Chargement…</value></data>
+  <data name="Status_AwaitingApproval" xml:space="preserve"><value>À valider</value></data>
+  <data name="Status_Submitted" xml:space="preserve"><value>Reçu</value></data>
+  <data name="Status_UnderReview" xml:space="preserve"><value>En analyse</value></data>
+  <data name="Status_AppointmentProposed" xml:space="preserve"><value>RDV proposé</value></data>
+  <data name="Status_AppointmentConfirmed" xml:space="preserve"><value>RDV confirmé</value></data>
+  <data name="Status_OnTheWay" xml:space="preserve"><value>Technicien en route</value></data>
+  <data name="Status_InProgress" xml:space="preserve"><value>En cours</value></data>
+  <data name="Status_Completed" xml:space="preserve"><value>Terminé</value></data>
+  <data name="Status_ValidatedByCustomer" xml:space="preserve"><value>Validé</value></data>
+  <data name="Status_Disputed" xml:space="preserve"><value>Contesté</value></data>
+  <data name="Status_Cancelled" xml:space="preserve"><value>Annulé</value></data>
+  <data name="Urgency_Critical" xml:space="preserve"><value>Critique</value></data>
+  <data name="Urgency_High" xml:space="preserve"><value>Haute</value></data>
+  <data name="Urgency_Normal" xml:space="preserve"><value>Normale</value></data>
+  <data name="Urgency_Planned" xml:space="preserve"><value>Planifiée</value></data>
+  <data name="Domain_Electricity" xml:space="preserve"><value>Électricité</value></data>
+  <data name="Domain_Plumbing" xml:space="preserve"><value>Plomberie</value></data>
+  <data name="Domain_Waterproofing" xml:space="preserve"><value>Étanchéité</value></data>
+  <data name="Domain_Masonry" xml:space="preserve"><value>Maçonnerie</value></data>
+  <data name="Domain_Carpentry" xml:space="preserve"><value>Menuiserie</value></data>
+  <data name="Domain_Security" xml:space="preserve"><value>Sécurité</value></data>
+  <data name="Domain_Outdoor" xml:space="preserve"><value>Espaces extérieurs</value></data>
+  <data name="Tab_NavLabel" xml:space="preserve"><value>Navigation principale</value></data>
+  <data name="Tab_Home" xml:space="preserve"><value>Accueil</value></data>
+  <data name="Tab_Interventions" xml:space="preserve"><value>Suivi</value></data>
+  <data name="Tab_Property" xml:space="preserve"><value>Logement</value></data>
+  <data name="Tab_Profile" xml:space="preserve"><value>Profil</value></data>
+  <data name="Tab_Report" xml:space="preserve"><value>Signaler</value></data>
+  <data name="Picker_NeighborhoodLabel" xml:space="preserve"><value>Quartier</value></data>
+  <data name="Picker_NeighborhoodPlaceholder" xml:space="preserve"><value>Ex. : Sacré-Cœur, Almadies, Keur Massar</value></data>
+  <data name="Picker_NeighborhoodHint" xml:space="preserve"><value>Tapez au moins 2 lettres, les accents ne comptent pas.</value></data>
+  <data name="Picker_NoResult" xml:space="preserve"><value>Aucun quartier trouvé. Essayez avec le nom de la commune.</value></data>
+  <data name="Uploader_Add" xml:space="preserve"><value>Prendre ou ajouter une photo</value></data>
+  <data name="Uploader_Hint" xml:space="preserve"><value>Jusqu'à {0} photos. Elles sont allégées sur votre téléphone pour économiser vos données.</value></data>
+  <data name="Uploader_Working" xml:space="preserve"><value>Préparation des photos…</value></data>
+  <data name="Uploader_Remove" xml:space="preserve"><value>Retirer la photo</value></data>
+  <data name="Card_Appointment" xml:space="preserve"><value>Rendez-vous</value></data>
+  <data name="Card_Technician" xml:space="preserve"><value>Technicien</value></data>
+  <data name="Card_Call" xml:space="preserve"><value>Appeler</value></data>
+  <data name="Timeline_Done" xml:space="preserve"><value>étape terminée</value></data>
+  <data name="Timeline_Current" xml:space="preserve"><value>étape en cours</value></data>
+  <data name="Theme_Toggle" xml:space="preserve"><value>Changer de thème (clair / sombre)</value></data>
 </root>

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SeneCare.Domain.Accounts;
+using SeneCare.Domain.Locations;
 using SeneCare.Domain.Plans;
 using SeneCare.Domain.Platform;
 using SeneCare.Domain.Users;
@@ -20,6 +21,14 @@ public interface IApplicationDbContext
     DbSet<Property> Properties { get; }
 
     DbSet<Plan> Plans { get; }
+
+    DbSet<Region> Regions { get; }
+
+    DbSet<Department> Departments { get; }
+
+    DbSet<Commune> Communes { get; }
+
+    DbSet<Neighborhood> Neighborhoods { get; }
 
     DbSet<AuditLog> AuditLogs { get; }
 

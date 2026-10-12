@@ -1,0 +1,49 @@
+@model IReadOnlyList<TimelineStep>
+<ol class="relative ml-1">
+    @for (var i = 0; i < Model.Count; i++)
+    {
+        var step = Model[i];
+        var last = i == Model.Count - 1;
+        <li class="relative flex gap-4 pb-6 last:pb-0" aria-current="@(step.State == TimelineState.Current ? "step" : null)">
+            @if (!last)
+            {
+                <span class="absolute top-7 bottom-0 left-[13px] w-0.5 @(step.State == TimelineState.Done ? "bg-baobab" : "bg-ligne")" aria-hidden="true"></span>
+            }
+            @switch (step.State)
+            {
+                case TimelineState.Done:
+                    <span class="relative z-10 grid size-7 shrink-0 place-items-center rounded-full bg-baobab text-sur-accent"><sc-icon name="check" class="size-4" /></span>
+                    break;
+                case TimelineState.Current:
+                    <span class="relative z-10 grid size-7 shrink-0 place-items-center rounded-full border-4 border-laterite bg-surface">
+                        <span class="size-2 rounded-full bg-laterite motion-safe:animate-pulse"></span>
+                    </span>
+                    break;
+                default:
+                    <span class="relative z-10 size-7 shrink-0 rounded-full border-2 border-ligne bg-surface"></span>
+                    break;
+            }
+            <div class="pt-0.5">
+                <p class="@(step.State == TimelineState.Upcoming ? "text-charbon-doux" : "font-bold")">
+                    @step.Label
+                    @if (step.State == TimelineState.Done)
+                    {
+                        <span class="sr-only">(@L["Timeline_Done"])</span>
+                    }
+                    @if (step.State == TimelineState.Current)
+                    {
+                        <span class="sr-only">(@L["Timeline_Current"])</span>
+                    }
+                </p>
+                @if (step.At is { } at)
+                {
+                    <p class="text-sm text-charbon-doux"><time datetime="@at.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">@Formatting.ShortDateTime(at)</time></p>
+                }
+                @if (step.Note is not null)
+                {
+                    <p class="mt-1 text-sm">@step.Note</p>
+                }
+            </div>
+        </li>
+    }
+</ol>

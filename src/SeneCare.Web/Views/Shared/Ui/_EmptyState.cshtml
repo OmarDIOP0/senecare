@@ -1,0 +1,47 @@
+@model EmptyStateModel
+@* Flat illustrations drawn with the colour tokens, so they follow light/dark mode. *@
+<section class="sc-carte flex flex-col items-center px-6 py-8 text-center">
+    <div class="sc-motif sc-motif-bogolan mb-6 h-3 w-24 text-laterite/35" aria-hidden="true"></div>
+    <svg viewBox="0 0 240 150" class="h-36 w-auto" aria-hidden="true">
+        <rect y="132" width="240" height="3" rx="1.5" class="fill-ligne" />
+        @switch (Model.Illustration)
+        {
+            case EmptyIllustration.Tools:
+                <circle cx="188" cy="40" r="16" class="fill-soleil" />
+                <rect x="62" y="84" width="116" height="48" rx="6" class="fill-laterite" />
+                <path d="M98 84v-12a6 6 0 0 1 6-6h32a6 6 0 0 1 6 6v12" fill="none" stroke-width="6" class="stroke-charbon" />
+                <rect x="62" y="100" width="116" height="6" class="fill-laterite-fonce" />
+                <rect x="112" y="96" width="16" height="14" rx="2" class="fill-soleil" />
+                <path d="M30 128l34-34m0 0a12 12 0 1 1 6 6l-34 34z" fill="none" stroke-width="7" stroke-linecap="round" class="stroke-atlantique" />
+                break;
+            case EmptyIllustration.Tree:
+                <circle cx="196" cy="36" r="16" class="fill-soleil" />
+                <path d="M58 132c3-20 3-32-1-48h14c-4 16-4 28-1 48z" class="fill-baobab" />
+                <ellipse cx="64" cy="70" rx="34" ry="20" class="fill-baobab" />
+                <path d="M128 132v-30" stroke-width="5" class="stroke-baobab" />
+                <circle cx="128" cy="92" r="16" class="fill-baobab-clair stroke-baobab" stroke-width="3" />
+                <path d="M178 132v-18" stroke-width="4" class="stroke-baobab" />
+                <path d="M178 116c-10 0-14-8-14-14 8 0 14 4 14 14zm0 0c10 0 14-8 14-14-8 0-14 4-14 14z" class="fill-baobab" />
+                break;
+            default:
+                <circle cx="196" cy="36" r="16" class="fill-soleil" />
+                <path d="M34 132c4-22 4-36-1-54h16c-5 18-5 32-1 54z" class="fill-baobab" />
+                <path d="M41 80l-12-14M41 80l14-16" stroke-width="5" stroke-linecap="round" class="stroke-baobab" />
+                <ellipse cx="27" cy="62" rx="15" ry="8" class="fill-baobab" />
+                <ellipse cx="58" cy="60" rx="15" ry="8" class="fill-baobab" />
+                <rect x="96" y="84" width="96" height="48" class="fill-surface stroke-charbon" stroke-width="3" />
+                <path d="M88 87l56-34 56 34z" class="fill-laterite" />
+                <rect x="134" y="104" width="18" height="28" class="fill-atlantique" />
+                <rect x="106" y="96" width="18" height="14" class="fill-atlantique-clair stroke-atlantique" stroke-width="2" />
+                <rect x="164" y="96" width="18" height="14" class="fill-atlantique-clair stroke-atlantique" stroke-width="2" />
+                <path d="M96 124h38M152 124h40" stroke-width="3" stroke-dasharray="4 4" class="stroke-laterite" />
+                break;
+        }
+    </svg>
+    <h2 class="sc-sous-titre mt-4">@Model.Title</h2>
+    <p class="mt-2 max-w-sm text-charbon-doux">@Model.Text</p>
+    @if (Model.ActionLabel is not null && Model.ActionUrl is not null)
+    {
+        <a href="@Model.ActionUrl" class="sc-btn-primaire mt-6">@Model.ActionLabel</a>
+    }
+</section>

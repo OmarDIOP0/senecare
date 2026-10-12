@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using SeneCare.Application.Accounts;
 using SeneCare.Application.Auth;
+using SeneCare.Application.Locations;
 using SeneCare.Application.Users;
 
 namespace SeneCare.Application;
@@ -18,6 +19,7 @@ public static class DependencyInjection
         services.AddScoped<AcceptInvitationHandler>();
         services.AddScoped<GetUserProfileHandler>();
         services.AddScoped<GetTeamHandler>();
+        services.AddScoped<SearchNeighborhoodsHandler>();
 
         return services;
     }

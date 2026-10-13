@@ -1,22 +1,32 @@
 @model IReadOnlyList<SeneCare.Application.Properties.PropertySummary>
 @{
     Layout = "_AppLayout";
-    ViewData["NavActive"] = "logements";
-    ViewData["Title"] = L["Properties_Title"];
+    var isBusiness = AppNavigation.IsBusiness(User);
+    var canAdd = !isBusiness || AppNavigation.IsBusinessManager(User);
+    var title = isBusiness ? L["Sites_Title"] : L["Properties_Title"];
+    ViewData["NavActive"] = isBusiness ? "sites" : "logements";
+    ViewData["Title"] = title;
 }
 
 <div class="flex items-center justify-between gap-3">
-    <h1 class="sc-titre">@L["Properties_Title"]</h1>
-    @if (Model.Count > 0)
+    <h1 class="sc-titre">@title</h1>
+    @if (Model.Count > 0 && canAdd)
     {
-        <a href="/logements/nouveau" class="sc-btn-secondaire"><sc-icon name="plus" />@L["Property_Add_Short"]</a>
+        <a href="/logements/nouveau" class="sc-btn-secondaire"><sc-icon name="plus" />@(isBusiness ? L["Site_Add_Short"] : L["Property_Add_Short"])</a>
     }
 </div>
 
 @if (Model.Count == 0)
 {
     <div class="mt-6">
-        <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Space_NoProperty_Title"], L["Space_NoProperty_Text"], EmptyIllustration.House, L["Property_Add"], "/logements/nouveau")' />
+        @if (isBusiness)
+        {
+            <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Sites_Empty_Title"], L["Sites_Empty_Text"], EmptyIllustration.House, canAdd ? L["Site_Add"].Value : null, canAdd ? "/logements/nouveau" : null)' />
+        }
+        else
+        {
+            <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Space_NoProperty_Title"], L["Space_NoProperty_Text"], EmptyIllustration.House, L["Property_Add"], "/logements/nouveau")' />
+        }
     </div>
 }
 

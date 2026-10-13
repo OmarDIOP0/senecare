@@ -25,7 +25,8 @@ public sealed class PropertiesController(PropertyQueries queries, AddPropertyHan
         View(await queries.ListAsync(User.GetUserId()!.Value, cancellationToken));
 
     [HttpGet("nouveau")]
-    public IActionResult Create() => View(new PropertyFormModel());
+    public IActionResult Create() =>
+        View(new PropertyFormModel { Kind = AppNavigation.IsBusiness(User) ? Domain.Accounts.PropertyKind.Office : Domain.Accounts.PropertyKind.House });
 
     [HttpPost("nouveau")]
     [RequestSizeLimit(64 * 1024 * 1024)]
@@ -197,8 +198,8 @@ public sealed class InterventionsController(
     }
 }
 
-/// <summary>« Mon abonnement »: status, due dates, invoices.</summary>
-[Authorize]
+/// <summary>« Mon abonnement »: status, due dates, invoices. Businesses: the manager only.</summary>
+[Authorize(Policy = Policies.Billing)]
 [Route("/abonnement")]
 public sealed class SubscriptionController(
     SubscriptionQueries queries,
@@ -226,6 +227,11 @@ public sealed class SubscriptionController(
                 ? new SubscriptionPageItem(s, due, due.WaveUrl is { } url ? QrCode.Svg(url) : null)
                 : new SubscriptionPageItem(s, null, null))
             .ToList();
+
+        if (items.Count == 0 && AppNavigation.IsBusinessManager(User))
+        {
+            return Redirect("/entreprise/offre");
+        }
 
         ViewData["CanSimulate"] = environment.IsDevelopment();
         return View(items);

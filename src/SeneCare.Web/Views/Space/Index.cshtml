@@ -33,12 +33,11 @@
     @switch (Model.Space)
     {
         case TourKeys.Business:
-            <a href="/entreprise/diagnostics" data-tour="diagnostics" class="sc-carte flex items-center gap-4 text-charbon no-underline">
-                <span class="grid size-12 place-items-center rounded-md bg-indigo-clair text-indigo"><sc-icon name="calendar-check" class="size-6" /></span>
-                <span class="flex-1"><span class="block font-bold">@L["Space_Diagnostics"]</span><span class="sc-texte-doux">@L["Space_Diagnostics_Text"]</span></span>
-                <sc-icon name="chevron-right" class="text-charbon-doux" />
-            </a>
-            <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Space_Business_Empty_Title"], L["Space_Business_Empty_Text"], EmptyIllustration.House)' />
+            ViewData["Wide"] = true;
+            if (Model.Business is { } business)
+            {
+                <partial name="_BusinessHome" model="business" />
+            }
             break;
 
         case TourKeys.Technician:

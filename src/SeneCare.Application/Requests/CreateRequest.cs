@@ -84,6 +84,11 @@ public sealed class CreateRequestHandler(
         }
 
         var plan = await db.Plans.AsNoTracking().FirstAsync(p => p.Id == subscription.PlanId, cancellationToken);
+        if (!plan.Covers(domain))
+        {
+            return Result<RequestCreated>.Failure("request.domain_not_covered");
+        }
+
         var account = await db.CustomerAccounts.FirstAsync(a => a.Id == property.AccountId, cancellationToken);
         var requiresApproval = account.RequiresRequestApproval && account.FindMember(command.UserId)?.Role == AccountRole.Reporter;
         var now = clock.GetUtcNow();

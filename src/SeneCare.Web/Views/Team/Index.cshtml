@@ -5,39 +5,111 @@
     ViewData["NavActive"] = "equipe";
     ViewData["Title"] = L["Team_Title"];
     var invitePhone = new PhoneInputModel("Invite.Phone", Model.Invite.Phone, L["SignIn_PhoneLabel"], ViewData.ModelState["Invite.Phone"]?.Errors.FirstOrDefault()?.ErrorMessage);
+    var siteNames = Model.Sites.ToDictionary(s => s.Id, s => s.Name);
+    var roles = new[] { AccountRole.Reporter, AccountRole.SiteManager, AccountRole.Manager };
 }
 
-<h1 class="text-2xl font-bold text-atlantique">@L["Team_Heading", Model.AccountName]</h1>
+<h1 class="sc-titre">@L["Team_Heading", Model.AccountName]</h1>
 
 @if (TempData["flash.success"] is string invited)
 {
     <p class="sc-alert mt-4" role="status">@L["Team_InviteSent", invited]</p>
 }
 
-<h2 class="mt-6 text-lg font-semibold">@L["Team_Members"]</h2>
-<ul class="mt-2 space-y-2">
-    @foreach (var member in Model.Members)
-    {
-        <li class="rounded-lg border border-charbon/20 bg-white px-4 py-3">
-            <strong>@(member.FullName ?? "—")</strong>
-            <span class="text-sm text-charbon/70">· +221 @member.Phone · @L["Role_" + member.Role]</span>
-        </li>
-    }
-</ul>
+<section class="mt-6" aria-labelledby="membres-titre">
+    <h2 id="membres-titre" class="sc-sous-titre">@L["Team_Members"]</h2>
+    <ul class="mt-3 grid gap-3 lg:grid-cols-2">
+        @foreach (var member in Model.Members)
+        {
+            var isMe = member.UserId == Model.CurrentUserId;
+            <li class="sc-carte flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                    <p class="font-bold">@(member.FullName ?? "—") @if (isMe) { <span class="font-normal text-charbon-doux">(@L["Team_You"])</span> }</p>
+                    <p class="text-sm text-charbon-doux">+221 @member.Phone</p>
+                    <p class="mt-2 flex flex-wrap gap-1">
+                        <span class="sc-badge bg-atlantique-clair text-atlantique">@L["Role_" + member.Role]</span>
+                        @if (member.Role is AccountRole.SiteManager or AccountRole.Reporter)
+                        {
+                            @foreach (var siteId in member.SiteIds.Where(siteNames.ContainsKey))
+                            {
+                                <span class="sc-badge bg-sable text-charbon">@siteNames[siteId]</span>
+                            }
+                        }
+                    </p>
+                </div>
+                @if (!isMe)
+                {
+                    <button type="button" class="sc-btn-discret min-h-10 shrink-0 text-sm" data-sheet-open="membre-@member.UserId">@L["Team_Edit"]</button>
+                    <sc-sheet id="membre-@member.UserId" title="@(member.FullName ?? member.Phone)">
+                        <form method="post" asp-action="Update" asp-route-memberId="@member.UserId" class="grid gap-4">
+                            <div>
+                                <label class="sc-label" for="role-@member.UserId">@L["Team_RoleLabel"]</label>
+                                <select id="role-@member.UserId" name="role" class="sc-input">
+                                    @foreach (var role in roles)
+                                    {
+                                        <option value="@role" selected="@(role == member.Role)">@L["Role_" + role]</option>
+                                    }
+                                </select>
+                            </div>
+                            <fieldset>
+                                <legend class="sc-label">@L["Team_Sites"]</legend>
+                                <p class="sc-aide">@L["Team_Sites_Hint"]</p>
+                                <div class="mt-2 grid gap-2">
+                                    @foreach (var site in Model.Sites)
+                                    {
+                                        <label class="sc-choix"><input type="checkbox" name="sites" value="@site.Id" checked="@member.SiteIds.Contains(site.Id)" />@site.Name</label>
+                                    }
+                                </div>
+                            </fieldset>
+                            <button type="submit" class="sc-btn-primaire">@L["Common_Save"]</button>
+                        </form>
+                        <form method="post" asp-action="Remove" asp-route-memberId="@member.UserId" class="mt-3">
+                            <button type="submit" class="sc-btn-danger w-full">@L["Team_Remove"]</button>
+                        </form>
+                    </sc-sheet>
+                }
+            </li>
+        }
+    </ul>
+</section>
+
+<section class="sc-carte mt-8" aria-labelledby="validation-titre">
+    <h2 id="validation-titre" class="sc-sous-titre">@L["Team_ApprovalTitle"]</h2>
+    <p class="sc-texte-doux mt-1">@L["Team_ApprovalText"]</p>
+    <form method="post" asp-action="Approval" class="mt-3 flex flex-wrap items-center gap-3">
+        <input type="hidden" name="required" value="@(!Model.RequiresApproval ? "true" : "false")" />
+        <span class="sc-badge @(Model.RequiresApproval ? "bg-baobab-clair text-baobab" : "bg-sable text-charbon")">@(Model.RequiresApproval ? L["Team_ApprovalIsOn"] : L["Team_ApprovalIsOff"])</span>
+        <button type="submit" class="sc-btn-secondaire min-h-10 text-sm">@(Model.RequiresApproval ? L["Team_ApprovalDisable"] : L["Team_ApprovalEnable"])</button>
+    </form>
+</section>
 
 <section class="mt-8" aria-labelledby="invite-title">
-    <h2 id="invite-title" class="text-lg font-semibold">@L["Team_InviteHeading"]</h2>
-    <p class="mt-1 text-sm">@L["Team_InviteIntro"]</p>
-    <form method="post" class="mt-4 space-y-4" novalidate>
+    <h2 id="invite-title" class="sc-sous-titre">@L["Team_InviteHeading"]</h2>
+    <p class="sc-texte-doux mt-1">@L["Team_InviteIntro"]</p>
+    <form method="post" asp-action="Index" class="mt-4 grid gap-4" novalidate>
         <partial name="Ui/_PhoneInput" model="invitePhone" />
         <div>
             <label class="sc-label" asp-for="Invite.Role">@L["Team_RoleLabel"]</label>
             <select asp-for="Invite.Role" class="sc-input">
-                <option value="@AccountRole.Reporter">@L["Role_Reporter"]</option>
-                <option value="@AccountRole.SiteManager">@L["Role_SiteManager"]</option>
-                <option value="@AccountRole.Manager">@L["Role_Manager"]</option>
+                @foreach (var role in roles)
+                {
+                    <option value="@role">@L["Role_" + role]</option>
+                }
             </select>
         </div>
+        @if (Model.Sites.Count > 0)
+        {
+            <fieldset>
+                <legend class="sc-label">@L["Team_Sites"]</legend>
+                <p class="sc-aide">@L["Team_Sites_Hint"]</p>
+                <div class="mt-2 grid gap-2 sm:grid-cols-2">
+                    @foreach (var site in Model.Sites)
+                    {
+                        <label class="sc-choix"><input type="checkbox" name="Invite.Sites" value="@site.Id" checked="@Model.Invite.Sites.Contains(site.Id)" />@site.Name</label>
+                    }
+                </div>
+            </fieldset>
+        }
         <button type="submit" class="sc-btn-primaire">@L["Team_InviteSubmit"]</button>
     </form>
 </section>

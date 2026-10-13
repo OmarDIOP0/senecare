@@ -55,6 +55,9 @@ public sealed class InviteMemberViewModel
     public string? Phone { get; set; }
 
     public AccountRole Role { get; set; } = AccountRole.Reporter;
+
+    /// <summary>Sites the site manager / employee works on (ignored for a manager).</summary>
+    public List<Guid> Sites { get; set; } = [];
 }
 
 public sealed class TeamViewModel
@@ -64,4 +67,10 @@ public sealed class TeamViewModel
     public IReadOnlyList<TeamMemberDto> Members { get; set; } = [];
 
     public InviteMemberViewModel Invite { get; set; } = new();
+
+    public IReadOnlyList<TeamSite> Sites { get; set; } = [];
+
+    public bool RequiresApproval { get; set; }
+
+    public Guid CurrentUserId { get; set; }
 }

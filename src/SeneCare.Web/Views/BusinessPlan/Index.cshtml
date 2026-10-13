@@ -1,0 +1,65 @@
+@model IReadOnlyList<SeneCare.Application.Business.PlanOffer>
+@using SeneCare.Domain.Common
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "factures";
+    ViewData["Title"] = L["Offer_Title"];
+    ViewData["Wide"] = true;
+    var siteCount = ViewData["SiteCount"] as int? ?? 0;
+    var urgencies = new[] { Urgency.Critical, Urgency.High, Urgency.Normal };
+    string Hours(TimeSpan t) => t.TotalHours < 48 ? L["Sla_Hours", (int)t.TotalHours] : L["Sla_Days", (int)t.TotalDays];
+    var recommended = Model.Count > 1 ? Model[Model.Count / 2].Code : null;
+}
+
+<h1 class="sc-titre">@L["Offer_Title"]</h1>
+<p class="mt-2 max-w-prose text-charbon-doux">@L["Offer_Intro"]</p>
+
+@if (siteCount == 0)
+{
+    <p class="sc-alert mt-4 border-soleil bg-soleil-clair">@L["Offer_NeedSite"] <a href="/logements/nouveau" class="font-bold">@L["Site_Add"]</a></p>
+}
+
+<div class="mt-6 grid gap-4 md:grid-cols-3">
+    @foreach (var offer in Model)
+    {
+        var isRecommended = offer.Code == recommended;
+        <section class="sc-carte flex flex-col @(isRecommended ? "border-2 border-laterite" : "")" aria-labelledby="offre-@offer.Code">
+            @if (isRecommended)
+            {
+                <p class="sc-surtitre">@L["Offer_Popular"]</p>
+            }
+            <h2 id="offre-@offer.Code" class="font-display text-2xl font-bold">@offer.Name</h2>
+            <p class="mt-2"><sc-amount value="@offer.MonthlyPrice.Amount" class="font-display text-3xl font-bold text-laterite" /> <span class="text-charbon-doux">@L["Offer_PerMonth"]</span></p>
+            <p class="sc-texte-doux">@L["Offer_Billing", offer.BillingPeriodMonths]</p>
+
+            <h3 class="mt-4 text-sm font-bold">@L["Offer_Delays"]</h3>
+            <dl class="mt-1 grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 text-sm">
+                @foreach (var urgency in urgencies)
+                {
+                    if (offer.DelayFor(urgency) is { } delay)
+                    {
+                        <dt class="text-charbon-doux">@L["Urgency_" + urgency]</dt><dd class="text-right font-bold">@Hours(delay)</dd>
+                    }
+                }
+                <dt class="text-charbon-doux">@L["Offer_Visits"]</dt><dd class="text-right font-bold">@(offer.IncludedVisitsPerPeriod is { } v ? L["Offer_VisitsCount", v] : L["Offer_VisitsUnlimited"])</dd>
+            </dl>
+            <ul class="mt-3 grid gap-1 text-sm">
+                @if (offer.DiagnosticRequired)
+                {
+                    <li class="flex gap-2"><sc-icon name="circle-check" class="mt-0.5 size-4 shrink-0 text-baobab" />@L["Offer_Diagnostic"]</li>
+                }
+                <li class="flex gap-2"><sc-icon name="circle-check" class="mt-0.5 size-4 shrink-0 text-baobab" />@L["Offer_Domains", offer.Domains.Count]</li>
+                <li class="flex gap-2"><sc-icon name="circle-check" class="mt-0.5 size-4 shrink-0 text-baobab" />@L["Offer_AllSites"]</li>
+            </ul>
+
+            <div class="mt-auto pt-5">
+                <p class="text-sm">@L["Offer_FirstPayment"] <sc-amount value="@offer.FirstPayment.Amount" class="font-bold" /></p>
+                <p class="sc-aide">@L["Offer_FirstPayment_Hint", Formatting.Fcfa(offer.RegistrationFee)]</p>
+                <form method="post" asp-action="Choose" class="mt-3">
+                    <input type="hidden" name="plan" value="@offer.Code" />
+                    <button type="submit" class="@(isRecommended ? "sc-btn-primaire" : "sc-btn-secondaire") w-full" disabled="@(siteCount == 0)">@L["Offer_ChooseThis", offer.Name]</button>
+                </form>
+            </div>
+        </section>
+    }
+</div>

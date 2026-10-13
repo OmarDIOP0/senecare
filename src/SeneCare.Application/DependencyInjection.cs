@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using SeneCare.Application.Accounts;
 using SeneCare.Application.Auth;
+using SeneCare.Application.Business;
 using SeneCare.Application.Common;
 using SeneCare.Application.Development;
 using SeneCare.Application.Locations;
@@ -44,9 +45,21 @@ public static class DependencyInjection
         services.AddScoped<DeclarePaymentHandler>();
         services.AddScoped<PaymentVerificationHandler>();
 
+        services.AddScoped<BusinessAccess>();
+        services.AddScoped<PlanCatalog>();
+        services.AddScoped<ChoosePlanHandler>();
+        services.AddScoped<BusinessDashboardQuery>();
+        services.AddScoped<RequestApprovalHandler>();
+        services.AddScoped<TeamManagementHandler>();
+        services.AddScoped<DiagnosticPlanner>();
+        services.AddScoped<DiagnosticQueries>();
+        services.AddScoped<ConvertAnomalyHandler>();
+        services.AddScoped<BusinessExports>();
+
         // Development tools (refused by the Web outside Development).
         services.AddScoped<SimulatedActivation>();
         services.AddScoped<RequestSimulator>();
+        services.AddScoped<DiagnosticSimulator>();
 
         return services;
     }

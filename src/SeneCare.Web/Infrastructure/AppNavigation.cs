@@ -53,15 +53,25 @@ public static class AppNavigation
                 TourKeys.Technician);
         }
 
-        if (user.GetMemberships().Any(m => m.Kind == AccountKind.Business))
+        if (IsBusiness(user))
         {
+            // Money and team are the manager's; site managers and employees follow their requests instead.
             return new AppNav(
-                [
-                    new("espace", "/espace", "house", "Tab_Home"),
-                    new("sites", "/entreprise/sites", "building-2", "Tab_Sites", "sites"),
-                    new("equipe", "/entreprise/equipe", "users", "Tab_Team", "equipe"),
-                    new("factures", "/entreprise/factures", "receipt", "Tab_Invoices", "factures"),
-                ],
+                IsBusinessManager(user)
+                    ?
+                    [
+                        new("espace", "/espace", "house", "Tab_Home"),
+                        new("sites", "/entreprise/sites", "building-2", "Tab_Sites", "sites"),
+                        new("equipe", "/entreprise/equipe", "users", "Tab_Team", "equipe"),
+                        new("factures", "/entreprise/factures", "receipt", "Tab_Invoices", "factures"),
+                    ]
+                    :
+                    [
+                        new("espace", "/espace", "house", "Tab_Home"),
+                        new("sites", "/entreprise/sites", "building-2", "Tab_Sites", "sites"),
+                        new("interventions", "/interventions", "clipboard-list", "Tab_Requests", "suivi"),
+                        Profile,
+                    ],
                 Report,
                 TourKeys.Business);
         }
@@ -76,6 +86,12 @@ public static class AppNavigation
             Report,
             TourKeys.Client);
     }
+
+    public static bool IsBusiness(ClaimsPrincipal user) =>
+        user.GetMemberships().Any(m => m.Kind == AccountKind.Business);
+
+    public static bool IsBusinessManager(ClaimsPrincipal user) =>
+        user.GetMemberships().Any(m => m.Kind == AccountKind.Business && m.Role == AccountRole.Manager);
 
     private static bool IsAdmin(ClaimsPrincipal user) =>
         user.IsInRole(nameof(PlatformRole.SuperAdmin))

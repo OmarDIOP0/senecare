@@ -38,16 +38,20 @@ public sealed partial class DatabaseSeeder(SeneCareDbContext db, TimeProvider cl
         home.SetServiceLevel(priority: 1, includedVisitsPerPeriod: null);
         yield return home;
 
-        var business = new (string Code, string Name, long Monthly, int Priority)[]
+        // Default service levels (data, edited by admins): higher offers answer faster and visit more.
+        var business = new (string Code, string Name, long Monthly, int Priority, int Visits, int CriticalHours, int HighHours, int NormalHours)[]
         {
-            ("ESSENTIEL", "Essentiel", 1_500_000, 2),
-            ("PROFESSIONNEL", "Professionnel", 2_500_000, 3),
-            ("PREMIUM", "Premium", 3_500_000, 4),
+            ("ESSENTIEL", "Essentiel", 1_500_000, 2, 1, 4, 24, 72),
+            ("PROFESSIONNEL", "Professionnel", 2_500_000, 3, 2, 4, 12, 48),
+            ("PREMIUM", "Premium", 3_500_000, 4, 3, 2, 8, 24),
         };
-        foreach (var (code, name, monthly, priority) in business)
+        foreach (var (code, name, monthly, priority, visits, critical, high, normal) in business)
         {
             var plan = new Plan(code, name, AccountKind.Business, Money.FromFcfa(75_000), Money.FromFcfa(monthly), 3, diagnosticRequired: true);
-            plan.SetServiceLevel(priority, includedVisitsPerPeriod: null);
+            plan.SetServiceLevel(priority, includedVisitsPerPeriod: visits);
+            plan.SetSla(Urgency.Critical, TimeSpan.FromHours(critical));
+            plan.SetSla(Urgency.High, TimeSpan.FromHours(high));
+            plan.SetSla(Urgency.Normal, TimeSpan.FromHours(normal));
             yield return plan;
         }
     }

@@ -20,7 +20,7 @@ public sealed record AddPropertyCommand(
     IReadOnlyList<UploadedFile> Photos);
 
 /// <summary>
-/// « Ajouter mon logement ». For a household, each home gets its own « Maisons &amp; Villas »
+/// « Ajouter mon logement » / « Ajouter un site ». For a household, each home gets its own « Maisons &amp; Villas »
 /// subscription, created pending until the registration fee and first month are paid (Phase 6).
 /// </summary>
 public sealed class AddPropertyHandler(IApplicationDbContext db, AccessControl access, MediaUploader uploader, TimeProvider clock)
@@ -76,6 +76,15 @@ public sealed class AddPropertyHandler(IApplicationDbContext db, AccessControl a
         {
             var plan = await db.Plans.FirstAsync(p => p.Code == HouseholdPlanCode, cancellationToken);
             db.Subscriptions.Add(Subscription.Create(account, plan, [property.Id], clock.GetUtcNow()));
+        }
+        else
+        {
+            // A business subscription covers every site, including new ones (same price: it is per company).
+            var subscription = await db.Subscriptions
+                .Where(s => s.AccountId == account.Id && s.Status != SubscriptionStatus.Cancelled)
+                .OrderByDescending(s => s.CreatedAt)
+                .FirstOrDefaultAsync(cancellationToken);
+            subscription?.AddProperty(property.Id);
         }
 
         await db.SaveChangesAsync(cancellationToken);

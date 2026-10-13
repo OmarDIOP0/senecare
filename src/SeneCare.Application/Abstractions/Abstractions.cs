@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using SeneCare.Domain.Accounts;
 using SeneCare.Domain.Billing;
+using SeneCare.Application.Business;
 using SeneCare.Domain.Common;
+using SeneCare.Domain.Diagnostics;
 using SeneCare.Domain.Interventions;
 using SeneCare.Domain.Locations;
 using SeneCare.Domain.Neighborhoods;
@@ -48,6 +50,8 @@ public interface IApplicationDbContext
 
     DbSet<Technician> Technicians { get; }
 
+    DbSet<Diagnostic> Diagnostics { get; }
+
     DbSet<MediaFile> MediaFiles { get; }
 
     DbSet<NeighborhoodProgram> NeighborhoodPrograms { get; }
@@ -57,6 +61,14 @@ public interface IApplicationDbContext
     DbSet<AuditLog> AuditLogs { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+}
+
+/// <summary>PDF documents (QuestPDF in Infrastructure). Inputs are plain, already-authorized data.</summary>
+public interface IPdfRenderer
+{
+    byte[] DiagnosticReport(DiagnosticReport report);
+
+    byte[] RequestsReport(RequestsReport report);
 }
 
 /// <summary>Sends a text message by SMS. Dev: console; prod: Orange SMS API or an aggregator.</summary>

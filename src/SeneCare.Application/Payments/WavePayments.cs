@@ -1,6 +1,7 @@
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using SeneCare.Application.Abstractions;
+using SeneCare.Application.Business;
 using SeneCare.Application.Common;
 using SeneCare.Domain.Billing;
 using SeneCare.Domain.Common;
@@ -47,6 +48,7 @@ public sealed class PrepareInvoiceHandler(
     AccessControl access,
     IDocumentNumberGenerator numbers,
     Settings settings,
+    DiagnosticPlanner diagnostics,
     TimeProvider clock)
 {
     public const int RenewalWindowDays = 7;
@@ -71,8 +73,8 @@ public sealed class PrepareInvoiceHandler(
 
             try
             {
-                // Business plans also need the quarterly diagnostic (Phase 7): until then nothing is due.
-                period = subscription.PrepareRenewal(null);
+                // Business plans need the validated quarterly diagnostic: until then nothing is due.
+                period = subscription.PrepareRenewal(await diagnostics.ValidatedForCurrentPeriodAsync(subscription, cancellationToken));
             }
             catch (DomainException)
             {

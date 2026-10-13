@@ -2,13 +2,20 @@
 @using SeneCare.Domain.Billing
 @{
     Layout = "_AppLayout";
-    ViewData["NavActive"] = "espace";
+    var isBusiness = AppNavigation.IsBusiness(User);
+    ViewData["NavActive"] = isBusiness ? "factures" : "espace";
     ViewData["Title"] = L["Space_Subscription"];
     var canSimulate = ViewData["CanSimulate"] is true;
     string Day(DateOnly d) => Formatting.ShortDate(new DateTimeOffset(d.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero));
 }
 
-<h1 class="sc-titre">@L["Space_Subscription"]</h1>
+<div class="flex flex-wrap items-center justify-between gap-3">
+    <h1 class="sc-titre">@L["Space_Subscription"]</h1>
+    @if (isBusiness)
+    {
+        <a href="/entreprise/exports/factures.csv" class="sc-btn-secondaire min-h-10 text-sm" download><sc-icon name="receipt" />@L["Export_InvoicesCsv"]</a>
+    }
+</div>
 
 @if (Model.Count == 0)
 {

@@ -2,6 +2,8 @@
 @{
     var nav = AppNavigation.For(User);
     var active = ViewData["NavActive"] as string ?? "espace";
+    // Business dashboards and reports use the desktop width; everything else stays a readable column.
+    var width = ViewData["Wide"] is true ? "max-w-screen-xl" : "max-w-screen-md";
 }
 <!DOCTYPE html>
 <html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
@@ -12,7 +14,7 @@
 <body class="min-h-dvh lg:pl-60">
     <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-atlantique focus:px-4 focus:py-3 focus:text-sable">@L["Layout_SkipToContent"]</a>
     <header class="sticky top-0 z-30 border-b border-ligne bg-sable/95 backdrop-blur">
-        <div class="mx-auto flex w-full max-w-screen-md items-center justify-between gap-2 px-4 py-2">
+        <div class="mx-auto flex w-full @width items-center justify-between gap-2 px-4 py-2">
             <div class="lg:invisible"><partial name="Ui/_Brand" /></div>
             <div class="flex items-center gap-1">
                 <partial name="Ui/_AppStatus" />
@@ -22,7 +24,7 @@
             </div>
         </div>
     </header>
-    <main id="contenu" class="mx-auto w-full max-w-screen-md px-4 pt-6 pb-32 lg:pb-12">
+    <main id="contenu" class="mx-auto w-full @width px-4 pt-6 pb-32 lg:pb-12">
         @RenderBody()
     </main>
     <partial name="Ui/_TabBar" model="new TabBarModel(nav, active)" />

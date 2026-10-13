@@ -2,10 +2,14 @@
 @using SeneCare.Domain.Accounts
 @{
     Layout = "_AppLayout";
-    ViewData["NavActive"] = "logements";
-    ViewData["Title"] = L["Property_Add"];
+    var isBusiness = AppNavigation.IsBusiness(User);
+    var title = isBusiness ? L["Site_Add"] : L["Property_Add"];
+    ViewData["NavActive"] = isBusiness ? "sites" : "logements";
+    ViewData["Title"] = title;
     var picker = new NeighborhoodPickerModel("NeighborhoodId", Model.NeighborhoodId, Model.NeighborhoodLabel);
-    var kinds = new[] { PropertyKind.House, PropertyKind.Villa, PropertyKind.Apartment };
+    var kinds = isBusiness
+        ? new[] { PropertyKind.Office, PropertyKind.Shop, PropertyKind.Warehouse }
+        : new[] { PropertyKind.House, PropertyKind.Villa, PropertyKind.Apartment };
 }
 @section Head {
     @* Map assets only on this page (≈45 KB), never on the others. *@
@@ -14,8 +18,8 @@
     <script src="~/js/map.js" asp-append-version="true" defer></script>
 }
 
-<h1 class="sc-titre">@L["Property_Add"]</h1>
-<p class="mt-2 text-charbon-doux">@L["Property_Add_Intro"]</p>
+<h1 class="sc-titre">@title</h1>
+<p class="mt-2 text-charbon-doux">@(isBusiness ? L["Site_Add_Intro"] : L["Property_Add_Intro"])</p>
 
 <div asp-validation-summary="All" class="sc-error" role="alert"></div>
 

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SeneCare.Application.Abstractions;
+using SeneCare.Application.Business;
 using SeneCare.Application.Common;
 using SeneCare.Domain.Billing;
 using SeneCare.Domain.Common;
@@ -82,7 +83,7 @@ public sealed class SubscriptionQueries(IApplicationDbContext db, AccessControl 
 /// Development only (the Web hides it elsewhere): activates a pending subscription without payment,
 /// so the client journey can be tried before the payment phase.
 /// </summary>
-public sealed class SimulatedActivation(IApplicationDbContext db, AccessControl access, TimeProvider clock)
+public sealed class SimulatedActivation(IApplicationDbContext db, AccessControl access, DiagnosticPlanner diagnostics, TimeProvider clock)
 {
     public async Task<Result<Guid>> ActivateAsync(Guid userId, Guid subscriptionId, CancellationToken cancellationToken = default)
     {
@@ -95,6 +96,7 @@ public sealed class SimulatedActivation(IApplicationDbContext db, AccessControl 
         try
         {
             subscription.Activate(DakarCalendar.Today(clock), clock.GetUtcNow());
+            await diagnostics.EnsurePlannedAsync(subscription, cancellationToken);
         }
         catch (DomainException ex)
         {

@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using SeneCare.Application.Business;
 using SeneCare.Application.Properties;
 using SeneCare.Application.Requests;
 using SeneCare.Application.Subscriptions;
@@ -21,6 +22,7 @@ public sealed class SpaceController(
     PropertyQueries properties,
     RequestQueries requests,
     SubscriptionQueries subscriptions,
+    BusinessDashboardQuery businessDashboard,
     IStringLocalizer<SharedResource> localizer,
     TimeProvider clock) : Controller
 {
@@ -44,6 +46,7 @@ public sealed class SpaceController(
             Month = Formatting.ToDakar(clock.GetUtcNow()).Month,
             TourJson = runTour ? TourJson(nav.TourKey) : null,
             Client = nav.TourKey == TourKeys.Client ? await ClientHomeAsync(userId, cancellationToken) : null,
+            Business = nav.TourKey == TourKeys.Business ? await businessDashboard.GetAsync(userId, cancellationToken) : null,
         });
     }
 
@@ -113,18 +116,6 @@ public sealed class SpaceController(
 [Authorize]
 public sealed class SectionsController : Controller
 {
-    [HttpGet("/entreprise/sites")]
-    [Authorize(Policy = Policies.OrganizationMember)]
-    public IActionResult Sites() => Soon("sites", "Tab_Sites", EmptyIllustration.House);
-
-    [HttpGet("/entreprise/factures")]
-    [Authorize(Policy = Policies.OrganizationMember)]
-    public IActionResult Invoices() => Soon("factures", "Tab_Invoices", EmptyIllustration.Tools);
-
-    [HttpGet("/entreprise/diagnostics")]
-    [Authorize(Policy = Policies.OrganizationMember)]
-    public IActionResult Diagnostics() => Soon("espace", "Space_Diagnostics", EmptyIllustration.Tools);
-
     [HttpGet("/technicien/rapports")]
     [Authorize(Policy = Policies.Technician)]
     public IActionResult Reports() => Soon("rapports", "Tab_Reports", EmptyIllustration.Tools);

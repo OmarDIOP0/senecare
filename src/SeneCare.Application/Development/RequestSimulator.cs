@@ -108,7 +108,7 @@ public sealed class RequestSimulator(IApplicationDbContext db, IFileStorage stor
         await db.Interventions.Where(i => i.RequestId == requestId && i.CompletedAt == null).FirstOrDefaultAsync(cancellationToken)
         ?? throw new DomainException("simulation.no_intervention", "Send the technician first.");
 
-    private async Task<Technician> DemoTechnicianAsync(ServiceDomain domain, CancellationToken cancellationToken)
+    internal async Task<Technician> DemoTechnicianAsync(ServiceDomain domain, CancellationToken cancellationToken)
     {
         var user = await db.Users.FirstOrDefaultAsync(u => u.PhoneNumber == DemoTechnicianPhone, cancellationToken);
         if (user is null)

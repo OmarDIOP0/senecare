@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using SeneCare.Application.Abstractions;
 using SeneCare.Application.Auth;
+using SeneCare.Infrastructure.Documents;
 using SeneCare.Infrastructure.Identity;
 using SeneCare.Infrastructure.Messaging;
 using SeneCare.Infrastructure.Persistence;
@@ -40,6 +41,7 @@ public static class DependencyInjection
         services.AddScoped<IDocumentNumberGenerator, DocumentNumberGenerator>();
         services.Configure<StorageOptions>(configuration.GetSection(StorageOptions.SectionName));
         services.AddSingleton<IFileStorage, LocalFileStorage>();
+        services.AddSingleton<IPdfRenderer, QuestPdfRenderer>();
 
         AddMessaging(services, configuration);
 

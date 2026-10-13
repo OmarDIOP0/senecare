@@ -97,7 +97,7 @@ public sealed class RequestQueries(IApplicationDbContext db, AccessControl acces
             request.DisputeReason);
     }
 
-    private async Task<IReadOnlyList<RequestSummary>> SummariesAsync(IReadOnlyList<ServiceRequest> requests, CancellationToken cancellationToken)
+    internal async Task<IReadOnlyList<RequestSummary>> SummariesAsync(IReadOnlyList<ServiceRequest> requests, CancellationToken cancellationToken)
     {
         var requestIds = requests.Select(r => r.Id).ToList();
         var propertyIds = requests.Select(r => r.PropertyId).Distinct().ToList();

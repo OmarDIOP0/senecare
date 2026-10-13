@@ -64,6 +64,9 @@ public static class Policies
     /// <summary>Any member of a business account (manager, site manager, reporter).</summary>
     public const string OrganizationMember = nameof(OrganizationMember);
 
+    /// <summary>Who sees prices and pays: a household, or the manager of a business.</summary>
+    public const string Billing = nameof(Billing);
+
     public const string Technician = nameof(Technician);
 
     public const string AdminDispatcher = nameof(AdminDispatcher);
@@ -93,6 +96,8 @@ public static class Policies
             c.User.GetMemberships().Any(m => m.Kind == AccountKind.Business && m.Role == AccountRole.Manager)));
         options.AddPolicy(OrganizationMember, Registered(c =>
             c.User.GetMemberships().Any(m => m.Kind == AccountKind.Business)));
+        options.AddPolicy(Billing, Registered(c =>
+            c.User.GetMemberships().Any(m => m.Kind == AccountKind.Household || m.Role == AccountRole.Manager)));
         options.AddPolicy(Technician, Registered(c => c.User.IsInRole(nameof(PlatformRole.Technician))));
         options.AddPolicy(AdminDispatcher, Registered(c =>
             c.User.IsInRole(nameof(PlatformRole.Dispatcher)) || c.User.IsInRole(nameof(PlatformRole.SuperAdmin))));

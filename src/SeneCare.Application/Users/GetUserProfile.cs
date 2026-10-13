@@ -43,9 +43,11 @@ public sealed class GetUserProfileHandler(IApplicationDbContext db)
     }
 }
 
-public sealed record TeamMemberDto(Guid UserId, string? FullName, string Phone, AccountRole Role);
+public sealed record TeamMemberDto(Guid UserId, string? FullName, string Phone, AccountRole Role, IReadOnlyList<Guid> SiteIds);
 
-public sealed record TeamDto(string AccountName, IReadOnlyList<TeamMemberDto> Members);
+public sealed record TeamSite(Guid Id, string Name);
+
+public sealed record TeamDto(string AccountName, IReadOnlyList<TeamMemberDto> Members, IReadOnlyList<TeamSite> Sites, bool RequiresApproval);
 
 /// <summary>Members of a business account (team page).</summary>
 public sealed class GetTeamHandler(IApplicationDbContext db)
@@ -60,10 +62,19 @@ public sealed class GetTeamHandler(IApplicationDbContext db)
 
         var userIds = account.Members.Select(m => m.UserId).ToList();
         var users = await db.Users.AsNoTracking().Where(u => userIds.Contains(u.Id)).ToDictionaryAsync(u => u.Id, cancellationToken);
-        return new TeamDto(account.DisplayName, [.. account.Members
-            .Where(m => users.ContainsKey(m.UserId))
-            .Select(m => new TeamMemberDto(m.UserId, users[m.UserId].FullName, users[m.UserId].PhoneNumber.Formatted, m.Role))
-            .OrderBy(m => m.Role)
-            .ThenBy(m => m.FullName, StringComparer.CurrentCulture)]);
+        var sites = await db.Properties.AsNoTracking()
+            .Where(p => p.AccountId == account.Id)
+            .OrderBy(p => p.Name)
+            .Select(p => new TeamSite(p.Id, p.Name))
+            .ToListAsync(cancellationToken);
+        return new TeamDto(
+            account.DisplayName,
+            [.. account.Members
+                .Where(m => users.ContainsKey(m.UserId))
+                .Select(m => new TeamMemberDto(m.UserId, users[m.UserId].FullName, users[m.UserId].PhoneNumber.Formatted, m.Role, [.. m.PropertyScope]))
+                .OrderBy(m => m.Role)
+                .ThenBy(m => m.FullName, StringComparer.CurrentCulture)],
+            sites,
+            account.RequiresRequestApproval);
     }
 }

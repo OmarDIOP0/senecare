@@ -16,6 +16,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <!-- Readiness probe that checks the database connection. -->
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
+    <!-- PDF documents (diagnostic reports, exports, later receipts). Community licence: free under 1 M$ revenue. -->
+    <PackageReference Include="QuestPDF" />
     <!-- Migrations tooling (design time only, not shipped). -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>

@@ -21,4 +21,7 @@ public sealed class SpaceViewModel
 
     /// <summary>Customer data (household space only).</summary>
     public ClientHomeModel? Client { get; init; }
+
+    /// <summary>Company dashboard (business space only).</summary>
+    public SeneCare.Application.Business.BusinessDashboard? Business { get; init; }
 }

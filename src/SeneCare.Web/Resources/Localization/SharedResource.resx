@@ -457,4 +457,149 @@
   <data name="Error_payment_rejection_reason" xml:space="preserve"><value>Indiquez le motif du refus.</value></data>
   <data name="Error_payment_reference" xml:space="preserve"><value>La référence est trop longue.</value></data>
   <data name="Error_payment_not_pending" xml:space="preserve"><value>Ce paiement a déjà été traité.</value></data>
+  <data name="Common_Save" xml:space="preserve"><value>Enregistrer</value></data>
+  <data name="Tab_Requests" xml:space="preserve"><value>Demandes</value></data>
+  <data name="Sites_Title" xml:space="preserve"><value>Mes sites</value></data>
+  <data name="Sites_Empty_Title" xml:space="preserve"><value>Aucun site pour le moment</value></data>
+  <data name="Sites_Empty_Text" xml:space="preserve"><value>Ajoutez vos bureaux, boutiques ou entrepôts : chaque site a son adresse, son point de repère et son carnet de santé.</value></data>
+  <data name="Site_Add" xml:space="preserve"><value>Ajouter un site</value></data>
+  <data name="Site_Add_Short" xml:space="preserve"><value>Site</value></data>
+  <data name="Site_Add_Intro" xml:space="preserve"><value>Le technicien doit trouver le site du premier coup : quartier, point sur la carte et point de repère.</value></data>
+  <data name="Sla_Hours" xml:space="preserve"><value>&lt; {0} h</value></data>
+  <data name="Sla_Days" xml:space="preserve"><value>&lt; {0} jours</value></data>
+  <data name="Biz_Figures" xml:space="preserve"><value>Chiffres clés</value></data>
+  <data name="Biz_Sites" xml:space="preserve"><value>Sites</value></data>
+  <data name="Biz_Open" xml:space="preserve"><value>Demandes ouvertes</value></data>
+  <data name="Biz_Sla" xml:space="preserve"><value>Délais respectés</value></data>
+  <data name="Biz_SlaWindow" xml:space="preserve"><value>{0} demandes sur 90 jours</value></data>
+  <data name="Biz_LateNow" xml:space="preserve"><value>{0} en retard en ce moment</value></data>
+  <data name="Biz_Spent" xml:space="preserve"><value>Payé en {0}</value></data>
+  <data name="Biz_NextDiagnostic" xml:space="preserve"><value>Prochain diagnostic</value></data>
+  <data name="Biz_ToApprove" xml:space="preserve"><value>À valider ({0})</value></data>
+  <data name="Biz_OpenRequests" xml:space="preserve"><value>Demandes en cours</value></data>
+  <data name="Biz_AllRequests" xml:space="preserve"><value>Toutes les demandes</value></data>
+  <data name="Biz_NoOpen" xml:space="preserve"><value>Aucune demande en cours sur vos sites.</value></data>
+  <data name="Biz_Offer" xml:space="preserve"><value>Votre offre</value></data>
+  <data name="Biz_NoOffer" xml:space="preserve"><value>Choisissez votre offre pour que vos équipes puissent signaler.</value></data>
+  <data name="Biz_NoOfferMember" xml:space="preserve"><value>Le gestionnaire du compte n'a pas encore choisi l'offre.</value></data>
+  <data name="Biz_SeeSubscription" xml:space="preserve"><value>Abonnement et factures</value></data>
+  <data name="Biz_DiagnosticPlanned" xml:space="preserve"><value>Prochain : {0}</value></data>
+  <data name="Biz_LastDiagnostic" xml:space="preserve"><value>Dernier : {0} · {1} anomalie(s)</value></data>
+  <data name="Approval_Approve" xml:space="preserve"><value>Valider</value></data>
+  <data name="Approval_Reject" xml:space="preserve"><value>Refuser</value></data>
+  <data name="Approval_Reason" xml:space="preserve"><value>Motif (l'employé le verra)</value></data>
+  <data name="Approval_Approved" xml:space="preserve"><value>Demande validée : elle part chez SENECARE.</value></data>
+  <data name="Approval_Rejected" xml:space="preserve"><value>Demande refusée.</value></data>
+  <data name="Offer_Title" xml:space="preserve"><value>Choisir votre offre</value></data>
+  <data name="Offer_Intro" xml:space="preserve"><value>Une seule offre pour tous vos sites. Facturation trimestrielle, après le diagnostic technique de chaque trimestre.</value></data>
+  <data name="Offer_NeedSite" xml:space="preserve"><value>Ajoutez d'abord au moins un site.</value></data>
+  <data name="Offer_Popular" xml:space="preserve"><value>Le plus choisi</value></data>
+  <data name="Offer_PerMonth" xml:space="preserve"><value>/ mois</value></data>
+  <data name="Offer_Billing" xml:space="preserve"><value>Facturé tous les {0} mois</value></data>
+  <data name="Offer_Delays" xml:space="preserve"><value>Délai d'intervention</value></data>
+  <data name="Offer_Visits" xml:space="preserve"><value>Visites préventives</value></data>
+  <data name="Offer_VisitsCount" xml:space="preserve"><value>{0} par trimestre</value></data>
+  <data name="Offer_VisitsUnlimited" xml:space="preserve"><value>Selon besoin</value></data>
+  <data name="Offer_Diagnostic" xml:space="preserve"><value>Diagnostic technique complet chaque trimestre, avec rapport</value></data>
+  <data name="Offer_Domains" xml:space="preserve"><value>{0} corps de métier couverts</value></data>
+  <data name="Offer_AllSites" xml:space="preserve"><value>Tous vos sites, nouveaux sites inclus</value></data>
+  <data name="Offer_FirstPayment" xml:space="preserve"><value>Pour démarrer :</value></data>
+  <data name="Offer_FirstPayment_Hint" xml:space="preserve"><value>Inscription ({0}) + premier trimestre.</value></data>
+  <data name="Offer_ChooseThis" xml:space="preserve"><value>Choisir {0}</value></data>
+  <data name="Offer_Choose" xml:space="preserve"><value>Choisir mon offre</value></data>
+  <data name="Offer_Chosen" xml:space="preserve"><value>Offre choisie. Réglez l'inscription et le premier trimestre pour démarrer.</value></data>
+  <data name="Team_You" xml:space="preserve"><value>vous</value></data>
+  <data name="Team_Edit" xml:space="preserve"><value>Modifier</value></data>
+  <data name="Team_Remove" xml:space="preserve"><value>Retirer de l'équipe</value></data>
+  <data name="Team_Removed" xml:space="preserve"><value>Membre retiré de l'équipe.</value></data>
+  <data name="Team_Updated" xml:space="preserve"><value>Rôle mis à jour. Il s'applique à sa prochaine connexion.</value></data>
+  <data name="Team_Sites" xml:space="preserve"><value>Sites</value></data>
+  <data name="Team_Sites_Hint" xml:space="preserve"><value>Pour un responsable de site ou un employé : les sites où il travaille. Un gestionnaire voit tous les sites.</value></data>
+  <data name="Team_ApprovalTitle" xml:space="preserve"><value>Validation des demandes</value></data>
+  <data name="Team_ApprovalText" xml:space="preserve"><value>Activée, une demande signalée par un employé attend l'accord du responsable du site avant de partir chez SENECARE.</value></data>
+  <data name="Team_ApprovalIsOn" xml:space="preserve"><value>Validation activée</value></data>
+  <data name="Team_ApprovalIsOff" xml:space="preserve"><value>Validation désactivée</value></data>
+  <data name="Team_ApprovalEnable" xml:space="preserve"><value>Activer</value></data>
+  <data name="Team_ApprovalDisable" xml:space="preserve"><value>Désactiver</value></data>
+  <data name="Team_ApprovalOn" xml:space="preserve"><value>Les demandes des employés seront validées par les responsables.</value></data>
+  <data name="Team_ApprovalOff" xml:space="preserve"><value>Les demandes partent directement chez SENECARE.</value></data>
+  <data name="DiagnosticStatus_Planned" xml:space="preserve"><value>Planifié</value></data>
+  <data name="DiagnosticStatus_InProgress" xml:space="preserve"><value>En cours</value></data>
+  <data name="DiagnosticStatus_Submitted" xml:space="preserve"><value>Rapport remis</value></data>
+  <data name="DiagnosticStatus_Validated" xml:space="preserve"><value>Validé</value></data>
+  <data name="DiagnosticStatus_Cancelled" xml:space="preserve"><value>Annulé</value></data>
+  <data name="ControlPoint_Ok" xml:space="preserve"><value>Conforme</value></data>
+  <data name="ControlPoint_Anomaly" xml:space="preserve"><value>Anomalie</value></data>
+  <data name="ControlPoint_NotApplicable" xml:space="preserve"><value>Non concerné</value></data>
+  <data name="Diagnostic_Intro" xml:space="preserve"><value>Chaque trimestre, un technicien contrôle tous vos sites. Le trimestre suivant n'est facturé qu'après ce diagnostic.</value></data>
+  <data name="Diagnostic_None_Title" xml:space="preserve"><value>Pas encore de diagnostic</value></data>
+  <data name="Diagnostic_None_Text" xml:space="preserve"><value>Le premier diagnostic est planifié dès que votre abonnement démarre.</value></data>
+  <data name="Diagnostic_PeriodShort" xml:space="preserve"><value>Trimestre du {0} au {1}</value></data>
+  <data name="Diagnostic_Of" xml:space="preserve"><value>Diagnostic du {0}</value></data>
+  <data name="Diagnostic_PlannedOn" xml:space="preserve"><value>Prévu le {0}</value></data>
+  <data name="Diagnostic_AnomalyCount" xml:space="preserve"><value>{0} anomalie(s)</value></data>
+  <data name="Diagnostic_ReportTitle" xml:space="preserve"><value>Diagnostic technique T{0} {1}</value></data>
+  <data name="Diagnostic_Period" xml:space="preserve"><value>Trimestre</value></data>
+  <data name="Diagnostic_Date" xml:space="preserve"><value>Date</value></data>
+  <data name="Diagnostic_Status" xml:space="preserve"><value>Statut</value></data>
+  <data name="Diagnostic_Technician" xml:space="preserve"><value>Technicien</value></data>
+  <data name="Diagnostic_Anomalies" xml:space="preserve"><value>Anomalies</value></data>
+  <data name="Diagnostic_ValidatedOn" xml:space="preserve"><value>Validé le</value></data>
+  <data name="Diagnostic_Recommendations" xml:space="preserve"><value>Recommandations</value></data>
+  <data name="Diagnostic_General" xml:space="preserve"><value>Tous les sites</value></data>
+  <data name="Diagnostic_DownloadPdf" xml:space="preserve"><value>Rapport PDF</value></data>
+  <data name="Diagnostic_Convert" xml:space="preserve"><value>Créer la demande</value></data>
+  <data name="Diagnostic_Converted" xml:space="preserve"><value>Demande créée à partir de l'anomalie.</value></data>
+  <data name="Diagnostic_SeeRequest" xml:space="preserve"><value>Voir la demande</value></data>
+  <data name="Pdf_Footer" xml:space="preserve"><value>SENECARE by SENE DESIGN · généré le {0}</value></data>
+  <data name="Export_Title" xml:space="preserve"><value>Exporter</value></data>
+  <data name="Export_Text" xml:space="preserve"><value>Les demandes de vos sites sur la période : CSV pour Excel, PDF pour un rapport.</value></data>
+  <data name="Export_From" xml:space="preserve"><value>Du</value></data>
+  <data name="Export_To" xml:space="preserve"><value>Au</value></data>
+  <data name="Export_InvoicesCsv" xml:space="preserve"><value>Factures (CSV)</value></data>
+  <data name="Export_RequestsTitle" xml:space="preserve"><value>Synthèse des demandes</value></data>
+  <data name="Export_Total" xml:space="preserve"><value>Demandes</value></data>
+  <data name="Export_Critical" xml:space="preserve"><value>Dont critiques</value></data>
+  <data name="Export_SlaRate" xml:space="preserve"><value>Délais respectés</value></data>
+  <data name="Export_Sla_Yes" xml:space="preserve"><value>Oui</value></data>
+  <data name="Export_Sla_No" xml:space="preserve"><value>Non</value></data>
+  <data name="Export_Registration" xml:space="preserve"><value>Inscription</value></data>
+  <data name="Export_Col_Number" xml:space="preserve"><value>N°</value></data>
+  <data name="Export_Col_Date" xml:space="preserve"><value>Date</value></data>
+  <data name="Export_Col_Site" xml:space="preserve"><value>Site</value></data>
+  <data name="Export_Col_Domain" xml:space="preserve"><value>Métier</value></data>
+  <data name="Export_Col_Urgency" xml:space="preserve"><value>Urgence</value></data>
+  <data name="Export_Col_Status" xml:space="preserve"><value>Statut</value></data>
+  <data name="Export_Col_ReportedBy" xml:space="preserve"><value>Signalé par</value></data>
+  <data name="Export_Col_SlaDeadline" xml:space="preserve"><value>Délai max</value></data>
+  <data name="Export_Col_Responded" xml:space="preserve"><value>Arrivée technicien</value></data>
+  <data name="Export_Col_Completed" xml:space="preserve"><value>Terminée</value></data>
+  <data name="Export_Col_Sla" xml:space="preserve"><value>Délai respecté</value></data>
+  <data name="Export_Col_Description" xml:space="preserve"><value>Description</value></data>
+  <data name="Export_Col_Invoice" xml:space="preserve"><value>Facture</value></data>
+  <data name="Export_Col_DueDate" xml:space="preserve"><value>Échéance</value></data>
+  <data name="Export_Col_Period" xml:space="preserve"><value>Période</value></data>
+  <data name="Export_Col_Amount" xml:space="preserve"><value>Montant (FCFA)</value></data>
+  <data name="Export_Col_Paid" xml:space="preserve"><value>Payé (FCFA)</value></data>
+  <data name="Export_Col_PaidOn" xml:space="preserve"><value>Payée le</value></data>
+  <data name="Error_business_manager_only" xml:space="preserve"><value>Réservé au gestionnaire du compte.</value></data>
+  <data name="Error_business_approver_only" xml:space="preserve"><value>Seuls les responsables de site et le gestionnaire peuvent faire cela.</value></data>
+  <data name="Error_business_already_subscribed" xml:space="preserve"><value>Votre entreprise a déjà une offre.</value></data>
+  <data name="Error_business_plan_unknown" xml:space="preserve"><value>Cette offre n'existe pas.</value></data>
+  <data name="Error_business_no_site" xml:space="preserve"><value>Ajoutez d'abord au moins un site.</value></data>
+  <data name="Error_business_not_awaiting_approval" xml:space="preserve"><value>Cette demande a déjà été traitée.</value></data>
+  <data name="Error_business_reject_reason" xml:space="preserve"><value>Indiquez le motif du refus.</value></data>
+  <data name="Error_business_site_unknown" xml:space="preserve"><value>Site inconnu.</value></data>
+  <data name="Error_business_site_required" xml:space="preserve"><value>Choisissez au moins un site pour ce rôle.</value></data>
+  <data name="Error_account_last_admin" xml:space="preserve"><value>Le compte doit garder au moins un gestionnaire.</value></data>
+  <data name="Error_account_role_not_allowed" xml:space="preserve"><value>Ce rôle n'est pas disponible pour ce compte.</value></data>
+  <data name="Error_account_member_not_found" xml:space="preserve"><value>Ce membre ne fait plus partie de l'équipe.</value></data>
+  <data name="Error_account_approval_business_only" xml:space="preserve"><value>La validation des demandes est réservée aux entreprises.</value></data>
+  <data name="Error_subscription_plan_inactive" xml:space="preserve"><value>Cette offre n'est plus proposée.</value></data>
+  <data name="Error_subscription_properties" xml:space="preserve"><value>Cette offre ne peut pas couvrir ces sites.</value></data>
+  <data name="Error_request_domain_not_covered" xml:space="preserve"><value>Ce métier n'est pas couvert par votre offre.</value></data>
+  <data name="Error_diagnostic_not_found" xml:space="preserve"><value>Diagnostic introuvable.</value></data>
+  <data name="Error_diagnostic_not_anomaly" xml:space="preserve"><value>Seule une anomalie d'un rapport remis peut devenir une demande.</value></data>
+  <data name="Error_diagnostic_already_converted" xml:space="preserve"><value>Cette anomalie a déjà sa demande.</value></data>
+  <data name="Error_simulation_no_diagnostic" xml:space="preserve"><value>Aucun diagnostic planifié à réaliser.</value></data>
 </root>

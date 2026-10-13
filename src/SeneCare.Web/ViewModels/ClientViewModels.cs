@@ -80,6 +80,8 @@ public sealed class ClientHomeModel
 
     public int PropertyCount { get; init; }
 
+    public int RequestCount { get; init; }
+
     /// <summary>Advice of the month written by SENECARE (null: the built-in seasonal advice).</summary>
     public SeneCare.Domain.Content.PreventiveAdvice? Advice { get; init; }
 

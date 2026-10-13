@@ -26,7 +26,7 @@ public static class AppNavigation
     private static readonly NavItem Report = new("signaler", "/signaler", "plus", "Tab_Report", "signaler");
 
     /// <summary>Account settings: bottom of the sidebar, « Plus » on phones.</summary>
-    public static readonly NavItem Settings = new("profil", "/compte", "circle-user", "Tab_Settings", "profil");
+    public static readonly NavItem Settings = new("profil", "/compte", "settings", "Tab_Settings", "profil");
 
     /// <summary>
     /// One navigation per kind of user. Priority when someone has several roles:

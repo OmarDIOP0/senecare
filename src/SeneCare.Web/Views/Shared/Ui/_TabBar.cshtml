@@ -40,7 +40,7 @@
         }
         <li class="flex-1">
             <button type="button" data-sheet-open="plus" class="flex h-14 w-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium @Tab(moreActive)">
-                <sc-icon name="list-checks" class="size-5 @(moreActive ? "text-laterite" : "")" />@L["Shell_More"]
+                <sc-icon name="ellipsis" class="size-5 @(moreActive ? "text-laterite" : "")" />@L["Shell_More"]
             </button>
         </li>
     </ul>
@@ -57,7 +57,7 @@
         <li>
             <form method="post" action="/visite/rejouer">
                 @Html.AntiForgeryToken()
-                <button type="submit" class="sc-menu-item min-h-11"><sc-icon name="info" class="size-[18px] text-charbon-doux" />@L["Shell_Help"]</button>
+                <button type="submit" class="sc-menu-item min-h-11"><sc-icon name="life-buoy" class="size-[18px] text-charbon-doux" />@L["Shell_Help"]</button>
             </form>
         </li>
     </ul>

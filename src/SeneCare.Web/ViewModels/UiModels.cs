@@ -74,3 +74,11 @@ public sealed record AdviceFormModel(Guid? Id, string? Title, string? Body, IRea
 
 /// <summary>Page title + grey description + main action on the right.</summary>
 public sealed record PageHeaderModel(string Title, string? Description = null, string? ActionLabel = null, string? ActionUrl = null, string? ActionIcon = null);
+
+public sealed record ChecklistStep(string Label, string Url, bool Done);
+
+/// <summary>Start-up checklist (« 1/4 ») shown instead of figures on a new account.</summary>
+public sealed record ChecklistModel(string Title, IReadOnlyList<ChecklistStep> Steps)
+{
+    public int Done => Steps.Count(s => s.Done);
+}

@@ -69,7 +69,8 @@ public sealed class SpaceController(
     private async Task<ClientHomeModel> ClientHomeAsync(Guid userId, CancellationToken cancellationToken)
     {
         var homes = await properties.ListAsync(userId, cancellationToken);
-        var active = (await requests.ListAsync(userId, cancellationToken)).FirstOrDefault(r => r.IsOpen);
+        var all = await requests.ListAsync(userId, cancellationToken);
+        var active = all.FirstOrDefault(r => r.IsOpen);
         var timeline = active is null
             ? []
             : RequestTimeline.Build(
@@ -81,6 +82,7 @@ public sealed class SpaceController(
         return new ClientHomeModel
         {
             PropertyCount = homes.Count,
+            RequestCount = all.Count,
             Subscription = (await subscriptions.ListAsync(userId, cancellationToken)) is { Count: > 0 } subs ? subs[0] : null,
             ActiveRequest = active,
             ActiveTimeline = timeline,

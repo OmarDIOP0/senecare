@@ -42,14 +42,14 @@ else if (Model.Client is { } client)
     {
         (client.PropertyCount > 0, L["Start_AddHome"].Value, "/logements/nouveau"),
         (client.Subscription?.Status is SubscriptionStatus.Active or SubscriptionStatus.PastDue, L["Start_Activate"].Value, "/abonnement"),
-        (client.ActiveRequest is not null || client.Subscription?.Status == SubscriptionStatus.Active && client.Referral is not null, L["Start_FirstReport"].Value, "/signaler"),
+        (client.RequestCount > 0, L["Start_FirstReport"].Value, "/signaler"),
     };
     var done = steps.Count(s => s.Done);
 
     <div class="mt-6 grid gap-6">
         @if (done < steps.Length && client.ActiveRequest is null)
         {
-            <partial name="_Checklist" model="new ChecklistModel(L[\"Start_Title\"].Value, [.. steps.Select(s => new ChecklistStep(s.Label, s.Url, s.Done))])" />
+            <partial name="Ui/_Checklist" model='new ChecklistModel(L["Start_Title"].Value, [.. steps.Select(s => new ChecklistStep(s.Label, s.Url, s.Done))])' />
         }
 
         @if (client.ActiveRequest is { } active)

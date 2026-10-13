@@ -1,20 +1,28 @@
 @model IReadOnlyList<SeneCare.Application.Properties.PropertySummary>
+@using SeneCare.Domain.Billing
 @{
     Layout = "_AppLayout";
     var isBusiness = AppNavigation.IsBusiness(User);
     var canAdd = !isBusiness || AppNavigation.IsBusinessManager(User);
-    var title = isBusiness ? L["Sites_Title"] : L["Properties_Title"];
+    var title = isBusiness ? L["Sites_Title"].Value : L["Properties_Title"].Value;
     ViewData["NavActive"] = isBusiness ? "sites" : "logements";
     ViewData["Title"] = title;
+    ViewData["Wide"] = true;
+    var communes = Model.Select(p => p.Commune).Distinct().Order().ToList();
+    string Badge(SubscriptionStatus? status) => status switch
+    {
+        SubscriptionStatus.Active => "bg-baobab-clair text-baobab",
+        SubscriptionStatus.PastDue => "bg-soleil-clair text-soleil",
+        SubscriptionStatus.Suspended => "bg-rouge-clair text-rouge",
+        _ => "bg-sourdine text-charbon-doux",
+    };
 }
 
-<div class="flex items-center justify-between gap-3">
-    <h1 class="sc-titre">@title</h1>
-    @if (Model.Count > 0 && canAdd)
-    {
-        <a href="/logements/nouveau" class="sc-btn-secondaire"><sc-icon name="plus" />@(isBusiness ? L["Site_Add_Short"] : L["Property_Add_Short"])</a>
-    }
-</div>
+<partial name="Ui/_PageHeader" model='new PageHeaderModel(
+    title,
+    isBusiness ? L["Sites_Description"].Value : L["Properties_Description"].Value,
+    canAdd && Model.Count > 0 ? (isBusiness ? L["Site_Add"].Value : L["Property_Add"].Value) : null,
+    "/logements/nouveau")' />
 
 @if (Model.Count == 0)
 {
@@ -29,35 +37,85 @@
         }
     </div>
 }
+else
+{
+    <div class="mt-6 flex flex-wrap items-center gap-2" data-table-controls="table-sites">
+        <label class="relative flex-1 sm:max-w-xs">
+            <span class="sr-only">@L["Admin_Search"]</span>
+            <sc-icon name="search" class="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-charbon-pale" />
+            <input type="search" data-table-search class="sc-input mt-0 pl-8" placeholder="@L["Sites_Search_Placeholder"]" />
+        </label>
+        @if (communes.Count > 1)
+        {
+            <label>
+                <span class="sr-only">@L["Admin_Commune"]</span>
+                <select data-table-filter="commune" class="sc-input mt-0 w-auto">
+                    <option value="">@L["Sites_AllCommunes"]</option>
+                    @foreach (var commune in communes)
+                    {
+                        <option value="@commune">@commune</option>
+                    }
+                </select>
+            </label>
+        }
+    </div>
 
-<ul class="mt-6 grid gap-4 sm:grid-cols-2">
-    @foreach (var home in Model)
-    {
-        <li class="sc-carte relative overflow-hidden p-0">
-            @if (home.PhotoId is { } photo)
-            {
-                <img src="/fichiers/@photo" alt="" loading="lazy" decoding="async" class="h-36 w-full object-cover" />
-            }
-            else
-            {
-            }
-            <div class="p-4">
-                <p class="text-xs font-bold text-charbon-doux">@L["PropertyKind_" + home.Kind]</p>
-                <h2 class="text-[15px] font-semibold">
-                    <a href="/logements/@home.Id" class="text-charbon no-underline after:absolute after:inset-0">@home.Name</a>
-                </h2>
-                <p class="mt-1 flex items-center gap-1 text-sm"><sc-icon name="map-pin" class="size-4 text-laterite" />@home.Neighborhood, @home.Commune</p>
-                <div class="mt-3 flex flex-wrap gap-2">
-                    @if (home.SubscriptionStatus is { } status)
-                    {
-                        <span class="sc-badge @(status == SeneCare.Domain.Billing.SubscriptionStatus.Active ? "bg-baobab-clair text-baobab" : "bg-soleil-clair text-charbon")">@L["SubscriptionStatus_" + status]</span>
-                    }
-                    @if (home.OpenRequests > 0)
-                    {
-                        <span class="sc-badge bg-atlantique-clair text-atlantique">@L["Properties_OpenRequests", home.OpenRequests]</span>
-                    }
+    <div class="mt-3 hidden overflow-x-auto rounded-lg border border-ligne bg-surface md:block">
+        <table class="sc-table" id="table-sites">
+            <thead>
+                <tr>
+                    <th scope="col" data-sort>@L["Admin_PlanName"]</th>
+                    <th scope="col" data-sort>@L["Sites_Col_Place"]</th>
+                    <th scope="col">@L["Property_Landmark"]</th>
+                    <th scope="col" data-sort class="text-right">@L["Biz_Open"]</th>
+                    <th scope="col" data-sort>@L["Space_Subscription"]</th>
+                    <th scope="col"><span class="sr-only">@L["Sites_Actions"]</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr data-row data-commune="@p.Commune">
+                        <td><a href="/logements/@p.Id" class="font-medium text-charbon">@p.Name</a><span class="block text-xs text-charbon-doux">@L["PropertyKind_" + p.Kind]</span></td>
+                        <td>@p.Neighborhood<span class="block text-xs text-charbon-doux">@p.Commune</span></td>
+                        <td class="max-w-56 truncate text-charbon-doux">@p.Landmark</td>
+                        <td class="text-right tabular-nums" data-value="@p.OpenRequests.ToString("D4")">@(p.OpenRequests > 0 ? p.OpenRequests : "")</td>
+                        <td>
+                            @if (p.SubscriptionStatus is { } status)
+                            {
+                                <span class="sc-badge @Badge(status)">@L["SubscriptionStatus_" + status]</span>
+                            }
+                        </td>
+                        <td class="w-10 text-right">
+                            <details class="relative inline-block" data-menu>
+                                <summary class="sc-btn-icone size-8 list-none cursor-pointer" aria-label="@L["Sites_Actions"] — @p.Name"><sc-icon name="ellipsis" class="size-4" /></summary>
+                                <div class="sc-menu right-0 text-left">
+                                    <a href="/logements/@p.Id" class="sc-menu-item">@L["Sites_Open"]</a>
+                                    <a href="/signaler?logement=@p.Id" class="sc-menu-item">@L["Tab_Report"]</a>
+                                </div>
+                            </details>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <p class="mt-3 text-sm text-charbon-doux" data-table-empty="table-sites" hidden>@L["Admin_NoResult"]</p>
+
+    <ul class="mt-3 grid gap-2 md:hidden">
+        @foreach (var p in Model)
+        {
+            <li class="sc-carte relative flex items-center gap-3 px-3 py-2.5">
+                <div class="min-w-0 flex-1">
+                    <a href="/logements/@p.Id" class="font-medium text-charbon after:absolute after:inset-0">@p.Name</a>
+                    <p class="truncate text-[13px] text-charbon-doux">@p.Neighborhood, @p.Commune</p>
                 </div>
-            </div>
-        </li>
-    }
-</ul>
+                @if (p.SubscriptionStatus is { } status)
+                {
+                    <span class="sc-badge @Badge(status)">@L["SubscriptionStatus_" + status]</span>
+                }
+                <sc-icon name="chevron-right" class="size-4 text-charbon-pale" />
+            </li>
+        }
+    </ul>
+}

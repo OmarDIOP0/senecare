@@ -1,191 +1,220 @@
 @model SeneCare.Application.Business.BusinessDashboard
 @using SeneCare.Domain.Accounts
 @using SeneCare.Domain.Billing
-@using SeneCare.Domain.Common
 @{
     var isManager = Model.Role == AccountRole.Manager;
-    var urgencies = new[] { Urgency.Critical, Urgency.High, Urgency.Normal, Urgency.Planned };
     string Day(DateOnly d) => Formatting.ShortDate(new DateTimeOffset(d.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero));
     string Hours(TimeSpan t) => t.TotalHours < 48 ? L["Sla_Hours", (int)t.TotalHours] : L["Sla_Days", (int)t.TotalDays];
     var today = DateOnly.FromDateTime(DateTime.UtcNow);
+    var hasData = Model.RequestCount > 0;
+    // A KPI is shown only when it means something: never a « 0 » or « — » row on an empty account.
+    var kpis = new List<(string Label, string Value, string? Note)>
+    {
+        (L["Biz_Sites"].Value, Model.SiteCount.ToString(System.Globalization.CultureInfo.CurrentCulture), null),
+        (L["Biz_Open"].Value, Model.OpenTotal.ToString(System.Globalization.CultureInfo.CurrentCulture), Model.Sla.LateNow > 0 ? L["Biz_LateNow", Model.Sla.LateNow].Value : null),
+    };
+    if (Model.Sla.Rate is { } rate)
+    {
+        kpis.Add((L["Biz_Sla"].Value, rate + " %", L["Biz_SlaWindow", Model.Sla.Measured].Value));
+    }
+    if (isManager && Model.SpentThisYear is { Amount: > 0 } spent)
+    {
+        kpis.Add((L["Biz_Spent", DateTime.UtcNow.Year].Value, Formatting.Fcfa(spent), null));
+    }
+    else if (Model.NextDiagnostic is { } next)
+    {
+        kpis.Add((L["Biz_NextDiagnostic"].Value, Formatting.ShortDate(next.ScheduledFor), null));
+    }
+    var columns = kpis.Count switch { 2 => "lg:grid-cols-2", 3 => "lg:grid-cols-3", _ => "lg:grid-cols-4" };
 }
 
-@* ---- Figures ---- *@
-<section aria-label="@L["Biz_Figures"]" class="grid grid-cols-2 gap-3 lg:grid-cols-4">
-    <a href="/entreprise/sites" class="sc-carte text-charbon no-underline" data-tour="sites">
-        <p class="sc-texte-doux">@L["Biz_Sites"]</p>
-        <p class="mt-1 text-2xl font-bold">@Model.SiteCount</p>
-    </a>
-    <a href="/interventions" class="sc-carte text-charbon no-underline">
-        <p class="sc-texte-doux">@L["Biz_Open"]</p>
-        <p class="mt-1 text-2xl font-bold">@Model.OpenTotal</p>
-        <p class="mt-1 flex flex-wrap gap-1">
-            @foreach (var urgency in urgencies.Where(u => Model.OpenByUrgency.GetValueOrDefault(u) > 0))
+<div class="mt-6 grid gap-8">
+    @if (Model.StepsDone < 4 && isManager)
+    {
+        <partial name="Ui/_Checklist" model='new ChecklistModel(L["Start_Title"].Value, [
+            new ChecklistStep(L["Start_AddSite"].Value, "/logements/nouveau", Model.SiteCount > 0),
+            new ChecklistStep(L["Start_InviteTeam"].Value, "/entreprise/equipe", Model.TeamSize > 1),
+            new ChecklistStep(L["Start_ChoosePlan"].Value, "/entreprise/offre", Model.Subscription is not null),
+            new ChecklistStep(L["Start_FirstReport"].Value, "/signaler", Model.RequestCount > 0),
+        ])' />
+    }
+
+    @if (hasData)
+    {
+        <section aria-label="@L["Biz_Figures"]" class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-ligne bg-ligne @columns">
+            @foreach (var (label, value, note) in kpis)
             {
-                <span class="sc-badge @Formatting.BadgeClass(urgency)">@Model.OpenByUrgency[urgency] @L["Urgency_" + urgency]</span>
-            }
-        </p>
-    </a>
-    <div class="sc-carte">
-        <p class="sc-texte-doux">@L["Biz_Sla"]</p>
-        <p class="mt-1 text-2xl font-bold @(Model.Sla.Rate is < 90 ? "text-laterite" : "text-baobab")">@(Model.Sla.Rate is { } rate ? rate + " %" : "—")</p>
-        <p class="sc-texte-doux">@(Model.Sla.LateNow > 0 ? L["Biz_LateNow", Model.Sla.LateNow] : L["Biz_SlaWindow", Model.Sla.Measured])</p>
-    </div>
-    @if (isManager && Model.SpentThisYear is { } spent)
-    {
-        <div class="sc-carte">
-            <p class="sc-texte-doux">@L["Biz_Spent", DateTime.UtcNow.Year]</p>
-            <p class="mt-1 text-2xl font-bold"><sc-amount value="@spent.Amount" /></p>
-        </div>
-    }
-    else
-    {
-        <a href="/entreprise/diagnostics" class="sc-carte text-charbon no-underline">
-            <p class="sc-texte-doux">@L["Biz_NextDiagnostic"]</p>
-            <p class="mt-1 text-base font-semibold">@(Model.NextDiagnostic is { } nd ? Formatting.ShortDate(nd.ScheduledFor) : "—")</p>
-        </a>
-    }
-</section>
-
-<div class="mt-6 grid gap-6 lg:grid-cols-3">
-    <div class="grid content-start gap-6 lg:col-span-2">
-        @* ---- Approvals first: someone is waiting. ---- *@
-        @if (Model.PendingApprovals.Count > 0)
-        {
-            <section aria-labelledby="valider-titre" class="sc-carte">
-                <h2 id="valider-titre" class="sc-sous-titre">@L["Biz_ToApprove", Model.PendingApprovals.Count]</h2>
-                <ul class="mt-3 divide-y divide-ligne">
-                    @foreach (var request in Model.PendingApprovals)
+                <div class="bg-surface px-4 py-3">
+                    <p class="text-[13px] text-charbon-doux">@label</p>
+                    <p class="mt-1 text-2xl font-semibold tracking-tight tabular-nums">@value</p>
+                    @if (note is not null)
                     {
-                        <li class="flex flex-wrap items-center justify-between gap-3 py-3">
-                            <div class="min-w-0">
-                                <p class="text-xs font-bold text-charbon-doux">@L["Domain_" + request.Domain] · @request.Number · @request.PropertyName</p>
-                                <a href="/interventions/@request.Id" class="font-bold text-charbon">@request.Title</a>
-                                <p class="mt-1"><span class="sc-badge @Formatting.BadgeClass(request.Urgency)">@L["Urgency_" + request.Urgency]</span></p>
-                            </div>
-                            <div class="flex gap-2">
-                                <form method="post" action="/entreprise/demandes/@request.Id/approuver">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="sc-btn min-h-10 bg-baobab text-sm text-sur-accent"><sc-icon name="check" />@L["Approval_Approve"]</button>
-                                </form>
-                                <button type="button" class="sc-btn-danger min-h-10 text-sm" data-sheet-open="refus-@request.Id">@L["Approval_Reject"]</button>
-                            </div>
-                            <sc-sheet id="refus-@request.Id" title="@L["Approval_Reject"]">
-                                <form method="post" action="/entreprise/demandes/@request.Id/refuser" class="grid gap-3">
-                                    @Html.AntiForgeryToken()
-                                    <label class="sc-label" for="motif-@request.Id">@L["Approval_Reason"]</label>
-                                    <textarea id="motif-@request.Id" name="reason" rows="2" class="sc-input py-2" required></textarea>
-                                    <button type="submit" class="sc-btn bg-laterite text-sur-accent">@L["Approval_Reject"]</button>
-                                </form>
-                            </sc-sheet>
-                        </li>
+                        <p class="mt-0.5 text-xs text-charbon-doux">@note</p>
                     }
-                </ul>
-            </section>
-        }
+                </div>
+            }
+        </section>
+    }
 
+    @if (Model.PendingApprovals.Count > 0)
+    {
+        <section aria-labelledby="valider-titre">
+            <h2 id="valider-titre" class="sc-sous-titre">@L["Biz_ToApprove", Model.PendingApprovals.Count]</h2>
+            <ul class="mt-3 overflow-hidden rounded-lg border border-ligne bg-surface">
+                @foreach (var request in Model.PendingApprovals)
+                {
+                    <li class="flex flex-wrap items-center justify-between gap-3 border-b border-ligne px-4 py-3 last:border-b-0">
+                        <div class="min-w-0">
+                            <a href="/interventions/@request.Id" class="font-medium text-charbon">@request.Title</a>
+                            <p class="text-[13px] text-charbon-doux">@request.Number · @L["Domain_" + request.Domain] · @request.PropertyName</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <sc-urgency value="@request.Urgency" />
+                            <form method="post" action="/entreprise/demandes/@request.Id/approuver">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="sc-btn-primaire">@L["Approval_Approve"]</button>
+                            </form>
+                            <button type="button" class="sc-btn-secondaire" data-sheet-open="refus-@request.Id">@L["Approval_Reject"]</button>
+                        </div>
+                        <sc-sheet id="refus-@request.Id" title="@L["Approval_Reject"]">
+                            <form method="post" action="/entreprise/demandes/@request.Id/refuser" class="grid gap-3">
+                                @Html.AntiForgeryToken()
+                                <label class="sc-label" for="motif-@request.Id">@L["Approval_Reason"]</label>
+                                <textarea id="motif-@request.Id" name="reason" rows="2" class="sc-input py-2" required></textarea>
+                                <button type="submit" class="sc-btn-primaire">@L["Approval_Reject"]</button>
+                            </form>
+                        </sc-sheet>
+                    </li>
+                }
+            </ul>
+        </section>
+    }
+
+    @if (hasData)
+    {
         <section aria-labelledby="ouvertes-titre">
             <div class="flex items-center justify-between gap-2">
                 <h2 id="ouvertes-titre" class="sc-sous-titre">@L["Biz_OpenRequests"]</h2>
-                <a href="/interventions" class="text-sm font-bold">@L["Biz_AllRequests"]</a>
+                <a href="/interventions" class="text-sm">@L["Biz_AllRequests"]</a>
             </div>
             @if (Model.OpenRequests.Count == 0)
             {
-                <p class="sc-texte-doux mt-2">@L["Biz_NoOpen"]</p>
+                <p class="mt-2 text-sm text-charbon-doux">@L["Biz_NoOpen"]</p>
             }
-            <div class="mt-3 grid gap-3 xl:grid-cols-2">
-                @foreach (var r in Model.OpenRequests)
+            else
+            {
+                <div class="mt-3 hidden overflow-x-auto rounded-lg border border-ligne bg-surface md:block">
+                    <table class="sc-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">@L["Export_Col_Number"]</th>
+                                <th scope="col">@L["Dispatch_Col_Request"]</th>
+                                <th scope="col">@L["Export_Col_Site"]</th>
+                                <th scope="col">@L["Export_Col_Urgency"]</th>
+                                <th scope="col">@L["Export_Col_Status"]</th>
+                                <th scope="col">@L["Biz_Col_Appointment"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in Model.OpenRequests)
+                            {
+                                <tr>
+                                    <td class="text-charbon-doux">@r.Number</td>
+                                    <td><a href="/interventions/@r.Id" class="font-medium text-charbon">@r.Title</a><span class="block text-xs text-charbon-doux">@L["Domain_" + r.Domain]</span></td>
+                                    <td>@r.PropertyName</td>
+                                    <td><sc-urgency value="@r.Urgency" /></td>
+                                    <td><sc-status value="@r.Status" /></td>
+                                    <td class="text-charbon-doux">@(r.AppointmentAt is { } at ? Formatting.ShortDateTime(at) : "")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <ul class="mt-3 grid gap-2 md:hidden">
+                    @foreach (var r in Model.OpenRequests)
+                    {
+                        <li class="sc-carte relative px-3 py-2.5">
+                            <a href="/interventions/@r.Id" class="font-medium text-charbon after:absolute after:inset-0">@r.Title</a>
+                            <p class="text-[13px] text-charbon-doux">@r.Number · @r.PropertyName</p>
+                            <p class="mt-1.5 flex flex-wrap gap-1"><sc-urgency value="@r.Urgency" /><sc-status value="@r.Status" /></p>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+    }
+
+    <section class="grid gap-4 md:grid-cols-2" aria-label="@L["Biz_Offer"]">
+        <div class="sc-carte">
+            <div class="flex items-center justify-between gap-2">
+                <h2 class="text-sm font-medium text-charbon-doux">@L["Biz_Offer"]</h2>
+                @if (Model.Subscription is { } s)
                 {
-                    <partial name="Ui/_InterventionCard" model='new InterventionCardModel(r.Number, r.Domain, r.Title, r.Status, r.Urgency, "/interventions/" + r.Id, r.AppointmentAt, r.Technician?.Name, r.Technician?.PhoneE164)' />
+                    <span class="sc-badge @(s.Status == SubscriptionStatus.Active ? "bg-baobab-clair text-baobab" : "bg-sourdine text-charbon-doux")">@L["SubscriptionStatus_" + s.Status]</span>
                 }
             </div>
-        </section>
+            @if (Model.Subscription is { } sub)
+            {
+                <p class="mt-2 text-[15px] font-medium">@sub.Plan.Name</p>
+                <dl class="mt-2 grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 text-sm">
+                    @foreach (var sla in sub.Plan.Sla)
+                    {
+                        <dt class="text-charbon-doux">@L["Urgency_" + sla.Urgency]</dt><dd class="text-right tabular-nums">@Hours(sla.MaxDelay)</dd>
+                    }
+                    <dt class="text-charbon-doux">@L["Offer_Visits"]</dt><dd class="text-right">@(sub.Plan.IncludedVisitsPerPeriod is { } visits ? L["Offer_VisitsCount", visits] : L["Offer_VisitsUnlimited"])</dd>
+                    @if (sub.NextDueDate is { } due && isManager)
+                    {
+                        <dt class="text-charbon-doux">@L["Subscription_NextDueLabel"]</dt><dd class="text-right">@Day(due)</dd>
+                    }
+                </dl>
+                @if (isManager)
+                {
+                    <a href="/abonnement" class="sc-btn-secondaire mt-3" data-tour="factures">@L["Biz_SeeSubscription"]</a>
+                }
+            }
+            else
+            {
+                <p class="mt-2 text-sm text-charbon-doux">@(isManager ? L["Biz_NoOffer"] : L["Biz_NoOfferMember"])</p>
+                @if (isManager)
+                {
+                    <a href="/entreprise/offre" class="sc-btn-primaire mt-3">@L["Offer_Choose"]</a>
+                }
+            }
+        </div>
 
-        <section aria-labelledby="export-titre" class="sc-carte">
+        <a href="/entreprise/diagnostics" data-tour="diagnostics" class="sc-carte block text-charbon no-underline hover:bg-sourdine/50 hover:no-underline">
+            <h2 class="text-sm font-medium text-charbon-doux">@L["Space_Diagnostics"]</h2>
+            @if (Model.NextDiagnostic is { } next)
+            {
+                <p class="mt-2 text-[15px] font-medium">@L["Biz_DiagnosticPlanned", Formatting.ShortDate(next.ScheduledFor)]</p>
+            }
+            @if (Model.LastDiagnostic is { } last)
+            {
+                <p class="mt-1 text-sm text-charbon-doux">@L["Biz_LastDiagnostic", Formatting.ShortDate(last.ScheduledFor), last.Anomalies]</p>
+            }
+            @if (Model.NextDiagnostic is null && Model.LastDiagnostic is null)
+            {
+                <p class="mt-2 text-sm text-charbon-doux">@L["Space_Diagnostics_Text"]</p>
+            }
+        </a>
+    </section>
+
+    @if (hasData)
+    {
+        <section aria-labelledby="export-titre">
             <h2 id="export-titre" class="sc-sous-titre">@L["Export_Title"]</h2>
-            <p class="sc-texte-doux mt-1">@L["Export_Text"]</p>
-            <form method="get" action="/entreprise/exports/demandes.csv" class="mt-3 grid gap-3 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end">
+            <form method="get" action="/entreprise/exports/demandes.csv" class="mt-3 flex flex-wrap items-end gap-2">
                 <div>
                     <label class="sc-label" for="du">@L["Export_From"]</label>
-                    <input id="du" name="du" type="date" class="sc-input" value="@today.AddMonths(-3).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)" />
+                    <input id="du" name="du" type="date" class="sc-input w-40" value="@today.AddMonths(-3).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)" />
                 </div>
                 <div>
                     <label class="sc-label" for="au">@L["Export_To"]</label>
-                    <input id="au" name="au" type="date" class="sc-input" value="@today.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)" />
+                    <input id="au" name="au" type="date" class="sc-input w-40" value="@today.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)" />
                 </div>
                 <button type="submit" class="sc-btn-secondaire">CSV</button>
                 <button type="submit" formaction="/entreprise/exports/demandes.pdf" class="sc-btn-secondaire">PDF</button>
             </form>
         </section>
-    </div>
-
-    <aside class="grid content-start gap-6">
-        @* ---- Offer and service level, read from the plan configuration. ---- *@
-        <section aria-labelledby="offre-titre" class="sc-carte relative overflow-hidden">
-            <h2 id="offre-titre" class="sc-surtitre">@L["Biz_Offer"]</h2>
-            @if (Model.Subscription is { } sub)
-            {
-                <p class="mt-1 text-2xl font-bold">@sub.Plan.Name</p>
-                <p class="mt-1 flex flex-wrap items-center gap-2">
-                    <span class="sc-badge @(sub.Status == SubscriptionStatus.Active ? "bg-baobab-clair text-baobab" : "bg-atlantique-clair text-atlantique")">@L["SubscriptionStatus_" + sub.Status]</span>
-                    @if (sub.NextDueDate is { } due && isManager)
-                    {
-                        <span class="sc-texte-doux">@L["Subscription_NextDue", Day(due)]</span>
-                    }
-                </p>
-                <dl class="mt-3 grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 text-sm">
-                    @foreach (var sla in sub.Plan.Sla)
-                    {
-                        <dt class="text-charbon-doux">@L["Urgency_" + sla.Urgency]</dt><dd class="text-right font-bold">@Hours(sla.MaxDelay)</dd>
-                    }
-                    <dt class="text-charbon-doux">@L["Offer_Visits"]</dt><dd class="text-right font-bold">@(sub.Plan.IncludedVisitsPerPeriod is { } visits ? L["Offer_VisitsCount", visits] : L["Offer_VisitsUnlimited"])</dd>
-                </dl>
-                @if (isManager)
-                {
-                    <a href="/abonnement" class="sc-btn-secondaire mt-4 w-full" data-tour="factures">@L["Biz_SeeSubscription"]</a>
-                }
-            }
-            else if (isManager)
-            {
-                <p class="mt-1">@L["Biz_NoOffer"]</p>
-                <a href="/entreprise/offre" class="sc-btn-primaire mt-4">@L["Offer_Choose"]</a>
-            }
-            else
-            {
-                <p class="sc-texte-doux mt-1">@L["Biz_NoOfferMember"]</p>
-            }
-        </section>
-
-        <a href="/entreprise/diagnostics" data-tour="diagnostics" class="sc-carte flex items-center gap-4 text-charbon no-underline">
-            <span class="grid size-9 shrink-0 place-items-center rounded-md bg-sourdine text-charbon-doux"><sc-icon name="calendar-check" class="size-6" /></span>
-            <span class="flex-1">
-                <span class="block font-bold">@L["Space_Diagnostics"]</span>
-                @if (Model.NextDiagnostic is { } next)
-                {
-                    <span class="sc-texte-doux block">@L["Biz_DiagnosticPlanned", Formatting.ShortDate(next.ScheduledFor)]</span>
-                }
-                @if (Model.LastDiagnostic is { } last)
-                {
-                    <span class="sc-texte-doux block">@L["Biz_LastDiagnostic", Formatting.ShortDate(last.ScheduledFor), last.Anomalies]</span>
-                }
-                @if (Model.NextDiagnostic is null && Model.LastDiagnostic is null)
-                {
-                    <span class="sc-texte-doux block">@L["Space_Diagnostics_Text"]</span>
-                }
-            </span>
-            <sc-icon name="chevron-right" class="text-charbon-doux" />
-        </a>
-
-        @if (isManager)
-        {
-            <a href="/entreprise/equipe" class="sc-carte flex items-center gap-4 text-charbon no-underline">
-                <span class="grid size-9 shrink-0 place-items-center rounded-md bg-sourdine text-charbon-doux"><sc-icon name="users" class="size-6" /></span>
-                <span class="flex-1">
-                    <span class="block font-bold">@L["Tab_Team"]</span>
-                    <span class="sc-texte-doux block">@(Model.RequiresApproval ? L["Team_ApprovalIsOn"] : L["Team_ApprovalIsOff"])</span>
-                </span>
-                <sc-icon name="chevron-right" class="text-charbon-doux" />
-            </a>
-        }
-    </aside>
+    }
 </div>

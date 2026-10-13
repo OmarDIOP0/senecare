@@ -1,0 +1,63 @@
+@model IReadOnlyList<SeneCare.Application.Admin.AuditRow>
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "gestion";
+    ViewData["Title"] = L["Admin_Journal"];
+    ViewData["Wide"] = true;
+    var page = (int)ViewData["Page"]!;
+    var sensitive = ViewData["Sensitive"] is true;
+    var action = ViewData["Action"] as string;
+    string Link(int p) => $"?page={p}&sensibles={(sensitive ? "true" : "false")}&q={Uri.EscapeDataString(action ?? string.Empty)}";
+}
+
+<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-bold">← @L["Tab_Management"]</a>
+<h1 class="sc-titre">@L["Admin_Journal"]</h1>
+
+<form method="get" class="mt-4 flex flex-wrap items-end gap-3">
+    <div>
+        <label class="sc-label" for="action">@L["Admin_JournalAction"]</label>
+        <input id="action" name="q" class="sc-input" value="@action" placeholder="payment., privacy., plan." />
+    </div>
+    <label class="sc-choix"><input type="checkbox" name="sensibles" value="true" checked="@sensitive" />@L["Admin_JournalSensitive"]</label>
+    <button type="submit" class="sc-btn-secondaire"><sc-icon name="search" />@L["Admin_Search"]</button>
+</form>
+
+<div class="mt-4 overflow-x-auto rounded-lg border border-ligne bg-surface">
+    <table class="w-full min-w-[56rem] text-left text-sm">
+        <thead class="bg-sable text-xs uppercase tracking-wide">
+            <tr>
+                <th scope="col" class="px-3 py-2">@L["Export_Col_Date"]</th>
+                <th scope="col" class="px-3 py-2">@L["Admin_JournalWho"]</th>
+                <th scope="col" class="px-3 py-2">@L["Admin_JournalAction"]</th>
+                <th scope="col" class="px-3 py-2">@L["Admin_JournalWhat"]</th>
+                <th scope="col" class="px-3 py-2">@L["Admin_JournalDetails"]</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-ligne">
+            @foreach (var a in Model)
+            {
+                <tr class="@(a.IsSensitive ? "bg-soleil-clair/40" : "")">
+                    <td class="px-3 py-2 whitespace-nowrap">@Formatting.ShortDateTime(a.At)</td>
+                    <td class="px-3 py-2">@(a.Actor ?? "—")<span class="block text-xs">@a.IpAddress</span></td>
+                    <td class="px-3 py-2 font-mono text-xs">@a.Action@if (a.IsSensitive) { <span class="sc-badge ml-1 bg-soleil text-charbon">@L["Admin_JournalSensitiveShort"]</span> }</td>
+                    <td class="px-3 py-2 text-xs">@a.EntityType<span class="block font-mono">@a.EntityId</span></td>
+                    <td class="px-3 py-2 text-xs">@a.Details</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="mt-4 flex justify-between">
+    @if (page > 0)
+    {
+        <a href="@Link(page - 1)" class="sc-btn-secondaire min-h-10 text-sm">← @L["Dispatch_PrevWeek"]</a>
+    }
+    else
+    {
+        <span></span>
+    }
+    @if (Model.Count == SeneCare.Application.Admin.AuditQuery.PageSize)
+    {
+        <a href="@Link(page + 1)" class="sc-btn-secondaire min-h-10 text-sm">@L["Dispatch_NextWeek"] →</a>
+    }
+</div>

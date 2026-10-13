@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SeneCare.Application.Abstractions;
+using SeneCare.Application.Admin;
 using SeneCare.Application.Business;
 using SeneCare.Application.Common;
 using SeneCare.Domain.Billing;
@@ -75,7 +76,7 @@ public sealed class SubscriptionQueries(IApplicationDbContext db, AccessControl 
         var name = await db.Neighborhoods.Where(n => n.Id == neighborhoodId).Select(n => n.Name).FirstAsync(cancellationToken);
         return program is null
             ? null
-            : new NeighborhoodProgress(name, program.MemberCount, program.Threshold, program.Status, program.TotalTreesPlanted);
+            : new NeighborhoodProgress(name, program.MemberCount, program.Threshold, program.Status, program.PublishedTreesPlanted);
     }
 }
 
@@ -83,7 +84,8 @@ public sealed class SubscriptionQueries(IApplicationDbContext db, AccessControl 
 /// Development only (the Web hides it elsewhere): activates a pending subscription without payment,
 /// so the client journey can be tried before the payment phase.
 /// </summary>
-public sealed class SimulatedActivation(IApplicationDbContext db, AccessControl access, DiagnosticPlanner diagnostics, TimeProvider clock)
+public sealed class SimulatedActivation(
+    IApplicationDbContext db, AccessControl access, DiagnosticPlanner diagnostics, NeighborhoodMembership neighborhoods, TimeProvider clock)
 {
     public async Task<Result<Guid>> ActivateAsync(Guid userId, Guid subscriptionId, CancellationToken cancellationToken = default)
     {
@@ -97,6 +99,7 @@ public sealed class SimulatedActivation(IApplicationDbContext db, AccessControl 
         {
             subscription.Activate(DakarCalendar.Today(clock), clock.GetUtcNow());
             await diagnostics.EnsurePlannedAsync(subscription, cancellationToken);
+            await neighborhoods.RefreshForPropertiesAsync([.. subscription.CoveredPropertyIds], cancellationToken);
         }
         catch (DomainException ex)
         {

@@ -1,6 +1,7 @@
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using SeneCare.Application.Abstractions;
+using SeneCare.Application.Admin;
 using SeneCare.Application.Business;
 using SeneCare.Application.Common;
 using SeneCare.Domain.Billing;
@@ -26,7 +27,8 @@ public sealed record PendingPayment(
 /// Finance back-office for payment-link payments: list what customers declared, then verify (credit the
 /// invoice and activate / extend the subscription) or reject with a reason. Every decision is audited.
 /// </summary>
-public sealed class PaymentVerificationHandler(IApplicationDbContext db, Settings settings, DiagnosticPlanner diagnostics, TimeProvider clock)
+public sealed class PaymentVerificationHandler(
+    IApplicationDbContext db, Settings settings, DiagnosticPlanner diagnostics, NeighborhoodMembership neighborhoods, TimeProvider clock)
 {
     public async Task<IReadOnlyList<PendingPayment>> PendingAsync(CancellationToken cancellationToken = default)
     {
@@ -167,6 +169,7 @@ public sealed class PaymentVerificationHandler(IApplicationDbContext db, Setting
             }
 
             await diagnostics.EnsurePlannedAsync(subscription, cancellationToken);
+            await neighborhoods.RefreshForPropertiesAsync([.. subscription.CoveredPropertyIds], cancellationToken);
         }
     }
 

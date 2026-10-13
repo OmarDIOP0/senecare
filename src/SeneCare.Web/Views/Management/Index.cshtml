@@ -11,12 +11,15 @@
         ("/admin/clients", "users", L["Admin_Customers"].Value, L["Admin_Customers_Text"].Value),
     };
     if (dispatch) cards.Add(("/admin/techniciens", "wrench", L["Admin_Technicians"].Value, L["Admin_Technicians_Text"].Value));
+    if (dispatch) cards.Add(("/admin/quartiers", "sprout", L["Admin_Neighborhoods_Title"].Value, L["Admin_Neighborhoods_Text"].Value));
+    cards.Add(("/admin/conseils", "info", L["Admin_Advice"].Value, L["Admin_Advice_Text"].Value));
     if (finance) cards.Add(("/admin/paiements", "wallet", L["Tab_Payments"].Value, L["Admin_Payments_Text"].Value));
     if (super_)
     {
         cards.Add(("/admin/offres", "receipt", L["Admin_Plans"].Value, L["Admin_Plans_Text"].Value));
         cards.Add(("/admin/referentiel", "map-pin", L["Admin_Geography"].Value, L["Admin_Geography_Text"].Value));
         cards.Add(("/admin/parametres", "list-checks", L["Admin_Settings"].Value, L["Admin_Settings_Text"].Value));
+        cards.Add(("/admin/journal", "history", L["Admin_Journal"].Value, L["Admin_Journal_Text"].Value));
     }
 }
 

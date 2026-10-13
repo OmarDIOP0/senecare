@@ -1,0 +1,46 @@
+@model IReadOnlyList<SeneCare.Domain.Content.PreventiveAdvice>
+@using System.Globalization
+@using SeneCare.Domain.Common
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "gestion";
+    ViewData["Title"] = L["Admin_Advice"];
+    ViewData["Wide"] = true;
+    var months = Enumerable.Range(1, 12).ToList();
+    string MonthName(int m) => CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(m);
+}
+
+<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-bold">← @L["Tab_Management"]</a>
+<div class="flex flex-wrap items-center justify-between gap-3">
+    <h1 class="sc-titre">@L["Admin_Advice"]</h1>
+    <button type="button" class="sc-btn-primaire" data-sheet-open="nouveau-conseil"><sc-icon name="plus" />@L["Admin_AdviceAdd"]</button>
+</div>
+<p class="mt-2 max-w-prose">@L["Admin_Advice_Intro"]</p>
+
+<ul class="mt-6 grid gap-4 lg:grid-cols-2">
+    @foreach (var a in Model)
+    {
+        <li class="sc-carte">
+            <div class="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                    <p class="font-display text-lg font-bold">@a.Title</p>
+                    <p class="text-sm">@(a.Months.Count == 0 ? L["Admin_AllYear"].Value : string.Join(", ", a.Months.Select(MonthName)))@(a.Domain is { } d ? " · " + L["Domain_" + d].Value : "")</p>
+                </div>
+                <form method="post" action="/admin/conseils/@a.Id/publication">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="published" value="@(a.IsPublished ? "false" : "true")" />
+                    <button type="submit" class="sc-badge min-h-10 px-3 @(a.IsPublished ? "bg-baobab-clair text-baobab" : "bg-sable text-charbon")">@(a.IsPublished ? L["Admin_Published"] : L["Admin_Draft"])</button>
+                </form>
+            </div>
+            <p class="mt-2">@a.Body</p>
+            <button type="button" class="sc-btn-discret mt-2" data-sheet-open="conseil-@a.Id">@L["Team_Edit"]</button>
+            <sc-sheet id="conseil-@a.Id" title="@a.Title">
+                <partial name="_Form" model="new AdviceFormModel(a.Id, a.Title, a.Body, a.Months, a.Domain)" />
+            </sc-sheet>
+        </li>
+    }
+</ul>
+
+<sc-sheet id="nouveau-conseil" title="@L["Admin_AdviceAdd"]">
+    <partial name="_Form" model="new AdviceFormModel(null, null, null, [], null)" />
+</sc-sheet>

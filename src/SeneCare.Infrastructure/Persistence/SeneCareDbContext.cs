@@ -4,6 +4,7 @@ using SeneCare.Application.Abstractions;
 using SeneCare.Domain.Accounts;
 using SeneCare.Domain.Billing;
 using SeneCare.Domain.Common;
+using SeneCare.Domain.Content;
 using SeneCare.Domain.Diagnostics;
 using SeneCare.Domain.Interventions;
 using SeneCare.Domain.Locations;
@@ -70,6 +71,8 @@ public sealed class SeneCareDbContext(DbContextOptions<SeneCareDbContext> option
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
     public DbSet<AppSetting> AppSettings => Set<AppSetting>();
+
+    public DbSet<PreventiveAdvice> PreventiveAdvices => Set<PreventiveAdvice>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {

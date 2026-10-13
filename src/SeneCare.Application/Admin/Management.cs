@@ -37,7 +37,7 @@ public sealed record CustomerFile(
     int OpenRequests);
 
 /// <summary>Households and companies, searchable by name or phone (support, finance).</summary>
-public sealed class CustomerDirectory(IApplicationDbContext db)
+public sealed class CustomerDirectory(IApplicationDbContext db, TimeProvider clock)
 {
     public async Task<IReadOnlyList<CustomerRow>> SearchAsync(string? query, AccountKind? kind, CancellationToken cancellationToken = default)
     {
@@ -66,13 +66,17 @@ public sealed class CustomerDirectory(IApplicationDbContext db)
         return await RowsAsync(list, cancellationToken);
     }
 
-    public async Task<CustomerFile?> FileAsync(Guid accountId, CancellationToken cancellationToken = default)
+    /// <summary>Customer file. Opening it is an access to personal data: logged as sensitive.</summary>
+    public async Task<CustomerFile?> FileAsync(Guid adminId, Guid accountId, string? ipAddress, CancellationToken cancellationToken = default)
     {
         var account = await db.CustomerAccounts.AsNoTracking().FirstOrDefaultAsync(a => a.Id == accountId, cancellationToken);
         if (account is null)
         {
             return null;
         }
+
+        db.AuditLogs.Add(new AuditLog(adminId, "privacy.view_customer", nameof(CustomerAccount), accountId.ToString(), true, ipAddress, null, clock.GetUtcNow()));
+        await db.SaveChangesAsync(cancellationToken);
 
         var summary = (await RowsAsync([account], cancellationToken))[0];
         var userIds = account.Members.Select(m => m.UserId).ToList();

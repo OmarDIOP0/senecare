@@ -85,6 +85,9 @@ public sealed class NeighborhoodProgram : AggregateRoot
 
     public int TotalTreesPlanted => _operations.Sum(o => o.TreesPlanted);
 
+    /// <summary>What members see: only published operations count.</summary>
+    public int PublishedTreesPlanted => _operations.Where(o => o.IsPublished).Sum(o => o.TreesPlanted);
+
     /// <summary>Progress towards the threshold, 0–1 (« 347 / 500 voisins »).</summary>
     public double Progress => Math.Min(1d, (double)MemberCount / Threshold);
 

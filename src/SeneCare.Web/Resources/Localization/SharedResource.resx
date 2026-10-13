@@ -853,4 +853,51 @@
   <data name="Error_setting_number" xml:space="preserve"><value>Entrez un nombre entier.</value></data>
   <data name="Error_payment_note_required" xml:space="preserve"><value>Indiquez la référence du reçu ou du virement.</value></data>
   <data name="Error_payment_channel" xml:space="preserve"><value>Moyen de paiement non accepté ici.</value></data>
+  <data name="Admin_Neighborhoods_Title" xml:space="preserve"><value>Programme Quartiers</value></data>
+  <data name="Admin_Neighborhoods_Text" xml:space="preserve"><value>Adhérents par quartier, seuils, opérations de reboisement.</value></data>
+  <data name="Admin_Neighborhoods_All" xml:space="preserve"><value>Voir tous les quartiers</value></data>
+  <data name="Admin_Neighborhoods_WithMembers" xml:space="preserve"><value>Voir seulement les quartiers avec adhérents</value></data>
+  <data name="Admin_Recount" xml:space="preserve"><value>Recompter les adhérents</value></data>
+  <data name="Admin_Recounted" xml:space="preserve"><value>{0} quartiers recomptés.</value></data>
+  <data name="Admin_Trees" xml:space="preserve"><value>{0} arbre(s)</value></data>
+  <data name="Admin_Threshold" xml:space="preserve"><value>Seuil d'adhérents</value></data>
+  <data name="Admin_Operations" xml:space="preserve"><value>Opérations</value></data>
+  <data name="Admin_Operations_None" xml:space="preserve"><value>Aucune opération pour le moment.</value></data>
+  <data name="Admin_Operations_NotActive" xml:space="preserve"><value>Le quartier n'a pas encore atteint son seuil : pas d'opération possible.</value></data>
+  <data name="Admin_NewOperation" xml:space="preserve"><value>Nouvelle opération</value></data>
+  <data name="Admin_TreesPlanted" xml:space="preserve"><value>Arbres plantés</value></data>
+  <data name="Admin_OperationText" xml:space="preserve"><value>Ce qui a été fait</value></data>
+  <data name="Admin_OperationText_Placeholder" xml:space="preserve"><value>Ex : 40 neems et filaos plantés le long de la corniche avec les jeunes du quartier.</value></data>
+  <data name="Admin_Publish" xml:space="preserve"><value>Publier</value></data>
+  <data name="Admin_Published" xml:space="preserve"><value>Publié</value></data>
+  <data name="Admin_Draft" xml:space="preserve"><value>Brouillon</value></data>
+  <data name="ProgramStatus_Gathering" xml:space="preserve"><value>En collecte</value></data>
+  <data name="ProgramStatus_Active" xml:space="preserve"><value>Actif</value></data>
+  <data name="Admin_Advice" xml:space="preserve"><value>Conseils préventifs</value></data>
+  <data name="Admin_Advice_Text" xml:space="preserve"><value>Le conseil du mois sur l'accueil des clients.</value></data>
+  <data name="Admin_Advice_Intro" xml:space="preserve"><value>Le conseil publié le plus récent pour le mois en cours s'affiche sur l'accueil des clients. Sans conseil publié, le conseil de saison intégré est utilisé.</value></data>
+  <data name="Admin_AdviceAdd" xml:space="preserve"><value>Nouveau conseil</value></data>
+  <data name="Admin_AdviceTitle" xml:space="preserve"><value>Titre</value></data>
+  <data name="Admin_AdviceBody" xml:space="preserve"><value>Conseil</value></data>
+  <data name="Admin_AdviceMonths" xml:space="preserve"><value>Mois</value></data>
+  <data name="Admin_AdviceMonths_Hint" xml:space="preserve"><value>Aucun mois coché : toute l'année.</value></data>
+  <data name="Admin_AllYear" xml:space="preserve"><value>Toute l'année</value></data>
+  <data name="Admin_Journal" xml:space="preserve"><value>Journal d'audit</value></data>
+  <data name="Admin_Journal_Text" xml:space="preserve"><value>Qui a fait quoi, et les accès aux données personnelles.</value></data>
+  <data name="Admin_JournalAction" xml:space="preserve"><value>Action</value></data>
+  <data name="Admin_JournalWho" xml:space="preserve"><value>Qui</value></data>
+  <data name="Admin_JournalWhat" xml:space="preserve"><value>Sur quoi</value></data>
+  <data name="Admin_JournalDetails" xml:space="preserve"><value>Détails</value></data>
+  <data name="Admin_JournalSensitive" xml:space="preserve"><value>Accès aux données personnelles seulement</value></data>
+  <data name="Admin_JournalSensitiveShort" xml:space="preserve"><value>données perso</value></data>
+  <data name="Admin_ExportData" xml:space="preserve"><value>Exporter ses données</value></data>
+  <data name="Error_advice_not_found" xml:space="preserve"><value>Conseil introuvable.</value></data>
+  <data name="Error_advice_title" xml:space="preserve"><value>Indiquez un titre (120 caractères au plus).</value></data>
+  <data name="Error_advice_body" xml:space="preserve"><value>Écrivez le conseil (600 caractères au plus).</value></data>
+  <data name="Error_advice_months" xml:space="preserve"><value>Mois invalide.</value></data>
+  <data name="Error_neighborhood_not_active" xml:space="preserve"><value>Le quartier n'a pas encore atteint son seuil.</value></data>
+  <data name="Error_neighborhood_threshold" xml:space="preserve"><value>Le seuil doit être positif.</value></data>
+  <data name="Error_neighborhood_operation_not_found" xml:space="preserve"><value>Opération introuvable.</value></data>
+  <data name="Error_greening_trees" xml:space="preserve"><value>Le nombre d'arbres ne peut pas être négatif.</value></data>
+  <data name="Error_greening_description" xml:space="preserve"><value>Décrivez l'opération.</value></data>
 </root>

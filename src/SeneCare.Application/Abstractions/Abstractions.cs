@@ -3,6 +3,7 @@ using SeneCare.Domain.Accounts;
 using SeneCare.Domain.Billing;
 using SeneCare.Application.Business;
 using SeneCare.Domain.Common;
+using SeneCare.Domain.Content;
 using SeneCare.Domain.Diagnostics;
 using SeneCare.Domain.Interventions;
 using SeneCare.Domain.Locations;
@@ -57,6 +58,8 @@ public interface IApplicationDbContext
     DbSet<NeighborhoodProgram> NeighborhoodPrograms { get; }
 
     DbSet<AppSetting> AppSettings { get; }
+
+    DbSet<PreventiveAdvice> PreventiveAdvices { get; }
 
     DbSet<AuditLog> AuditLogs { get; }
 

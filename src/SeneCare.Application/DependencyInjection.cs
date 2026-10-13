@@ -74,6 +74,11 @@ public static class DependencyInjection
         services.AddScoped<PlanManagement>();
         services.AddScoped<GeographyManagement>();
         services.AddScoped<SettingsManagement>();
+        services.AddScoped<NeighborhoodMembership>();
+        services.AddScoped<NeighborhoodPrograms>();
+        services.AddScoped<AdviceManagement>();
+        services.AddScoped<AuditQuery>();
+        services.AddScoped<PersonalDataService>();
 
         // Development tools (refused by the Web outside Development).
         services.AddScoped<SimulatedActivation>();

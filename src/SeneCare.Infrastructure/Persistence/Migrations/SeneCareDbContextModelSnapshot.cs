@@ -572,6 +572,51 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.ToTable("media_files", (string)null);
                 });
 
+            modelBuilder.Entity("SeneCare.Domain.Content.PreventiveAdvice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(600)
+                        .HasColumnType("character varying(600)")
+                        .HasColumnName("body");
+
+                    b.Property<string>("Domain")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("domain");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_published");
+
+                    b.PrimitiveCollection<int[]>("Months")
+                        .IsRequired()
+                        .HasColumnType("integer[]")
+                        .HasColumnName("months");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_preventive_advices");
+
+                    b.HasIndex("IsPublished")
+                        .HasDatabaseName("ix_preventive_advices_is_published");
+
+                    b.ToTable("preventive_advices", (string)null);
+                });
+
             modelBuilder.Entity("SeneCare.Domain.Diagnostics.ControlPoint", b =>
                 {
                     b.Property<Guid>("Id")

@@ -46,3 +46,6 @@ public sealed record TabBarModel(SeneCare.Web.Infrastructure.AppNav Nav, string 
 
 /// <summary>Technician form fields: empty for a new technician, filled when editing.</summary>
 public sealed record TechnicianFieldsModel(SeneCare.Application.Admin.TechnicianRow? Row);
+
+/// <summary>Preventive advice form (new when <see cref="Id"/> is null).</summary>
+public sealed record AdviceFormModel(Guid? Id, string? Title, string? Body, IReadOnlyCollection<int> Months, SeneCare.Domain.Common.ServiceDomain? Domain);

@@ -22,7 +22,13 @@
             {
                 <li class="flex flex-wrap justify-between gap-2 py-2">
                     <span><span class="font-bold">@(m.Name ?? "—")</span> · +221 @m.Phone</span>
-                    <span class="sc-badge bg-sable text-charbon">@L["Role_" + m.Role]</span>
+                    <span class="flex items-center gap-2">
+                        <span class="sc-badge bg-sable text-charbon">@L["Role_" + m.Role]</span>
+                        @if (User.IsInRole("SuperAdmin"))
+                        {
+                            <a href="/admin/donnees/@m.UserId/export.json" class="text-sm font-bold" download>@L["Admin_ExportData"]</a>
+                        }
+                    </span>
                 </li>
             }
         </ul>

@@ -1,0 +1,38 @@
+@model AdviceFormModel
+@using System.Globalization
+@using SeneCare.Domain.Common
+@{
+    var key = Model.Id?.ToString("N") ?? "nouveau";
+}
+<form method="post" action="/admin/conseils@(Model.Id is { } id ? "/" + id : "")" class="grid gap-3">
+    @Html.AntiForgeryToken()
+    <div>
+        <label class="sc-label" for="titre-@key">@L["Admin_AdviceTitle"]</label>
+        <input id="titre-@key" name="title" class="sc-input" value="@Model.Title" required maxlength="120" />
+    </div>
+    <div>
+        <label class="sc-label" for="texte-@key">@L["Admin_AdviceBody"]</label>
+        <textarea id="texte-@key" name="body" rows="4" class="sc-input py-2" required maxlength="600">@Model.Body</textarea>
+    </div>
+    <fieldset>
+        <legend class="sc-label">@L["Admin_AdviceMonths"]</legend>
+        <p class="sc-aide">@L["Admin_AdviceMonths_Hint"]</p>
+        <div class="mt-2 grid grid-cols-4 gap-2 sm:grid-cols-6">
+            @for (var m = 1; m <= 12; m++)
+            {
+                <label class="sc-choix justify-center text-sm"><input type="checkbox" name="months" value="@m" checked="@Model.Months.Contains(m)" />@CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(m)</label>
+            }
+        </div>
+    </fieldset>
+    <div>
+        <label class="sc-label" for="metier-@key">@L["Export_Col_Domain"]</label>
+        <select id="metier-@key" name="domain" class="sc-input">
+            <option value="">—</option>
+            @foreach (var d in Enum.GetValues<ServiceDomain>())
+            {
+                <option value="@d" selected="@(Model.Domain == d)">@L["Domain_" + d]</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="sc-btn-primaire">@L["Common_Save"]</button>
+</form>

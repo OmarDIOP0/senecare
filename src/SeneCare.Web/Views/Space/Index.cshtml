@@ -95,9 +95,9 @@
             <aside class="sc-carte border-l-4 border-l-soleil" aria-labelledby="conseil-titre">
                 <p class="sc-surtitre text-charbon-doux">@L["Space_Advice"]</p>
                 <h2 id="conseil-titre" class="mt-1 font-display text-lg font-bold">
-                    @(Model.IsRainySeason ? L["Space_Advice_Rain_Title"] : L["Space_Advice_PreRain_Title"])
+                    @(client.Advice?.Title ?? (Model.IsRainySeason ? L["Space_Advice_Rain_Title"] : L["Space_Advice_PreRain_Title"]))
                 </h2>
-                <p class="mt-1">@(Model.IsRainySeason ? L["Space_Advice_Rain_Text"] : L["Space_Advice_PreRain_Text"])</p>
+                <p class="mt-1">@(client.Advice?.Body ?? (Model.IsRainySeason ? L["Space_Advice_Rain_Text"] : L["Space_Advice_PreRain_Text"]))</p>
             </aside>
             if (client.Neighborhood is { } hood)
             {

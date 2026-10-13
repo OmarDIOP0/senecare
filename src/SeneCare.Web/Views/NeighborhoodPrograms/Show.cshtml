@@ -1,0 +1,85 @@
+@model (SeneCare.Application.Admin.ProgramRow Program, IReadOnlyList<SeneCare.Application.Admin.OperationRow> Operations)
+@using System.Globalization
+@using SeneCare.Domain.Neighborhoods
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "gestion";
+    ViewData["Wide"] = true;
+    var p = Model.Program;
+    ViewData["Title"] = p.Neighborhood;
+    var active = p.Status == NeighborhoodProgramStatus.Active;
+}
+
+<a href="/admin/quartiers" class="inline-flex min-h-12 items-center font-bold">← @L["Admin_Neighborhoods_Title"]</a>
+<h1 class="sc-titre">@p.Neighborhood</h1>
+<p class="mt-1">@p.Commune · @L["ProgramStatus_" + p.Status] · @L["Admin_Members", p.Members, p.Threshold] · @L["Admin_Trees", p.Trees]</p>
+
+<div class="mt-6 grid gap-6 lg:grid-cols-3">
+    <div class="grid content-start gap-4 lg:col-span-2">
+        <h2 class="sc-sous-titre">@L["Admin_Operations"]</h2>
+        @if (Model.Operations.Count == 0)
+        {
+            <p class="sc-texte-doux">@(active ? L["Admin_Operations_None"] : L["Admin_Operations_NotActive"])</p>
+        }
+        @foreach (var o in Model.Operations)
+        {
+            <article class="sc-carte">
+                <div class="flex flex-wrap items-start justify-between gap-2">
+                    <p class="font-bold">@Formatting.ShortDate(new DateTimeOffset(o.Date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero)) · @L["Admin_Trees", o.Trees]</p>
+                    @if (o.IsPublished)
+                    {
+                        <span class="sc-badge bg-baobab-clair text-baobab">@L["Admin_Published"]</span>
+                    }
+                    else
+                    {
+                        <form method="post" action="/admin/quartiers/@p.NeighborhoodId/operations/@o.Id/publier">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="sc-btn-secondaire min-h-10 text-sm">@L["Admin_Publish"]</button>
+                        </form>
+                    }
+                </div>
+                <p class="mt-2 whitespace-pre-line">@o.Description</p>
+                @if (o.PhotoIds.Count > 0)
+                {
+                    <div class="mt-3 flex gap-2 overflow-x-auto">
+                        @foreach (var photo in o.PhotoIds)
+                        {
+                            <img src="/fichiers/@photo" alt="" loading="lazy" class="size-24 rounded-md object-cover" />
+                        }
+                    </div>
+                }
+            </article>
+        }
+    </div>
+
+    <aside class="grid content-start gap-4">
+        <form method="post" action="/admin/quartiers/@p.NeighborhoodId/seuil" class="sc-carte grid gap-2">
+            @Html.AntiForgeryToken()
+            <label class="sc-label" for="seuil">@L["Admin_Threshold"]</label>
+            <input id="seuil" name="threshold" type="number" min="1" class="sc-input" value="@p.Threshold" />
+            <button type="submit" class="sc-btn-secondaire">@L["Common_Save"]</button>
+        </form>
+
+        @if (active)
+        {
+            <form method="post" action="/admin/quartiers/@p.NeighborhoodId/operations" enctype="multipart/form-data" class="sc-carte grid gap-3">
+                @Html.AntiForgeryToken()
+                <h2 class="sc-sous-titre">@L["Admin_NewOperation"]</h2>
+                <div>
+                    <label class="sc-label" for="date">@L["Export_Col_Date"]</label>
+                    <input id="date" name="date" type="date" class="sc-input" value="@DateTime.UtcNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" required />
+                </div>
+                <div>
+                    <label class="sc-label" for="arbres">@L["Admin_TreesPlanted"]</label>
+                    <input id="arbres" name="trees" type="number" min="0" class="sc-input" value="0" required />
+                </div>
+                <div>
+                    <label class="sc-label" for="desc">@L["Admin_OperationText"]</label>
+                    <textarea id="desc" name="description" rows="3" class="sc-input py-2" required maxlength="2000" placeholder="@L["Admin_OperationText_Placeholder"]"></textarea>
+                </div>
+                <partial name="Ui/_PhotoUploader" model='new PhotoUploaderModel("photos", L["Tech_AddPhotos"], 8, "photos-operation")' />
+                <button type="submit" class="sc-btn-primaire"><sc-icon name="sprout" />@L["Admin_Add"]</button>
+            </form>
+        }
+    </aside>
+</div>

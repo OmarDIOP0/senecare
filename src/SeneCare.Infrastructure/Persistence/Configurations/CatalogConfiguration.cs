@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SeneCare.Domain.Content;
 using SeneCare.Domain.Locations;
 using SeneCare.Domain.Neighborhoods;
 using SeneCare.Domain.Plans;
@@ -79,6 +80,7 @@ internal sealed class NeighborhoodProgramConfiguration : IEntityTypeConfiguratio
         builder.HasOne<Neighborhood>().WithMany().HasForeignKey(p => p.NeighborhoodId).OnDelete(DeleteBehavior.Restrict);
         builder.HasIndex(p => p.NeighborhoodId).IsUnique();
         builder.HasMany(p => p.Operations).WithOne().HasForeignKey("program_id").OnDelete(DeleteBehavior.Cascade);
+        builder.Navigation(p => p.Operations).AutoInclude();
     }
 }
 
@@ -89,6 +91,18 @@ internal sealed class GreeningOperationConfiguration : IEntityTypeConfiguration<
         builder.ToTable("greening_operations");
         builder.Property(o => o.Description).HasMaxLength(2000);
         builder.OwnsMany(o => o.Photos, OwnedMedia.Configure<GreeningOperation>("greening_operation_photos", "operation_id"));
+    }
+}
+
+internal sealed class PreventiveAdviceConfiguration : IEntityTypeConfiguration<PreventiveAdvice>
+{
+    public void Configure(EntityTypeBuilder<PreventiveAdvice> builder)
+    {
+        builder.ToTable("preventive_advices");
+        builder.Property(a => a.Title).HasMaxLength(PreventiveAdvice.TitleMaxLength);
+        builder.Property(a => a.Body).HasMaxLength(PreventiveAdvice.BodyMaxLength);
+        builder.PrimitiveCollection(a => a.Months);
+        builder.HasIndex(a => a.IsPublished);
     }
 }
 

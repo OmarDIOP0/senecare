@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using SeneCare.Application.Admin;
 using SeneCare.Application.Business;
 using SeneCare.Application.Properties;
 using SeneCare.Application.Requests;
@@ -23,6 +24,7 @@ public sealed class SpaceController(
     RequestQueries requests,
     SubscriptionQueries subscriptions,
     BusinessDashboardQuery businessDashboard,
+    AdviceManagement advice,
     IStringLocalizer<SharedResource> localizer,
     TimeProvider clock) : Controller
 {
@@ -80,6 +82,7 @@ public sealed class SpaceController(
             ActiveRequest = active,
             ActiveTimeline = timeline,
             Neighborhood = await subscriptions.NeighborhoodAsync(userId, cancellationToken),
+            Advice = await advice.ForMonthAsync(Formatting.ToDakar(clock.GetUtcNow()).Month, cancellationToken),
         };
     }
 

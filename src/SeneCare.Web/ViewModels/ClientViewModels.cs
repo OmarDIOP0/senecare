@@ -79,6 +79,9 @@ public sealed class ClientHomeModel
     public NeighborhoodProgress? Neighborhood { get; init; }
 
     public int PropertyCount { get; init; }
+
+    /// <summary>Advice of the month written by SENECARE (null: the built-in seasonal advice).</summary>
+    public SeneCare.Domain.Content.PreventiveAdvice? Advice { get; init; }
 }
 
 /// <summary>A subscription and, when something is due, the invoice to pay with the Wave link (+ its QR code).</summary>

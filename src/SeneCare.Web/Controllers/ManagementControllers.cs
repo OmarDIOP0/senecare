@@ -35,7 +35,7 @@ public sealed class CustomersController(CustomerDirectory directory) : Controlle
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Show(Guid id, CancellationToken cancellationToken)
     {
-        var file = await directory.FileAsync(id, cancellationToken);
+        var file = await directory.FileAsync(User.GetUserId()!.Value, id, HttpContext.Connection.RemoteIpAddress?.ToString(), cancellationToken);
         return file is null ? NotFound() : View(file);
     }
 }
@@ -175,5 +175,126 @@ public sealed class SettingsController(SettingsManagement settings) : Controller
         var result = await settings.UpdateAsync(User.GetUserId()!.Value, key, value, cancellationToken);
         TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Admin_Saved"].Value : this.ErrorMessage(result.Error);
         return RedirectToAction(nameof(Index));
+    }
+}
+
+/// <summary>Programme Quartiers: member counts, thresholds, greening operations (photos, trees), publication.</summary>
+[Authorize(Policy = Policies.AdminDispatcher)]
+[Route("/admin/quartiers")]
+public sealed class NeighborhoodProgramsController(NeighborhoodPrograms programs) : Controller
+{
+    [HttpGet("")]
+    public async Task<IActionResult> Index(bool tous, CancellationToken cancellationToken)
+    {
+        ViewData["All"] = tous;
+        return View(await programs.ListAsync(!tous, cancellationToken));
+    }
+
+    [HttpPost("recompter")]
+    public async Task<IActionResult> Recount(CancellationToken cancellationToken)
+    {
+        var result = await programs.RecountAllAsync(cancellationToken);
+        TempData["flash.toast"] = this.Localizer()["Admin_Recounted", result.Value].Value;
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> Show(Guid id, CancellationToken cancellationToken)
+    {
+        var detail = await programs.DetailAsync(id, cancellationToken);
+        return detail is null ? NotFound() : View(detail.Value);
+    }
+
+    [HttpPost("{id:guid}/seuil")]
+    public async Task<IActionResult> Threshold(Guid id, int threshold, CancellationToken cancellationToken) =>
+        Done(id, await programs.ChangeThresholdAsync(Me, id, threshold, cancellationToken));
+
+    [HttpPost("{id:guid}/operations")]
+    [RequestSizeLimit(48 * 1024 * 1024)]
+    public async Task<IActionResult> Operation(Guid id, string? date, int trees, string? description, List<IFormFile> photos, CancellationToken cancellationToken)
+    {
+        if (!DateOnly.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var day))
+        {
+            return Done(id, Result<Guid>.Failure("dispatch.past_date"));
+        }
+
+        var files = (photos ?? []).Select(p => new Application.Media.UploadedFile(p.OpenReadStream(), p.Length)).ToList();
+        return Done(id, await programs.RecordOperationAsync(Me, id, day, trees, description, files, cancellationToken));
+    }
+
+    [HttpPost("{id:guid}/operations/{operationId:guid}/publier")]
+    public async Task<IActionResult> Publish(Guid id, Guid operationId, CancellationToken cancellationToken) =>
+        Done(id, await programs.PublishAsync(Me, id, operationId, cancellationToken));
+
+    private Guid Me => User.GetUserId()!.Value;
+
+    private RedirectToActionResult Done(Guid id, Result<Guid> result)
+    {
+        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Admin_Saved"].Value : this.ErrorMessage(result.Error);
+        return RedirectToAction(nameof(Show), new { id });
+    }
+}
+
+/// <summary>Preventive advice for the customer home (super-admin, support).</summary>
+[Authorize(Policy = Policies.BackOffice)]
+[Route("/admin/conseils")]
+public sealed class AdviceController(AdviceManagement advice) : Controller
+{
+    [HttpGet("")]
+    public async Task<IActionResult> Index(CancellationToken cancellationToken) => View(await advice.ListAsync(cancellationToken));
+
+    [HttpPost("")]
+    public async Task<IActionResult> Create(string? title, string? body, List<int> months, ServiceDomain? domain, CancellationToken cancellationToken) =>
+        Done(await advice.CreateAsync(User.GetUserId()!.Value, new AdviceForm(title, body, months ?? [], domain), cancellationToken));
+
+    [HttpPost("{id:guid}")]
+    public async Task<IActionResult> Update(Guid id, string? title, string? body, List<int> months, ServiceDomain? domain, CancellationToken cancellationToken) =>
+        Done(await advice.UpdateAsync(User.GetUserId()!.Value, id, new AdviceForm(title, body, months ?? [], domain), cancellationToken));
+
+    [HttpPost("{id:guid}/publication")]
+    public async Task<IActionResult> Publish(Guid id, bool published, CancellationToken cancellationToken) =>
+        Done(await advice.SetPublishedAsync(User.GetUserId()!.Value, id, published, cancellationToken));
+
+    private RedirectToActionResult Done(Result<Guid> result)
+    {
+        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Admin_Saved"].Value : this.ErrorMessage(result.Error);
+        return RedirectToAction(nameof(Index));
+    }
+}
+
+/// <summary>Audit log and personal-data requests (super-admin).</summary>
+[Authorize(Policy = Policies.SuperAdmin)]
+public sealed class PrivacyController(AuditQuery audit, PersonalDataService personalData) : Controller
+{
+    // A file for the person, not a web page: keep « + », accents and apostrophes readable.
+    private static readonly System.Text.Json.JsonSerializerOptions Indented = new()
+    {
+        WriteIndented = true,
+        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+    };
+
+    [HttpGet("/admin/journal")]
+    public async Task<IActionResult> Journal(string? q, bool sensibles, int page, CancellationToken cancellationToken)
+    {
+        // « q », not « action »: MVC would bind the route value (the action name) instead.
+        ViewData["Action"] = q;
+        ViewData["Sensitive"] = sensibles;
+        ViewData["Page"] = Math.Max(0, page);
+        return View(await audit.ListAsync(q, sensibles, page, cancellationToken));
+    }
+
+    /// <summary>Right of access (law 2008-12): the person's data as JSON. Logged as a sensitive access.</summary>
+    [HttpGet("/admin/donnees/{userId:guid}/export.json")]
+    public async Task<IActionResult> Export(Guid userId, CancellationToken cancellationToken)
+    {
+        var export = await personalData.ExportAsync(User.GetUserId()!.Value, userId, HttpContext.Connection.RemoteIpAddress?.ToString(), cancellationToken);
+        if (export is null)
+        {
+            return NotFound();
+        }
+
+        Response.Headers.CacheControl = "no-store";
+        var json = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(export, Indented);
+        return File(json, "application/json", $"donnees-{userId:N}.json");
     }
 }

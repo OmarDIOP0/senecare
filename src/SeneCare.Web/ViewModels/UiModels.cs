@@ -43,3 +43,6 @@ public sealed record EmptyStateModel(string Title, string Text, EmptyIllustratio
 
 /// <summary>Bottom tab bar (mobile) / side rail (desktop), with the central action (« Signaler »).</summary>
 public sealed record TabBarModel(SeneCare.Web.Infrastructure.AppNav Nav, string ActiveKey, bool Demo = false);
+
+/// <summary>Technician form fields: empty for a new technician, filled when editing.</summary>
+public sealed record TechnicianFieldsModel(SeneCare.Application.Admin.TechnicianRow? Row);

@@ -1,0 +1,28 @@
+@model IReadOnlyList<SeneCare.Application.Admin.SettingRow>
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "gestion";
+    ViewData["Title"] = L["Admin_Settings"];
+}
+
+<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-bold">← @L["Tab_Management"]</a>
+<h1 class="sc-titre">@L["Admin_Settings"]</h1>
+
+<ul class="mt-6 grid gap-3">
+    @foreach (var s in Model)
+    {
+        var id = "s-" + s.Key.Replace('.', '-');
+        <li class="sc-carte">
+            <form method="post" action="/admin/parametres" class="flex flex-wrap items-end gap-2">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="key" value="@s.Key" />
+                <div class="min-w-48 flex-1">
+                    <label class="sc-label" for="@id">@L["Setting_" + s.Key.Replace('.', '_')]</label>
+                    <input id="@id" name="value" class="sc-input" value="@s.Value" inputmode="@(s.IsNumber ? "numeric" : "text")" />
+                    <p class="sc-aide">@L["Setting_" + s.Key.Replace('.', '_') + "_Hint"]</p>
+                </div>
+                <button type="submit" class="sc-btn-secondaire">@L["Common_Save"]</button>
+            </form>
+        </li>
+    }
+</ul>

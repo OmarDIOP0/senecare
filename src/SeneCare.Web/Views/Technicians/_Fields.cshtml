@@ -1,0 +1,50 @@
+@model TechnicianFieldsModel
+@using SeneCare.Domain.Common
+@{
+    var row = Model.Row;
+    var communes = ViewData["Communes"] as IReadOnlyList<SeneCare.Application.Admin.CommuneRow> ?? [];
+    var skills = row?.Skills ?? [];
+    var zones = row?.CommuneIds ?? [];
+    var week = row?.Week ?? [];
+    var workDays = week.Count == 0 && row is null
+        ? new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Saturday }
+        : week.Select(w => w.Day).ToArray();
+    var start = week.FirstOrDefault()?.Start ?? new TimeOnly(8, 0);
+    var end = week.FirstOrDefault()?.End ?? new TimeOnly(18, 0);
+    var days = new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Saturday, DayOfWeek.Sunday };
+    var culture = System.Globalization.CultureInfo.CurrentCulture;
+}
+<fieldset>
+    <legend class="sc-label">@L["Admin_Skills"]</legend>
+    <div class="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        @foreach (var domain in Enum.GetValues<ServiceDomain>())
+        {
+            <label class="sc-choix"><input type="checkbox" name="skills" value="@domain" checked="@skills.Contains(domain)" />@L["Domain_" + domain]</label>
+        }
+    </div>
+</fieldset>
+<div>
+    <label class="sc-label" for="communes">@L["Admin_Zones"]</label>
+    <select id="communes" name="communes" multiple size="8" class="sc-input py-2">
+        @foreach (var c in communes)
+        {
+            <option value="@c.Id" selected="@zones.Contains(c.Id)">@c.Name (@c.Department)</option>
+        }
+    </select>
+    <p class="sc-aide">@L["Admin_Zones_Hint"]</p>
+</div>
+<fieldset>
+    <legend class="sc-label">@L["Admin_Week"]</legend>
+    <div class="mt-2 grid grid-cols-4 gap-2 sm:grid-cols-7">
+        @foreach (var day in days)
+        {
+            <label class="sc-choix justify-center"><input type="checkbox" name="days" value="@day" checked="@workDays.Contains(day)" />@culture.DateTimeFormat.GetAbbreviatedDayName(day)</label>
+        }
+    </div>
+    <div class="mt-2 flex flex-wrap gap-2">
+        <label class="sc-label" for="start">@L["Admin_From"]</label>
+        <input id="start" name="start" type="time" class="sc-input w-32" value="@start.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture)" />
+        <label class="sc-label" for="end">@L["Admin_To"]</label>
+        <input id="end" name="end" type="time" class="sc-input w-32" value="@end.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture)" />
+    </div>
+</fieldset>

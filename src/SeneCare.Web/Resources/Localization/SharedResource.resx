@@ -766,4 +766,91 @@
   <data name="Error_dispatch_cancel_reason" xml:space="preserve"><value>Indiquez le motif de l'annulation.</value></data>
   <data name="Error_dispatch_past_date" xml:space="preserve"><value>Choisissez une date à venir.</value></data>
   <data name="Error_request_requalify" xml:space="preserve"><value>L'urgence ne peut plus changer une fois le rendez-vous confirmé.</value></data>
+  <data name="Tab_Management" xml:space="preserve"><value>Gestion</value></data>
+  <data name="Admin_Saved" xml:space="preserve"><value>Modifications enregistrées.</value></data>
+  <data name="Admin_Search" xml:space="preserve"><value>Rechercher</value></data>
+  <data name="Admin_Search_Placeholder" xml:space="preserve"><value>Nom, entreprise ou numéro complet</value></data>
+  <data name="Admin_Type" xml:space="preserve"><value>Type</value></data>
+  <data name="Admin_All" xml:space="preserve"><value>Tous</value></data>
+  <data name="Admin_NoResult" xml:space="preserve"><value>Aucun résultat.</value></data>
+  <data name="Admin_Contact" xml:space="preserve"><value>Contact</value></data>
+  <data name="Admin_Since" xml:space="preserve"><value>Client depuis</value></data>
+  <data name="Admin_RequestsCount" xml:space="preserve"><value>{0} demande(s), dont {1} en cours</value></data>
+  <data name="Admin_Customers" xml:space="preserve"><value>Clients et entreprises</value></data>
+  <data name="Admin_Customers_Text" xml:space="preserve"><value>Recherche, comptes, sites, abonnements et factures.</value></data>
+  <data name="Admin_Technicians" xml:space="preserve"><value>Techniciens</value></data>
+  <data name="Admin_Technicians_Text" xml:space="preserve"><value>Métiers, zones, semaine de travail, certification.</value></data>
+  <data name="Admin_Payments_Text" xml:space="preserve"><value>Paiements Wave à vérifier, espèces et virements.</value></data>
+  <data name="Admin_Plans" xml:space="preserve"><value>Offres et tarifs</value></data>
+  <data name="Admin_Plans_Text" xml:space="preserve"><value>Prix, délais d'intervention, visites, métiers couverts.</value></data>
+  <data name="Admin_Plans_Intro" xml:space="preserve"><value>Les abonnements en cours gardent leur prix. Les nouveaux abonnements et les nouvelles demandes utilisent ces valeurs. Chaque modification est journalisée.</value></data>
+  <data name="Admin_Geography" xml:space="preserve"><value>Référentiel géographique</value></data>
+  <data name="Admin_Geography_Text" xml:space="preserve"><value>Régions, départements, communes et quartiers.</value></data>
+  <data name="Admin_Settings" xml:space="preserve"><value>Paramètres</value></data>
+  <data name="Admin_Settings_Text" xml:space="preserve"><value>Délai de grâce, garantie, seuil des quartiers…</value></data>
+  <data name="Admin_TechAdd" xml:space="preserve"><value>Ajouter un technicien</value></data>
+  <data name="Admin_TechCreated" xml:space="preserve"><value>Technicien ajouté : il se connecte avec son numéro.</value></data>
+  <data name="Admin_Skills" xml:space="preserve"><value>Métiers</value></data>
+  <data name="Admin_Zones" xml:space="preserve"><value>Zones (communes)</value></data>
+  <data name="Admin_Zones_Hint" xml:space="preserve"><value>Ctrl ou appui long pour en choisir plusieurs.</value></data>
+  <data name="Admin_Week" xml:space="preserve"><value>Semaine de travail</value></data>
+  <data name="Admin_From" xml:space="preserve"><value>De</value></data>
+  <data name="Admin_To" xml:space="preserve"><value>à</value></data>
+  <data name="Admin_Certified" xml:space="preserve"><value>Certifié</value></data>
+  <data name="Admin_Inactive" xml:space="preserve"><value>Inactif</value></data>
+  <data name="Admin_ZonesCount" xml:space="preserve"><value>{0} commune(s)</value></data>
+  <data name="Admin_DaysCount" xml:space="preserve"><value>{0} jour(s) par semaine</value></data>
+  <data name="Admin_NoWeek" xml:space="preserve"><value>Semaine non renseignée</value></data>
+  <data name="Admin_Activate" xml:space="preserve"><value>Réactiver</value></data>
+  <data name="Admin_Deactivate" xml:space="preserve"><value>Désactiver</value></data>
+  <data name="Admin_Deactivate_Hint" xml:space="preserve"><value>Un technicien désactivé ne reçoit plus de missions et ne voit plus son espace.</value></data>
+  <data name="Admin_Certify" xml:space="preserve"><value>Certifier SENECARE</value></data>
+  <data name="Admin_PlanName" xml:space="preserve"><value>Nom</value></data>
+  <data name="Admin_Priority" xml:space="preserve"><value>Priorité au dispatch</value></data>
+  <data name="Admin_SlaHours" xml:space="preserve"><value>Délai maximal (heures)</value></data>
+  <data name="Admin_Domains" xml:space="preserve"><value>Métiers couverts</value></data>
+  <data name="Admin_PlanActive" xml:space="preserve"><value>Offre proposée aux nouveaux clients</value></data>
+  <data name="Admin_Geo_Placeholder" xml:space="preserve"><value>Commune ou département</value></data>
+  <data name="Admin_Commune" xml:space="preserve"><value>Commune</value></data>
+  <data name="Admin_Department" xml:space="preserve"><value>Département</value></data>
+  <data name="Admin_Region" xml:space="preserve"><value>Région</value></data>
+  <data name="Admin_NeighborhoodsCount" xml:space="preserve"><value>Quartiers</value></data>
+  <data name="Admin_AddNeighborhood" xml:space="preserve"><value>Nouveau quartier</value></data>
+  <data name="Admin_Add" xml:space="preserve"><value>Ajouter</value></data>
+  <data name="Admin_Rename" xml:space="preserve"><value>Renommer</value></data>
+  <data name="Admin_Members" xml:space="preserve"><value>{0} / {1} adhérents</value></data>
+  <data name="AdminPay_Unpaid" xml:space="preserve"><value>Factures à encaisser ({0})</value></data>
+  <data name="AdminPay_Unpaid_Hint" xml:space="preserve"><value>Pour un règlement en espèces ou par virement : la facture est soldée et l'abonnement démarre ou se prolonge.</value></data>
+  <data name="AdminPay_Record" xml:space="preserve"><value>Encaisser</value></data>
+  <data name="AdminPay_Recorded" xml:space="preserve"><value>Paiement enregistré, abonnement à jour.</value></data>
+  <data name="AdminPay_Note" xml:space="preserve"><value>Référence (reçu, virement)</value></data>
+  <data name="AdminPay_Note_Placeholder" xml:space="preserve"><value>Ex : reçu n° 0042, virement CBAO du 12/10</value></data>
+  <data name="Channel_Cash" xml:space="preserve"><value>Espèces</value></data>
+  <data name="Channel_BankTransfer" xml:space="preserve"><value>Virement</value></data>
+  <data name="Setting_billing_grace_days" xml:space="preserve"><value>Délai de grâce après échéance (jours)</value></data>
+  <data name="Setting_billing_grace_days_Hint" xml:space="preserve"><value>Pendant ce délai, le client peut encore signaler ; ensuite l'abonnement est suspendu.</value></data>
+  <data name="Setting_requests_auto_validate_after_days" xml:space="preserve"><value>Validation automatique d'une intervention (jours)</value></data>
+  <data name="Setting_requests_auto_validate_after_days_Hint" xml:space="preserve"><value>Sans réponse du client après ce délai, l'intervention est considérée validée.</value></data>
+  <data name="Setting_interventions_warranty_days" xml:space="preserve"><value>Garantie des travaux (jours)</value></data>
+  <data name="Setting_interventions_warranty_days_Hint" xml:space="preserve"><value>Même métier, même bâtiment pendant ce délai : reprise sans frais.</value></data>
+  <data name="Setting_neighborhoods_default_threshold" xml:space="preserve"><value>Seuil du Programme Quartiers (adhérents)</value></data>
+  <data name="Setting_neighborhoods_default_threshold_Hint" xml:space="preserve"><value>Nombre d'adhérents d'un quartier qui déclenche les opérations de reboisement.</value></data>
+  <data name="Error_technician_exists" xml:space="preserve"><value>Ce numéro est déjà celui d'un technicien.</value></data>
+  <data name="Error_technician_not_found" xml:space="preserve"><value>Technicien introuvable.</value></data>
+  <data name="Error_technician_skills" xml:space="preserve"><value>Choisissez au moins un métier.</value></data>
+  <data name="Error_technician_zones" xml:space="preserve"><value>Choisissez au moins une commune.</value></data>
+  <data name="Error_availability_invalid" xml:space="preserve"><value>L'heure de fin doit suivre l'heure de début.</value></data>
+  <data name="Error_plan_not_found" xml:space="preserve"><value>Offre introuvable.</value></data>
+  <data name="Error_plan_price" xml:space="preserve"><value>Prix invalide.</value></data>
+  <data name="Error_plan_name" xml:space="preserve"><value>Indiquez le nom de l'offre.</value></data>
+  <data name="Error_plan_visits" xml:space="preserve"><value>Nombre de visites invalide.</value></data>
+  <data name="Error_plan_sla_delay" xml:space="preserve"><value>Les délais doivent être positifs.</value></data>
+  <data name="Error_plan_domains" xml:space="preserve"><value>Une offre couvre au moins un métier.</value></data>
+  <data name="Error_place_not_found" xml:space="preserve"><value>Lieu introuvable.</value></data>
+  <data name="Error_place_name" xml:space="preserve"><value>Indiquez le nom.</value></data>
+  <data name="Error_place_exists" xml:space="preserve"><value>Ce quartier existe déjà dans la commune.</value></data>
+  <data name="Error_setting_unknown" xml:space="preserve"><value>Paramètre inconnu.</value></data>
+  <data name="Error_setting_number" xml:space="preserve"><value>Entrez un nombre entier.</value></data>
+  <data name="Error_payment_note_required" xml:space="preserve"><value>Indiquez la référence du reçu ou du virement.</value></data>
+  <data name="Error_payment_channel" xml:space="preserve"><value>Moyen de paiement non accepté ici.</value></data>
 </root>

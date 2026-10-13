@@ -1,0 +1,37 @@
+@model (SeneCare.Application.Admin.CommuneRow Commune, IReadOnlyList<SeneCare.Application.Admin.NeighborhoodRow> Neighborhoods)
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "gestion";
+    ViewData["Title"] = Model.Commune.Name;
+    ViewData["Wide"] = true;
+}
+
+<a href="/admin/referentiel" class="inline-flex min-h-12 items-center font-bold">← @L["Admin_Geography"]</a>
+<h1 class="sc-titre">@Model.Commune.Name</h1>
+<p class="mt-1">@Model.Commune.Department · @Model.Commune.Region</p>
+
+<form method="post" action="/admin/referentiel/@Model.Commune.Id/quartiers" class="sc-carte mt-6 flex flex-wrap items-end gap-2">
+    @Html.AntiForgeryToken()
+    <div class="min-w-64 flex-1">
+        <label class="sc-label" for="nouveau">@L["Admin_AddNeighborhood"]</label>
+        <input id="nouveau" name="name" class="sc-input" required maxlength="120" />
+    </div>
+    <button type="submit" class="sc-btn-primaire"><sc-icon name="plus" />@L["Admin_Add"]</button>
+</form>
+
+<ul class="mt-6 grid gap-2 lg:grid-cols-2">
+    @foreach (var n in Model.Neighborhoods)
+    {
+        <li class="sc-carte">
+            <form method="post" action="/admin/referentiel/@Model.Commune.Id/quartiers/@n.Id" class="flex flex-wrap items-end gap-2">
+                @Html.AntiForgeryToken()
+                <div class="flex-1">
+                    <label class="sr-only" for="q-@n.Id">@L["Admin_PlanName"]</label>
+                    <input id="q-@n.Id" name="name" class="sc-input" value="@n.Name" required maxlength="120" />
+                    <p class="sc-aide">@L["Admin_Members", n.Members, n.Threshold]</p>
+                </div>
+                <button type="submit" class="sc-btn-secondaire min-h-10 text-sm">@L["Admin_Rename"]</button>
+            </form>
+        </li>
+    }
+</ul>

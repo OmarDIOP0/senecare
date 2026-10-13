@@ -1,0 +1,34 @@
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "gestion";
+    ViewData["Title"] = L["Tab_Management"];
+    ViewData["Wide"] = true;
+    var super_ = User.IsInRole("SuperAdmin");
+    var dispatch = super_ || User.IsInRole("Dispatcher");
+    var finance = super_ || User.IsInRole("Finance");
+    var cards = new List<(string Url, string Icon, string Title, string Text)>
+    {
+        ("/admin/clients", "users", L["Admin_Customers"].Value, L["Admin_Customers_Text"].Value),
+    };
+    if (dispatch) cards.Add(("/admin/techniciens", "wrench", L["Admin_Technicians"].Value, L["Admin_Technicians_Text"].Value));
+    if (finance) cards.Add(("/admin/paiements", "wallet", L["Tab_Payments"].Value, L["Admin_Payments_Text"].Value));
+    if (super_)
+    {
+        cards.Add(("/admin/offres", "receipt", L["Admin_Plans"].Value, L["Admin_Plans_Text"].Value));
+        cards.Add(("/admin/referentiel", "map-pin", L["Admin_Geography"].Value, L["Admin_Geography_Text"].Value));
+        cards.Add(("/admin/parametres", "list-checks", L["Admin_Settings"].Value, L["Admin_Settings_Text"].Value));
+    }
+}
+
+<h1 class="sc-titre">@L["Tab_Management"]</h1>
+<ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    @foreach (var (url, icon, title, text) in cards)
+    {
+        <li>
+            <a href="@url" class="sc-carte flex h-full items-start gap-4 text-charbon no-underline">
+                <span class="grid size-12 shrink-0 place-items-center rounded-md bg-atlantique-clair text-atlantique"><sc-icon name="@icon" class="size-6" /></span>
+                <span><span class="block font-bold">@title</span><span class="sc-texte-doux">@text</span></span>
+            </a>
+        </li>
+    }
+</ul>

@@ -69,6 +69,11 @@ public static class DependencyInjection
         services.AddScoped<DispatchQueries>();
         services.AddScoped<DispatchActions>();
         services.AddScoped<DiagnosticSupervision>();
+        services.AddScoped<CustomerDirectory>();
+        services.AddScoped<TechnicianManagement>();
+        services.AddScoped<PlanManagement>();
+        services.AddScoped<GeographyManagement>();
+        services.AddScoped<SettingsManagement>();
 
         // Development tools (refused by the Web outside Development).
         services.AddScoped<SimulatedActivation>();

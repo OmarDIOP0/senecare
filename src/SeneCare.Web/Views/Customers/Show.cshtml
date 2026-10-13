@@ -1,0 +1,66 @@
+@model SeneCare.Application.Admin.CustomerFile
+@using SeneCare.Domain.Accounts
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "gestion";
+    ViewData["Wide"] = true;
+    var s = Model.Summary;
+    ViewData["Title"] = s.Name;
+    string Day(DateOnly d) => Formatting.ShortDate(new DateTimeOffset(d.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero));
+}
+
+<a href="/admin/clients" class="inline-flex min-h-12 items-center font-bold">← @L["Admin_Customers"]</a>
+<h1 class="sc-titre">@s.Name</h1>
+<p class="mt-1">@(s.Kind == AccountKind.Business ? L["Register_ProfileBusiness"] : L["Register_ProfileHousehold"]) · @L["Admin_Since"] @Formatting.ShortDate(s.CreatedAt)@(Model.Ninea is { } ninea ? " · NINEA " + ninea : "")</p>
+<p class="mt-1">@L["Admin_RequestsCount", Model.Requests, Model.OpenRequests]</p>
+
+<div class="mt-6 grid gap-6 lg:grid-cols-2">
+    <section class="sc-carte" aria-labelledby="membres-titre">
+        <h2 id="membres-titre" class="sc-sous-titre">@L["Team_Members"]</h2>
+        <ul class="mt-2 divide-y divide-ligne">
+            @foreach (var m in Model.Members)
+            {
+                <li class="flex flex-wrap justify-between gap-2 py-2">
+                    <span><span class="font-bold">@(m.Name ?? "—")</span> · +221 @m.Phone</span>
+                    <span class="sc-badge bg-sable text-charbon">@L["Role_" + m.Role]</span>
+                </li>
+            }
+        </ul>
+    </section>
+
+    <section class="sc-carte" aria-labelledby="sites-titre">
+        <h2 id="sites-titre" class="sc-sous-titre">@L["Biz_Sites"]</h2>
+        <ul class="mt-2 divide-y divide-ligne">
+            @foreach (var site in Model.Sites)
+            {
+                <li class="py-2"><span class="font-bold">@site.Name</span> · @L["PropertyKind_" + site.Kind]<span class="block text-sm">@site.Place</span></li>
+            }
+        </ul>
+    </section>
+
+    <section class="sc-carte" aria-labelledby="abonnements-titre">
+        <h2 id="abonnements-titre" class="sc-sous-titre">@L["Space_Subscription"]</h2>
+        <ul class="mt-2 divide-y divide-ligne">
+            @foreach (var sub in Model.Subscriptions)
+            {
+                <li class="flex flex-wrap justify-between gap-2 py-2">
+                    <span><span class="font-bold">@sub.Plan</span> · <sc-amount value="@sub.MonthlyPrice.Amount" /> @L["Offer_PerMonth"]@if (sub.NextDueDate is { } due) { <span class="block text-sm">@L["Subscription_NextDue", Day(due)]</span> }</span>
+                    <span class="sc-badge bg-sable text-charbon">@L["SubscriptionStatus_" + sub.Status]</span>
+                </li>
+            }
+        </ul>
+    </section>
+
+    <section class="sc-carte" aria-labelledby="factures-titre">
+        <h2 id="factures-titre" class="sc-sous-titre">@L["Subscription_Invoices"]</h2>
+        <ul class="mt-2 divide-y divide-ligne">
+            @foreach (var invoice in Model.Invoices)
+            {
+                <li class="flex flex-wrap justify-between gap-2 py-2">
+                    <span><span class="font-bold">@invoice.Number</span><span class="block text-sm">@L["Subscription_DueOn", Day(invoice.DueDate)]</span></span>
+                    <span class="text-right"><sc-amount value="@invoice.Total.Amount" class="font-bold" /><span class="block text-sm">@L["InvoiceStatus_" + invoice.Status]</span></span>
+                </li>
+            }
+        </ul>
+    </section>
+</div>

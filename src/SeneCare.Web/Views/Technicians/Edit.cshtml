@@ -1,0 +1,34 @@
+@model SeneCare.Application.Admin.TechnicianRow
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "gestion";
+    ViewData["Title"] = Model.Name;
+    ViewData["Wide"] = true;
+}
+
+<a href="/admin/techniciens" class="inline-flex min-h-12 items-center font-bold">← @L["Admin_Technicians"]</a>
+<h1 class="sc-titre">@(string.IsNullOrEmpty(Model.Name) ? "+221 " + Model.Phone : Model.Name)</h1>
+<p class="mt-1">+221 @Model.Phone · @L["Dispatch_Load", Model.OpenMissions]</p>
+
+<div class="mt-6 grid gap-6 lg:grid-cols-3">
+    <form method="post" action="/admin/techniciens/@Model.Id" class="sc-carte grid gap-4 lg:col-span-2">
+        @Html.AntiForgeryToken()
+        <partial name="_Fields" model="new TechnicianFieldsModel(Model)" />
+        <button type="submit" class="sc-btn-primaire">@L["Common_Save"]</button>
+    </form>
+    <aside class="grid content-start gap-3">
+        <form method="post" action="/admin/techniciens/@Model.Id/statut">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="active" value="@(Model.IsActive ? "false" : "true")" />
+            <button type="submit" class="@(Model.IsActive ? "sc-btn-danger" : "sc-btn-secondaire") w-full">@(Model.IsActive ? L["Admin_Deactivate"] : L["Admin_Activate"])</button>
+        </form>
+        @if (!Model.IsCertified)
+        {
+            <form method="post" action="/admin/techniciens/@Model.Id/certifier">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="sc-btn-secondaire w-full"><sc-icon name="shield-check" />@L["Admin_Certify"]</button>
+            </form>
+        }
+        <p class="sc-aide">@L["Admin_Deactivate_Hint"]</p>
+    </aside>
+</div>

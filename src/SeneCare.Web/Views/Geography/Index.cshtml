@@ -1,0 +1,42 @@
+@model IReadOnlyList<SeneCare.Application.Admin.CommuneRow>
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "gestion";
+    ViewData["Title"] = L["Admin_Geography"];
+    ViewData["Wide"] = true;
+}
+
+<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-bold">← @L["Tab_Management"]</a>
+<h1 class="sc-titre">@L["Admin_Geography"]</h1>
+
+<form method="get" class="mt-4 flex flex-wrap items-end gap-2" role="search">
+    <div class="min-w-64 flex-1">
+        <label class="sc-label" for="q">@L["Admin_Search"]</label>
+        <input id="q" name="q" type="search" class="sc-input" value="@ViewData["Query"]" placeholder="@L["Admin_Geo_Placeholder"]" />
+    </div>
+    <button type="submit" class="sc-btn-secondaire"><sc-icon name="search" />@L["Admin_Search"]</button>
+</form>
+
+<div class="mt-4 overflow-x-auto rounded-lg border border-ligne bg-surface">
+    <table class="w-full min-w-[36rem] text-left text-sm">
+        <thead class="bg-sable text-xs uppercase tracking-wide">
+            <tr>
+                <th scope="col" class="px-3 py-2">@L["Admin_Commune"]</th>
+                <th scope="col" class="px-3 py-2">@L["Admin_Department"]</th>
+                <th scope="col" class="px-3 py-2">@L["Admin_Region"]</th>
+                <th scope="col" class="px-3 py-2">@L["Admin_NeighborhoodsCount"]</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-ligne">
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td class="px-3 py-2"><a href="/admin/referentiel/@c.Id" class="font-bold">@c.Name</a></td>
+                    <td class="px-3 py-2">@c.Department</td>
+                    <td class="px-3 py-2">@c.Region</td>
+                    <td class="px-3 py-2">@c.Neighborhoods</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

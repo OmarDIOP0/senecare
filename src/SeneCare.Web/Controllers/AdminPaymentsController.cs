@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SeneCare.Application.Payments;
+using SeneCare.Domain.Billing;
 using SeneCare.Infrastructure.Identity;
 using SeneCare.Web.Infrastructure;
 
@@ -18,6 +19,7 @@ public sealed class AdminPaymentsController(PaymentVerificationHandler payments)
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         ViewData["WaveLink"] = await payments.WaveLinkAsync(cancellationToken);
+        ViewData["Unpaid"] = await payments.UnpaidAsync(cancellationToken);
         return View(await payments.PendingAsync(cancellationToken));
     }
 
@@ -34,6 +36,15 @@ public sealed class AdminPaymentsController(PaymentVerificationHandler payments)
     {
         var result = await payments.RejectAsync(User.GetUserId()!.Value, id, reason, ClientIp, cancellationToken);
         TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["AdminPay_Rejected"].Value : this.ErrorMessage(result.Error);
+        return RedirectToAction(nameof(Index));
+    }
+
+    /// <summary>Cash or bank transfer received for an invoice (receipt / bank reference in the note).</summary>
+    [HttpPost("factures/{invoiceId:guid}/encaisser")]
+    public async Task<IActionResult> RecordManual(Guid invoiceId, PaymentChannel channel, string? note, CancellationToken cancellationToken)
+    {
+        var result = await payments.RecordManualAsync(User.GetUserId()!.Value, invoiceId, channel, note, ClientIp, cancellationToken);
+        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["AdminPay_Recorded"].Value : this.ErrorMessage(result.Error);
         return RedirectToAction(nameof(Index));
     }
 

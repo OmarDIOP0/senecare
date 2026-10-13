@@ -4,6 +4,7 @@
     ViewData["NavActive"] = "paiements";
     ViewData["Title"] = L["AdminPay_Title"];
     var waveLink = ViewData["WaveLink"] as string;
+    var unpaid = ViewData["Unpaid"] as IReadOnlyList<SeneCare.Application.Payments.UnpaidInvoice> ?? [];
 }
 
 <h1 class="sc-titre">@L["AdminPay_Title"]</h1>
@@ -43,6 +44,40 @@
                         <label class="sc-label" for="motif-@p.PaymentId">@L["AdminPay_RejectReason"]</label>
                         <textarea id="motif-@p.PaymentId" name="reason" rows="2" class="sc-input py-2" required placeholder="@L["AdminPay_RejectReason_Placeholder"]"></textarea>
                         <button type="submit" class="sc-btn bg-laterite text-sur-accent">@L["AdminPay_Reject"]</button>
+                    </form>
+                </sc-sheet>
+            </li>
+        }
+    </ul>
+</section>
+
+<section class="mt-10" aria-labelledby="impayes-titre">
+    <h2 id="impayes-titre" class="sc-sous-titre">@L["AdminPay_Unpaid", unpaid.Count]</h2>
+    <p class="sc-texte-doux mt-1">@L["AdminPay_Unpaid_Hint"]</p>
+    <ul class="mt-3 divide-y divide-ligne rounded-lg border border-ligne bg-surface">
+        @foreach (var invoice in unpaid)
+        {
+            <li class="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+                <div>
+                    <p class="font-bold">@invoice.Number · @invoice.AccountName</p>
+                    <p class="text-sm">@L["Subscription_DueOn", Formatting.ShortDate(new DateTimeOffset(invoice.DueDate.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero))] · @L["InvoiceStatus_" + invoice.Status]</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <sc-amount value="@invoice.Due.Amount" class="font-bold" />
+                    <button type="button" class="sc-btn-secondaire min-h-10 text-sm" data-sheet-open="encaisser-@invoice.InvoiceId">@L["AdminPay_Record"]</button>
+                </div>
+                <sc-sheet id="encaisser-@invoice.InvoiceId" title="@L["AdminPay_Record"]">
+                    <form method="post" action="/admin/paiements/factures/@invoice.InvoiceId/encaisser" class="grid gap-3">
+                        @Html.AntiForgeryToken()
+                        <p>@invoice.Number · <sc-amount value="@invoice.Due.Amount" class="font-bold" /></p>
+                        <fieldset class="grid grid-cols-2 gap-2">
+                            <legend class="sc-label">@L["AdminPay_Channel"]</legend>
+                            <label class="sc-choix"><input type="radio" name="channel" value="Cash" checked />@L["Channel_Cash"]</label>
+                            <label class="sc-choix"><input type="radio" name="channel" value="BankTransfer" />@L["Channel_BankTransfer"]</label>
+                        </fieldset>
+                        <label class="sc-label" for="note-@invoice.InvoiceId">@L["AdminPay_Note"]</label>
+                        <input id="note-@invoice.InvoiceId" name="note" class="sc-input" required maxlength="500" placeholder="@L["AdminPay_Note_Placeholder"]" />
+                        <button type="submit" class="sc-btn bg-baobab text-sur-accent">@L["AdminPay_Record"]</button>
                     </form>
                 </sc-sheet>
             </li>

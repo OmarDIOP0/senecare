@@ -1,0 +1,58 @@
+@model IReadOnlyList<SeneCare.Application.Admin.CustomerRow>
+@using SeneCare.Domain.Accounts
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "gestion";
+    ViewData["Title"] = L["Admin_Customers"];
+    ViewData["Wide"] = true;
+    var type = ViewData["Type"] as AccountKind?;
+}
+
+<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-bold">← @L["Tab_Management"]</a>
+<h1 class="sc-titre">@L["Admin_Customers"]</h1>
+
+<form method="get" class="mt-4 flex flex-wrap items-end gap-2" role="search">
+    <div class="min-w-64 flex-1">
+        <label class="sc-label" for="q">@L["Admin_Search"]</label>
+        <input id="q" name="q" type="search" class="sc-input" value="@ViewData["Query"]" placeholder="@L["Admin_Search_Placeholder"]" />
+    </div>
+    <div>
+        <label class="sc-label" for="type">@L["Admin_Type"]</label>
+        <select id="type" name="type" class="sc-input">
+            <option value="">@L["Admin_All"]</option>
+            <option value="Household" selected="@(type == AccountKind.Household)">@L["Register_ProfileHousehold"]</option>
+            <option value="Business" selected="@(type == AccountKind.Business)">@L["Register_ProfileBusiness"]</option>
+        </select>
+    </div>
+    <button type="submit" class="sc-btn-secondaire"><sc-icon name="search" />@L["Admin_Search"]</button>
+</form>
+
+<div class="mt-4 overflow-x-auto rounded-lg border border-ligne bg-surface">
+    <table class="w-full min-w-[44rem] text-left text-sm">
+        <thead class="bg-sable text-xs uppercase tracking-wide">
+            <tr>
+                <th scope="col" class="px-3 py-2">@L["Dispatch_Customer"]</th>
+                <th scope="col" class="px-3 py-2">@L["Admin_Contact"]</th>
+                <th scope="col" class="px-3 py-2">@L["Biz_Sites"]</th>
+                <th scope="col" class="px-3 py-2">@L["Space_Subscription"]</th>
+                <th scope="col" class="px-3 py-2">@L["Admin_Since"]</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-ligne">
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td class="px-3 py-2"><a href="/admin/clients/@c.AccountId" class="font-bold">@c.Name</a><span class="block text-xs">@(c.Kind == AccountKind.Business ? L["Register_ProfileBusiness"] : L["Register_ProfileHousehold"])</span></td>
+                    <td class="px-3 py-2">@(c.ContactName ?? "—")<span class="block text-xs">+221 @c.ContactPhone</span></td>
+                    <td class="px-3 py-2">@c.Sites</td>
+                    <td class="px-3 py-2">@(c.Status is { } s ? L["SubscriptionStatus_" + s] : "—")</td>
+                    <td class="px-3 py-2">@Formatting.ShortDate(c.CreatedAt)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@if (Model.Count == 0)
+{
+    <p class="sc-texte-doux mt-3">@L["Admin_NoResult"]</p>
+}

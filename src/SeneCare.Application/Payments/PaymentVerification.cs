@@ -9,6 +9,8 @@ using SeneCare.Domain.Platform;
 
 namespace SeneCare.Application.Payments;
 
+public sealed record UnpaidInvoice(Guid InvoiceId, string Number, string AccountName, Money Due, DateOnly DueDate, InvoiceStatus Status);
+
 public sealed record PendingPayment(
     Guid PaymentId,
     string InvoiceNumber,
@@ -57,22 +59,7 @@ public sealed class PaymentVerificationHandler(IApplicationDbContext db, Setting
         try
         {
             payment.Verify(adminUserId, now);
-            invoice.ApplyPayment(payment.Id, payment.Amount, now);
-
-            if (invoice.Status == InvoiceStatus.Paid && invoice.SubscriptionId is { } subscriptionId)
-            {
-                var subscription = await db.Subscriptions.FirstAsync(s => s.Id == subscriptionId, cancellationToken);
-                if (subscription.Status == SubscriptionStatus.PendingRegistration)
-                {
-                    subscription.Activate(DakarCalendar.Today(clock), now);
-                }
-                else if (invoice.Period is { } period)
-                {
-                    subscription.RecordPeriodPaid(period, now);
-                }
-
-                await diagnostics.EnsurePlannedAsync(subscription, cancellationToken);
-            }
+            await SettleAsync(invoice, payment, now, cancellationToken);
         }
         catch (DomainException ex)
         {
@@ -105,6 +92,82 @@ public sealed class PaymentVerificationHandler(IApplicationDbContext db, Setting
         Audit(adminUserId, "payment.reject", payment, ipAddress, reason, now);
         await db.SaveChangesAsync(cancellationToken);
         return Result<Guid>.Success(payment.Id);
+    }
+
+    /// <summary>Invoices waiting for money (for cash / bank transfer recording).</summary>
+    public async Task<IReadOnlyList<UnpaidInvoice>> UnpaidAsync(CancellationToken cancellationToken = default)
+    {
+        var rows = await (
+                from i in db.Invoices
+                join a in db.CustomerAccounts on i.AccountId equals a.Id
+                where i.Status == InvoiceStatus.Issued || i.Status == InvoiceStatus.Overdue
+                orderby i.DueDate
+                select new { Invoice = i, Account = a.DisplayName })
+            .AsNoTracking()
+            .Take(200)
+            .ToListAsync(cancellationToken);
+        return [.. rows.Select(r => new UnpaidInvoice(r.Invoice.Id, r.Invoice.Number, r.Account, r.Invoice.Total - r.Invoice.AmountPaid, r.Invoice.DueDate, r.Invoice.Status))];
+    }
+
+    /// <summary>
+    /// Cash or bank transfer received by SENECARE (large company invoices often go this way): recorded by
+    /// Finance with a note (receipt number, bank reference), then settled like a verified Wave payment.
+    /// </summary>
+    public async Task<Result<Guid>> RecordManualAsync(
+        Guid adminUserId, Guid invoiceId, PaymentChannel channel, string? note, string? ipAddress, CancellationToken cancellationToken = default)
+    {
+        var invoice = await db.Invoices.FirstOrDefaultAsync(i => i.Id == invoiceId, cancellationToken);
+        if (invoice is null)
+        {
+            return Result<Guid>.Failure("invoice.not_found");
+        }
+
+        if (invoice.Status is not (InvoiceStatus.Issued or InvoiceStatus.Overdue))
+        {
+            return Result<Guid>.Failure("invoice.not_payable");
+        }
+
+        if (string.IsNullOrWhiteSpace(note))
+        {
+            return Result<Guid>.Failure("payment.note_required");
+        }
+
+        var now = clock.GetUtcNow();
+        Payment payment;
+        try
+        {
+            payment = Payment.RecordManual(invoice.Id, invoice.Total - invoice.AmountPaid, channel, adminUserId, note, now);
+            db.Payments.Add(payment);
+            await SettleAsync(invoice, payment, now, cancellationToken);
+        }
+        catch (DomainException ex)
+        {
+            return Result<Guid>.Failure(ex.Code);
+        }
+
+        Audit(adminUserId, "payment.record_manual", payment, ipAddress, $"{invoice.Number} · {channel} · {note}", now);
+        await db.SaveChangesAsync(cancellationToken);
+        return Result<Guid>.Success(payment.Id);
+    }
+
+    /// <summary>Credits the invoice; once paid, starts or extends the subscription and plans its diagnostic.</summary>
+    private async Task SettleAsync(Invoice invoice, Payment payment, DateTimeOffset now, CancellationToken cancellationToken)
+    {
+        invoice.ApplyPayment(payment.Id, payment.Amount, now);
+        if (invoice.Status == InvoiceStatus.Paid && invoice.SubscriptionId is { } subscriptionId)
+        {
+            var subscription = await db.Subscriptions.FirstAsync(s => s.Id == subscriptionId, cancellationToken);
+            if (subscription.Status == SubscriptionStatus.PendingRegistration)
+            {
+                subscription.Activate(DakarCalendar.Today(clock), now);
+            }
+            else if (invoice.Period is { } period)
+            {
+                subscription.RecordPeriodPaid(period, now);
+            }
+
+            await diagnostics.EnsurePlannedAsync(subscription, cancellationToken);
+        }
     }
 
     public Task<string> WaveLinkAsync(CancellationToken cancellationToken = default) =>

@@ -1,0 +1,52 @@
+@model IReadOnlyList<SeneCare.Application.Admin.TechnicianRow>
+@using System.Globalization
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "gestion";
+    ViewData["Title"] = L["Admin_Technicians"];
+    ViewData["Wide"] = true;
+}
+
+<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-bold">← @L["Tab_Management"]</a>
+<div class="flex flex-wrap items-center justify-between gap-3">
+    <h1 class="sc-titre">@L["Admin_Technicians"]</h1>
+    <button type="button" class="sc-btn-primaire" data-sheet-open="nouveau-tech"><sc-icon name="plus" />@L["Admin_TechAdd"]</button>
+</div>
+
+<ul class="mt-6 grid gap-3 lg:grid-cols-2">
+    @foreach (var t in Model)
+    {
+        <li class="sc-carte relative @(t.IsActive ? "" : "opacity-60")">
+            <div class="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                    <a href="/admin/techniciens/@t.Id" class="font-display text-lg font-bold after:absolute after:inset-0">@(string.IsNullOrEmpty(t.Name) ? "+221 " + t.Phone : t.Name)</a>
+                    <p class="text-sm">+221 @t.Phone · @L["Dispatch_Load", t.OpenMissions]@(t.Rating is { } r ? " · ★ " + r.ToString("0.0", CultureInfo.CurrentCulture) : "")</p>
+                </div>
+                <span class="flex gap-1">
+                    @if (t.IsCertified) { <span class="sc-badge bg-baobab-clair text-baobab"><sc-icon name="shield-check" class="size-3.5" />@L["Admin_Certified"]</span> }
+                    @if (!t.IsActive) { <span class="sc-badge bg-sable text-charbon">@L["Admin_Inactive"]</span> }
+                </span>
+            </div>
+            <p class="mt-2 flex flex-wrap gap-1">
+                @foreach (var skill in t.Skills)
+                {
+                    <span class="sc-badge bg-laterite-clair text-laterite">@L["Domain_" + skill]</span>
+                }
+            </p>
+            <p class="mt-1 text-sm">@L["Admin_ZonesCount", t.CommuneIds.Count] · @(t.Week.Count == 0 ? L["Admin_NoWeek"] : L["Admin_DaysCount", t.Week.Count])</p>
+        </li>
+    }
+</ul>
+
+<sc-sheet id="nouveau-tech" title="@L["Admin_TechAdd"]">
+    <form method="post" action="/admin/techniciens" class="grid gap-4">
+        @Html.AntiForgeryToken()
+        <partial name="Ui/_PhoneInput" model='new PhoneInputModel("phone", null, L["SignIn_PhoneLabel"], null)' />
+        <div>
+            <label class="sc-label" for="nom">@L["Register_NameLabel"]</label>
+            <input id="nom" name="fullName" class="sc-input" required maxlength="120" />
+        </div>
+        <partial name="_Fields" model="new TechnicianFieldsModel(null)" />
+        <button type="submit" class="sc-btn-primaire">@L["Admin_TechAdd"]</button>
+    </form>
+</sc-sheet>

@@ -1,0 +1,70 @@
+@model IReadOnlyList<SeneCare.Domain.Plans.Plan>
+@using System.Globalization
+@using SeneCare.Domain.Common
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "gestion";
+    ViewData["Title"] = L["Admin_Plans"];
+    ViewData["Wide"] = true;
+    int Hours(SeneCare.Domain.Plans.Plan p, Urgency u) => (int)(p.GetMaxDelay(u)?.TotalHours ?? 0);
+}
+
+<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-bold">← @L["Tab_Management"]</a>
+<h1 class="sc-titre">@L["Admin_Plans"]</h1>
+<p class="mt-2 max-w-prose">@L["Admin_Plans_Intro"]</p>
+
+<div class="mt-6 grid gap-6 lg:grid-cols-2">
+    @foreach (var plan in Model)
+    {
+        <form id="plan-@plan.Id" method="post" action="/admin/offres/@plan.Id" class="sc-carte grid gap-3">
+            @Html.AntiForgeryToken()
+            <div class="flex items-center justify-between gap-2">
+                <h2 class="font-display text-xl font-bold">@plan.Code</h2>
+                <span class="sc-badge bg-sable text-charbon">@(plan.Segment == SeneCare.Domain.Accounts.AccountKind.Business ? L["Register_ProfileBusiness"] : L["Register_ProfileHousehold"]) · @L["Offer_Billing", plan.BillingPeriodMonths]</span>
+            </div>
+            <div>
+                <label class="sc-label" for="nom-@plan.Id">@L["Admin_PlanName"]</label>
+                <input id="nom-@plan.Id" name="name" class="sc-input" value="@plan.Name" required maxlength="80" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="sc-label" for="inscr-@plan.Id">@L["Subscription_Registration"] (FCFA)</label>
+                    <input id="inscr-@plan.Id" name="registrationFee" type="number" min="0" step="500" class="sc-input" value="@plan.RegistrationFee.Amount" />
+                </div>
+                <div>
+                    <label class="sc-label" for="mois-@plan.Id">@L["Subscription_Monthly"] (FCFA)</label>
+                    <input id="mois-@plan.Id" name="monthlyPrice" type="number" min="1" step="500" class="sc-input" value="@plan.MonthlyPrice.Amount" />
+                </div>
+                <div>
+                    <label class="sc-label" for="prio-@plan.Id">@L["Admin_Priority"]</label>
+                    <input id="prio-@plan.Id" name="priority" type="number" min="0" max="10" class="sc-input" value="@plan.Priority" />
+                </div>
+                <div>
+                    <label class="sc-label" for="visites-@plan.Id">@L["Offer_Visits"]</label>
+                    <input id="visites-@plan.Id" name="visits" type="number" min="0" class="sc-input" value="@plan.IncludedVisitsPerPeriod" placeholder="@L["Offer_VisitsUnlimited"]" />
+                </div>
+            </div>
+            <fieldset class="grid grid-cols-3 gap-3">
+                <legend class="sc-label">@L["Admin_SlaHours"]</legend>
+                @foreach (var (u, field) in new[] { (Urgency.Critical, "criticalHours"), (Urgency.High, "highHours"), (Urgency.Normal, "normalHours") })
+                {
+                    <div>
+                        <label class="text-sm" for="@field-@plan.Id">@L["Urgency_" + u]</label>
+                        <input id="@field-@plan.Id" name="@field" type="number" min="1" class="sc-input" value="@Hours(plan, u)" />
+                    </div>
+                }
+            </fieldset>
+            <fieldset>
+                <legend class="sc-label">@L["Admin_Domains"]</legend>
+                <div class="mt-1 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                    @foreach (var d in Enum.GetValues<ServiceDomain>())
+                    {
+                        <label class="sc-choix text-sm"><input type="checkbox" name="domains" value="@d" checked="@plan.Covers(d)" />@L["Domain_" + d]</label>
+                    }
+                </div>
+            </fieldset>
+            <label class="sc-choix"><input type="checkbox" name="isActive" value="true" checked="@plan.IsActive" />@L["Admin_PlanActive"]</label>
+            <button type="submit" class="sc-btn-primaire">@L["Common_Save"]</button>
+        </form>
+    }
+</div>

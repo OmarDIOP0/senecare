@@ -41,6 +41,7 @@ public static class AppNavigation
                 items.Add(new("paiements", "/admin/paiements", "wallet", "Tab_Payments"));
             }
 
+            items.Add(new("gestion", "/admin/gestion", "building-2", "Tab_Management"));
             items.Add(Profile);
             return new AppNav(items, null, TourKeys.Admin);
         }

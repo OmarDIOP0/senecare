@@ -27,6 +27,16 @@
                         @if (User.IsInRole("SuperAdmin"))
                         {
                             <a href="/admin/donnees/@m.UserId/export.json" class="text-sm font-bold" download>@L["Admin_ExportData"]</a>
+                            <button type="button" class="text-sm font-bold text-laterite" data-sheet-open="effacer-@m.UserId">@L["Admin_Erase"]</button>
+                            <sc-sheet id="effacer-@m.UserId" title="@L["Admin_Erase"]">
+                                <form method="post" action="/admin/donnees/@m.UserId/effacer" class="grid gap-3">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="returnUrl" value="/admin/clients/@s.AccountId" />
+                                    <p>@L["Admin_Erase_Text", m.Name ?? m.Phone]</p>
+                                    <label class="sc-choix"><input type="checkbox" name="confirm" value="true" required />@L["Admin_Erase_Confirm"]</label>
+                                    <button type="submit" class="sc-btn bg-laterite text-sur-accent">@L["Admin_Erase"]</button>
+                                </form>
+                            </sc-sheet>
                         }
                     </span>
                 </li>

@@ -12,6 +12,12 @@ public sealed record PhoneNumber
 
     private static readonly string[] MobilePrefixes = ["70", "75", "76", "77", "78"];
 
+    /// <summary>
+    /// Placeholder of an erased person: a fixed-line prefix, so it can never receive an OTP, never be typed
+    /// at sign-in, and never collide with a real customer's mobile number.
+    /// </summary>
+    private const string AnonymizedPrefix = "330";
+
     private PhoneNumber(string nationalNumber) => NationalNumber = nationalNumber;
 
     /// <summary>The 9 national digits, e.g. « 771234567 ».</summary>
@@ -60,6 +66,27 @@ public sealed record PhoneNumber
 
         phone = new PhoneNumber(digits);
         return true;
+    }
+
+    /// <summary>True for the placeholder number of an erased person.</summary>
+    public bool IsAnonymized => NationalNumber.StartsWith(AnonymizedPrefix, StringComparison.Ordinal);
+
+    /// <summary>Placeholder number for an erased person (<paramref name="serial"/>: 0–999 999, unique).</summary>
+    public static PhoneNumber Anonymized(int serial) =>
+        serial is < 0 or > 999_999
+            ? throw new ArgumentOutOfRangeException(nameof(serial))
+            : new PhoneNumber(AnonymizedPrefix + serial.ToString("D6", System.Globalization.CultureInfo.InvariantCulture));
+
+    /// <summary>Reads a stored E.164 value: a mobile number, or the placeholder of an erased person.</summary>
+    public static PhoneNumber FromStorage(string e164)
+    {
+        ArgumentNullException.ThrowIfNull(e164);
+        if (e164.StartsWith(CountryCode + AnonymizedPrefix, StringComparison.Ordinal) && e164.Length == CountryCode.Length + 9)
+        {
+            return new PhoneNumber(e164[CountryCode.Length..]);
+        }
+
+        return Parse(e164);
     }
 
     public override string ToString() => E164;

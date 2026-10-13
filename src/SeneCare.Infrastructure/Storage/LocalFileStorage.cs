@@ -51,6 +51,12 @@ internal sealed class LocalFileStorage : IFileStorage
         return Task.FromResult(stream);
     }
 
+    public Task DeleteAsync(string storageKey, CancellationToken cancellationToken = default)
+    {
+        File.Delete(PathOf(storageKey)); // no exception when the file is already gone
+        return Task.CompletedTask;
+    }
+
     /// <summary>Resolves a key inside the root; refuses anything that would escape it.</summary>
     private string PathOf(string key)
     {

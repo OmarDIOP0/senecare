@@ -900,4 +900,13 @@
   <data name="Error_neighborhood_operation_not_found" xml:space="preserve"><value>Opération introuvable.</value></data>
   <data name="Error_greening_trees" xml:space="preserve"><value>Le nombre d'arbres ne peut pas être négatif.</value></data>
   <data name="Error_greening_description" xml:space="preserve"><value>Décrivez l'opération.</value></data>
+  <data name="Admin_Erase" xml:space="preserve"><value>Effacer ses données</value></data>
+  <data name="Admin_Erase_Text" xml:space="preserve"><value>Les données personnelles de {0} seront anonymisées : nom, e-mail, numéro, consentements ; pour un logement à son seul nom, adresses, photos et descriptions. Les factures et paiements sont conservés (obligation légale) sans désigner la personne. C'est définitif.</value></data>
+  <data name="Admin_Erase_Confirm" xml:space="preserve"><value>Je confirme la demande d'effacement de cette personne.</value></data>
+  <data name="Admin_Erased" xml:space="preserve"><value>Données effacées (anonymisation).</value></data>
+  <data name="Error_privacy_confirm" xml:space="preserve"><value>Cochez la confirmation pour effacer.</value></data>
+  <data name="Error_privacy_not_found" xml:space="preserve"><value>Personne introuvable.</value></data>
+  <data name="Error_privacy_already_erased" xml:space="preserve"><value>Les données de cette personne sont déjà effacées.</value></data>
+  <data name="Error_privacy_staff" xml:space="preserve"><value>Un membre de l'équipe SENECARE se retire par la procédure RH, pas ici.</value></data>
+  <data name="Error_privacy_last_manager" xml:space="preserve"><value>C'est le dernier gestionnaire de l'entreprise : il doit d'abord confier la gestion à un collègue.</value></data>
 </root>

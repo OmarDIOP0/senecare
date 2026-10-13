@@ -283,6 +283,22 @@ public sealed class PrivacyController(AuditQuery audit, PersonalDataService pers
         return View(await audit.ListAsync(q, sensibles, page, cancellationToken));
     }
 
+    /// <summary>Right to erasure (law 2008-12), by anonymisation. The admin confirms explicitly.</summary>
+    [HttpPost("/admin/donnees/{userId:guid}/effacer")]
+    public async Task<IActionResult> Erase(Guid userId, bool confirm, string? returnUrl, CancellationToken cancellationToken)
+    {
+        var target = Url.IsLocalUrl(returnUrl) ? returnUrl : "/admin/clients";
+        if (!confirm)
+        {
+            TempData["flash.toast"] = this.Localizer()["Error_privacy_confirm"].Value;
+            return LocalRedirect(target);
+        }
+
+        var result = await personalData.EraseAsync(User.GetUserId()!.Value, userId, HttpContext.Connection.RemoteIpAddress?.ToString(), cancellationToken);
+        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Admin_Erased"].Value : this.ErrorMessage(result.Error);
+        return LocalRedirect(target);
+    }
+
     /// <summary>Right of access (law 2008-12): the person's data as JSON. Logged as a sensitive access.</summary>
     [HttpGet("/admin/donnees/{userId:guid}/export.json")]
     public async Task<IActionResult> Export(Guid userId, CancellationToken cancellationToken)

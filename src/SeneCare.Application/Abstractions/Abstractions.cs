@@ -99,6 +99,9 @@ public interface ISecretHasher
 public interface IIdentityService
 {
     Task EnsureIdentityUserAsync(User user, CancellationToken cancellationToken = default);
+
+    /// <summary>Erasure: the sign-in record follows the placeholder number and every session is invalidated.</summary>
+    Task ForgetAsync(User user, CancellationToken cancellationToken = default);
 }
 
 public sealed record AuthTokens(string AccessToken, DateTimeOffset AccessTokenExpiresAt, string RefreshToken, DateTimeOffset RefreshTokenExpiresAt);
@@ -129,4 +132,7 @@ public interface IFileStorage
     Task<string> SaveAsync(Stream content, string extension, CancellationToken cancellationToken = default);
 
     Task<Stream?> OpenReadAsync(string storageKey, CancellationToken cancellationToken = default);
+
+    /// <summary>Removes the file (no error when it is already gone).</summary>
+    Task DeleteAsync(string storageKey, CancellationToken cancellationToken = default);
 }

@@ -150,6 +150,111 @@ public sealed class NeighborhoodsAndPrivacyTests(WebAppFixture app)
         Assert.StartsWith("/acces-refuse", (await support.GetAsync(new Uri("/admin/journal", UriKind.Relative))).Location(), StringComparison.Ordinal);
     }
 
+    [PostgresFact]
+    public async Task Erasure_anonymises_the_person_and_their_home_but_keeps_invoices()
+    {
+        var phone = TestData.NewPhone();
+        var customer = app.CreateClient();
+        await customer.SignInAsync(app.Messages, phone);
+        await customer.SubmitAsync("/inscription", "/inscription", new Dictionary<string, string>
+        {
+            ["FullName"] = "Ndèye Fall",
+            ["Profile"] = "Household",
+            ["AcceptsPrivacyPolicy"] = "true",
+        });
+        var propertyId = await AddPropertyAsync(customer, null, "Maison de Ndèye à Ouakam");
+        await customer.GetStringAsync(new Uri("/abonnement", UriKind.Relative)); // issues an invoice
+
+        Guid userId;
+        Guid accountId;
+        Guid photoId;
+        await using (var db = app.Database.CreateContext())
+        {
+            userId = await db.Users.Where(u => u.PhoneNumber == phone).Select(u => u.Id).SingleAsync();
+            var property = await db.Properties.SingleAsync(p => p.Id == propertyId);
+            accountId = property.AccountId;
+            photoId = property.Photos.Single().MediaFileId;
+        }
+
+        var admin = await StaffAsync(PlatformRole.SuperAdmin);
+        var file = $"/admin/clients/{accountId}";
+        // Without the explicit confirmation, nothing happens.
+        await admin.SubmitAsync(file, $"/admin/donnees/{userId}/effacer", new Dictionary<string, string>());
+        await using (var db = app.Database.CreateContext())
+        {
+            Assert.Null((await db.Users.SingleAsync(u => u.Id == userId)).AnonymizedAt);
+        }
+
+        await admin.SubmitAsync(file, $"/admin/donnees/{userId}/effacer", new Dictionary<string, string> { ["confirm"] = "true", ["returnUrl"] = file });
+
+        await using (var db = app.Database.CreateContext())
+        {
+            var user = await db.Users.SingleAsync(u => u.Id == userId);
+            Assert.NotNull(user.AnonymizedAt);
+            Assert.True(user.PhoneNumber.IsAnonymized);
+            Assert.Null(user.FullName);
+            Assert.False(user.IsActive);
+            Assert.DoesNotContain(user.Consents, c => c.IsActive);
+
+            var property = await db.Properties.SingleAsync(p => p.Id == propertyId);
+            Assert.Equal("[supprimé]", property.Name);
+            Assert.Null(property.Address.Landmark);
+            Assert.Empty(property.Photos);
+            Assert.Equal(Domain.Billing.SubscriptionStatus.Cancelled, (await db.Subscriptions.SingleAsync(s => s.AccountId == accountId)).Status);
+            Assert.True(await db.Invoices.AnyAsync(i => i.AccountId == accountId)); // kept: legal obligation
+            Assert.True(await db.AuditLogs.AnyAsync(a => a.Action == "privacy.erase" && a.EntityId == userId.ToString() && a.IsSensitiveData));
+        }
+
+        // The photo file is gone, even for SENECARE.
+        Assert.Equal(HttpStatusCode.NotFound, (await admin.GetAsync(new Uri($"/fichiers/{photoId}", UriKind.Relative))).StatusCode);
+        var export = await admin.GetStringAsync(new Uri($"/admin/donnees/{userId}/export.json", UriKind.Relative));
+        Assert.DoesNotContain("Ndèye", export, StringComparison.Ordinal);
+        Assert.DoesNotContain(phone.E164, export, StringComparison.Ordinal);
+    }
+
+    [PostgresFact]
+    public async Task Erasure_is_refused_for_a_company_last_manager_and_for_staff()
+    {
+        var phone = TestData.NewPhone();
+        var manager = app.CreateClient();
+        await manager.SignInAsync(app.Messages, phone);
+        await manager.SubmitAsync("/inscription", "/inscription", new Dictionary<string, string>
+        {
+            ["FullName"] = "Ousmane Fall",
+            ["Profile"] = "Business",
+            ["CompanyName"] = "Ziguinchor Bois",
+            ["AcceptsPrivacyPolicy"] = "true",
+        });
+        Guid managerId;
+        await using (var db = app.Database.CreateContext())
+        {
+            managerId = await db.Users.Where(u => u.PhoneNumber == phone).Select(u => u.Id).SingleAsync();
+            var account = await db.CustomerAccounts.SingleAsync(a => a.Members.Any(m => m.UserId == managerId));
+            var colleague = User.Register(TestData.NewPhone(), DateTimeOffset.UtcNow);
+            db.Users.Add(colleague);
+            account.AddMember(colleague.Id, Domain.Accounts.AccountRole.Reporter, [], DateTimeOffset.UtcNow);
+            await db.SaveChangesAsync();
+        }
+
+        var admin = await StaffAsync(PlatformRole.SuperAdmin);
+        await admin.SubmitAsync("/admin/clients", $"/admin/donnees/{managerId}/effacer", new Dictionary<string, string> { ["confirm"] = "true" });
+
+        Guid staffId;
+        await using (var db = app.Database.CreateContext())
+        {
+            Assert.Null((await db.Users.SingleAsync(u => u.Id == managerId)).AnonymizedAt);
+            var technician = User.Register(TestData.NewPhone(), DateTimeOffset.UtcNow);
+            technician.GrantRole(PlatformRole.Technician, DateTimeOffset.UtcNow);
+            db.Users.Add(technician);
+            await db.SaveChangesAsync();
+            staffId = technician.Id;
+        }
+
+        await admin.SubmitAsync("/admin/clients", $"/admin/donnees/{staffId}/effacer", new Dictionary<string, string> { ["confirm"] = "true" });
+        await using var check = app.Database.CreateContext();
+        Assert.Null((await check.Users.SingleAsync(u => u.Id == staffId)).AnonymizedAt);
+    }
+
     private async Task<HttpClient> StaffAsync(PlatformRole role)
     {
         var phone = TestData.NewPhone();

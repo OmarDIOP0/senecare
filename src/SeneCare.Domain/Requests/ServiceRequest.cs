@@ -292,6 +292,18 @@ public sealed class ServiceRequest : AggregateRoot
 
     public void MarkUnderWarranty(Guid interventionId) => WarrantyInterventionId = interventionId;
 
+    /// <summary>Erasure of the reporter: free texts may hold personal details; trade, dates and status stay for statistics.</summary>
+    public void Redact(string placeholder)
+    {
+        Description = Guard.Required(placeholder, "request.description", 200);
+        DisputeReason = null;
+        ClientReference = null;
+        if (Rating is { } rating)
+        {
+            Rating = new Rating(rating.Score, null, rating.GivenAt);
+        }
+    }
+
     /// <summary>True when the technician was not on site in time (or still isn't, past the deadline).</summary>
     public bool IsSlaBreached(DateTimeOffset now) =>
         SlaDeadline is { } deadline && (RespondedAt ?? now) > deadline;

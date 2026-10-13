@@ -1522,6 +1522,10 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<DateTimeOffset?>("AnonymizedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("anonymized_at");
+
                     b.PrimitiveCollection<string[]>("CompletedTours")
                         .IsRequired()
                         .HasColumnType("text[]")

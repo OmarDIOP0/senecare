@@ -144,5 +144,33 @@ public sealed class User : AggregateRoot
 
     public void Deactivate() => IsActive = false;
 
+    public DateTimeOffset? AnonymizedAt { get; private set; }
+
+    /// <summary>
+    /// Right to erasure (law 2008-12): name, e-mail and phone are replaced, consents withdrawn, roles and
+    /// preferences removed, the account can no longer sign in. Irreversible.
+    /// </summary>
+    public void Anonymize(PhoneNumber placeholder, DateTimeOffset now)
+    {
+        ArgumentNullException.ThrowIfNull(placeholder);
+        if (!placeholder.IsAnonymized)
+        {
+            throw new DomainException("user.placeholder", "Erased users get a placeholder number.");
+        }
+
+        foreach (var consent in _consents.Where(c => c.IsActive).ToList())
+        {
+            WithdrawConsent(consent.Type, now);
+        }
+
+        PhoneNumber = placeholder;
+        FullName = null;
+        Email = null;
+        _roles.Clear();
+        _completedTours.Clear();
+        IsActive = false;
+        AnonymizedAt = now;
+    }
+
     public void Reactivate() => IsActive = true;
 }

@@ -5,6 +5,37 @@ namespace SeneCare.Domain.Tests;
 
 public class PhoneNumberTests
 {
+    [Fact]
+    public void Placeholder_of_an_erased_person_can_be_stored_but_never_typed_at_sign_in()
+    {
+        var placeholder = PhoneNumber.Anonymized(42);
+
+        Assert.True(placeholder.IsAnonymized);
+        Assert.Equal("+221330000042", placeholder.E164);
+        Assert.Equal(placeholder, PhoneNumber.FromStorage(placeholder.E164));
+        Assert.False(PhoneNumber.TryParse(placeholder.E164, out _));
+        Assert.False(PhoneNumber.Parse("77 123 45 67").IsAnonymized);
+    }
+
+    [Fact]
+    public void Anonymizing_a_user_removes_identity_consents_and_access()
+    {
+        var user = User.Register(PhoneNumber.Parse("77 123 45 67"), TestData.Now);
+        user.UpdateProfile("Awa Ndiaye", "awa@example.sn", Language.French);
+        user.GiveConsent(ConsentType.PersonalData, "v1", TestData.Now);
+        user.GrantRole(PlatformRole.Customer, TestData.Now);
+
+        user.Anonymize(PhoneNumber.Anonymized(7), TestData.Now);
+
+        Assert.Null(user.FullName);
+        Assert.Null(user.Email);
+        Assert.True(user.PhoneNumber.IsAnonymized);
+        Assert.False(user.IsActive);
+        Assert.Empty(user.Roles);
+        Assert.DoesNotContain(user.Consents, c => c.IsActive);
+        Assert.Throws<DomainException>(() => user.Anonymize(PhoneNumber.Parse("78 000 00 00"), TestData.Now));
+    }
+
     [Theory]
     [InlineData("77 123 45 67")]
     [InlineData("771234567")]

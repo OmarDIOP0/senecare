@@ -1,0 +1,20 @@
+@model ShellModel
+@* Ctrl+K: quick navigation over the pages the person can open (filtered on the phone, no server call). *@
+<dialog id="palette" class="m-auto mt-[12vh] w-[min(36rem,calc(100vw-2rem))] rounded-lg border border-ligne bg-surface p-0 text-charbon shadow-sm backdrop:bg-black/30" aria-label="@L["Shell_Search"]">
+    <div class="flex items-center gap-2 border-b border-ligne px-3">
+        <sc-icon name="search" class="size-4 text-charbon-pale" />
+        <input type="search" data-palette-input class="h-12 flex-1 bg-transparent text-sm outline-none" placeholder="@L["Shell_Search_Placeholder"]" aria-label="@L["Shell_Search"]" autocomplete="off" />
+        <kbd class="rounded border border-ligne px-1 text-[11px] text-charbon-doux">Esc</kbd>
+    </div>
+    <ul class="max-h-80 overflow-y-auto p-1" data-palette-list>
+        @if (Model.Nav.Primary is { } primary)
+        {
+            <li><a href="@primary.Url" class="sc-menu-item" data-palette-item><sc-icon name="@primary.Icon" class="size-4 text-charbon-doux" />@L[primary.LabelKey]</a></li>
+        }
+        @foreach (var item in Model.Nav.Items.Append(AppNavigation.Settings))
+        {
+            <li><a href="@item.Url" class="sc-menu-item" data-palette-item><sc-icon name="@item.Icon" class="size-4 text-charbon-doux" />@L[item.LabelKey]</a></li>
+        }
+    </ul>
+    <p class="hidden px-3 py-6 text-center text-sm text-charbon-doux" data-palette-empty>@L["Admin_NoResult"]</p>
+</dialog>

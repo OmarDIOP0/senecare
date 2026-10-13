@@ -1,0 +1,75 @@
+@model ShellModel
+@{
+    var sectionLabel = Model.ActiveItem is { } item ? L[item.LabelKey].Value : null;
+    var title = Model.PageTitle;
+    var showTitle = title is not null && !string.Equals(title, sectionLabel, StringComparison.Ordinal);
+}
+<header class="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-ligne bg-surface px-4 lg:px-8">
+    <div class="lg:hidden"><partial name="Ui/_Brand" /></div>
+
+    <nav aria-label="@L["Shell_Breadcrumb"]" class="hidden min-w-0 items-center gap-1.5 text-sm lg:flex">
+        @if (sectionLabel is not null && Model.ActiveItem is { } current)
+        {
+            <a href="@current.Url" class="truncate @(showTitle ? "text-charbon-doux" : "font-medium text-charbon") no-underline hover:text-charbon hover:no-underline">@sectionLabel</a>
+        }
+        @if (showTitle)
+        {
+            <sc-icon name="chevron-right" class="size-3.5 shrink-0 text-charbon-pale" />
+            <span class="truncate font-medium text-charbon" aria-current="page">@title</span>
+        }
+    </nav>
+
+    <div class="ml-auto flex items-center gap-1">
+        <partial name="Ui/_AppStatus" />
+
+        <button type="button" data-palette-open aria-keyshortcuts="Control+K"
+                class="hidden h-8 w-56 items-center gap-2 rounded-md border border-ligne bg-surface px-2.5 text-sm text-charbon-pale hover:bg-sourdine lg:flex">
+            <sc-icon name="search" class="size-4" />
+            <span class="flex-1 text-left">@L["Shell_Search"]</span>
+            <kbd class="rounded border border-ligne px-1 font-sans text-[11px] text-charbon-doux">Ctrl K</kbd>
+        </button>
+        <button type="button" data-palette-open class="sc-btn-icone lg:hidden" aria-label="@L["Shell_Search"]"><sc-icon name="search" class="size-[18px]" /></button>
+
+        <details class="relative" data-menu data-load="/notifications">
+            <summary class="sc-btn-icone relative list-none cursor-pointer" aria-label="@L["Shell_Notifications"]">
+                <sc-icon name="bell" class="size-[18px]" />
+                @if (Model.UnreadNotifications > 0)
+                {
+                    <span class="absolute top-2 right-2 size-2 rounded-full bg-laterite" aria-hidden="true"></span>
+                    <span class="sr-only">@L["Shell_Unread", Model.UnreadNotifications]</span>
+                }
+            </summary>
+            <div class="sc-menu right-0 w-80 p-0" data-load-target>
+                <p class="px-3 py-6 text-center text-sm text-charbon-doux">@L["Common_Loading"]</p>
+            </div>
+        </details>
+
+        <details class="relative" data-menu>
+            <summary class="flex size-11 cursor-pointer list-none items-center justify-center rounded-md hover:bg-sourdine lg:size-9" aria-label="@L["Shell_Account"]">
+                <span class="grid size-7 place-items-center rounded-full bg-sourdine text-xs font-medium text-charbon">@Model.Initials</span>
+            </summary>
+            <div class="sc-menu right-0 w-64">
+                <div class="px-2 py-2">
+                    <p class="truncate text-sm font-medium">@Model.DisplayName</p>
+                    @if (Model.Profile is { } p)
+                    {
+                        <p class="truncate text-xs text-charbon-doux">+221 @p.Phone</p>
+                    }
+                </div>
+                <div class="my-1 border-t border-ligne"></div>
+                <a href="@AppNavigation.Settings.Url" class="sc-menu-item"><sc-icon name="circle-user" class="size-4 text-charbon-doux" />@L[AppNavigation.Settings.LabelKey]</a>
+                <div class="px-2 pt-2 pb-1 text-xs text-charbon-doux">@L["Shell_Theme"]</div>
+                <div class="grid grid-cols-3 gap-1 px-1 pb-1" role="group" aria-label="@L["Shell_Theme"]">
+                    <button type="button" class="sc-menu-item justify-center text-xs" data-theme-set="light">@L["Shell_ThemeLight"]</button>
+                    <button type="button" class="sc-menu-item justify-center text-xs" data-theme-set="dark">@L["Shell_ThemeDark"]</button>
+                    <button type="button" class="sc-menu-item justify-center text-xs" data-theme-set="system">@L["Shell_ThemeSystem"]</button>
+                </div>
+                <div class="my-1 border-t border-ligne"></div>
+                <form method="post" action="/deconnexion">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="sc-menu-item"><sc-icon name="log-out" class="size-4 text-charbon-doux" />@L["Account_SignOut"]</button>
+                </form>
+            </div>
+        </details>
+    </div>
+</header>

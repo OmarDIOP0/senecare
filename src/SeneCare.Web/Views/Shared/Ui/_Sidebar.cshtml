@@ -1,0 +1,96 @@
+@model ShellModel
+@using SeneCare.Domain.Accounts
+@{
+    var profile = Model.Profile;
+    var accounts = profile?.Memberships ?? [];
+    var current = accounts.FirstOrDefault();
+    var isStaff = profile?.Roles.Any(r => r != SeneCare.Domain.Users.PlatformRole.Customer) == true;
+    var orgName = isStaff ? "SENECARE" : current?.AccountName ?? L["App_Name"].Value;
+    var roleLabel = isStaff
+        ? L["PlatformRole_" + profile!.Roles.First(r => r != SeneCare.Domain.Users.PlatformRole.Customer)].Value
+        : current is null ? string.Empty : L["Role_" + current.Role].Value;
+    string ItemClass(bool active) => active
+        ? "bg-sourdine text-charbon font-medium"
+        : "text-charbon-doux hover:bg-sourdine hover:text-charbon";
+}
+<aside class="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-ligne bg-surface lg:flex" aria-label="@L["Tab_NavLabel"]">
+    <div class="flex h-14 items-center px-4">
+        <partial name="Ui/_Brand" />
+    </div>
+
+    @* Organisation: a menu only when the person belongs to several accounts. *@
+    <div class="px-3">
+        @if (accounts.Count > 1)
+        {
+            <details class="relative" data-menu>
+                <summary class="flex h-9 cursor-pointer list-none items-center gap-2 rounded-md px-2 text-sm font-medium text-charbon hover:bg-sourdine">
+                    <span class="grid size-5 shrink-0 place-items-center rounded bg-charbon text-[11px] text-surface">@orgName[..1].ToUpperInvariant()</span>
+                    <span class="flex-1 truncate">@orgName</span>
+                    <sc-icon name="chevron-down" class="size-4 text-charbon-pale" />
+                </summary>
+                <div class="sc-menu left-0 w-full">
+                    @foreach (var account in accounts)
+                    {
+                        <span class="sc-menu-item">
+                            <span class="flex-1 truncate">@account.AccountName</span>
+                            @if (account.AccountId == current?.AccountId)
+                            {
+                                <sc-icon name="check" class="size-4 text-laterite" />
+                            }
+                        </span>
+                    }
+                </div>
+            </details>
+        }
+        else
+        {
+            <p class="flex h-9 items-center gap-2 px-2 text-sm font-medium text-charbon">
+                <span class="grid size-5 shrink-0 place-items-center rounded bg-charbon text-[11px] text-surface">@orgName[..1].ToUpperInvariant()</span>
+                <span class="truncate">@orgName</span>
+            </p>
+        }
+    </div>
+
+    @if (Model.Nav.Primary is { } primary)
+    {
+        <div class="px-3 pt-3">
+            <a href="@primary.Url" data-tour="@primary.Tour" class="sc-btn-primaire w-full"><sc-icon name="@primary.Icon" class="size-4" />@L[primary.LabelKey]</a>
+        </div>
+    }
+
+    <nav class="flex-1 overflow-y-auto px-3 pt-4">
+        <ul class="grid gap-0.5">
+            @foreach (var item in Model.Nav.Items)
+            {
+                var active = item.Key == Model.ActiveKey;
+                <li>
+                    <a href="@item.Url" data-tour="@item.Tour" aria-current="@(active ? "page" : null)"
+                       class="flex h-9 items-center gap-2.5 rounded-md px-2 text-sm no-underline hover:no-underline @ItemClass(active)">
+                        <sc-icon name="@item.Icon" class="size-[18px] @(active ? "text-laterite" : "")" />
+                        @L[item.LabelKey]
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+
+    <div class="border-t border-ligne px-3 py-3">
+        <form method="post" action="/visite/rejouer">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="flex h-9 w-full items-center gap-2.5 rounded-md px-2 text-sm @ItemClass(false)">
+                <sc-icon name="life-buoy" class="size-[18px]" />@L["Shell_Help"]
+            </button>
+        </form>
+        <a href="@AppNavigation.Settings.Url" data-tour="@AppNavigation.Settings.Tour" aria-current="@(Model.ActiveKey == AppNavigation.Settings.Key ? "page" : null)"
+           class="flex h-9 items-center gap-2.5 rounded-md px-2 text-sm no-underline hover:no-underline @ItemClass(Model.ActiveKey == AppNavigation.Settings.Key)">
+            <sc-icon name="settings" class="size-[18px]" />@L[AppNavigation.Settings.LabelKey]
+        </a>
+        <div class="mt-2 flex items-center gap-2.5 rounded-md px-2 py-1.5">
+            <span class="grid size-8 shrink-0 place-items-center rounded-full bg-sourdine text-xs font-medium text-charbon">@Model.Initials</span>
+            <span class="min-w-0 leading-tight">
+                <span class="block truncate text-sm font-medium">@Model.DisplayName</span>
+                <span class="block truncate text-xs text-charbon-doux">@roleLabel</span>
+            </span>
+        </div>
+    </div>
+</aside>

@@ -21,9 +21,9 @@
     {
         kpis.Add((L["Biz_Spent", DateTime.UtcNow.Year].Value, Formatting.Fcfa(spent), null));
     }
-    else if (Model.NextDiagnostic is { } next)
+    else if (Model.NextDiagnostic is { } planned)
     {
-        kpis.Add((L["Biz_NextDiagnostic"].Value, Formatting.ShortDate(next.ScheduledFor), null));
+        kpis.Add((L["Biz_NextDiagnostic"].Value, Formatting.ShortDate(planned.ScheduledFor), null));
     }
     var columns = kpis.Count switch { 2 => "lg:grid-cols-2", 3 => "lg:grid-cols-3", _ => "lg:grid-cols-4" };
 }

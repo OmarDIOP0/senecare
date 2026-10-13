@@ -46,7 +46,7 @@
             {
                 <li class="sc-carte flex items-center gap-3 py-3">
                     <sc-icon name="shield-check" class="size-6 text-baobab" />
-                    <span class="flex-1"><strong>@L["Domain_" + w.Domain]</strong> · @w.Summary</span>
+                    <span class="flex-1"><span class="font-medium">@L["Domain_" + w.Domain]</span> · @w.Summary</span>
                     <span class="text-sm text-charbon-doux">@L["HealthBook_Until", Day(w.WarrantyEndsOn!.Value)]</span>
                 </li>
             }

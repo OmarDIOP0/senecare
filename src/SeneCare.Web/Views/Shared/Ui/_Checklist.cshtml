@@ -1,0 +1,35 @@
+@model ChecklistModel
+@* Stripe / Linear-style getting started list: progress, then each step as a row. *@
+<section class="rounded-lg border border-ligne bg-surface" aria-labelledby="demarrage-titre">
+    <div class="flex items-center justify-between gap-3 border-b border-ligne px-4 py-3">
+        <h2 id="demarrage-titre" class="text-sm font-semibold">@Model.Title</h2>
+        <span class="flex items-center gap-2 text-xs text-charbon-doux tabular-nums">
+            <span class="block h-1.5 w-20 overflow-hidden rounded-full bg-sourdine" aria-hidden="true">
+                <span class="block h-full rounded-full bg-laterite" style="width: @(100 * Model.Done / Math.Max(1, Model.Steps.Count))%"></span>
+            </span>
+            @Model.Done/@Model.Steps.Count
+        </span>
+    </div>
+    <ol>
+        @foreach (var step in Model.Steps)
+        {
+            <li class="border-b border-ligne last:border-b-0">
+                @if (step.Done)
+                {
+                    <p class="flex items-center gap-3 px-4 py-3 text-sm text-charbon-doux">
+                        <span class="grid size-5 place-items-center rounded-full bg-baobab text-surface"><sc-icon name="check" class="size-3" /></span>
+                        <span class="line-through decoration-charbon-pale">@step.Label</span>
+                    </p>
+                }
+                else
+                {
+                    <a href="@step.Url" class="flex items-center gap-3 px-4 py-3 text-sm text-charbon no-underline hover:bg-sourdine hover:no-underline">
+                        <span class="size-5 rounded-full border border-dashed border-charbon-pale" aria-hidden="true"></span>
+                        <span class="flex-1 font-medium">@step.Label</span>
+                        <sc-icon name="chevron-right" class="size-4 text-charbon-pale" />
+                    </a>
+                }
+            </li>
+        }
+    </ol>
+</section>

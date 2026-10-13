@@ -30,7 +30,6 @@
         new("Intervention", TimelineState.Upcoming),
         new("Validation de votre part", TimelineState.Upcoming),
     };
-    var demoNav = new TabBarModel(AppNavigation.For(new System.Security.Claims.ClaimsPrincipal()), "interventions", Demo: true);
     var empties = new[]
     {
         new EmptyStateModel("Aucun logement pour l'instant", "Ajoutez votre maison pour que nos techniciens la trouvent du premier coup.", EmptyIllustration.House, "Ajouter mon logement", "#"),
@@ -39,12 +38,15 @@
     };
 }
 
-<header class="relative overflow-hidden rounded-xl bg-atlantique px-6 py-10 text-sable">
-    <div class="sc-motif sc-motif-manjak absolute inset-y-0 right-0 w-1/2 text-sable/10" aria-hidden="true"></div>
-    <p class="sc-surtitre text-soleil">SENECARE · design system</p>
-    <h1 class="relative mt-2 text-2xl font-bold sm:text-5xl">Du plan à la réalité.</h1>
-    <p class="relative mt-3 max-w-lg text-sable/85">Vous signalez. Nous intervenons. Votre patrimoine est préservé.</p>
-    <button type="button" class="sc-btn relative mt-6 border-2 border-sable/60 text-sable hover:bg-sable/10" data-theme-toggle>Basculer clair / sombre</button>
+<header class="sc-entete">
+    <div>
+        <h1 class="sc-titre">Design system</h1>
+        <p>Composants de SENECARE : surfaces neutres, bordures 1 px, une seule couleur d'accent (latérite).</p>
+    </div>
+    <div class="flex gap-1">
+        <button type="button" class="sc-btn-secondaire" data-theme-set="light">Clair</button>
+        <button type="button" class="sc-btn-secondaire" data-theme-set="dark">Sombre</button>
+    </div>
 </header>
 
 <div class="mt-10 grid gap-12">
@@ -208,11 +210,5 @@
         </form>
     </section>
 
-    <section aria-labelledby="navigation">
-        <h2 id="navigation" class="sc-sous-titre">Barre d'onglets et bouton « Signaler »</h2>
-        <p class="sc-texte-doux mt-1">Mobile : barre fixe en bas, bouton central toujours accessible. Ordinateur : colonne à gauche.</p>
-        <div class="mx-auto mt-4 max-w-sm overflow-hidden rounded-xl border-2 border-ligne bg-sable pt-10">
-            <partial name="Ui/_TabBar" model="demoNav" />
-        </div>
-    </section>
+
 </div>

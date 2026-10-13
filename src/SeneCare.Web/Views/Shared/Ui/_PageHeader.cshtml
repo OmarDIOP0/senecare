@@ -1,0 +1,15 @@
+@model PageHeaderModel
+@* Standard page header: title, short grey description, main action on the right. *@
+<header class="sc-entete">
+    <div class="min-w-0">
+        <h1 class="sc-titre">@Model.Title</h1>
+        @if (Model.Description is not null)
+        {
+            <p>@Model.Description</p>
+        }
+    </div>
+    @if (Model.ActionLabel is not null && Model.ActionUrl is not null)
+    {
+        <a href="@Model.ActionUrl" class="sc-btn-primaire"><sc-icon name="@(Model.ActionIcon ?? "plus")" class="size-4" />@Model.ActionLabel</a>
+    }
+</header>

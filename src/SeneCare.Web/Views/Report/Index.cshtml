@@ -12,7 +12,15 @@
     <script src="~/js/report.js" asp-append-version="true" defer></script>
 }
 
-<h1 class="sc-titre">@L["Report_Title"]</h1>
+<header class="sc-entete">
+    <div>
+        <h1 class="sc-titre">@L["Report_Title"]</h1>
+        @if (Model.Blocker is null)
+        {
+            <p>@L["Report_Intro"]</p>
+        }
+    </div>
+</header>
 
 @if (Model.Blocker is not null)
 {
@@ -23,11 +31,10 @@
     return;
 }
 
-<p class="mt-2 text-charbon-doux">@L["Report_Intro"]</p>
 <div asp-validation-summary="All" class="sc-error" role="alert"></div>
 
 @* Offline: the page is kept on the phone and the form is queued (outbox) until the network is back. *@
-<form method="post" enctype="multipart/form-data" class="mt-6" novalidate
+<form method="post" enctype="multipart/form-data" class="mt-6 rounded-lg border border-ligne bg-surface p-4 lg:p-6" novalidate
       data-offline="queue" data-offline-message="@L["Report_Queued"]"
       data-report-wizard data-draft-key="sc-brouillon-signalement" data-text-draft="@L["Report_DraftRestored"]">
     <input type="hidden" name="ClientReference" value="@form.ClientReference" data-client-reference />
@@ -49,16 +56,16 @@
         <input type="hidden" name="PropertyId" value="@form.PropertyId" />
     }
 
-    <p class="sc-surtitre" data-step-progress data-text="@L["Report_StepOf"]" aria-live="polite"></p>
+    <p class="text-[13px] font-medium text-charbon-doux" data-step-progress data-text="@L["Report_StepOf"]" aria-live="polite"></p>
 
     <fieldset data-step class="mt-2">
         <legend class="sc-sous-titre">@L["Report_Step1"]</legend>
-        <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
             @foreach (var domain in domains)
             {
-                <label class="sc-choix flex-col justify-center gap-2 py-4 text-center font-bold">
+                <label class="sc-choix gap-2.5 py-2.5 font-medium">
                     <input type="radio" name="Domain" value="@domain" checked="@(form.Domain == domain)" class="sr-only" required />
-                    <span class="grid size-14 place-items-center rounded-full bg-laterite-clair text-laterite"><sc-icon name="@Formatting.Icon(domain)" class="size-7" /></span>
+                    <sc-icon name="@Formatting.Icon(domain)" class="size-[18px] text-charbon-doux" />
                     @L["Domain_" + domain]
                 </label>
             }
@@ -91,11 +98,11 @@
         <div class="mt-4 grid gap-2">
             @foreach (var urgency in urgencies)
             {
-                <label class="sc-choix items-start py-3">
+                <label class="sc-choix items-start py-2.5">
                     <input type="radio" name="Urgency" value="@urgency" checked="@(form.Urgency == urgency || (form.Urgency is null && urgency == Urgency.Normal))" class="mt-1" required />
                     <span>
-                        <span class="flex items-center gap-2 font-bold"><sc-urgency value="@urgency" /></span>
-                        <span class="mt-1 block text-sm text-charbon-doux">@L["Report_Urgency_" + urgency]</span>
+                        <span class="flex items-center gap-2"><sc-urgency value="@urgency" /></span>
+                        <span class="mt-1 block text-[13px] text-charbon-doux">@L["Report_Urgency_" + urgency]</span>
                     </span>
                 </label>
             }
@@ -110,16 +117,16 @@
                     var value = start.ToString("O", System.Globalization.CultureInfo.InvariantCulture);
                     <label class="sc-choix py-2 text-sm">
                         <input type="checkbox" name="Slots" value="@value" checked="@form.Slots.Contains(start)" />
-                        <span><span class="block font-bold">@Formatting.ShortDate(start)</span>@(start.Hour < 12 ? L["Slot_Morning"] : L["Slot_Afternoon"])</span>
+                        <span><span class="block font-medium">@Formatting.ShortDate(start)</span><span class="text-charbon-doux">@(start.Hour < 12 ? L["Slot_Morning"] : L["Slot_Afternoon"])</span></span>
                     </label>
                 }
             </div>
         </fieldset>
     </fieldset>
 
-    <div class="sticky bottom-24 mt-8 flex gap-3 bg-sable/95 py-3 lg:bottom-0">
+    <div class="sticky bottom-16 -mx-4 mt-8 flex justify-end gap-2 border-t border-ligne bg-surface px-4 py-3 lg:static lg:mx-0 lg:px-0 lg:pb-0">
         <button type="button" class="sc-btn-secondaire" data-step-prev hidden>@L["Report_Previous"]</button>
-        <button type="button" class="sc-btn-primaire flex-1" data-step-next hidden>@L["Report_Next"]</button>
-        <button type="submit" class="sc-btn-primaire flex-1" data-step-submit><sc-icon name="check" />@L["Report_Send"]</button>
+        <button type="button" class="sc-btn-primaire max-lg:flex-1" data-step-next hidden>@L["Report_Next"]</button>
+        <button type="submit" class="sc-btn-primaire max-lg:flex-1" data-step-submit><sc-icon name="check" class="size-4" />@L["Report_Send"]</button>
     </div>
 </form>

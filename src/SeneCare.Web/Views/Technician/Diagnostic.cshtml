@@ -23,7 +23,7 @@
     <ul class="mt-2 grid gap-1">
         @foreach (var site in Model.Sites)
         {
-            <li><strong>@site.Name</strong> · @site.Place · @L["Diagnostic_AnomalyCount", Model.Points.Count(p => p.SiteId == site.Id && p.Result == ControlPointResult.Anomaly)]</li>
+            <li><span class="font-medium">@site.Name</span> · @site.Place · @L["Diagnostic_AnomalyCount", Model.Points.Count(p => p.SiteId == site.Id && p.Result == ControlPointResult.Anomaly)]</li>
         }
     </ul>
 </section>

@@ -18,8 +18,8 @@
   <data name="Nav_Account" xml:space="preserve"><value>Mon compte</value></data>
   <data name="Nav_SignOut" xml:space="preserve"><value>Se déconnecter</value></data>
   <data name="SignIn_Title" xml:space="preserve"><value>Connexion</value></data>
-  <data name="SignIn_Heading" xml:space="preserve"><value>Connectez-vous avec votre numéro</value></data>
-  <data name="SignIn_Intro" xml:space="preserve"><value>Nous vous envoyons un code par SMS. Pas besoin de mot de passe.</value></data>
+  <data name="SignIn_Heading" xml:space="preserve"><value>Connexion</value></data>
+  <data name="SignIn_Intro" xml:space="preserve"><value>Entrez votre numéro, nous vous envoyons un code. Pas de mot de passe.</value></data>
   <data name="SignIn_PhoneLabel" xml:space="preserve"><value>Numéro de téléphone</value></data>
   <data name="SignIn_PhoneHint" xml:space="preserve"><value>Numéro mobile sénégalais : 77, 78, 76, 70 ou 75</value></data>
   <data name="SignIn_Channel" xml:space="preserve"><value>Recevoir le code par</value></data>
@@ -151,7 +151,7 @@
   <data name="Connection_Online" xml:space="preserve"><value>De retour en ligne</value></data>
   <data name="Update_Available" xml:space="preserve"><value>Nouvelle version disponible</value></data>
   <data name="Update_Apply" xml:space="preserve"><value>Mettre à jour</value></data>
-  <data name="Install_Title" xml:space="preserve"><value>Installer SeneCare sur votre téléphone</value></data>
+  <data name="Install_Title" xml:space="preserve"><value>Installer l’application</value></data>
   <data name="Install_Text" xml:space="preserve"><value>Ouverture plus rapide, moins de données consommées, et signalement possible même sans réseau.</value></data>
   <data name="Install_Button" xml:space="preserve"><value>Installer</value></data>
   <data name="Install_Later" xml:space="preserve"><value>Plus tard</value></data>
@@ -179,15 +179,15 @@
   <data name="Onboarding_3_Text" xml:space="preserve"><value>Vous choisissez le créneau, suivez le technicien en route et recevez le rapport avec les photos avant et après.</value></data>
   <data name="Onboarding_4_Title" xml:space="preserve"><value>Ensemble, on reverdit votre quartier</value></data>
   <data name="Onboarding_4_Text" xml:space="preserve"><value>Dès 500 voisins abonnés dans un même quartier, nous plantons des arbres et embellissons les rues tous les trois mois.</value></data>
-  <data name="Space_Hello" xml:space="preserve"><value>Nanga def</value></data>
-  <data name="Space_HelloName" xml:space="preserve"><value>Nanga def, {0}</value></data>
+  <data name="Space_Hello" xml:space="preserve"><value>Bonjour</value></data>
+  <data name="Space_HelloName" xml:space="preserve"><value>Bonjour {0}</value></data>
   <data name="Space_Client_Intro" xml:space="preserve"><value>Votre maison est entre de bonnes mains. Un souci ? Touchez « Signaler ».</value></data>
   <data name="Space_Business_Intro" xml:space="preserve"><value>Espace de {0} : vos sites, votre équipe et vos interventions.</value></data>
   <data name="Space_Tech_Intro" xml:space="preserve"><value>Vos missions du jour, l'itinéraire et les rapports.</value></data>
   <data name="Space_Admin_Intro" xml:space="preserve"><value>Suivi des demandes, des techniciens et des délais.</value></data>
-  <data name="Space_Subscription" xml:space="preserve"><value>Mon abonnement</value></data>
+  <data name="Space_Subscription" xml:space="preserve"><value>Abonnement</value></data>
   <data name="Space_Subscription_Text" xml:space="preserve"><value>Échéances, factures et reçus.</value></data>
-  <data name="Space_Advice" xml:space="preserve"><value>Conseil de saison</value></data>
+  <data name="Space_Advice" xml:space="preserve"><value>Conseil du mois</value></data>
   <data name="Space_Advice_Rain_Title" xml:space="preserve"><value>C'est l'hivernage : surveillez la dalle et les gouttières</value></data>
   <data name="Space_Advice_Rain_Text" xml:space="preserve"><value>Après chaque grosse pluie, regardez les plafonds et le haut des murs. Une tache d'humidité signalée tôt évite une infiltration coûteuse.</value></data>
   <data name="Space_Advice_PreRain_Title" xml:space="preserve"><value>Préparez l'hivernage dès maintenant</value></data>
@@ -265,7 +265,7 @@
   <data name="Property_Photos" xml:space="preserve"><value>Photos du logement (facultatif)</value></data>
   <data name="Property_Save" xml:space="preserve"><value>Enregistrer le logement</value></data>
   <data name="Property_OpenMap" xml:space="preserve"><value>Itinéraire</value></data>
-  <data name="Properties_Title" xml:space="preserve"><value>Mes logements</value></data>
+  <data name="Properties_Title" xml:space="preserve"><value>Logements</value></data>
   <data name="Properties_OpenRequests" xml:space="preserve"><value>{0} demande(s) en cours</value></data>
   <data name="Space_NoProperty_Title" xml:space="preserve"><value>Ajoutez votre logement</value></data>
   <data name="Space_NoProperty_Text" xml:space="preserve"><value>Adresse, point de repère et photos : nos techniciens trouveront votre maison du premier coup.</value></data>
@@ -297,7 +297,7 @@
   <data name="Hood_Remaining" xml:space="preserve"><value>Encore {0} voisins et nous plantons des arbres dans votre quartier.</value></data>
   <data name="Hood_Active" xml:space="preserve"><value>Quartier actif : {0} arbres plantés à ce jour.</value></data>
   <data name="Report_Title" xml:space="preserve"><value>Signaler un problème</value></data>
-  <data name="Report_Intro" xml:space="preserve"><value>Trois étapes, une minute. Sans réseau, votre signalement partira dès que la connexion revient.</value></data>
+  <data name="Report_Intro" xml:space="preserve"><value>Trois étapes. Sans réseau, le signalement part dès que la connexion revient.</value></data>
   <data name="Report_Queued" xml:space="preserve"><value>Enregistré sur votre téléphone : envoi dès le retour du réseau.</value></data>
   <data name="Report_DraftRestored" xml:space="preserve"><value>Votre brouillon a été restauré.</value></data>
   <data name="Report_Property" xml:space="preserve"><value>Logement concerné</value></data>
@@ -329,7 +329,7 @@
   <data name="Voice_Record" xml:space="preserve"><value>Enregistrer</value></data>
   <data name="Voice_Stop" xml:space="preserve"><value>Arrêter</value></data>
   <data name="Voice_Denied" xml:space="preserve"><value>Micro indisponible. Vous pouvez écrire à la place.</value></data>
-  <data name="Requests_Title" xml:space="preserve"><value>Mes interventions</value></data>
+  <data name="Requests_Title" xml:space="preserve"><value>Demandes</value></data>
   <data name="Requests_Open" xml:space="preserve"><value>En cours</value></data>
   <data name="Requests_Closed" xml:space="preserve"><value>Terminées</value></data>
   <data name="Request_SentOn" xml:space="preserve"><value>Signalé le {0}</value></data>
@@ -357,8 +357,8 @@
   <data name="Request_Cancel" xml:space="preserve"><value>Annuler la demande</value></data>
   <data name="Request_CancelReason" xml:space="preserve"><value>Pourquoi ? (facultatif)</value></data>
   <data name="Request_CancelConfirm" xml:space="preserve"><value>Oui, annuler</value></data>
-  <data name="Request_SlotChosen" xml:space="preserve"><value>Créneau confirmé. Merci !</value></data>
-  <data name="Request_Validated" xml:space="preserve"><value>Merci pour votre note !</value></data>
+  <data name="Request_SlotChosen" xml:space="preserve"><value>Créneau confirmé.</value></data>
+  <data name="Request_Validated" xml:space="preserve"><value>Merci pour votre note.</value></data>
   <data name="Request_Disputed" xml:space="preserve"><value>Contestation envoyée. Nous vous recontactons.</value></data>
   <data name="Request_Cancelled" xml:space="preserve"><value>Demande annulée.</value></data>
   <data name="Simulation_Done" xml:space="preserve"><value>Simulation effectuée.</value></data>
@@ -427,7 +427,7 @@
   <data name="Pay_Verifying" xml:space="preserve"><value>Paiement signalé le {0}. L'équipe SENECARE le vérifie : vous serez prévenu dès l'activation.</value></data>
   <data name="Pay_Rejected" xml:space="preserve"><value>Votre dernier paiement n'a pas pu être confirmé : {0}. Vous pouvez réessayer ou nous appeler.</value></data>
   <data name="Pay_NotConfigured" xml:space="preserve"><value>Le paiement en ligne sera bientôt disponible. En attendant, contactez le service client Teranga pour régler.</value></data>
-  <data name="Payment_Declared" xml:space="preserve"><value>Merci ! Nous vérifions votre paiement.</value></data>
+  <data name="Payment_Declared" xml:space="preserve"><value>Paiement signalé. Nous le vérifions.</value></data>
   <data name="AdminPay_Title" xml:space="preserve"><value>Paiements à vérifier</value></data>
   <data name="AdminPay_Intro" xml:space="preserve"><value>Comparez chaque déclaration avec l'historique du compte marchand Wave avant de valider. Valider marque la facture payée et active l'abonnement.</value></data>
   <data name="AdminPay_Pending" xml:space="preserve"><value>En attente ({0})</value></data>
@@ -911,12 +911,12 @@
   <data name="Error_privacy_last_manager" xml:space="preserve"><value>C'est le dernier gestionnaire de l'entreprise : il doit d'abord confier la gestion à un collègue.</value></data>
   <data name="Community_Title" xml:space="preserve"><value>Nos voisins de {0}</value></data>
   <data name="Community_LatestOperation" xml:space="preserve"><value>Dernière opération le {0} : {1} arbre(s) planté(s)</value></data>
-  <data name="Community_Invite_Text" xml:space="preserve"><value>Encore {0} voisin(s) et SENECARE plante et embellit le quartier tous les trois mois. Invitez vos voisins !</value></data>
+  <data name="Community_Invite_Text" xml:space="preserve"><value>Encore {0} voisin(s) et SENECARE plante et embellit le quartier tous les trois mois.</value></data>
   <data name="Community_Share" xml:space="preserve"><value>Inviter sur WhatsApp</value></data>
   <data name="Community_SeePage" xml:space="preserve"><value>Page du quartier</value></data>
   <data name="Community_ShareText" xml:space="preserve"><value>Je suis adhérent SENECARE à {0} : entretien de la maison et, dès 500 voisins, des arbres plantés dans le quartier. Rejoins-nous : {1}</value></data>
   <data name="Community_NoReferral" xml:space="preserve"><value>Partagez le lien : chaque voisin qui s'inscrit grâce à vous rapproche le quartier de son objectif.</value></data>
-  <data name="Community_Referrals" xml:space="preserve"><value>{0} voisin(s) inscrit(s) grâce à vous, dont {1} déjà adhérent(s). Jërëjëf !</value></data>
+  <data name="Community_Referrals" xml:space="preserve"><value>{0} voisin(s) inscrit(s) grâce à vous, dont {1} déjà adhérent(s).</value></data>
   <data name="Community_PageTitle" xml:space="preserve"><value>{0} · Programme Quartiers SENECARE</value></data>
   <data name="Community_OgActive" xml:space="preserve"><value>Le quartier {0} est actif : {1} arbres plantés avec SENECARE.</value></data>
   <data name="Community_OgGathering" xml:space="preserve"><value>{0} / {1} voisins : aidez {2} à atteindre son objectif et à verdir le quartier.</value></data>
@@ -928,4 +928,48 @@
   <data name="Community_Ranking_Empty" xml:space="preserve"><value>Les premiers quartiers apparaîtront ici avec leurs premiers adhérents.</value></data>
   <data name="Community_Operations" xml:space="preserve"><value>Opérations réalisées</value></data>
   <data name="Community_NoOperation" xml:space="preserve"><value>Les photos des premières plantations s'afficheront ici.</value></data>
+  <data name="Tab_Settings" xml:space="preserve"><value>Paramètres</value></data>
+  <data name="Shell_Help" xml:space="preserve"><value>Aide</value></data>
+  <data name="Shell_Breadcrumb" xml:space="preserve"><value>Fil d'Ariane</value></data>
+  <data name="Shell_Search" xml:space="preserve"><value>Rechercher</value></data>
+  <data name="Shell_Search_Placeholder" xml:space="preserve"><value>Aller à une page…</value></data>
+  <data name="Shell_Notifications" xml:space="preserve"><value>Notifications</value></data>
+  <data name="Shell_Unread" xml:space="preserve"><value>{0} non lue(s)</value></data>
+  <data name="Shell_Account" xml:space="preserve"><value>Mon compte</value></data>
+  <data name="Shell_Theme" xml:space="preserve"><value>Thème</value></data>
+  <data name="Shell_ThemeLight" xml:space="preserve"><value>Clair</value></data>
+  <data name="Shell_ThemeDark" xml:space="preserve"><value>Sombre</value></data>
+  <data name="Shell_ThemeSystem" xml:space="preserve"><value>Système</value></data>
+  <data name="Shell_More" xml:space="preserve"><value>Plus</value></data>
+  <data name="Account_SignOut" xml:space="preserve"><value>Se déconnecter</value></data>
+  <data name="PlatformRole_SuperAdmin" xml:space="preserve"><value>Super-admin</value></data>
+  <data name="PlatformRole_Dispatcher" xml:space="preserve"><value>Dispatch</value></data>
+  <data name="PlatformRole_Finance" xml:space="preserve"><value>Comptabilité</value></data>
+  <data name="PlatformRole_Support" xml:space="preserve"><value>Support</value></data>
+  <data name="PlatformRole_Technician" xml:space="preserve"><value>Technicien</value></data>
+  <data name="Notif_Empty_Title" xml:space="preserve"><value>Aucune notification</value></data>
+  <data name="Notif_Empty_Text" xml:space="preserve"><value>Les rendez-vous, arrivées du technicien et factures s'afficheront ici.</value></data>
+  <data name="Start_Title" xml:space="preserve"><value>Pour bien démarrer</value></data>
+  <data name="Start_AddHome" xml:space="preserve"><value>Ajouter votre logement</value></data>
+  <data name="Start_Activate" xml:space="preserve"><value>Activer l'abonnement</value></data>
+  <data name="Start_FirstReport" xml:space="preserve"><value>Faire un premier signalement</value></data>
+  <data name="Start_AddSite" xml:space="preserve"><value>Ajouter un site</value></data>
+  <data name="Start_InviteTeam" xml:space="preserve"><value>Inviter l'équipe</value></data>
+  <data name="Start_ChoosePlan" xml:space="preserve"><value>Choisir une formule</value></data>
+  <data name="Pay_Action" xml:space="preserve"><value>Payer</value></data>
+  <data name="Space_ManageSubscription" xml:space="preserve"><value>Voir l'abonnement</value></data>
+  <data name="Biz_Col_Appointment" xml:space="preserve"><value>Rendez-vous</value></data>
+  <data name="Sites_Description" xml:space="preserve"><value>Les bâtiments de l'entreprise couverts par la formule.</value></data>
+  <data name="Properties_Description" xml:space="preserve"><value>Vos logements, avec leur adresse et leur carnet d'entretien.</value></data>
+  <data name="Sites_Search_Placeholder" xml:space="preserve"><value>Rechercher un site, un quartier…</value></data>
+  <data name="Sites_AllCommunes" xml:space="preserve"><value>Toutes les communes</value></data>
+  <data name="Sites_Col_Place" xml:space="preserve"><value>Quartier</value></data>
+  <data name="Sites_Actions" xml:space="preserve"><value>Actions</value></data>
+  <data name="Sites_Open" xml:space="preserve"><value>Ouvrir</value></data>
+  <data name="Team_AllSites" xml:space="preserve"><value>Tous les sites</value></data>
+  <data name="Team_Col_Name" xml:space="preserve"><value>Nom</value></data>
+  <data name="Team_Description" xml:space="preserve"><value>Les personnes de {0} qui signalent et suivent les interventions.</value></data>
+  <data name="Team_Invite" xml:space="preserve"><value>Inviter</value></data>
+  <data name="Subscription_Description" xml:space="preserve"><value>Échéances, paiements et factures.</value></data>
+  <data name="Requests_Description" xml:space="preserve"><value>Vos signalements et leur suivi.</value></data>
 </root>

@@ -1,15 +1,14 @@
 @model bool
-@using Microsoft.AspNetCore.Mvc.ViewFeatures
 @* Welcome screens: horizontal swipe with CSS scroll-snap (no library). Model = replay from the profile. *@
 @{
     Layout = null;
     ViewData["Title"] = L["Onboarding_Title"];
-    var slides = new (EmptyIllustration Art, string Title, string Text, string Motif)[]
+    var slides = new (string Icon, string Title, string Text)[]
     {
-        (EmptyIllustration.House, L["Onboarding_1_Title"], L["Onboarding_1_Text"], "sc-motif-wax"),
-        (EmptyIllustration.Phone, L["Onboarding_2_Title"], L["Onboarding_2_Text"], "sc-motif-manjak"),
-        (EmptyIllustration.Tools, L["Onboarding_3_Title"], L["Onboarding_3_Text"], "sc-motif-bogolan"),
-        (EmptyIllustration.Tree, L["Onboarding_4_Title"], L["Onboarding_4_Text"], "sc-motif-wax"),
+        ("building-2", L["Onboarding_1_Title"], L["Onboarding_1_Text"]),
+        ("camera", L["Onboarding_2_Title"], L["Onboarding_2_Text"]),
+        ("wrench", L["Onboarding_3_Title"], L["Onboarding_3_Text"]),
+        ("sprout", L["Onboarding_4_Title"], L["Onboarding_4_Text"]),
     };
 }
 <!DOCTYPE html>
@@ -17,10 +16,12 @@
 <head>
     <partial name="Ui/_Head" />
 </head>
-<body class="flex min-h-dvh flex-col">
+<body class="flex min-h-dvh flex-col bg-sable">
+    @* The one place a motif appears: a thin, very light band at the top. *@
+    <div class="sc-motif sc-motif-bogolan h-1.5 w-full text-laterite/20" aria-hidden="true"></div>
     <form method="post" asp-action="Finish" class="flex min-h-dvh flex-col" data-onboarding>
         <input type="hidden" name="rejouer" value="@(Model ? "true" : "false")" />
-        <header class="flex items-center justify-between px-4 py-3">
+        <header class="flex h-14 items-center justify-between px-4">
             <partial name="Ui/_Brand" />
             <button type="submit" class="sc-btn-discret">@L["Onboarding_Skip"]</button>
         </header>
@@ -29,14 +30,14 @@
             @for (var i = 0; i < slides.Length; i++)
             {
                 var slide = slides[i];
-                <section id="ecran-@(i + 1)" class="flex w-full shrink-0 snap-center flex-col items-center justify-center px-6 pb-6 text-center"
+                <section id="ecran-@(i + 1)" class="flex w-full shrink-0 snap-center flex-col justify-center px-6 pb-6"
                          aria-roledescription="@L["Onboarding_Slide"]" aria-label="@L["Onboarding_SlideOf", i + 1, slides.Length]">
-                    <div class="relative grid w-full max-w-sm place-items-center rounded-xl bg-surface py-8">
-                        <div class="sc-motif @slide.Motif absolute inset-x-6 top-3 h-4 text-laterite/25" aria-hidden="true"></div>
-                        <partial name="Ui/_Illustration" model="slide.Art" view-data='new ViewDataDictionary(ViewData) { ["Class"] = "h-44 w-auto" }' />
+                    <div class="mx-auto w-full max-w-sm">
+                        <span class="grid size-11 place-items-center rounded-md border border-ligne bg-surface text-charbon"><sc-icon name="@slide.Icon" class="size-5" /></span>
+                        <p class="mt-6 text-[13px] font-medium text-charbon-doux tabular-nums">@(i + 1) / @slides.Length</p>
+                        <h1 class="mt-1 text-2xl font-semibold tracking-tight text-balance">@slide.Title</h1>
+                        <p class="mt-2 text-[15px] text-charbon-doux">@slide.Text</p>
                     </div>
-                    <h1 class="sc-titre mt-8 max-w-sm text-balance">@slide.Title</h1>
-                    <p class="mt-3 max-w-sm text-lg text-charbon-doux">@slide.Text</p>
                 </section>
             }
         </div>
@@ -47,7 +48,7 @@
                 {
                     <a href="#ecran-@(i + 1)" data-onboarding-dot="@i" aria-current="@(i == 0 ? "step" : null)"
                        class="group grid size-6 place-items-center" aria-label="@L["Onboarding_SlideOf", i + 1, slides.Length]">
-                        <span class="block h-2.5 w-2.5 rounded-full bg-ligne transition-all duration-200 group-aria-[current=step]:w-7 group-aria-[current=step]:bg-laterite"></span>
+                        <span class="block h-1.5 w-1.5 rounded-full bg-ligne transition-all duration-200 group-aria-[current=step]:w-5 group-aria-[current=step]:bg-charbon"></span>
                     </a>
                 }
             </nav>

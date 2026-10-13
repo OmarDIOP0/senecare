@@ -6,19 +6,22 @@
     var phoneInput = new PhoneInputModel(nameof(Model.Phone), Model.Phone, L["SignIn_PhoneLabel"], phoneError);
 }
 
-<h1 class="sc-titre">@L["SignIn_Heading"]</h1>
-<p class="mt-2 text-charbon-doux">@L["SignIn_Intro"]</p>
+<div class="mx-auto max-w-sm pt-6 lg:pt-16">
+<div class="sc-motif sc-motif-bogolan mb-8 h-1.5 w-16 text-laterite/30" aria-hidden="true"></div>
+<h1 class="text-2xl font-semibold tracking-tight">@L["SignIn_Heading"]</h1>
+<p class="mt-1.5 text-[15px] text-charbon-doux">@L["SignIn_Intro"]</p>
 
-<form method="post" asp-action="SignIn" class="mt-6 space-y-6" novalidate>
+<form method="post" asp-action="SignIn" class="mt-8 grid gap-5" novalidate>
     <partial name="Ui/_PhoneInput" model="phoneInput" />
 
     <fieldset>
         <legend class="sc-label">@L["SignIn_Channel"]</legend>
-        <div class="mt-2 grid grid-cols-2 gap-3">
+        <div class="mt-1.5 grid grid-cols-2 gap-2">
             <label class="sc-choix"><input type="radio" asp-for="Channel" value="@OtpChannel.Sms" /> @L["SignIn_ChannelSms"]</label>
-            <label class="sc-choix"><input type="radio" asp-for="Channel" value="@OtpChannel.WhatsApp" /><sc-icon name="message-circle" class="size-5 text-baobab" /> @L["SignIn_ChannelWhatsApp"]</label>
+            <label class="sc-choix"><input type="radio" asp-for="Channel" value="@OtpChannel.WhatsApp" /> @L["SignIn_ChannelWhatsApp"]</label>
         </div>
     </fieldset>
 
-    <button type="submit" class="sc-btn-primaire">@L["SignIn_Submit"]</button>
+    <button type="submit" class="sc-btn-primaire w-full">@L["SignIn_Submit"]</button>
 </form>
+</div>

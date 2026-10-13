@@ -388,10 +388,10 @@
     const overlay = document.createElement("div");
     overlay.className = "fixed inset-0 z-[60]";
     const spotlight = document.createElement("div");
-    spotlight.className = "pointer-events-none fixed z-[61] rounded-lg ring-4 ring-soleil transition-all duration-200";
+    spotlight.className = "pointer-events-none fixed z-[61] rounded-lg ring-2 ring-laterite transition-all duration-200";
     spotlight.style.boxShadow = "0 0 0 9999px rgb(21 18 14 / 0.6)";
     const bubble = document.createElement("div");
-    bubble.className = "fixed inset-x-4 z-[62] mx-auto max-w-sm rounded-lg bg-surface p-4 text-charbon shadow-carte";
+    bubble.className = "fixed inset-x-4 z-[62] mx-auto max-w-sm rounded-lg border border-ligne bg-surface p-4 text-sm text-charbon shadow-sm";
     bubble.setAttribute("role", "dialog");
     bubble.setAttribute("aria-modal", "true");
     bubble.setAttribute("aria-labelledby", "sc-tour-title");

@@ -85,36 +85,47 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
   hors du code.
 - Docker + docker-compose (web, api, postgres, redis éventuel).
 
-## 5. Direction artistique — « Made in Sénégal », jamais « fait par une IA »
-INTERDIT : dégradés violet/bleu génériques, emojis comme icônes, cartes blanches
-toutes identiques avec ombre floue, police Inter partout, illustrations 3D génériques,
-textes marketing creux (« Révolutionnez votre expérience »), drapeau partout.
+## 5. Direction visuelle — produit SaaS sobre (Linear, Stripe, Vercel, Notion, Mercury, Attio, Wave)
+Le « Made in Sénégal » passe par le contenu (quartiers, points de repère, Wave / Orange Money,
++221 77 123 45 67, vocabulaire du quotidien), PAS par la décoration. Ne jamais faire « généré par une IA ».
 
-À FAIRE :
-- Palette inspirée du pays, avec tokens CSS nommés :
-  --latérite (terre rouge/ocre, couleur d'accent principale),
-  --atlantique (bleu profond, confiance / navigation),
-  --baobab (vert profond, succès / environnement / programme quartiers),
-  --sable (fond chaud, remplace le blanc pur),
-  --indigo-teinture, --soleil (jaune pour alertes/urgence modérée),
-  --charbon (texte). Mode sombre prévu.
-- Motifs graphiques discrets inspirés du wax, du tissage manjak et du bogolan,
-  en SVG légers, utilisés avec parcimonie (en-têtes, onboarding, états vides).
-- Typographie avec caractère : une display expressive pour les titres
-  + une sans-serif très lisible pour le corps (Google Fonts, sous-ensembles latins,
-  font-display: swap).
-- Iconographie cohérente en ligne (Lucide ou Phosphor), une seule famille.
-- Ton chaleureux et local, sans folklore : micro-copies naturelles,
-  salutations contextuelles (« Nanga def, Awa 👋 » est OK UNE fois sur l'accueil,
-  sinon pas d'emoji), « Teranga » dans le service client, vocabulaire du quotidien
-  (« hivernage », « Senelec », « robinet », « dalle »).
-- Photos réelles de maisons/équipes sénégalaises quand disponibles ; sinon
-  illustrations vectorielles plates avec personnages africains, cohérentes entre elles.
-- Mobile-first absolu : navigation par barre d'onglets en bas, gros boutons
-  (min 48px), action principale « Signaler » toujours accessible (FAB central).
-- Micro-interactions sobres (transitions 150–250ms), skeletons au lieu de spinners,
-  respect de prefers-reduced-motion.
-- Accessibilité : contrastes AA, focus visible, libellés ARIA, tailles de texte relatives.
+INTERDIT dans l'application :
+- Bannière « hero », emojis, motifs décoratifs (wax, manjak, bogolan, cercles) dans les écrans connectés
+  (tolérés uniquement sur connexion et onboarding, très discrets), illustrations clichés dans les états vides.
+- rounded-2xl/3xl, grosses ombres, dégradés, glassmorphism, cartes dans des cartes,
+  icônes dans des ronds colorés partout, contenu centré dans une carte géante.
+- KPI à 0 ou « — » : un compte vide montre une checklist de démarrage, pas des chiffres.
+- Texte de bouton en police display grasse. Fond beige.
+
+Tokens (Styles/app.css, noms conservés) :
+- Fond page `--sable` #FAFAF9, surfaces `--surface` blanc, bordures `--ligne` #E7E5E4 (1px).
+- Texte #1C1917 (`charbon`), #57534E (`charbon-doux`), #A8A29E (`charbon-pale`) ; survol `--sourdine` #F5F5F4.
+- Accent `--laterite` #A84B22 UNIQUEMENT : bouton primaire, élément actif, focus. Jamais en grande surface.
+- `--atlantique` : liens et information. Statuts en badges discrets teintés : vert `baobab`,
+  ambre `soleil`, rouge `rouge`. Mode sombre neutre froid (#0C0A09 / #1C1917).
+- Typo : Inter auto-hébergée (400/500/600) pour toute l'app ; la display (Bricolage) = logo seul
+  (`font-logo`). Desktop corps 14px, petits textes 13px, titres de page 20–24px semibold ;
+  mobile 15–16px. Chiffres en `tabular-nums`.
+- Rayons 6px (contrôles, badges) / 8px (cartes, dialogues). Aucune ombre sur les cartes ;
+  `shadow-sm` seulement pour menus et popovers. Boutons 36px desktop, 44px mobile (56px en mode terrain).
+- Icônes Lucide 18px, trait 1.75 (`<sc-icon>`).
+
+Coque :
+- Desktop ≥ 1024px : sidebar 240px blanche (logo, organisation, bouton « Signaler » compact,
+  navigation 36px, Aide / Paramètres / carte utilisateur en bas) + topbar 56px (fil d'Ariane,
+  recherche Ctrl+K, notifications, menu avatar contenant le thème). Contenu aligné à gauche, max ~1200px.
+- Mobile : barre d'onglets en bas (3 onglets + « Signaler » au centre + « Plus »), header compact.
+- En-tête de page standard (`Ui/_PageHeader`) : titre + description grise + action principale à droite.
+- Listes : tableaux (`.sc-table`, tri, recherche, filtres, menu « … ») sur desktop, cartes compactes sur mobile.
+- État vide (`Ui/_EmptyState`) dans le flux : icône 20px dans un carré gris 40px, titre, une phrase, un bouton.
+- « Installer l'application » : jamais sur desktop ; fine barre refermable sur mobile.
+
+Rédaction : microcopie courte et concrète, verbes d'action (« Ajouter un site », « Inviter », « Payer »),
+pas de phrases marketing ni de points d'exclamation dans l'app, accents corrects.
+Accessibilité : contrastes AA, focus visible (anneau latérite), libellés ARIA, tailles relatives,
+respect de prefers-reduced-motion.
+Revue visuelle : `tests/SeneCare.E2E/design-review.mjs` capture chaque écran (1440 / 390, clair / sombre)
+dans `docs/design-review/` ; se demander « est-ce que ça pourrait être une page de Linear, Stripe ou Vercel ? ».
 
 ## 6. Règles de travail
 - Une phase à la fois. Avant de coder : plan court + liste des fichiers.

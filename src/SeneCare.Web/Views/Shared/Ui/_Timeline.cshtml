@@ -1,30 +1,30 @@
 @model IReadOnlyList<TimelineStep>
-<ol class="relative ml-1">
+<ol class="relative">
     @for (var i = 0; i < Model.Count; i++)
     {
         var step = Model[i];
         var last = i == Model.Count - 1;
-        <li class="relative flex gap-4 pb-6 last:pb-0" aria-current="@(step.State == TimelineState.Current ? "step" : null)">
+        <li class="relative flex gap-3 pb-4 last:pb-0" aria-current="@(step.State == TimelineState.Current ? "step" : null)">
             @if (!last)
             {
-                <span class="absolute top-7 bottom-0 left-[13px] w-0.5 @(step.State == TimelineState.Done ? "bg-baobab" : "bg-ligne")" aria-hidden="true"></span>
+                <span class="absolute top-5 bottom-0 left-[9px] w-px @(step.State == TimelineState.Done ? "bg-baobab/50" : "bg-ligne")" aria-hidden="true"></span>
             }
             @switch (step.State)
             {
                 case TimelineState.Done:
-                    <span class="relative z-10 grid size-7 shrink-0 place-items-center rounded-full bg-baobab text-sur-accent"><sc-icon name="check" class="size-4" /></span>
+                    <span class="relative z-10 grid size-[19px] shrink-0 place-items-center rounded-full bg-baobab text-surface"><sc-icon name="check" class="size-3" /></span>
                     break;
                 case TimelineState.Current:
-                    <span class="relative z-10 grid size-7 shrink-0 place-items-center rounded-full border-4 border-laterite bg-surface">
-                        <span class="size-2 rounded-full bg-laterite motion-safe:animate-pulse"></span>
+                    <span class="relative z-10 grid size-[19px] shrink-0 place-items-center rounded-full border border-laterite bg-surface">
+                        <span class="size-2 rounded-full bg-laterite"></span>
                     </span>
                     break;
                 default:
-                    <span class="relative z-10 size-7 shrink-0 rounded-full border-2 border-ligne bg-surface"></span>
+                    <span class="relative z-10 size-[19px] shrink-0 rounded-full border border-ligne bg-surface"></span>
                     break;
             }
-            <div class="pt-0.5">
-                <p class="@(step.State == TimelineState.Upcoming ? "text-charbon-doux" : "font-bold")">
+            <div class="-mt-px min-w-0">
+                <p class="text-sm @(step.State == TimelineState.Upcoming ? "text-charbon-doux" : "font-medium")">
                     @step.Label
                     @if (step.State == TimelineState.Done)
                     {
@@ -37,11 +37,11 @@
                 </p>
                 @if (step.At is { } at)
                 {
-                    <p class="text-sm text-charbon-doux"><time datetime="@at.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">@Formatting.ShortDateTime(at)</time></p>
+                    <p class="text-xs text-charbon-doux"><time datetime="@at.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">@Formatting.ShortDateTime(at)</time></p>
                 }
                 @if (step.Note is not null)
                 {
-                    <p class="mt-1 text-sm">@step.Note</p>
+                    <p class="mt-0.5 text-[13px] text-charbon-doux">@step.Note</p>
                 }
             </div>
         </li>

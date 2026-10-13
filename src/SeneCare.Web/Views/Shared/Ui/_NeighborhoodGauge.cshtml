@@ -2,25 +2,27 @@
 @using SeneCare.Domain.Neighborhoods
 @{
     var active = Model.Status == NeighborhoodProgramStatus.Active;
+    var percent = Math.Min(100, 100 * Model.Members / Math.Max(1, Model.Threshold));
 }
 @* « 347 / 500 voisins »: the neighborhood program gauge. *@
-<section class="sc-carte relative overflow-hidden" aria-labelledby="quartier-titre">
-    <div class="flex items-start gap-3 pt-1">
-        <span class="grid size-9 shrink-0 place-items-center rounded-md bg-sourdine text-charbon-doux"><sc-icon name="sprout" class="size-6" /></span>
-        <div class="flex-1">
-            <p class="sc-surtitre text-baobab">@L["Hood_Program"]</p>
-            <h2 id="quartier-titre" class="text-[15px] font-semibold">@Model.Neighborhood</h2>
-            @if (active)
-            {
-                <p class="mt-1">@L["Hood_Active", Model.TreesPlanted]</p>
-            }
-            else
-            {
-                <p class="mt-1"><strong class="text-2xl">@Model.Members</strong> <span class="text-charbon-doux">/ @L["Hood_Neighbors", Model.Threshold]</span></p>
-                <progress class="mt-2 h-3 w-full appearance-none overflow-hidden rounded-full [&::-moz-progress-bar]:bg-baobab [&::-webkit-progress-bar]:bg-baobab-clair [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-baobab"
-                          max="@Model.Threshold" value="@Model.Members" aria-label="@L["Hood_Program"]">@Model.Members / @Model.Threshold</progress>
-                <p class="sc-texte-doux mt-2">@L["Hood_Remaining", Math.Max(0, Model.Threshold - Model.Members)]</p>
-            }
-        </div>
+<section class="sc-carte" aria-labelledby="quartier-titre">
+    <div class="flex items-baseline justify-between gap-2">
+        <h2 id="quartier-titre" class="text-sm font-medium text-charbon-doux">@L["Hood_Program"] · @Model.Neighborhood</h2>
+        @if (active)
+        {
+            <span class="sc-badge bg-baobab-clair text-baobab">@L["ProgramStatus_Active"]</span>
+        }
     </div>
+    @if (active)
+    {
+        <p class="mt-2 text-sm">@L["Hood_Active", Model.TreesPlanted]</p>
+    }
+    else
+    {
+        <p class="mt-2 tabular-nums"><span class="text-2xl font-semibold tracking-tight">@Model.Members</span> <span class="text-sm text-charbon-doux">/ @L["Hood_Neighbors", Model.Threshold]</span></p>
+        <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-sourdine" role="progressbar" aria-valuemin="0" aria-valuemax="@Model.Threshold" aria-valuenow="@Model.Members" aria-label="@L["Hood_Program"]">
+            <div class="h-full rounded-full bg-baobab" style="width: @percent%"></div>
+        </div>
+        <p class="mt-2 text-[13px] text-charbon-doux">@L["Hood_Remaining", Math.Max(0, Model.Threshold - Model.Members)]</p>
+    }
 </section>

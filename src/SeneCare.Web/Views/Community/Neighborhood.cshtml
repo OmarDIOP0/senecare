@@ -35,7 +35,7 @@
     }
     else
     {
-        <p class="relative mt-3"><strong class="text-2xl">@Model.Members</strong> <span class="text-sable/85">/ @L["Hood_Neighbors", Model.Threshold]</span></p>
+        <p class="relative mt-3"><span class="font-medium text-2xl">@Model.Members</span> <span class="text-sable/85">/ @L["Hood_Neighbors", Model.Threshold]</span></p>
         <progress class="relative mt-3 h-3 w-full overflow-hidden rounded-full accent-soleil" max="@Model.Threshold" value="@Model.Members" aria-label="@L["Hood_Program"]">@Model.Members / @Model.Threshold</progress>
         <p class="relative mt-2 text-sable/85">@L["Hood_Remaining", Model.Remaining]</p>
     }

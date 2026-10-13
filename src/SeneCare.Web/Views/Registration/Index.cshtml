@@ -18,7 +18,7 @@
         <input asp-for="FullName" autocomplete="name" class="sc-input" required />
     </div>
 
-    @if (Model.JoiningAccountName is null)
+    @if (Model.JoiningAccountName is null && !Model.IsStaff)
     {
         <fieldset>
             <legend class="sc-label">@L["Register_ProfileLabel"]</legend>

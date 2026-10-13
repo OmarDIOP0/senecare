@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using SeneCare.Application.Development;
 using SeneCare.Application.Media;
+using SeneCare.Application.Payments;
 using SeneCare.Application.Properties;
 using SeneCare.Application.Requests;
 using SeneCare.Application.Subscriptions;
@@ -199,13 +200,44 @@ public sealed class InterventionsController(
 /// <summary>« Mon abonnement »: status, due dates, invoices.</summary>
 [Authorize]
 [Route("/abonnement")]
-public sealed class SubscriptionController(SubscriptionQueries queries, SimulatedActivation activation, IWebHostEnvironment environment) : Controller
+public sealed class SubscriptionController(
+    SubscriptionQueries queries,
+    PrepareInvoiceHandler prepareInvoice,
+    DeclarePaymentHandler declarePayment,
+    SimulatedActivation activation,
+    IWebHostEnvironment environment) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
+        var userId = User.GetUserId()!.Value;
+        var dues = new Dictionary<Guid, InvoiceDue>();
+        foreach (var subscription in await queries.ListAsync(userId, cancellationToken))
+        {
+            if (await prepareInvoice.HandleAsync(userId, subscription.Id, cancellationToken) is { } due)
+            {
+                dues[subscription.Id] = due;
+            }
+        }
+
+        // Read again: preparing may have just issued an invoice, which must appear in the list.
+        var items = (await queries.ListAsync(userId, cancellationToken))
+            .Select(s => dues.TryGetValue(s.Id, out var due)
+                ? new SubscriptionPageItem(s, due, due.WaveUrl is { } url ? QrCode.Svg(url) : null)
+                : new SubscriptionPageItem(s, null, null))
+            .ToList();
+
         ViewData["CanSimulate"] = environment.IsDevelopment();
-        return View(await queries.ListAsync(User.GetUserId()!.Value, cancellationToken));
+        return View(items);
+    }
+
+    /// <summary>« J'ai payé » after paying with the Wave link: a Finance admin checks and activates.</summary>
+    [HttpPost("factures/{invoiceId:guid}/paiement")]
+    public async Task<IActionResult> DeclarePayment(Guid invoiceId, string? reference, CancellationToken cancellationToken)
+    {
+        var result = await declarePayment.HandleAsync(User.GetUserId()!.Value, invoiceId, reference, cancellationToken);
+        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Payment_Declared"].Value : this.ErrorMessage(result.Error);
+        return RedirectToAction(nameof(Index));
     }
 
     /// <summary>Development only, until payments (Phase 6).</summary>

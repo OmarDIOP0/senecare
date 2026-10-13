@@ -160,11 +160,15 @@ public static class SettingKeys
     public const string WarrantyDays = "interventions.warranty_days";
     public const string NeighborhoodThreshold = "neighborhoods.default_threshold";
 
+    /// <summary>Wave merchant payment link (« {montant} » is replaced by the amount when present). Empty = not configured.</summary>
+    public const string WaveLink = "payments.wave_link";
+
     public static readonly IReadOnlyDictionary<string, string> Defaults = new Dictionary<string, string>(StringComparer.Ordinal)
     {
         [PaymentGraceDays] = "7",
         [AutoValidateAfterDays] = "3",
         [WarrantyDays] = "90",
         [NeighborhoodThreshold] = "500",
+        [WaveLink] = "",
     };
 }

@@ -80,6 +80,58 @@ public sealed class Payment : AggregateRoot
         return new Payment(invoiceId, amount, channel, now);
     }
 
+    /// <summary>
+    /// The customer says they paid through a Wave (or other) payment link. Nothing is credited until a
+    /// Finance admin checks the transfer and calls <see cref="Verify"/>.
+    /// </summary>
+    public static Payment Declare(
+        Guid invoiceId, Money amount, PaymentChannel channel, Guid declaredByUserId, string? customerReference, DateTimeOffset now)
+    {
+        if (channel is PaymentChannel.Cash or PaymentChannel.BankTransfer)
+        {
+            throw new DomainException("payment.channel", "Only mobile money payments can be declared by the customer.");
+        }
+
+        return new Payment(invoiceId, amount, channel, now)
+        {
+            DeclaredByUserId = declaredByUserId,
+            CustomerReference = Guard.Optional(customerReference, "payment.reference", ReferenceMaxLength),
+        };
+    }
+
+    /// <summary>Customer who declared the payment (payment link), if any.</summary>
+    public Guid? DeclaredByUserId { get; private set; }
+
+    /// <summary>Transaction id the customer copied from their Wave receipt, to help the check.</summary>
+    public string? CustomerReference { get; private set; }
+
+    public bool IsAwaitingVerification => Status == PaymentStatus.Pending && DeclaredByUserId is not null;
+
+    /// <summary>Finance admin found the transfer: the payment counts.</summary>
+    public void Verify(Guid adminUserId, DateTimeOffset now)
+    {
+        EnsureAwaitingVerification();
+        RecordedByUserId = adminUserId;
+        Succeed(null, now);
+    }
+
+    /// <summary>Transfer not found or wrong amount: the customer sees the reason and can declare again.</summary>
+    public void Reject(Guid adminUserId, string reason, DateTimeOffset now)
+    {
+        EnsureAwaitingVerification();
+        RecordedByUserId = adminUserId;
+        Note = Guard.Required(reason, "payment.rejection_reason", NoteMaxLength);
+        Fail(now);
+    }
+
+    private void EnsureAwaitingVerification()
+    {
+        if (!IsAwaitingVerification)
+        {
+            throw new DomainException("payment.not_awaiting_verification", "This payment is not waiting for verification.");
+        }
+    }
+
     public static Payment RecordManual(
         Guid invoiceId, Money amount, PaymentChannel channel, Guid recordedByUserId, string? note, DateTimeOffset now)
     {

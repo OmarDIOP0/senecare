@@ -5,6 +5,7 @@ using SeneCare.Application.Common;
 using SeneCare.Application.Development;
 using SeneCare.Application.Locations;
 using SeneCare.Application.Media;
+using SeneCare.Application.Payments;
 using SeneCare.Application.Properties;
 using SeneCare.Application.Requests;
 using SeneCare.Application.Subscriptions;
@@ -39,6 +40,9 @@ public static class DependencyInjection
         services.AddScoped<RequestQueries>();
         services.AddScoped<ClientRequestActions>();
         services.AddScoped<SubscriptionQueries>();
+        services.AddScoped<PrepareInvoiceHandler>();
+        services.AddScoped<DeclarePaymentHandler>();
+        services.AddScoped<PaymentVerificationHandler>();
 
         // Development tools (refused by the Web outside Development).
         services.AddScoped<SimulatedActivation>();

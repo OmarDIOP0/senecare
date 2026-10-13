@@ -1,4 +1,4 @@
-@model IReadOnlyList<SeneCare.Application.Subscriptions.SubscriptionSummary>
+@model IReadOnlyList<SubscriptionPageItem>
 @using SeneCare.Domain.Billing
 @{
     Layout = "_AppLayout";
@@ -17,9 +17,11 @@
     </div>
 }
 
-<div class="mt-6 grid gap-4">
-    @foreach (var sub in Model)
+<div class="mt-6 grid gap-6">
+    @foreach (var item in Model)
     {
+        var sub = item.Subscription;
+        var due = item.Due;
         <section class="sc-carte" aria-label="@sub.PlanName">
             <div class="flex flex-wrap items-start justify-between gap-2">
                 <div>
@@ -34,27 +36,83 @@
                 @if (sub.Status == SubscriptionStatus.PendingRegistration)
                 {
                     <dt class="text-charbon-doux">@L["Subscription_Registration"]</dt><dd class="text-right font-bold"><sc-amount value="@sub.RegistrationFee.Amount" /></dd>
-                    <dt class="font-bold">@L["Subscription_FirstPayment"]</dt><dd class="text-right font-bold text-laterite"><sc-amount value="@((sub.RegistrationFee + sub.MonthlyPrice * sub.BillingPeriodMonths).Amount)" /></dd>
                 }
                 @if (sub.CurrentPeriod is { } period)
                 {
                     <dt class="text-charbon-doux">@L["Subscription_Period"]</dt><dd class="text-right">@Day(period.Start) – @Day(period.End)</dd>
                 }
-                @if (sub.NextDueDate is { } due)
+                @if (sub.NextDueDate is { } nextDue)
                 {
-                    <dt class="text-charbon-doux">@L["Subscription_NextDueLabel"]</dt><dd class="text-right font-bold">@Day(due)</dd>
+                    <dt class="text-charbon-doux">@L["Subscription_NextDueLabel"]</dt><dd class="text-right font-bold">@Day(nextDue)</dd>
                 }
             </dl>
 
-            @if (sub.Status == SubscriptionStatus.PendingRegistration)
+            @if (due is not null)
             {
-                <p class="sc-alert mt-4 border-soleil bg-soleil-clair">@L["Subscription_PendingText"]</p>
-                @if (canSimulate)
-                {
-                    <form method="post" asp-action="SimulateActivation" asp-route-id="@sub.Id" class="mt-2">
-                        <button type="submit" class="sc-btn-secondaire min-h-10 text-sm">Activer (simulation, développement)</button>
-                    </form>
-                }
+                <div class="mt-5 rounded-md border-2 border-ligne bg-sable p-4" aria-labelledby="payer-@due.InvoiceId">
+                    <h3 id="payer-@due.InvoiceId" class="font-bold">@(due.IsRegistration ? L["Pay_TitleFirst"] : L["Pay_TitleRenewal"])</h3>
+                    <p class="mt-1 font-display text-3xl font-bold text-laterite"><sc-amount value="@due.Amount.Amount" /></p>
+                    <p class="sc-texte-doux">@L["Pay_Invoice", due.Number]</p>
+
+                    @if (due.Declaration is { Status: PaymentStatus.Pending } pending)
+                    {
+                        <p class="sc-alert mt-4 flex items-start gap-2 border-atlantique bg-atlantique-clair" role="status">
+                            <sc-icon name="clock" class="mt-1 text-atlantique" />
+                            <span>@L["Pay_Verifying", Formatting.ShortDateTime(pending.DeclaredAt)]</span>
+                        </p>
+                    }
+                    else
+                    {
+                        @if (due.Declaration is { Status: PaymentStatus.Failed } rejected)
+                        {
+                            <p class="sc-alert mt-4 border-laterite bg-laterite-clair" role="alert">@L["Pay_Rejected", rejected.RejectionReason ?? string.Empty]</p>
+                        }
+
+                        @if (due.WaveUrl is { } waveUrl)
+                        {
+                            <ol class="mt-4 grid gap-3 text-sm">
+                                <li class="flex gap-3"><span class="grid size-7 shrink-0 place-items-center rounded-full bg-laterite font-bold text-sur-accent">1</span><span>@L["Pay_Step1"]</span></li>
+                                <li class="flex gap-3"><span class="grid size-7 shrink-0 place-items-center rounded-full bg-laterite font-bold text-sur-accent">2</span><span>@L["Pay_Step2", due.Number]</span></li>
+                                <li class="flex gap-3"><span class="grid size-7 shrink-0 place-items-center rounded-full bg-laterite font-bold text-sur-accent">3</span><span>@L["Pay_Step3"]</span></li>
+                            </ol>
+
+                            <a href="@waveUrl" class="sc-btn mt-4 w-full bg-[#1dc8ff] text-charbon hover:opacity-90" rel="noopener" target="_blank">
+                                <sc-icon name="wallet" />@L["Pay_WithWave"]
+                            </a>
+
+                            @if (item.QrSvg is not null)
+                            {
+                                <details class="mt-3">
+                                    <summary class="cursor-pointer text-sm font-bold text-atlantique">@L["Pay_ScanQr"]</summary>
+                                    <figure class="mx-auto mt-3 w-48 rounded-md bg-white p-2">
+                                        @Html.Raw(item.QrSvg)
+                                        <figcaption class="sr-only">@L["Pay_ScanQr"]</figcaption>
+                                    </figure>
+                                </details>
+                            }
+
+                            <form method="post" asp-action="DeclarePayment" asp-route-invoiceId="@due.InvoiceId" class="mt-5 grid gap-3 border-t border-dashed border-ligne pt-4">
+                                <div>
+                                    <label class="sc-label" for="ref-@due.InvoiceId">@L["Pay_Reference"]</label>
+                                    <input id="ref-@due.InvoiceId" name="reference" class="sc-input" autocomplete="off" placeholder="@L["Pay_Reference_Placeholder"]" />
+                                    <p class="sc-aide">@L["Pay_Reference_Hint"]</p>
+                                </div>
+                                <button type="submit" class="sc-btn-primaire"><sc-icon name="check" />@L["Pay_Declare"]</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <p class="sc-alert mt-4 border-soleil bg-soleil-clair">@L["Pay_NotConfigured"]</p>
+                        }
+                    }
+                </div>
+            }
+
+            @if (sub.Status == SubscriptionStatus.PendingRegistration && canSimulate)
+            {
+                <form method="post" asp-action="SimulateActivation" asp-route-id="@sub.Id" class="mt-3">
+                    <button type="submit" class="sc-btn-secondaire min-h-10 text-sm">Activer (simulation, développement)</button>
+                </form>
             }
 
             <h3 class="mt-5 font-bold">@L["Subscription_Invoices"]</h3>

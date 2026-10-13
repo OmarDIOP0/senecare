@@ -27,14 +27,18 @@ public static class AppNavigation
 
         if (IsAdmin(user))
         {
-            return new AppNav(
-                [
-                    new("espace", "/espace", "house", "Tab_Dashboard", "tableau-de-bord"),
-                    new("dispatch", "/admin/dispatch", "clipboard-list", "Tab_Dispatch", "dispatch"),
-                    Profile,
-                ],
-                null,
-                TourKeys.Admin);
+            List<NavItem> items =
+            [
+                new("espace", "/espace", "house", "Tab_Dashboard", "tableau-de-bord"),
+                new("dispatch", "/admin/dispatch", "clipboard-list", "Tab_Dispatch", "dispatch"),
+            ];
+            if (user.IsInRole(nameof(PlatformRole.Finance)) || user.IsInRole(nameof(PlatformRole.SuperAdmin)))
+            {
+                items.Add(new("paiements", "/admin/paiements", "wallet", "Tab_Payments"));
+            }
+
+            items.Add(Profile);
+            return new AppNav(items, null, TourKeys.Admin);
         }
 
         if (user.IsInRole(nameof(PlatformRole.Technician)))

@@ -8,6 +8,10 @@ namespace SeneCare.Application.Common;
 /// <summary>Reads admin-editable business parameters (with the defaults of <see cref="SettingKeys"/>).</summary>
 public sealed class Settings(IApplicationDbContext db)
 {
+    public async Task<string> StringAsync(string key, CancellationToken cancellationToken = default) =>
+        await db.AppSettings.Where(s => s.Key == key).Select(s => s.Value).FirstOrDefaultAsync(cancellationToken)
+        ?? SettingKeys.Defaults[key];
+
     public async Task<int> IntAsync(string key, CancellationToken cancellationToken = default)
     {
         var value = await db.AppSettings.Where(s => s.Key == key).Select(s => s.Value).FirstOrDefaultAsync(cancellationToken)

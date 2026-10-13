@@ -75,6 +75,10 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.ToTable("payments");
         builder.HasOne<Invoice>().WithMany().HasForeignKey(p => p.InvoiceId).OnDelete(DeleteBehavior.Restrict);
         builder.Property(p => p.ProviderReference).HasMaxLength(Payment.ReferenceMaxLength);
+        builder.Property(p => p.CustomerReference).HasMaxLength(Payment.ReferenceMaxLength);
+        // Finance queue: declared payments waiting for verification.
+        builder.HasIndex(p => new { p.Status, p.DeclaredByUserId });
+        builder.Ignore(p => p.IsAwaitingVerification);
         // Webhooks are idempotent: one provider transaction = one payment.
         builder.HasIndex(p => new { p.Channel, p.ProviderReference }).IsUnique().HasFilter("provider_reference IS NOT NULL");
         builder.HasIndex(p => p.InvoiceId);

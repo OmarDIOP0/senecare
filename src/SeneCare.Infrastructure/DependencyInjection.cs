@@ -31,6 +31,7 @@ public static class DependencyInjection
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<SeneCareDbContext>());
 
         services.AddScoped<DatabaseSeeder>();
+        services.AddScoped<AdminBootstrapper>();
         services.AddSingleton(TimeProvider.System);
 
         services.Configure<OtpOptions>(configuration.GetSection(OtpOptions.SectionName));

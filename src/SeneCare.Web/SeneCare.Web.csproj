@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="Serilog.AspNetCore" />
+    <!-- QR code of the Wave payment link, rendered as SVG on the server (no JavaScript). -->
+    <PackageReference Include="QRCoder" />
   </ItemGroup>
 
   <ItemGroup>

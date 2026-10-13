@@ -218,6 +218,37 @@ public class InvoiceTests
             Payment.RecordManual(Guid.CreateVersion7(), Money.FromFcfa(1), PaymentChannel.Wave, finance, null, Now));
     }
 
+    [Fact]
+    public void Declared_wave_payment_counts_only_after_verification()
+    {
+        var customer = Guid.CreateVersion7();
+        var admin = Guid.CreateVersion7();
+        var payment = Payment.Declare(Guid.CreateVersion7(), Money.FromFcfa(18_500), PaymentChannel.Wave, customer, "TX-123", Now);
+
+        Assert.True(payment.IsAwaitingVerification);
+        Assert.Empty(payment.DomainEvents);
+
+        payment.Verify(admin, Now);
+
+        Assert.Equal(PaymentStatus.Succeeded, payment.Status);
+        Assert.Equal(admin, payment.RecordedByUserId);
+        Assert.Single(payment.DomainEvents.OfType<PaymentSucceeded>());
+        Assert.Throws<DomainException>(() => payment.Verify(admin, Now));
+    }
+
+    [Fact]
+    public void Rejecting_a_declared_payment_requires_a_reason()
+    {
+        var payment = Payment.Declare(Guid.CreateVersion7(), Money.FromFcfa(18_500), PaymentChannel.Wave, Guid.CreateVersion7(), null, Now);
+
+        Assert.Throws<DomainException>(() => payment.Reject(Guid.CreateVersion7(), " ", Now));
+        payment.Reject(Guid.CreateVersion7(), "Aucun transfert reçu", Now);
+
+        Assert.Equal(PaymentStatus.Failed, payment.Status);
+        Assert.Equal("Aucun transfert reçu", payment.Note);
+        Assert.False(payment.IsAwaitingVerification);
+    }
+
     private static Invoice IssuedInvoice()
     {
         var invoice = new Invoice("FAC-2026-000001", Guid.CreateVersion7(), Guid.CreateVersion7(), null, new DateOnly(2026, 10, 15));

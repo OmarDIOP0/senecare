@@ -1,0 +1,61 @@
+@model IReadOnlyList<SeneCare.Application.Payments.PendingPayment>
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "paiements";
+    ViewData["Title"] = L["AdminPay_Title"];
+    var waveLink = ViewData["WaveLink"] as string;
+}
+
+<h1 class="sc-titre">@L["AdminPay_Title"]</h1>
+<p class="mt-2 text-charbon-doux">@L["AdminPay_Intro"]</p>
+
+<section class="mt-6" aria-labelledby="attente-titre">
+    <h2 id="attente-titre" class="sc-sous-titre">@L["AdminPay_Pending", Model.Count]</h2>
+    @if (Model.Count == 0)
+    {
+        <p class="sc-texte-doux mt-2">@L["AdminPay_None"]</p>
+    }
+    <ul class="mt-3 grid gap-3">
+        @foreach (var p in Model)
+        {
+            <li class="sc-carte">
+                <div class="flex flex-wrap items-start justify-between gap-2">
+                    <div>
+                        <p class="font-bold">@p.CustomerName <span class="font-normal text-charbon-doux">· +221 @p.CustomerPhone</span></p>
+                        <p class="text-sm text-charbon-doux">@p.AccountName · @L["AdminPay_DeclaredOn", Formatting.ShortDateTime(p.DeclaredAt)]</p>
+                    </div>
+                    <sc-amount value="@p.Amount.Amount" class="font-display text-xl font-bold text-laterite" />
+                </div>
+                <dl class="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
+                    <dt class="text-charbon-doux">@L["AdminPay_Invoice"]</dt><dd class="font-bold">@p.InvoiceNumber</dd>
+                    <dt class="text-charbon-doux">@L["AdminPay_Channel"]</dt><dd>@p.Channel</dd>
+                    <dt class="text-charbon-doux">@L["AdminPay_CustomerRef"]</dt><dd class="font-mono">@(p.CustomerReference ?? "—")</dd>
+                </dl>
+                <p class="sc-aide mt-2">@L["AdminPay_CheckHint", p.InvoiceNumber]</p>
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <form method="post" asp-action="Verify" asp-route-id="@p.PaymentId">
+                        <button type="submit" class="sc-btn bg-baobab text-sur-accent"><sc-icon name="check" />@L["AdminPay_Verify"]</button>
+                    </form>
+                    <button type="button" class="sc-btn-danger" data-sheet-open="refus-@p.PaymentId">@L["AdminPay_Reject"]</button>
+                </div>
+                <sc-sheet id="refus-@p.PaymentId" title="@L["AdminPay_Reject"]">
+                    <form method="post" asp-action="Reject" asp-route-id="@p.PaymentId" class="grid gap-3">
+                        <label class="sc-label" for="motif-@p.PaymentId">@L["AdminPay_RejectReason"]</label>
+                        <textarea id="motif-@p.PaymentId" name="reason" rows="2" class="sc-input py-2" required placeholder="@L["AdminPay_RejectReason_Placeholder"]"></textarea>
+                        <button type="submit" class="sc-btn bg-laterite text-sur-accent">@L["AdminPay_Reject"]</button>
+                    </form>
+                </sc-sheet>
+            </li>
+        }
+    </ul>
+</section>
+
+<section class="sc-carte mt-10" aria-labelledby="lien-titre">
+    <h2 id="lien-titre" class="sc-sous-titre">@L["AdminPay_LinkTitle"]</h2>
+    <p class="sc-texte-doux mt-1">@L["AdminPay_LinkHint"]</p>
+    <form method="post" asp-action="SetWaveLink" class="mt-3 grid gap-3">
+        <label class="sc-label" for="link">@L["AdminPay_LinkLabel"]</label>
+        <input id="link" name="link" type="url" inputmode="url" class="sc-input font-mono text-sm" value="@waveLink" placeholder="https://pay.wave.com/m/M_sn_.../c/sn/?amount={montant}" />
+        <button type="submit" class="sc-btn-primaire">@L["AdminPay_LinkSave"]</button>
+    </form>
+</section>

@@ -395,6 +395,15 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<string>("CustomerReference")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("customer_reference");
+
+                    b.Property<Guid?>("DeclaredByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("declared_by_user_id");
+
                     b.Property<Guid>("InvoiceId")
                         .HasColumnType("uuid")
                         .HasColumnName("invoice_id");
@@ -429,6 +438,9 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_payments_channel_provider_reference")
                         .HasFilter("provider_reference IS NOT NULL");
+
+                    b.HasIndex("Status", "DeclaredByUserId")
+                        .HasDatabaseName("ix_payments_status_declared_by_user_id");
 
                     b.ToTable("payments", (string)null);
                 });

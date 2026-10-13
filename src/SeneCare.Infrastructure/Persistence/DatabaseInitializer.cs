@@ -20,7 +20,8 @@ public static partial class DatabaseInitializer
     {
         var migrate = configuration.GetValue<bool>("Database:MigrateOnStartup");
         var seed = configuration.GetValue<bool>("Database:SeedOnStartup");
-        if (!migrate && !seed)
+        var bootstrapAdmins = !string.IsNullOrWhiteSpace(configuration[AdminBootstrapper.ConfigurationKey]);
+        if (!migrate && !seed && !bootstrapAdmins)
         {
             return;
         }
@@ -42,6 +43,12 @@ public static partial class DatabaseInitializer
         if (seed)
         {
             await scope.ServiceProvider.GetRequiredService<DatabaseSeeder>().SeedAsync(cancellationToken);
+        }
+
+        // Also in production: the first administrators come from configuration, not from the database.
+        if (bootstrapAdmins)
+        {
+            await scope.ServiceProvider.GetRequiredService<AdminBootstrapper>().RunAsync(cancellationToken);
         }
     }
 }

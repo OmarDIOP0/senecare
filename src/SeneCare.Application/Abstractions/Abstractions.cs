@@ -40,6 +40,8 @@ public interface IApplicationDbContext
 
     DbSet<Invoice> Invoices { get; }
 
+    DbSet<Payment> Payments { get; }
+
     DbSet<ServiceRequest> ServiceRequests { get; }
 
     DbSet<Intervention> Interventions { get; }

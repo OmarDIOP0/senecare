@@ -38,6 +38,9 @@ public sealed class RegistrationViewModel
 
     /// <summary>Set when the user was invited: the profile choice is skipped.</summary>
     public string? JoiningAccountName { get; set; }
+
+    /// <summary>SENECARE staff (admins, technicians) have no customer profile to choose.</summary>
+    public bool IsStaff { get; set; }
 }
 
 public sealed class InvitationViewModel

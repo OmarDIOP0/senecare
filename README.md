@@ -166,6 +166,25 @@ En production, utiliser des variables d'environnement (`ConnectionStrings__Defau
 - API : `POST /api/v1/auth/otp`, `/auth/otp/verify` (jetons JWT + refresh), `/auth/refresh`,
   `/auth/logout`, `/auth/register`, `GET /api/v1/me`.
 
+## Premier administrateur et paiements Wave
+
+Les numéros listés dans `Bootstrap:SuperAdminPhones` (séparés par des virgules) reçoivent le rôle
+Super-admin au démarrage ; ils se connectent ensuite par téléphone + code comme tout le monde :
+
+```bash
+dotnet user-secrets --project src/SeneCare.Web set "Bootstrap:SuperAdminPhones" "77 123 45 67"
+```
+
+Paiement (en attendant les agrégateurs PayDunya / PayTech / CinetPay) :
+
+1. L'admin (Super-admin ou Comptabilité) colle le lien marchand Wave dans `/admin/paiements`
+   (paramètre en base `payments.wave_link`, jamais dans le code). `{montant}` dans le lien est
+   remplacé par le montant de la facture.
+2. Le client voit dans « Mon abonnement » le montant, le bouton « Payer avec Wave » et le QR code,
+   paie, puis touche « J'ai payé » (référence Wave facultative).
+3. L'admin compare avec l'historique Wave Business puis valide (facture payée, abonnement activé
+   ou prolongé) ou refuse avec un motif visible par le client. Chaque décision est journalisée.
+
 ## Langues
 
 Français par défaut, wolof prévu (`?culture=wo` ou cookie). Les textes de l'interface

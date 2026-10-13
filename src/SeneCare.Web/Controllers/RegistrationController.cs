@@ -37,6 +37,7 @@ public sealed class RegistrationController(
             FullName = profile.FullName,
             JoiningAccountName = (profile.Memberships.Count > 0 ? profile.Memberships[0].AccountName : null),
             AcceptsWhatsApp = true,
+            IsStaff = IsStaff(profile),
         });
     }
 
@@ -54,6 +55,7 @@ public sealed class RegistrationController(
             ModelState.AddModelError(string.Empty, this.ErrorMessage(result.Error));
             var profile = await getProfile.HandleAsync(userId, cancellationToken);
             model.JoiningAccountName = profile?.Memberships.Count > 0 ? profile.Memberships[0].AccountName : null;
+            model.IsStaff = profile is not null && IsStaff(profile);
             return View(model);
         }
 
@@ -62,4 +64,7 @@ public sealed class RegistrationController(
         await signInManager.RefreshSignInAsync(identityUser!);
         return LocalRedirect("/");
     }
+
+    private static bool IsStaff(UserProfileDto profile) =>
+        profile.Roles.Any(r => r != SeneCare.Domain.Users.PlatformRole.Customer);
 }

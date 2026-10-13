@@ -7,11 +7,11 @@
     var latest = page.Operations.FirstOrDefault();
 }
 <section class="sc-carte" aria-labelledby="voisins-titre">
-    <h2 id="voisins-titre" class="sc-sous-titre">@L["Community_Title", page.Name]</h2>
+    <h2 id="voisins-titre" class="text-sm font-medium text-charbon-doux">@L["Community_Title", page.Name]</h2>
     @if (latest is not null)
     {
-        <p class="mt-2 text-sm font-bold text-baobab">@L["Community_LatestOperation", Formatting.ShortDate(new DateTimeOffset(latest.Date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero)), latest.Trees]</p>
-        <p class="mt-1">@latest.Description</p>
+        <p class="mt-2 text-sm font-medium text-baobab">@L["Community_LatestOperation", Formatting.ShortDate(new DateTimeOffset(latest.Date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero)), latest.Trees]</p>
+        <p class="mt-1 text-sm">@latest.Description</p>
         @if (latest.PhotoIds.Count > 0)
         {
             <div class="mt-2 flex gap-2 overflow-x-auto">
@@ -22,13 +22,9 @@
             </div>
         }
     }
-    else
-    {
-        <p class="mt-1">@L["Community_Invite_Text", page.Remaining]</p>
-    }
-    <div class="mt-4 grid gap-2 sm:grid-cols-2">
+    <div class="mt-3 flex flex-wrap gap-2">
         <a href="@whatsApp" class="sc-btn-whatsapp" target="_blank" rel="noopener"><sc-icon name="message-circle" />@L["Community_Share"]</a>
         <a href="@publicUrl" class="sc-btn-secondaire">@L["Community_SeePage"]</a>
     </div>
-    <p class="sc-texte-doux mt-3">@(Model.Referral.Invited == 0 ? L["Community_NoReferral"] : L["Community_Referrals", Model.Referral.Invited, Model.Referral.Members])</p>
+    <p class="mt-3 text-[13px] text-charbon-doux">@(Model.Referral.Invited == 0 ? L["Community_NoReferral"] : L["Community_Referrals", Model.Referral.Invited, Model.Referral.Members])</p>
 </section>

@@ -9,7 +9,7 @@
     string Day(DateOnly d) => Formatting.ShortDate(new DateTimeOffset(d.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero));
 }
 
-<a href="/entreprise/diagnostics" class="text-sm font-bold">← @L["Space_Diagnostics"]</a>
+<a href="/entreprise/diagnostics" class="text-sm font-medium">← @L["Space_Diagnostics"]</a>
 <div class="mt-2 flex flex-wrap items-start justify-between gap-3">
     <div>
         <h1 class="sc-titre">@title</h1>
@@ -22,10 +22,10 @@
 </div>
 
 <dl class="sc-carte mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-    <div><dt class="sc-texte-doux">@L["Diagnostic_Date"]</dt><dd class="font-bold">@Formatting.ShortDate(Model.Slot.ScheduledFor)</dd></div>
-    <div><dt class="sc-texte-doux">@L["Diagnostic_Status"]</dt><dd class="font-bold">@L["DiagnosticStatus_" + Model.Slot.Status]</dd></div>
-    <div><dt class="sc-texte-doux">@L["Diagnostic_Technician"]</dt><dd class="font-bold">@(Model.TechnicianName ?? "—")</dd></div>
-    <div><dt class="sc-texte-doux">@L["Diagnostic_Anomalies"]</dt><dd class="text-2xl font-bold @(Model.Slot.Anomalies > 0 ? "text-laterite" : "text-baobab")">@Model.Slot.Anomalies</dd></div>
+    <div><dt class="sc-texte-doux">@L["Diagnostic_Date"]</dt><dd class="font-medium">@Formatting.ShortDate(Model.Slot.ScheduledFor)</dd></div>
+    <div><dt class="sc-texte-doux">@L["Diagnostic_Status"]</dt><dd class="font-medium">@L["DiagnosticStatus_" + Model.Slot.Status]</dd></div>
+    <div><dt class="sc-texte-doux">@L["Diagnostic_Technician"]</dt><dd class="font-medium">@(Model.TechnicianName ?? "—")</dd></div>
+    <div><dt class="sc-texte-doux">@L["Diagnostic_Anomalies"]</dt><dd class="text-2xl font-semibold @(Model.Slot.Anomalies > 0 ? "text-rouge" : "")">@Model.Slot.Anomalies</dd></div>
 </dl>
 
 @if (!string.IsNullOrWhiteSpace(Model.Recommendations))
@@ -48,14 +48,14 @@
                     <li class="py-3">
                         <div class="flex items-start justify-between gap-3">
                             <div class="min-w-0">
-                                <p class="text-xs font-bold text-charbon-doux">@L["Domain_" + point.Domain]</p>
-                                <p class="font-bold">@point.Label</p>
+                                <p class="text-xs font-medium text-charbon-doux">@L["Domain_" + point.Domain]</p>
+                                <p class="font-medium">@point.Label</p>
                                 @if (point.Comment is { } comment)
                                 {
                                     <p class="text-sm">@comment</p>
                                 }
                             </div>
-                            <span class="sc-badge shrink-0 @(anomaly ? "bg-laterite-clair text-laterite" : point.Result == ControlPointResult.Ok ? "bg-baobab-clair text-baobab" : "bg-sourdine text-charbon-doux")">@L["ControlPoint_" + point.Result]</span>
+                            <span class="sc-badge shrink-0 @(anomaly ? "bg-rouge-clair text-rouge" : point.Result == ControlPointResult.Ok ? "bg-baobab-clair text-baobab" : "bg-sourdine text-charbon-doux")">@L["ControlPoint_" + point.Result]</span>
                         </div>
                         @if (point.PhotoIds.Count > 0)
                         {
@@ -70,7 +70,7 @@
                         {
                             @if (point.ConvertedRequestId is { } requestId)
                             {
-                                <a href="/interventions/@requestId" class="mt-2 inline-flex items-center gap-1 text-sm font-bold"><sc-icon name="clipboard-list" class="size-4" />@L["Diagnostic_SeeRequest"]</a>
+                                <a href="/interventions/@requestId" class="mt-2 inline-flex items-center gap-1 text-sm font-medium"><sc-icon name="clipboard-list" class="size-4" />@L["Diagnostic_SeeRequest"]</a>
                             }
                             else if (Model.CanConvert)
                             {

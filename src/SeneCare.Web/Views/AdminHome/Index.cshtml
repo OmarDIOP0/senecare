@@ -13,29 +13,43 @@
 
 <h1 class="sc-titre" data-tour="tableau-de-bord">@L["Tab_Dashboard"]</h1>
 
-<section aria-label="@L["Biz_Figures"]" class="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-5">
-    <a href="@(dispatch ? "/admin/dispatch" : null)" class="sc-carte text-charbon no-underline">
-        <p class="sc-texte-doux">@L["Admin_Open"]</p>
-        <p class="mt-1 text-2xl font-bold">@Model.Open</p>
+<section aria-label="@L["Biz_Figures"]" class="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-ligne bg-ligne lg:grid-cols-5">
+    <a href="@(dispatch ? "/admin/dispatch" : null)" class="bg-surface px-4 py-3 text-charbon no-underline hover:bg-sourdine hover:no-underline">
+        <p class="text-[13px] text-charbon-doux">@L["Admin_Open"]</p>
+        <p class="mt-1 text-2xl font-semibold tracking-tight tabular-nums">@Model.Open</p>
     </a>
-    <a href="@(dispatch ? "/admin/dispatch" : null)" class="sc-carte text-charbon no-underline">
-        <p class="sc-texte-doux">@L["Admin_Late"]</p>
-        <p class="mt-1 text-2xl font-bold @(Model.LateNow > 0 ? "text-laterite" : "")">@Model.LateNow</p>
+    <a href="@(dispatch ? "/admin/dispatch" : null)" class="bg-surface px-4 py-3 text-charbon no-underline hover:bg-sourdine hover:no-underline">
+        <p class="text-[13px] text-charbon-doux">@L["Admin_Late"]</p>
+        <p class="mt-1 text-2xl font-semibold tracking-tight tabular-nums @(Model.LateNow > 0 ? "text-rouge" : "")">@Model.LateNow</p>
     </a>
-    <div class="sc-carte">
-        <p class="sc-texte-doux">@L["Admin_Sla"]</p>
-        <p class="mt-1 text-2xl font-bold @(Model.SlaRate is < 90 ? "text-laterite" : "text-baobab")">@(Model.SlaRate is { } r ? r + " %" : "—")</p>
-        <p class="sc-texte-doux">@L["Admin_SlaWindow", Model.SlaMeasured]</p>
+    <div class="bg-surface px-4 py-3">
+        <p class="text-[13px] text-charbon-doux">@L["Admin_Sla"]</p>
+        @if (Model.SlaRate is { } r)
+        {
+            <p class="mt-1 text-2xl font-semibold tracking-tight tabular-nums @(r < 90 ? "text-rouge" : "")">@r %</p>
+            <p class="mt-0.5 text-xs text-charbon-doux">@L["Admin_SlaWindow", Model.SlaMeasured]</p>
+        }
+        else
+        {
+            <p class="mt-2 text-[13px] text-charbon-pale">@L["Admin_NotEnoughData"]</p>
+        }
     </div>
-    <a href="@(finance ? "/admin/paiements" : null)" class="sc-carte text-charbon no-underline">
-        <p class="sc-texte-doux">@L["Admin_Unpaid"]</p>
-        <p class="mt-1 text-2xl font-bold"><sc-amount value="@Model.Unpaid.Amount" /></p>
-        <p class="sc-texte-doux">@L["Admin_UnpaidInvoices", Model.UnpaidInvoices, Model.PendingPayments]</p>
+    <a href="@(finance ? "/admin/paiements" : null)" class="bg-surface px-4 py-3 text-charbon no-underline hover:bg-sourdine hover:no-underline">
+        <p class="text-[13px] text-charbon-doux">@L["Admin_Unpaid"]</p>
+        <p class="mt-1 text-2xl font-semibold tracking-tight"><sc-amount value="@Model.Unpaid.Amount" /></p>
+        <p class="mt-0.5 text-xs text-charbon-doux">@L["Admin_UnpaidInvoices", Model.UnpaidInvoices, Model.PendingPayments]</p>
     </a>
-    <div class="sc-carte">
-        <p class="sc-texte-doux">@L["Admin_Satisfaction"]</p>
-        <p class="mt-1 text-2xl font-bold">@(Model.AverageRating is { } avg ? avg.ToString("0.0", CultureInfo.CurrentCulture) + " / 5" : "—")</p>
-        <p class="sc-texte-doux">@L["Admin_Ratings", Model.Ratings, Model.Disputes]</p>
+    <div class="col-span-2 bg-surface px-4 py-3 lg:col-span-1">
+        <p class="text-[13px] text-charbon-doux">@L["Admin_Satisfaction"]</p>
+        @if (Model.AverageRating is { } avg)
+        {
+            <p class="mt-1 text-2xl font-semibold tracking-tight tabular-nums">@avg.ToString("0.0", CultureInfo.CurrentCulture) / 5</p>
+            <p class="mt-0.5 text-xs text-charbon-doux">@L["Admin_Ratings", Model.Ratings, Model.Disputes]</p>
+        }
+        else
+        {
+            <p class="mt-2 text-[13px] text-charbon-pale">@L["Admin_NotEnoughData"]</p>
+        }
     </div>
 </section>
 
@@ -47,8 +61,8 @@
             {
                 var height = (int)Math.Round(100.0 * month.Amount.Amount / maxRevenue);
                 <li class="flex h-full flex-1 flex-col items-center justify-end gap-1">
-                    <span class="text-xs font-bold tabular-nums">@(month.Amount.Amount >= 1_000_000 ? (month.Amount.Amount / 1_000_000.0).ToString("0.#", CultureInfo.CurrentCulture) + " M" : (month.Amount.Amount / 1000).ToString("N0", CultureInfo.CurrentCulture) + " k")</span>
-                    <span class="w-full rounded-t-md bg-laterite" style="height: @(Math.Max(height, 2))%" title="@Formatting.Fcfa(month.Amount)"></span>
+                    <span class="text-xs font-medium tabular-nums">@(month.Amount.Amount >= 1_000_000 ? (month.Amount.Amount / 1_000_000.0).ToString("0.#", CultureInfo.CurrentCulture) + " M" : (month.Amount.Amount / 1000).ToString("N0", CultureInfo.CurrentCulture) + " k")</span>
+                    <span class="w-full rounded-t-sm bg-charbon-pale" style="height: @(Math.Max(height, 2))%" title="@Formatting.Fcfa(month.Amount)"></span>
                     <span class="text-xs">@Month(month.Year, month.Month)</span>
                 </li>
             }
@@ -76,14 +90,14 @@
         <h2 id="quartiers-titre" class="sc-sous-titre">@L["Admin_Neighborhoods"]</h2>
         @if (Model.Neighborhoods.Count == 0)
         {
-            <p class="sc-texte-doux mt-2">—</p>
+            <p class="sc-texte-doux mt-2">@L["Admin_NotEnoughData"]</p>
         }
         <ul class="mt-3 grid gap-3">
             @foreach (var n in Model.Neighborhoods)
             {
                 var pct = Math.Min(100, (int)Math.Round(100.0 * n.Members / Math.Max(1, n.Threshold)));
                 <li>
-                    <p class="flex justify-between text-sm"><span class="font-bold">@n.Neighborhood <span class="font-normal text-charbon-doux">· @n.Commune</span></span><span class="tabular-nums">@n.Members / @n.Threshold</span></p>
+                    <p class="flex justify-between text-sm"><span class="font-medium">@n.Neighborhood <span class="font-normal text-charbon-doux">· @n.Commune</span></span><span class="tabular-nums">@n.Members / @n.Threshold</span></p>
                     <span class="mt-1 block h-2 rounded-full bg-ligne"><span class="block h-2 rounded-full bg-baobab" style="width: @pct%"></span></span>
                 </li>
             }

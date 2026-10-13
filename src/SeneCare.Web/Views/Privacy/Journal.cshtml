@@ -10,7 +10,7 @@
     string Link(int p) => $"?page={p}&sensibles={(sensitive ? "true" : "false")}&q={Uri.EscapeDataString(action ?? string.Empty)}";
 }
 
-<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-bold">← @L["Tab_Management"]</a>
+<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-medium">← @L["Tab_Management"]</a>
 <h1 class="sc-titre">@L["Admin_Journal"]</h1>
 
 <form method="get" class="mt-4 flex flex-wrap items-end gap-3">
@@ -23,8 +23,8 @@
 </form>
 
 <div class="mt-4 overflow-x-auto rounded-lg border border-ligne bg-surface">
-    <table class="w-full min-w-[56rem] text-left text-sm">
-        <thead class="bg-sable text-xs uppercase tracking-wide">
+    <table class="sc-table min-w-[56rem]">
+        <thead>
             <tr>
                 <th scope="col" class="px-3 py-2">@L["Export_Col_Date"]</th>
                 <th scope="col" class="px-3 py-2">@L["Admin_JournalWho"]</th>

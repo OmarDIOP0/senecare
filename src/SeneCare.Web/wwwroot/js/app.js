@@ -190,8 +190,11 @@
   // ---- Service worker + « Nouvelle version disponible » banner. ----
   if ("serviceWorker" in navigator) {
     let reloading = false;
+    // First visit: the worker takes control (clients.claim) — reloading then would cancel a form
+    // being sent (e.g. the phone number at sign-in). Reload only when an update replaces a worker.
+    const hadController = Boolean(navigator.serviceWorker.controller);
     navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if (reloading) return;
+      if (reloading || !hadController) return;
       reloading = true;
       location.reload();
     });

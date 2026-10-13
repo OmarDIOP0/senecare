@@ -7,7 +7,7 @@
     ViewData["Wide"] = true;
 }
 
-<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-bold">← @L["Tab_Management"]</a>
+<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-medium">← @L["Tab_Management"]</a>
 <div class="flex flex-wrap items-center justify-between gap-3">
     <h1 class="sc-titre">@L["Admin_Technicians"]</h1>
     <button type="button" class="sc-btn-primaire" data-sheet-open="nouveau-tech"><sc-icon name="plus" />@L["Admin_TechAdd"]</button>
@@ -30,7 +30,7 @@
             <p class="mt-2 flex flex-wrap gap-1">
                 @foreach (var skill in t.Skills)
                 {
-                    <span class="sc-badge bg-laterite-clair text-laterite">@L["Domain_" + skill]</span>
+                    <span class="sc-badge bg-sourdine text-charbon-doux">@L["Domain_" + skill]</span>
                 }
             </p>
             <p class="mt-1 text-sm">@L["Admin_ZonesCount", t.CommuneIds.Count] · @(t.Week.Count == 0 ? L["Admin_NoWeek"] : L["Admin_DaysCount", t.Week.Count])</p>

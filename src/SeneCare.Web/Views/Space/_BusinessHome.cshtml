@@ -42,9 +42,9 @@
     @if (hasData)
     {
         <section aria-label="@L["Biz_Figures"]" class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-ligne bg-ligne @columns">
-            @foreach (var (label, value, note) in kpis)
+            @foreach (var (index, (label, value, note)) in kpis.Index())
             {
-                <div class="bg-surface px-4 py-3">
+                <div class="bg-surface px-4 py-3 @(kpis.Count % 2 == 1 && index == kpis.Count - 1 ? "col-span-2 lg:col-span-1" : "")">
                     <p class="text-[13px] text-charbon-doux">@label</p>
                     <p class="mt-1 text-2xl font-semibold tracking-tight tabular-nums">@value</p>
                     @if (note is not null)
@@ -144,7 +144,7 @@
         </section>
     }
 
-    <section class="grid gap-4 md:grid-cols-2" aria-label="@L["Biz_Offer"]">
+    <section class="grid items-start gap-4 md:grid-cols-2" aria-label="@L["Biz_Offer"]">
         <div class="sc-carte">
             <div class="flex items-center justify-between gap-2">
                 <h2 class="text-sm font-medium text-charbon-doux">@L["Biz_Offer"]</h2>

@@ -9,7 +9,7 @@
     string Day(DateOnly d) => Formatting.ShortDate(new DateTimeOffset(d.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero));
 }
 
-<a href="/admin/clients" class="inline-flex min-h-12 items-center font-bold">← @L["Admin_Customers"]</a>
+<a href="/admin/clients" class="inline-flex min-h-12 items-center font-medium">← @L["Admin_Customers"]</a>
 <h1 class="sc-titre">@s.Name</h1>
 <p class="mt-1">@(s.Kind == AccountKind.Business ? L["Register_ProfileBusiness"] : L["Register_ProfileHousehold"]) · @L["Admin_Since"] @Formatting.ShortDate(s.CreatedAt)@(Model.Ninea is { } ninea ? " · NINEA " + ninea : "")</p>
 <p class="mt-1">@L["Admin_RequestsCount", Model.Requests, Model.OpenRequests]</p>
@@ -21,13 +21,13 @@
             @foreach (var m in Model.Members)
             {
                 <li class="flex flex-wrap justify-between gap-2 py-2">
-                    <span><span class="font-bold">@(m.Name ?? "—")</span> · +221 @m.Phone</span>
+                    <span><span class="font-medium">@(m.Name ?? "—")</span> · +221 @m.Phone</span>
                     <span class="flex items-center gap-2">
                         <span class="sc-badge bg-sourdine text-charbon-doux">@L["Role_" + m.Role]</span>
                         @if (User.IsInRole("SuperAdmin"))
                         {
-                            <a href="/admin/donnees/@m.UserId/export.json" class="text-sm font-bold" download>@L["Admin_ExportData"]</a>
-                            <button type="button" class="text-sm font-bold text-laterite" data-sheet-open="effacer-@m.UserId">@L["Admin_Erase"]</button>
+                            <a href="/admin/donnees/@m.UserId/export.json" class="text-sm font-medium" download>@L["Admin_ExportData"]</a>
+                            <button type="button" class="text-sm font-medium text-laterite" data-sheet-open="effacer-@m.UserId">@L["Admin_Erase"]</button>
                             <sc-sheet id="effacer-@m.UserId" title="@L["Admin_Erase"]">
                                 <form method="post" action="/admin/donnees/@m.UserId/effacer" class="grid gap-3">
                                     @Html.AntiForgeryToken()
@@ -49,7 +49,7 @@
         <ul class="mt-2 divide-y divide-ligne">
             @foreach (var site in Model.Sites)
             {
-                <li class="py-2"><span class="font-bold">@site.Name</span> · @L["PropertyKind_" + site.Kind]<span class="block text-sm">@site.Place</span></li>
+                <li class="py-2"><span class="font-medium">@site.Name</span> · @L["PropertyKind_" + site.Kind]<span class="block text-sm">@site.Place</span></li>
             }
         </ul>
     </section>
@@ -60,7 +60,7 @@
             @foreach (var sub in Model.Subscriptions)
             {
                 <li class="flex flex-wrap justify-between gap-2 py-2">
-                    <span><span class="font-bold">@sub.Plan</span> · <sc-amount value="@sub.MonthlyPrice.Amount" /> @L["Offer_PerMonth"]@if (sub.NextDueDate is { } due) { <span class="block text-sm">@L["Subscription_NextDue", Day(due)]</span> }</span>
+                    <span><span class="font-medium">@sub.Plan</span> · <sc-amount value="@sub.MonthlyPrice.Amount" /> @L["Offer_PerMonth"]@if (sub.NextDueDate is { } due) { <span class="block text-sm">@L["Subscription_NextDue", Day(due)]</span> }</span>
                     <span class="sc-badge bg-sourdine text-charbon-doux">@L["SubscriptionStatus_" + sub.Status]</span>
                 </li>
             }
@@ -73,8 +73,8 @@
             @foreach (var invoice in Model.Invoices)
             {
                 <li class="flex flex-wrap justify-between gap-2 py-2">
-                    <span><span class="font-bold">@invoice.Number</span><span class="block text-sm">@L["Subscription_DueOn", Day(invoice.DueDate)]</span></span>
-                    <span class="text-right"><sc-amount value="@invoice.Total.Amount" class="font-bold" /><span class="block text-sm">@L["InvoiceStatus_" + invoice.Status]</span></span>
+                    <span><span class="font-medium">@invoice.Number</span><span class="block text-sm">@L["Subscription_DueOn", Day(invoice.DueDate)]</span></span>
+                    <span class="text-right"><sc-amount value="@invoice.Total.Amount" class="font-medium" /><span class="block text-sm">@L["InvoiceStatus_" + invoice.Status]</span></span>
                 </li>
             }
         </ul>

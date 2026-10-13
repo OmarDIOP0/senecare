@@ -197,10 +197,9 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* 15px on phones, 14px on desktop. Numbers line up (no slashed zero). */
+  /* 15px on phones, 14px on desktop. Tabular figures only where numbers are compared. */
   body {
     @apply bg-sable font-sans text-[15px] leading-normal text-charbon antialiased lg:text-sm;
-    font-feature-settings: "cv11", "ss01";
   }
 
   h1, h2, h3 {
@@ -215,7 +214,7 @@
     @apply text-atlantique underline-offset-2 hover:underline;
   }
 
-  table, .tabular-nums, input[type=number] {
+  .tabular-nums, input[type=number] {
     font-variant-numeric: tabular-nums;
   }
 

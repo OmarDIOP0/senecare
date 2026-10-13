@@ -16,7 +16,7 @@
 
 @if (siteCount == 0)
 {
-    <p class="sc-alert mt-4 border-soleil bg-soleil-clair">@L["Offer_NeedSite"] <a href="/logements/nouveau" class="font-bold">@L["Site_Add"]</a></p>
+    <p class="sc-alert mt-4 border-soleil bg-soleil-clair">@L["Offer_NeedSite"] <a href="/logements/nouveau" class="font-medium">@L["Site_Add"]</a></p>
 }
 
 <div class="mt-6 grid gap-4 md:grid-cols-3">
@@ -28,20 +28,20 @@
             {
                 <p class="sc-surtitre">@L["Offer_Popular"]</p>
             }
-            <h2 id="offre-@offer.Code" class="text-2xl font-bold">@offer.Name</h2>
-            <p class="mt-2"><sc-amount value="@offer.MonthlyPrice.Amount" class="text-2xl font-bold text-laterite" /> <span class="text-charbon-doux">@L["Offer_PerMonth"]</span></p>
+            <h2 id="offre-@offer.Code" class="text-2xl font-semibold">@offer.Name</h2>
+            <p class="mt-2"><sc-amount value="@offer.MonthlyPrice.Amount" class="text-2xl font-semibold text-laterite" /> <span class="text-charbon-doux">@L["Offer_PerMonth"]</span></p>
             <p class="sc-texte-doux">@L["Offer_Billing", offer.BillingPeriodMonths]</p>
 
-            <h3 class="mt-4 text-sm font-bold">@L["Offer_Delays"]</h3>
+            <h3 class="mt-4 text-sm font-semibold">@L["Offer_Delays"]</h3>
             <dl class="mt-1 grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 text-sm">
                 @foreach (var urgency in urgencies)
                 {
                     if (offer.DelayFor(urgency) is { } delay)
                     {
-                        <dt class="text-charbon-doux">@L["Urgency_" + urgency]</dt><dd class="text-right font-bold">@Hours(delay)</dd>
+                        <dt class="text-charbon-doux">@L["Urgency_" + urgency]</dt><dd class="text-right font-medium">@Hours(delay)</dd>
                     }
                 }
-                <dt class="text-charbon-doux">@L["Offer_Visits"]</dt><dd class="text-right font-bold">@(offer.IncludedVisitsPerPeriod is { } v ? L["Offer_VisitsCount", v] : L["Offer_VisitsUnlimited"])</dd>
+                <dt class="text-charbon-doux">@L["Offer_Visits"]</dt><dd class="text-right font-medium">@(offer.IncludedVisitsPerPeriod is { } v ? L["Offer_VisitsCount", v] : L["Offer_VisitsUnlimited"])</dd>
             </dl>
             <ul class="mt-3 grid gap-1 text-sm">
                 @if (offer.DiagnosticRequired)
@@ -53,7 +53,7 @@
             </ul>
 
             <div class="mt-auto pt-5">
-                <p class="text-sm">@L["Offer_FirstPayment"] <sc-amount value="@offer.FirstPayment.Amount" class="font-bold" /></p>
+                <p class="text-sm">@L["Offer_FirstPayment"] <sc-amount value="@offer.FirstPayment.Amount" class="font-medium" /></p>
                 <p class="sc-aide">@L["Offer_FirstPayment_Hint", Formatting.Fcfa(offer.RegistrationFee)]</p>
                 <form method="post" asp-action="Choose" class="mt-3">
                     <input type="hidden" name="plan" value="@offer.Code" />

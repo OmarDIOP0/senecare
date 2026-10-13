@@ -22,13 +22,13 @@
             <li class="sc-carte">
                 <div class="flex flex-wrap items-start justify-between gap-2">
                     <div>
-                        <p class="font-bold">@p.CustomerName <span class="font-normal text-charbon-doux">· +221 @p.CustomerPhone</span></p>
+                        <p class="font-medium">@p.CustomerName <span class="font-normal text-charbon-doux">· +221 @p.CustomerPhone</span></p>
                         <p class="text-sm text-charbon-doux">@p.AccountName · @L["AdminPay_DeclaredOn", Formatting.ShortDateTime(p.DeclaredAt)]</p>
                     </div>
                     <sc-amount value="@p.Amount.Amount" class="text-base font-semibold text-laterite" />
                 </div>
                 <dl class="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
-                    <dt class="text-charbon-doux">@L["AdminPay_Invoice"]</dt><dd class="font-bold">@p.InvoiceNumber</dd>
+                    <dt class="text-charbon-doux">@L["AdminPay_Invoice"]</dt><dd class="font-medium">@p.InvoiceNumber</dd>
                     <dt class="text-charbon-doux">@L["AdminPay_Channel"]</dt><dd>@p.Channel</dd>
                     <dt class="text-charbon-doux">@L["AdminPay_CustomerRef"]</dt><dd class="font-mono">@(p.CustomerReference ?? "—")</dd>
                 </dl>
@@ -59,17 +59,17 @@
         {
             <li class="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
                 <div>
-                    <p class="font-bold">@invoice.Number · @invoice.AccountName</p>
+                    <p class="font-medium">@invoice.Number · @invoice.AccountName</p>
                     <p class="text-sm">@L["Subscription_DueOn", Formatting.ShortDate(new DateTimeOffset(invoice.DueDate.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero))] · @L["InvoiceStatus_" + invoice.Status]</p>
                 </div>
                 <div class="flex items-center gap-3">
-                    <sc-amount value="@invoice.Due.Amount" class="font-bold" />
+                    <sc-amount value="@invoice.Due.Amount" class="font-medium" />
                     <button type="button" class="sc-btn-secondaire min-h-10 text-sm" data-sheet-open="encaisser-@invoice.InvoiceId">@L["AdminPay_Record"]</button>
                 </div>
                 <sc-sheet id="encaisser-@invoice.InvoiceId" title="@L["AdminPay_Record"]">
                     <form method="post" action="/admin/paiements/factures/@invoice.InvoiceId/encaisser" class="grid gap-3">
                         @Html.AntiForgeryToken()
-                        <p>@invoice.Number · <sc-amount value="@invoice.Due.Amount" class="font-bold" /></p>
+                        <p>@invoice.Number · <sc-amount value="@invoice.Due.Amount" class="font-medium" /></p>
                         <fieldset class="grid grid-cols-2 gap-2">
                             <legend class="sc-label">@L["AdminPay_Channel"]</legend>
                             <label class="sc-choix"><input type="radio" name="channel" value="Cash" checked />@L["Channel_Cash"]</label>

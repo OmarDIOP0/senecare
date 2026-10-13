@@ -39,7 +39,7 @@
 
 @if (d.SlaDeadline is { } deadline && s.IsOpen && s.Status is RequestStatus.Submitted or RequestStatus.UnderReview or RequestStatus.AppointmentProposed or RequestStatus.AppointmentConfirmed)
 {
-    <p class="mt-3 flex items-center gap-2 text-sm"><sc-icon name="clock" class="size-4 text-laterite" />@L["Request_Sla", Formatting.ShortDateTime(deadline)]</p>
+    <p class="mt-3 flex items-center gap-2 text-sm"><sc-icon name="clock" class="size-4 text-charbon-doux" />@L["Request_Sla", Formatting.ShortDateTime(deadline)]</p>
 }
 
 @* ---- What the customer must do now ---- *@
@@ -52,7 +52,7 @@
             {
                 <label class="sc-choix">
                     <input type="radio" name="slot" value="@slot.Start.ToString("O", System.Globalization.CultureInfo.InvariantCulture)" required />
-                    <span class="font-bold">@Formatting.ShortDate(slot.Start)</span> @Formatting.Time(slot.Start) – @Formatting.Time(slot.End)
+                    <span class="font-medium">@Formatting.ShortDate(slot.Start)</span> @Formatting.Time(slot.Start) – @Formatting.Time(slot.End)
                 </label>
             }
             <button type="submit" class="sc-btn-primaire mt-2"><sc-icon name="calendar-check" />@L["Request_ConfirmSlot"]</button>
@@ -63,8 +63,8 @@
 @if (s.Technician is { } tech && s.IsOpen)
 {
     <section class="sc-carte mt-6" aria-labelledby="tech-titre">
-        <h2 id="tech-titre" class="font-bold">@L["Request_YourTechnician"]</h2>
-        <p class="mt-1 flex items-center gap-2"><sc-icon name="wrench" class="text-laterite" />@tech.Name</p>
+        <h2 id="tech-titre" class="font-semibold">@L["Request_YourTechnician"]</h2>
+        <p class="mt-1 flex items-center gap-2"><sc-icon name="wrench" class="text-charbon-doux" />@tech.Name</p>
         <div class="mt-3 grid grid-cols-2 gap-2">
             <a href="tel:@tech.PhoneE164" class="sc-btn-secondaire"><sc-icon name="phone" />@L["Card_Call"]</a>
             <a href="https://wa.me/@tech.PhoneE164.TrimStart('+')" class="sc-btn-whatsapp" rel="noopener"><sc-icon name="message-circle" />WhatsApp</a>
@@ -78,7 +78,7 @@
              data-lat="@d.PropertyLocation?.Latitude.ToString(System.Globalization.CultureInfo.InvariantCulture)"
              data-lng="@d.PropertyLocation?.Longitude.ToString(System.Globalization.CultureInfo.InvariantCulture)"
              data-text-live="@L["Tracking_Live"]">
-        <h2 id="suivi-titre" class="font-bold">@L["Tracking_Title"]</h2>
+        <h2 id="suivi-titre" class="font-semibold">@L["Tracking_Title"]</h2>
         <p class="sc-texte-doux mt-1" data-tracking-status role="status">@L["Tracking_Waiting"]</p>
         @* isolate: Leaflet layers stay below the tab bar. *@
         <div class="isolate mt-3 h-56 overflow-hidden rounded-md" data-tracking-map hidden></div>
@@ -118,7 +118,7 @@
         <form method="post" asp-action="Dispute" asp-route-id="@s.Id" class="grid gap-3">
             <label class="sc-label" for="reason">@L["Request_DisputeReason"]</label>
             <textarea id="reason" name="reason" rows="3" class="sc-input py-2" required></textarea>
-            <button type="submit" class="sc-btn bg-laterite text-sur-accent">@L["Request_Dispute"]</button>
+            <button type="submit" class="sc-btn-danger">@L["Request_Dispute"]</button>
         </form>
     </sc-sheet>
 }
@@ -129,7 +129,7 @@
     <div class="mt-4">
         @if (s.Status == RequestStatus.Cancelled)
         {
-            <p class="flex items-center gap-2 font-bold"><sc-icon name="ban" class="text-charbon-doux" />@L["Request_CancelledText"]</p>
+            <p class="flex items-center gap-2 font-medium"><sc-icon name="ban" class="text-charbon-doux" />@L["Request_CancelledText"]</p>
         }
         else
         {
@@ -180,15 +180,15 @@
         }
         @if (d.WarrantyEndsOn is { } warranty)
         {
-            <p class="mt-3 flex items-center gap-2 text-sm font-bold text-baobab"><sc-icon name="shield-check" class="size-4" />@L["HealthBook_Until", Formatting.ShortDate(new DateTimeOffset(warranty.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero))]</p>
+            <p class="mt-3 flex items-center gap-2 text-sm font-medium text-baobab"><sc-icon name="shield-check" class="size-4" />@L["HealthBook_Until", Formatting.ShortDate(new DateTimeOffset(warranty.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero))]</p>
         }
         @if (d.RatingScore is { } score)
         {
-            <p class="mt-3 flex items-center gap-1 font-bold"><sc-icon name="star" class="size-4 fill-soleil text-soleil" />@L["Rating_Given", score] @d.RatingComment</p>
+            <p class="mt-3 flex items-center gap-1 font-medium"><sc-icon name="star" class="size-4 fill-soleil text-soleil" />@L["Rating_Given", score] @d.RatingComment</p>
         }
         @if (d.DisputeReason is not null)
         {
-            <p class="sc-alert mt-3 border-laterite bg-laterite-clair">@L["Request_DisputedText", d.DisputeReason]</p>
+            <p class="sc-alert mt-3 border-rouge/30 bg-rouge-clair">@L["Request_DisputedText", d.DisputeReason]</p>
         }
     </section>
 }
@@ -202,7 +202,7 @@
         <form method="post" asp-action="Cancel" asp-route-id="@s.Id" class="grid gap-3">
             <label class="sc-label" for="cancel-reason">@L["Request_CancelReason"]</label>
             <textarea id="cancel-reason" name="reason" rows="2" class="sc-input py-2"></textarea>
-            <button type="submit" class="sc-btn bg-laterite text-sur-accent">@L["Request_CancelConfirm"]</button>
+            <button type="submit" class="sc-btn-danger">@L["Request_CancelConfirm"]</button>
         </form>
     </sc-sheet>
 }

@@ -6,7 +6,7 @@
     ViewData["Wide"] = true;
 }
 
-<a href="/admin/techniciens" class="inline-flex min-h-12 items-center font-bold">← @L["Admin_Technicians"]</a>
+<a href="/admin/techniciens" class="inline-flex min-h-12 items-center font-medium">← @L["Admin_Technicians"]</a>
 <h1 class="sc-titre">@(string.IsNullOrEmpty(Model.Name) ? "+221 " + Model.Phone : Model.Name)</h1>
 <p class="mt-1">+221 @Model.Phone · @L["Dispatch_Load", Model.OpenMissions]</p>
 

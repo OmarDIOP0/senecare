@@ -459,7 +459,7 @@
   <data name="Error_payment_not_pending" xml:space="preserve"><value>Ce paiement a déjà été traité.</value></data>
   <data name="Common_Save" xml:space="preserve"><value>Enregistrer</value></data>
   <data name="Tab_Requests" xml:space="preserve"><value>Demandes</value></data>
-  <data name="Sites_Title" xml:space="preserve"><value>Mes sites</value></data>
+  <data name="Sites_Title" xml:space="preserve"><value>Sites</value></data>
   <data name="Sites_Empty_Title" xml:space="preserve"><value>Aucun site pour le moment</value></data>
   <data name="Sites_Empty_Text" xml:space="preserve"><value>Ajoutez vos bureaux, boutiques ou entrepôts : chaque site a son adresse, son point de repère et son carnet de santé.</value></data>
   <data name="Site_Add" xml:space="preserve"><value>Ajouter un site</value></data>
@@ -972,4 +972,6 @@
   <data name="Team_Invite" xml:space="preserve"><value>Inviter</value></data>
   <data name="Subscription_Description" xml:space="preserve"><value>Échéances, paiements et factures.</value></data>
   <data name="Requests_Description" xml:space="preserve"><value>Vos signalements et leur suivi.</value></data>
+  <data name="Admin_NotEnoughData" xml:space="preserve"><value>Pas encore assez de données</value></data>
+  <data name="Invoice_Col_Amount" xml:space="preserve"><value>Montant</value></data>
 </root>

@@ -16,7 +16,7 @@
 
 <div class="mt-4 flex items-center justify-between gap-2">
     <a href="?semaine=@Iso(start.AddDays(-7))" class="sc-btn-secondaire min-h-10 text-sm">← @L["Dispatch_PrevWeek"]</a>
-    <p class="font-bold">@L["Dispatch_Week", Formatting.ShortDate(new DateTimeOffset(start.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero))]</p>
+    <p class="font-medium">@L["Dispatch_Week", Formatting.ShortDate(new DateTimeOffset(start.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero))]</p>
     <a href="?semaine=@Iso(start.AddDays(7))" class="sc-btn-secondaire min-h-10 text-sm">@L["Dispatch_NextWeek"] →</a>
 </div>
 
@@ -25,12 +25,12 @@
     {
         var entries = Model.Where(e => DateOnly.FromDateTime(e.Start.UtcDateTime) == day).ToList();
         <section class="rounded-lg border border-ligne bg-surface p-2" aria-label="@day.ToString("dddd d MMMM", CultureInfo.CurrentCulture)">
-            <h2 class="text-sm font-bold capitalize">@day.ToString("ddd d", CultureInfo.CurrentCulture)</h2>
+            <h2 class="text-sm font-semibold capitalize">@day.ToString("ddd d", CultureInfo.CurrentCulture)</h2>
             <ul class="mt-2 grid gap-2">
                 @foreach (var e in entries)
                 {
-                    <li class="rounded-md border-l-4 bg-sable p-2 text-xs @(e.Urgency == Urgency.Critical ? "border-laterite" : e.Urgency == Urgency.High ? "border-soleil" : "border-atlantique")">
-                        <a href="/admin/dispatch/@e.RequestId" class="font-bold">@Formatting.Time(e.Start)–@Formatting.Time(e.End)</a>
+                    <li class="rounded-md border border-ligne bg-surface p-2 text-xs @(e.Urgency == Urgency.Critical ? "border-l-2 border-l-rouge" : e.Urgency == Urgency.High ? "border-l-2 border-l-soleil" : "")">
+                        <a href="/admin/dispatch/@e.RequestId" class="font-medium">@Formatting.Time(e.Start)–@Formatting.Time(e.End)</a>
                         <span class="block">@L["Domain_" + e.Domain] · @e.Site</span>
                         <span class="block text-charbon-doux">@(e.TechnicianName ?? L["Dispatch_Unassigned"].Value)</span>
                     </li>

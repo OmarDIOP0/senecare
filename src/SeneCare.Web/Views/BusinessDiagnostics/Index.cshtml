@@ -27,8 +27,8 @@
                 <sc-icon name="@(done ? "circle-check" : "calendar")" class="size-6" />
             </span>
             <div class="min-w-0 flex-1">
-                <p class="text-xs font-bold text-charbon-doux">@L["Diagnostic_PeriodShort", Day(d.Period.Start), Day(d.Period.End)]</p>
-                <h2 class="font-bold">
+                <p class="text-xs font-medium text-charbon-doux">@L["Diagnostic_PeriodShort", Day(d.Period.Start), Day(d.Period.End)]</p>
+                <h2 class="font-semibold">
                     @if (done)
                     {
                         <a href="/entreprise/diagnostics/@d.Id" class="text-charbon no-underline after:absolute after:inset-0 hover:underline">@L["Diagnostic_Of", Formatting.ShortDate(d.ScheduledFor)]</a>

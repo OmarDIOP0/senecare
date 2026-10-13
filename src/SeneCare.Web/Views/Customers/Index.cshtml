@@ -8,7 +8,7 @@
     var type = ViewData["Type"] as AccountKind?;
 }
 
-<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-bold">← @L["Tab_Management"]</a>
+<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-medium">← @L["Tab_Management"]</a>
 <h1 class="sc-titre">@L["Admin_Customers"]</h1>
 
 <form method="get" class="mt-4 flex flex-wrap items-end gap-2" role="search">
@@ -28,8 +28,8 @@
 </form>
 
 <div class="mt-4 overflow-x-auto rounded-lg border border-ligne bg-surface">
-    <table class="w-full min-w-[44rem] text-left text-sm">
-        <thead class="bg-sable text-xs uppercase tracking-wide">
+    <table class="sc-table min-w-[44rem]">
+        <thead>
             <tr>
                 <th scope="col" class="px-3 py-2">@L["Dispatch_Customer"]</th>
                 <th scope="col" class="px-3 py-2">@L["Admin_Contact"]</th>
@@ -42,7 +42,7 @@
             @foreach (var c in Model)
             {
                 <tr>
-                    <td class="px-3 py-2"><a href="/admin/clients/@c.AccountId" class="font-bold">@c.Name</a><span class="block text-xs">@(c.Kind == AccountKind.Business ? L["Register_ProfileBusiness"] : L["Register_ProfileHousehold"])</span></td>
+                    <td class="px-3 py-2"><a href="/admin/clients/@c.AccountId" class="font-medium">@c.Name</a><span class="block text-xs">@(c.Kind == AccountKind.Business ? L["Register_ProfileBusiness"] : L["Register_ProfileHousehold"])</span></td>
                     <td class="px-3 py-2">@(c.ContactName ?? "—")<span class="block text-xs">+221 @c.ContactPhone</span></td>
                     <td class="px-3 py-2">@c.Sites</td>
                     <td class="px-3 py-2">@(c.Status is { } s ? L["SubscriptionStatus_" + s] : "—")</td>

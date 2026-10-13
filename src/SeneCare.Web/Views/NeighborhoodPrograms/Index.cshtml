@@ -8,7 +8,7 @@
     var all = ViewData["All"] is true;
 }
 
-<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-bold">← @L["Tab_Management"]</a>
+<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-medium">← @L["Tab_Management"]</a>
 <div class="flex flex-wrap items-center justify-between gap-3">
     <h1 class="sc-titre">@L["Admin_Neighborhoods_Title"]</h1>
     <form method="post" action="/admin/quartiers/recompter">
@@ -19,11 +19,11 @@
 <p class="mt-2">
     @if (all)
     {
-        <a href="/admin/quartiers" class="font-bold">@L["Admin_Neighborhoods_WithMembers"]</a>
+        <a href="/admin/quartiers" class="font-medium">@L["Admin_Neighborhoods_WithMembers"]</a>
     }
     else
     {
-        <a href="/admin/quartiers?tous=true" class="font-bold">@L["Admin_Neighborhoods_All"]</a>
+        <a href="/admin/quartiers?tous=true" class="font-medium">@L["Admin_Neighborhoods_All"]</a>
     }
 </p>
 
@@ -33,7 +33,7 @@
         var pct = Math.Min(100, (int)Math.Round(100.0 * p.Members / Math.Max(1, p.Threshold)));
         <li class="sc-carte relative">
             <div class="flex items-start justify-between gap-2">
-                <a href="/admin/quartiers/@p.NeighborhoodId" class="font-bold after:absolute after:inset-0">@p.Neighborhood <span class="font-normal text-charbon-doux">· @p.Commune</span></a>
+                <a href="/admin/quartiers/@p.NeighborhoodId" class="font-medium after:absolute after:inset-0">@p.Neighborhood <span class="font-normal text-charbon-doux">· @p.Commune</span></a>
                 <span class="sc-badge @(p.Status == NeighborhoodProgramStatus.Active ? "bg-baobab-clair text-baobab" : "bg-sourdine text-charbon-doux")">@L["ProgramStatus_" + p.Status]</span>
             </div>
             <p class="mt-2 text-sm tabular-nums">@L["Admin_Members", p.Members, p.Threshold] · @L["Admin_Trees", p.Trees]</p>

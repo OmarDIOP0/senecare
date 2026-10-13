@@ -10,7 +10,7 @@
     var active = p.Status == NeighborhoodProgramStatus.Active;
 }
 
-<a href="/admin/quartiers" class="inline-flex min-h-12 items-center font-bold">← @L["Admin_Neighborhoods_Title"]</a>
+<a href="/admin/quartiers" class="inline-flex min-h-12 items-center font-medium">← @L["Admin_Neighborhoods_Title"]</a>
 <h1 class="sc-titre">@p.Neighborhood</h1>
 <p class="mt-1">@p.Commune · @L["ProgramStatus_" + p.Status] · @L["Admin_Members", p.Members, p.Threshold] · @L["Admin_Trees", p.Trees]</p>
 
@@ -25,7 +25,7 @@
         {
             <article class="sc-carte">
                 <div class="flex flex-wrap items-start justify-between gap-2">
-                    <p class="font-bold">@Formatting.ShortDate(new DateTimeOffset(o.Date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero)) · @L["Admin_Trees", o.Trees]</p>
+                    <p class="font-medium">@Formatting.ShortDate(new DateTimeOffset(o.Date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero)) · @L["Admin_Trees", o.Trees]</p>
                     @if (o.IsPublished)
                     {
                         <span class="sc-badge bg-baobab-clair text-baobab">@L["Admin_Published"]</span>

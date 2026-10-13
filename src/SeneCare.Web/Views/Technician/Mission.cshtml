@@ -24,10 +24,10 @@
     <script src="~/js/technician.js" asp-append-version="true" defer></script>
 }
 
-<a href="/technicien" class="inline-flex min-h-12 items-center font-bold">← @L["Tech_Missions_Title"]</a>
+<a href="/technicien" class="inline-flex min-h-12 items-center font-medium">← @L["Tech_Missions_Title"]</a>
 
 <header class="mt-2">
-    <p class="font-bold">@L["Domain_" + Model.Domain] · @Model.Number</p>
+    <p class="font-medium">@L["Domain_" + Model.Domain] · @Model.Number</p>
     <h1 class="sc-titre">@Model.Site</h1>
     <p class="mt-2 flex flex-wrap gap-2"><sc-urgency value="@Model.Urgency" /><sc-status value="@Model.Status" /></p>
 </header>
@@ -74,7 +74,7 @@
     {
         <form method="post" action="@base_/etape/@step" class="mt-4">
             @Html.AntiForgeryToken()
-            <button type="submit" class="sc-btn w-full min-h-16 bg-laterite text-xl text-sur-accent" data-tour="demarrer"><sc-icon name="@icon" class="size-6" />@label</button>
+            <button type="submit" class="sc-btn-primaire w-full min-h-14 text-base" data-tour="demarrer"><sc-icon name="@icon" class="size-6" />@label</button>
         </form>
     }
 
@@ -108,7 +108,7 @@
         <p class="mt-2 whitespace-pre-line">@Model.Report</p>
         @if (Model.SignedByName is { } signer)
         {
-            <p class="mt-2 font-bold">@L["Tech_SignedBy", signer]</p>
+            <p class="mt-2 font-medium">@L["Tech_SignedBy", signer]</p>
         }
     </section>
 }
@@ -165,7 +165,7 @@ else if (onSite)
             <ul class="mt-2 divide-y divide-ligne">
                 @foreach (var part in Model.Parts)
                 {
-                    <li class="flex justify-between gap-2 py-2"><span>@part.Name</span><span class="font-bold">@part.Quantity.ToString("0.##", CultureInfo.CurrentCulture) @part.Unit</span></li>
+                    <li class="flex justify-between gap-2 py-2"><span>@part.Name</span><span class="font-medium">@part.Quantity.ToString("0.##", CultureInfo.CurrentCulture) @part.Unit</span></li>
                 }
             </ul>
         }

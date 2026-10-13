@@ -96,15 +96,17 @@ else if (Model.Client is { } client)
             </section>
         </div>
 
-        @if (client.Neighborhood is { } hood)
-        {
-            <partial name="Ui/_NeighborhoodGauge" model="hood" />
-        }
-
-        @if (client.Community is { } community && client.Referral is { } referral)
-        {
-            <partial name="_Community" model="(community, referral)" />
-        }
+        @* Gauge and invitation read as one block: the second card continues the first. *@
+        <div class="grid [&>section:not(:last-child)]:rounded-b-none [&>section+section]:-mt-px [&>section+section]:rounded-t-none">
+            @if (client.Neighborhood is { } hood)
+            {
+                <partial name="Ui/_NeighborhoodGauge" model="hood" />
+            }
+            @if (client.Community is { } community && client.Referral is { } referral)
+            {
+                <partial name="_Community" model="(community, referral)" />
+            }
+        </div>
     </div>
 }
 

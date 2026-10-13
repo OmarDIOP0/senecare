@@ -13,8 +13,8 @@
     <script src="~/js/technician.js" asp-append-version="true" defer></script>
 }
 
-<a href="/technicien" class="inline-flex min-h-12 items-center font-bold">← @L["Tech_Missions_Title"]</a>
-<p class="mt-2 font-bold">@L["Tech_Diagnostic"] · @L["Diagnostic_PeriodShort", Day(Model.Period.Start), Day(Model.Period.End)]</p>
+<a href="/technicien" class="inline-flex min-h-12 items-center font-medium">← @L["Tech_Missions_Title"]</a>
+<p class="mt-2 font-medium">@L["Tech_Diagnostic"] · @L["Diagnostic_PeriodShort", Day(Model.Period.Start), Day(Model.Period.End)]</p>
 <h1 class="sc-titre">@Model.AccountName</h1>
 <p class="mt-1">@L["Diagnostic_PlannedOn", Formatting.ShortDateTime(Model.ScheduledFor)] · @L["DiagnosticStatus_" + Model.Status]</p>
 
@@ -35,14 +35,14 @@
         {
             <li class="flex items-start justify-between gap-3 py-2">
                 <span>
-                    <span class="block text-sm font-bold">@(point.SiteId is { } s ? siteNames.GetValueOrDefault(s) : L["Diagnostic_General"].Value) · @L["Domain_" + point.Domain]</span>
+                    <span class="block text-sm font-medium">@(point.SiteId is { } s ? siteNames.GetValueOrDefault(s) : L["Diagnostic_General"].Value) · @L["Domain_" + point.Domain]</span>
                     @point.Label
                     @if (point.Comment is { } comment)
                     {
                         <span class="block text-sm">@comment</span>
                     }
                 </span>
-                <span class="sc-badge shrink-0 @(point.Result == ControlPointResult.Anomaly ? "bg-laterite-clair text-laterite" : "bg-baobab-clair text-baobab")">@L["ControlPoint_" + point.Result]</span>
+                <span class="sc-badge shrink-0 @(point.Result == ControlPointResult.Anomaly ? "bg-rouge-clair text-rouge" : "bg-baobab-clair text-baobab")">@L["ControlPoint_" + point.Result]</span>
             </li>
         }
     </ul>

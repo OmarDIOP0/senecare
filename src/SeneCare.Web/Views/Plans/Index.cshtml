@@ -9,7 +9,7 @@
     int Hours(SeneCare.Domain.Plans.Plan p, Urgency u) => (int)(p.GetMaxDelay(u)?.TotalHours ?? 0);
 }
 
-<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-bold">← @L["Tab_Management"]</a>
+<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-medium">← @L["Tab_Management"]</a>
 <h1 class="sc-titre">@L["Admin_Plans"]</h1>
 <p class="mt-2 max-w-prose">@L["Admin_Plans_Intro"]</p>
 

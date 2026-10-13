@@ -34,8 +34,10 @@ copyFileSync("node_modules/@microsoft/signalr/dist/browser/signalr.min.js", "www
 
 mkdirSync("wwwroot/fonts", { recursive: true });
 for (const [pkg, file] of [
-  ["atkinson-hyperlegible", "atkinson-hyperlegible-latin-400-normal.woff2"],
-  ["atkinson-hyperlegible", "atkinson-hyperlegible-latin-700-normal.woff2"],
+  ["inter", "inter-latin-400-normal.woff2"],
+  ["inter", "inter-latin-500-normal.woff2"],
+  ["inter", "inter-latin-600-normal.woff2"],
+  // Logo only.
   ["bricolage-grotesque", "bricolage-grotesque-latin-700-normal.woff2"],
 ]) {
   copyFileSync(`node_modules/@fontsource/${pkg}/files/${file}`, `wwwroot/fonts/${file}`);

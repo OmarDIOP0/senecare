@@ -27,8 +27,9 @@ public sealed class PwaController(IFileVersionProvider versions) : Controller
         "/lib/htmx.min.js",
         "/img/icons.svg",
         "/img/icons/favicon.svg",
-        "/fonts/atkinson-hyperlegible-latin-400-normal.woff2",
-        "/fonts/atkinson-hyperlegible-latin-700-normal.woff2",
+        "/fonts/inter-latin-400-normal.woff2",
+        "/fonts/inter-latin-500-normal.woff2",
+        "/fonts/inter-latin-600-normal.woff2",
         "/fonts/bricolage-grotesque-latin-700-normal.woff2",
     ];
 

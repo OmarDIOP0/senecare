@@ -5,24 +5,32 @@
 @source "../TagHelpers";
 @source "../wwwroot/js";
 
-/* Dark mode follows the phone setting, or [data-theme] when the user chooses. */
-/* Self-hosted Google Fonts (latin subset). swap: text shows immediately with the fallback font. */
+/* Self-hosted fonts (latin subset). swap: text shows immediately with the fallback font. */
 @font-face {
-  font-family: "Atkinson Hyperlegible";
+  font-family: "Inter";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("/fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2");
+  src: url("/fonts/inter-latin-400-normal.woff2") format("woff2");
 }
 
 @font-face {
-  font-family: "Atkinson Hyperlegible";
+  font-family: "Inter";
   font-style: normal;
-  font-weight: 700;
+  font-weight: 500;
   font-display: swap;
-  src: url("/fonts/atkinson-hyperlegible-latin-700-normal.woff2") format("woff2");
+  src: url("/fonts/inter-latin-500-normal.woff2") format("woff2");
 }
 
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/inter-latin-600-normal.woff2") format("woff2");
+}
+
+/* Logo only. */
 @font-face {
   font-family: "Bricolage Grotesque";
   font-style: normal;
@@ -34,84 +42,89 @@
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 /* ===========================================================================
-   SENECARE design tokens — « Made in Sénégal »
-   Source of truth = CSS variables below (light + dark). Tailwind utilities map onto them,
-   e.g. bg-laterite, text-charbon, border-ligne. Names are ASCII for Tailwind
-   (--laterite = « latérite » in CLAUDE.md).
+   SENECARE design tokens — sober product UI (Linear / Stripe / Vercel family).
+   Neutral surfaces, 1px borders, ONE signature colour (latérite) for the primary
+   action, the active item and focus. Status colours only in small tinted badges.
+   Token names are kept (bg-sable, text-charbon…) so every view follows the system.
    =========================================================================== */
 :root {
-  /* Latérite — red/ochre earth: main accent, primary actions. AA on sable and with white text. */
-  --laterite: #a84b24;
-  --laterite-fonce: #8a3b1b;
-  --laterite-clair: #f3dccd;
-  /* Atlantique — deep ocean blue: trust, navigation, links. */
-  --atlantique: #12355b;
-  --atlantique-clair: #dbe6f1;
-  /* Baobab — deep green: success, environment, neighborhood program. */
-  --baobab: #2e5e3e;
-  --baobab-clair: #dcebdf;
-  /* Indigo teinture — dyed-cloth indigo: secondary information, scheduled items. */
-  --indigo: #2b2f6b;
-  --indigo-clair: #e1e2f2;
-  /* Soleil — alerts and moderate urgency (text on it stays charbon). */
-  --soleil: #e8a317;
-  --soleil-clair: #fbedc8;
-  /* Neutrals: sable replaces pure white; charbon is the text colour. */
-  --sable: #f7f1e6;
-  --surface: #fffcf6;
-  --ligne: #e3d7c3;
-  --charbon: #1f1b16;
-  --charbon-doux: #5b5248;
-  /* Text on filled accent colours (latérite, baobab, atlantique buttons and badges). */
+  /* Accent — latérite: primary button, active navigation, focus. Never large surfaces. */
+  --laterite: #a84b22;
+  --laterite-fonce: #8c3d1b;
+  --laterite-clair: #fbf1ec;
+  /* Links and information. */
+  --atlantique: #1f4e8c;
+  --atlantique-clair: #eef3fa;
+  /* Status: success / neutral info / warning. */
+  --baobab: #1f7a45;
+  --baobab-clair: #ecf7f0;
+  --indigo: #4b4fa8;
+  --indigo-clair: #f0f0fb;
+  --soleil: #b45309;
+  --soleil-clair: #fef6e4;
+  --rouge: #b42318;
+  --rouge-clair: #fdf0ef;
+  /* Neutrals. */
+  --sable: #fafaf9;        /* page background */
+  --surface: #ffffff;      /* cards, tables, sidebar */
+  --sourdine: #f5f5f4;     /* hover / active rows */
+  --ligne: #e7e5e4;        /* 1px borders */
+  --charbon: #1c1917;      /* primary text */
+  --charbon-doux: #57534e; /* secondary text */
+  --charbon-pale: #a8a29e; /* tertiary text, placeholders */
   --sur-accent: #ffffff;
-
-  --ombre: 0 1px 0 rgb(31 27 22 / 0.06), 0 2px 6px rgb(31 27 22 / 0.06);
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme=light]) {
-    --laterite: #e0784a;
-    --laterite-fonce: #f09a70;
-    --laterite-clair: #4a2617;
-    --atlantique: #8fb4dd;
-    --atlantique-clair: #1c2b3c;
-    --baobab: #7cbf8f;
-    --baobab-clair: #1d3324;
-    --indigo: #a9adf0;
-    --indigo-clair: #262850;
-    --soleil: #f2b83b;
-    --soleil-clair: #43340f;
-    --sable: #15120e;
-    --surface: #211c16;
-    --ligne: #3a3229;
-    --charbon: #f3ebdd;
-    --charbon-doux: #c2b6a5;
-  --sur-accent: #15120e;
-    --sur-accent: #15120e;
-    --ombre: 0 1px 0 rgb(0 0 0 / 0.4);
+    --laterite: #e2875c;
+    --laterite-fonce: #eda07a;
+    --laterite-clair: #2a1a12;
+    --atlantique: #8db4e8;
+    --atlantique-clair: #142033;
+    --baobab: #6cc28d;
+    --baobab-clair: #10241a;
+    --indigo: #a9acef;
+    --indigo-clair: #1b1c33;
+    --soleil: #f0b44c;
+    --soleil-clair: #2a1f0b;
+    --rouge: #f28b82;
+    --rouge-clair: #2c1514;
+    --sable: #0c0a09;
+    --surface: #1c1917;
+    --sourdine: #292524;
+    --ligne: #292524;
+    --charbon: #fafaf9;
+    --charbon-doux: #a8a29e;
+    --charbon-pale: #78716c;
+    --sur-accent: #0c0a09;
     color-scheme: dark;
   }
 }
 
 :root[data-theme=dark] {
-  --laterite: #e0784a;
-  --laterite-fonce: #f09a70;
-  --laterite-clair: #4a2617;
-  --atlantique: #8fb4dd;
-  --atlantique-clair: #1c2b3c;
-  --baobab: #7cbf8f;
-  --baobab-clair: #1d3324;
-  --indigo: #a9adf0;
-  --indigo-clair: #262850;
-  --soleil: #f2b83b;
-  --soleil-clair: #43340f;
-  --sable: #15120e;
-  --surface: #211c16;
-  --ligne: #3a3229;
-  --charbon: #f3ebdd;
-  --charbon-doux: #c2b6a5;
-  --ombre: 0 1px 0 rgb(0 0 0 / 0.4);
+  --laterite: #e2875c;
+  --laterite-fonce: #eda07a;
+  --laterite-clair: #2a1a12;
+  --atlantique: #8db4e8;
+  --atlantique-clair: #142033;
+  --baobab: #6cc28d;
+  --baobab-clair: #10241a;
+  --indigo: #a9acef;
+  --indigo-clair: #1b1c33;
+  --soleil: #f0b44c;
+  --soleil-clair: #2a1f0b;
+  --rouge: #f28b82;
+  --rouge-clair: #2c1514;
+  --sable: #0c0a09;
+  --surface: #1c1917;
+  --sourdine: #292524;
+  --ligne: #292524;
+  --charbon: #fafaf9;
+  --charbon-doux: #a8a29e;
+  --charbon-pale: #78716c;
+  --sur-accent: #0c0a09;
   color-scheme: dark;
 }
 
@@ -127,31 +140,45 @@
   --color-indigo-clair: var(--indigo-clair);
   --color-soleil: var(--soleil);
   --color-soleil-clair: var(--soleil-clair);
+  --color-rouge: var(--rouge);
+  --color-rouge-clair: var(--rouge-clair);
   --color-sable: var(--sable);
   --color-surface: var(--surface);
+  --color-sourdine: var(--sourdine);
   --color-ligne: var(--ligne);
   --color-charbon: var(--charbon);
   --color-charbon-doux: var(--charbon-doux);
+  --color-charbon-pale: var(--charbon-pale);
   --color-sur-accent: var(--sur-accent);
-  --shadow-carte: var(--ombre);
 }
 
 @theme {
-  /* Display with character for titles, hyper-legible sans for text (low-end screens, sunlight). */
-  --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
-  --font-sans: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* One family for the whole interface; the display face is for the logo only. */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-logo: "Bricolage Grotesque", "Inter", system-ui, sans-serif;
 
-  --radius-sm: 0.375rem;
-  --radius-md: 0.625rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
+  /* Weights: 400 / 500 / 600 only (« bold » renders as semibold). */
+  --font-weight-bold: 600;
+  --font-weight-extrabold: 600;
 
-  /* Touch targets: 48px minimum everywhere. */
-  --spacing-cible: 3rem;
+  /* Radii: 6px controls and badges, 8px cards and dialogs. Nothing larger. */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.5rem;
+  --radius-3xl: 0.5rem;
+
+  /* Touch target on phones (44px). Desktop controls are 36px. */
+  --spacing-cible: 2.75rem;
+
+  /* Shadows: menus and popovers only. */
+  --shadow-carte: none;
 
   --ease-doux: cubic-bezier(0.2, 0, 0, 1);
   --animate-shimmer: shimmer 1.4s linear infinite;
-  --animate-monte: monte 200ms var(--ease-doux);
+  --animate-monte: monte 180ms var(--ease-doux);
 
   @keyframes shimmer {
     from { background-position: 150% 0; }
@@ -159,8 +186,8 @@
   }
 
   @keyframes monte {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
+    from { transform: translateY(12px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
   }
 }
 
@@ -170,20 +197,30 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* 15px on phones, 14px on desktop. Numbers line up (no slashed zero). */
   body {
-    @apply bg-sable font-sans text-base leading-relaxed text-charbon antialiased;
+    @apply bg-sable font-sans text-[15px] leading-normal text-charbon antialiased lg:text-sm;
+    font-feature-settings: "cv11", "ss01";
   }
 
   h1, h2, h3 {
-    @apply font-display leading-tight tracking-tight text-balance;
+    @apply font-sans font-semibold tracking-tight text-balance;
   }
 
   :focus-visible {
-    @apply outline-3 outline-offset-2 outline-atlantique;
+    @apply outline-2 outline-offset-2 outline-laterite;
   }
 
   a {
-    @apply text-atlantique underline-offset-4;
+    @apply text-atlantique underline-offset-2 hover:underline;
+  }
+
+  table, .tabular-nums, input[type=number] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::placeholder {
+    color: var(--charbon-pale);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -195,60 +232,81 @@
   }
 }
 
+/* ---- Buttons: 44px on phones, 36px on desktop; text 14px medium. ------------ */
 @utility sc-btn {
-  @apply inline-flex min-h-cible items-center justify-center gap-2 rounded-md px-5 font-bold no-underline
-    transition-[background-color,transform] duration-150 ease-doux active:scale-[0.98]
+  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-transparent px-3 text-sm font-medium
+    whitespace-nowrap no-underline transition-colors duration-150 ease-doux hover:no-underline lg:min-h-9
     disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 @utility sc-btn-secondaire {
-  @apply sc-btn border-2 border-atlantique bg-transparent text-atlantique hover:bg-atlantique-clair;
+  @apply sc-btn border-ligne bg-surface text-charbon hover:bg-sourdine;
 }
 
 @layer components {
   /* ---- Typography ------------------------------------------------------- */
-  .sc-titre { @apply font-display text-3xl font-bold text-charbon sm:text-4xl; }
-  .sc-sous-titre { @apply font-display text-xl font-semibold text-charbon; }
-  .sc-surtitre { @apply text-xs font-bold tracking-[0.12em] text-laterite uppercase; }
-  .sc-texte-doux { @apply text-sm text-charbon-doux; }
+  .sc-titre { @apply text-xl font-semibold tracking-tight text-charbon lg:text-2xl; }
+  .sc-sous-titre { @apply text-base font-semibold text-charbon; }
+  .sc-surtitre { @apply text-[13px] font-medium text-charbon-doux; }
+  .sc-texte-doux { @apply text-[13px] text-charbon-doux; }
 
-  /* ---- Buttons (min 48px): sc-btn and sc-btn-secondaire are @utility (below) so they can be composed. */
-  .sc-btn-primaire { @apply sc-btn w-full bg-laterite text-sur-accent hover:bg-laterite-fonce sm:w-auto; }
-  .sc-btn-discret { @apply sc-btn bg-transparent px-3 text-atlantique underline hover:bg-atlantique-clair; }
-  .sc-btn-danger { @apply sc-btn border-2 border-laterite bg-transparent text-laterite hover:bg-laterite-clair; }
-  .sc-btn-whatsapp { @apply sc-btn bg-baobab text-sur-accent hover:opacity-90; }
-  .sc-btn-icone { @apply inline-flex size-cible items-center justify-center rounded-full text-charbon hover:bg-ligne/60; }
+  /* ---- Buttons ----------------------------------------------------------- */
+  .sc-btn-primaire { @apply sc-btn bg-laterite text-sur-accent hover:bg-laterite-fonce; }
+  .sc-btn-discret { @apply sc-btn text-charbon-doux hover:bg-sourdine hover:text-charbon; }
+  .sc-btn-danger { @apply sc-btn border-ligne bg-surface text-rouge hover:bg-rouge-clair; }
+  .sc-btn-whatsapp { @apply sc-btn border-ligne bg-surface text-charbon hover:bg-sourdine; }
+  .sc-btn-icone { @apply inline-flex size-11 items-center justify-center rounded-md text-charbon-doux hover:bg-sourdine hover:text-charbon lg:size-9; }
 
-
-  /* ---- Forms ------------------------------------------------------------ */
-  .sc-label { @apply block text-sm font-bold text-charbon; }
-  .sc-aide { @apply mt-1 text-sm text-charbon-doux; }
+  /* ---- Forms ------------------------------------------------------------- */
+  .sc-label { @apply block text-[13px] font-medium text-charbon; }
+  .sc-aide { @apply mt-1 text-[13px] text-charbon-doux; }
   .sc-input {
-    @apply mt-1 block min-h-cible w-full rounded-md border-2 border-ligne bg-surface px-3 text-base text-charbon
-      placeholder:text-charbon-doux/70 focus:border-atlantique focus:outline-none
-      aria-invalid:border-laterite;
+    @apply mt-1.5 block min-h-11 w-full rounded-md border border-ligne bg-surface px-3 text-[15px] text-charbon
+      transition-colors focus:border-laterite focus:ring-2 focus:ring-laterite/20 focus:outline-none
+      aria-invalid:border-rouge lg:min-h-9 lg:text-sm;
   }
-  .sc-error { @apply mt-2 flex items-center gap-1 text-sm font-bold text-laterite empty:hidden; }
+  .sc-error { @apply mt-1.5 flex items-center gap-1 text-[13px] font-medium text-rouge empty:hidden; }
   .sc-choix {
-    @apply flex min-h-cible cursor-pointer items-center gap-3 rounded-md border-2 border-ligne bg-surface px-3 py-2
-      has-checked:border-laterite has-checked:bg-laterite-clair/60 has-focus-visible:outline-3 has-focus-visible:outline-atlantique;
+    @apply flex min-h-11 cursor-pointer items-center gap-2.5 rounded-md border border-ligne bg-surface px-3 py-2 text-sm
+      hover:bg-sourdine has-checked:border-laterite has-checked:bg-laterite-clair
+      has-focus-visible:outline-2 has-focus-visible:outline-laterite lg:min-h-9;
   }
-  .sc-choix input { @apply size-5 accent-laterite; }
+  .sc-choix input { @apply size-4 accent-laterite; }
 
-  /* ---- Surfaces ---------------------------------------------------------- */
-  .sc-carte { @apply rounded-lg border border-ligne bg-surface p-4 shadow-carte; }
-  .sc-alert { @apply mb-4 rounded-md border-l-4 border-baobab bg-baobab-clair px-4 py-3 text-charbon; }
+  /* ---- Surfaces: border, no shadow --------------------------------------- */
+  .sc-carte { @apply rounded-lg border border-ligne bg-surface p-4; }
+  .sc-alert { @apply mb-4 rounded-md border border-ligne bg-surface px-3 py-2.5 text-sm text-charbon; }
 
-  /* ---- Badges ------------------------------------------------------------ */
-  .sc-badge { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold whitespace-nowrap; }
+  /* ---- Badges: small, 12px, lightly tinted -------------------------------- */
+  .sc-badge { @apply inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium whitespace-nowrap; }
 
-  /* ---- Skeleton (instead of spinners) ----------------------------------- */
+  /* ---- Page header: title + grey description + main action on the right --- */
+  .sc-entete { @apply flex flex-wrap items-start justify-between gap-3; }
+  .sc-entete p { @apply mt-1 text-sm text-charbon-doux; }
+
+  /* ---- Tables (desktop) / stacked rows (phone) ---------------------------- */
+  .sc-table { @apply w-full border-collapse text-left text-sm; }
+  .sc-table th { @apply border-b border-ligne px-3 py-2 text-xs font-medium whitespace-nowrap text-charbon-doux; }
+  .sc-table td { @apply border-b border-ligne px-3 py-2.5 align-middle; }
+  .sc-table tbody tr:last-child td { @apply border-b-0; }
+  .sc-table tbody tr:hover { @apply bg-sourdine/60; }
+  .sc-table th[data-sort] { @apply cursor-pointer select-none hover:text-charbon; }
+
+  /* ---- Menus and popovers: the only elements with a shadow ----------------- */
+  .sc-menu {
+    @apply absolute z-50 mt-1 min-w-48 rounded-lg border border-ligne bg-surface p-1 text-sm shadow-sm;
+  }
+  .sc-menu-item {
+    @apply flex min-h-9 w-full items-center gap-2 rounded-md px-2 text-left text-charbon no-underline hover:bg-sourdine hover:no-underline;
+  }
+
+  /* ---- Skeleton (instead of spinners) ------------------------------------- */
   .sc-skeleton {
     @apply animate-shimmer rounded-md;
-    background: linear-gradient(90deg, var(--ligne) 0%, var(--surface) 50%, var(--ligne) 100%) 0 0 / 200% 100%;
+    background: linear-gradient(90deg, var(--sourdine) 0%, var(--surface) 50%, var(--sourdine) 100%) 0 0 / 200% 100%;
   }
 
-  /* ---- Motifs: SVG tiles used as masks, so they take any token colour ---- */
+  /* ---- Motifs: allowed only on sign-in and onboarding, very discreet ------- */
   .sc-motif {
     mask-repeat: repeat;
     -webkit-mask-repeat: repeat;
@@ -257,21 +315,21 @@
   .sc-motif-wax { mask-image: url("/img/motifs/wax.svg"); -webkit-mask-image: url("/img/motifs/wax.svg"); }
   .sc-motif-manjak { mask-image: url("/img/motifs/manjak.svg"); -webkit-mask-image: url("/img/motifs/manjak.svg"); }
   .sc-motif-bogolan { mask-image: url("/img/motifs/bogolan.svg"); -webkit-mask-image: url("/img/motifs/bogolan.svg"); }
+  /* Signed-in screens never show them, whatever a view says. */
+  .sc-app .sc-motif { display: none; }
 
-  /* ---- Bottom sheet (native <dialog>) ----------------------------------- */
+  /* ---- Dialog (bottom sheet on phones, centred on desktop) ---------------- */
   .sc-sheet {
-    @apply m-0 mt-auto max-h-[85dvh] w-full max-w-none rounded-t-xl bg-surface p-0 text-charbon
-      open:animate-monte sm:m-auto sm:max-w-lg sm:rounded-xl;
+    @apply m-0 mt-auto max-h-[85dvh] w-full max-w-none rounded-t-lg border border-ligne bg-surface p-0 text-charbon shadow-sm
+      open:animate-monte sm:m-auto sm:max-w-md sm:rounded-lg;
   }
-  .sc-sheet::backdrop { background: rgb(21 18 14 / 0.55); }
+  .sc-sheet::backdrop { background: rgb(12 10 9 / 0.4); }
 
-  /* ---- Field mode (technician): full sun, one hand, gloves -------------- */
-  /* Darker secondary text, thicker borders, bigger targets (56 px), slightly larger text. */
-  .sc-terrain { font-size: 1.0625rem; --color-charbon-doux: var(--charbon); }
-  .sc-terrain .sc-carte { @apply border-2 border-charbon/25 shadow-none; }
-  .sc-terrain :where(.sc-btn, .sc-btn-secondaire, .sc-btn-primaire, .sc-btn-danger, .sc-btn-whatsapp) { @apply min-h-14 text-lg; }
-  .sc-terrain .sc-input { @apply min-h-14 border-2 border-charbon/40; }
-  .sc-check { @apply flex min-h-14 w-full items-center gap-3 rounded-md border-2 border-ligne bg-surface px-3 text-left font-bold; }
+  /* ---- Field mode (technician): full sun, one hand, gloves ---------------- */
+  .sc-terrain { font-size: 1rem; --color-charbon-doux: var(--charbon); }
+  .sc-terrain :where(.sc-btn, .sc-btn-secondaire, .sc-btn-primaire, .sc-btn-danger, .sc-btn-whatsapp) { @apply min-h-14 text-base; }
+  .sc-terrain .sc-input { @apply min-h-14 text-base; }
+  .sc-check { @apply flex min-h-14 w-full items-center gap-3 rounded-md border border-ligne bg-surface px-3 text-left font-medium; }
   .sc-check[aria-pressed="true"] { @apply border-baobab bg-baobab-clair text-baobab; }
-  .sc-signature { @apply block h-48 w-full touch-none rounded-md border-2 border-dashed border-charbon/40 bg-white; }
+  .sc-signature { @apply block h-48 w-full touch-none rounded-md border border-dashed border-charbon-pale bg-white; }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using SeneCare.Application.Abstractions;
 using SeneCare.Application.Development;
 using SeneCare.Application.Media;
 using SeneCare.Application.Payments;
@@ -140,11 +141,25 @@ public sealed class InterventionsController(
     RequestQueries queries,
     ClientRequestActions actions,
     RequestSimulator simulator,
+    IPdfRenderer pdf,
     IWebHostEnvironment environment) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken) =>
         View(await queries.ListAsync(User.GetUserId()!.Value, cancellationToken));
+
+    /// <summary>Intervention report (generated from the technician's notes, checklist and parts).</summary>
+    [HttpGet("{id:guid}/rapport.pdf")]
+    public async Task<IActionResult> Report(Guid id, CancellationToken cancellationToken)
+    {
+        var detail = await queries.DetailAsync(User.GetUserId()!.Value, id, cancellationToken);
+        if (detail?.Report is null)
+        {
+            return NotFound();
+        }
+
+        return File(pdf.FieldReport(InterventionDocuments.Report(detail, this.Localizer())), "application/pdf", $"rapport-{detail.Summary.Number}.pdf");
+    }
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Show(Guid id, CancellationToken cancellationToken)
@@ -268,8 +283,9 @@ public sealed class MediaController(MediaAccess media, IAuthorizationService aut
     [HttpGet("/fichiers/{id:guid}")]
     public async Task<IActionResult> Show(Guid id, CancellationToken cancellationToken)
     {
-        var isStaff = (await authorization.AuthorizeAsync(User, Policies.Staff)).Succeeded;
-        var content = await media.OpenAsync(User.GetUserId()!.Value, isStaff, id, cancellationToken);
+        // Technicians are not « back-office »: they only see the files of the customers they work for.
+        var isBackOffice = (await authorization.AuthorizeAsync(User, Policies.BackOffice)).Succeeded;
+        var content = await media.OpenAsync(User.GetUserId()!.Value, isBackOffice, id, cancellationToken);
         if (content is null)
         {
             return NotFound();

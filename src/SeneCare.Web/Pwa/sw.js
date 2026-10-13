@@ -52,7 +52,8 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  if (request.method === "POST" && request.mode === "navigate" && OFFLINE_POSTS.includes(url.pathname)) {
+  const offlinePost = OFFLINE_POSTS.some((p) => (p.endsWith("/") ? url.pathname.startsWith(p) : url.pathname === p));
+  if (request.method === "POST" && request.mode === "navigate" && offlinePost) {
     event.respondWith(postOrQueue(request));
     return;
   }
@@ -117,6 +118,11 @@ async function postOrQueue(request) {
     await self.scOutbox.add(new URL(copy.url).pathname, self.scOutbox.fromFormData(form), "");
     if (self.registration.sync) {
       await self.registration.sync.register("sc-outbox").catch(() => {});
+    }
+    // Field actions: back to the mission page kept on the phone (the banner shows what is waiting).
+    const back = copy.referrer ? new URL(copy.referrer) : null;
+    if (back && back.origin === self.location.origin && back.pathname.startsWith("/technicien")) {
+      return Response.redirect(back.pathname, 303);
     }
     return Response.redirect(`${OFFLINE_PAGE}?en-attente=1`, 303);
   }

@@ -135,9 +135,21 @@ public sealed class Diagnostic : AggregateRoot
         ScheduledFor = scheduledFor;
     }
 
+    /// <summary>Dispatcher gives the planned diagnostic to a technician (it appears in their missions).</summary>
+    public void Assign(Guid technicianId)
+    {
+        EnsureStatus(DiagnosticStatus.Planned);
+        TechnicianId = technicianId;
+    }
+
     public void Start(Guid technicianId, DateTimeOffset now)
     {
         EnsureStatus(DiagnosticStatus.Planned);
+        if (TechnicianId is { } assigned && assigned != technicianId)
+        {
+            throw new DomainException("diagnostic.not_assigned", "This diagnostic is assigned to another technician.");
+        }
+
         TechnicianId = technicianId;
         StartedAt = now;
         Status = DiagnosticStatus.InProgress;

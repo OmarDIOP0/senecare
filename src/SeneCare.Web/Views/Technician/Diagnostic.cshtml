@@ -1,0 +1,105 @@
+@model SeneCare.Application.Technicians.DiagnosticMission
+@using SeneCare.Domain.Common
+@using SeneCare.Domain.Diagnostics
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "espace";
+    ViewData["Title"] = L["Tech_Diagnostic"];
+    string Day(DateOnly d) => Formatting.ShortDate(new DateTimeOffset(d.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero));
+    var siteNames = Model.Sites.ToDictionary(s => s.Id, s => s.Name);
+    var results = new[] { ControlPointResult.Ok, ControlPointResult.Anomaly, ControlPointResult.NotApplicable };
+}
+@section Scripts {
+    <script src="~/js/technician.js" asp-append-version="true" defer></script>
+}
+
+<a href="/technicien" class="inline-flex min-h-12 items-center font-bold">← @L["Tech_Missions_Title"]</a>
+<p class="mt-2 font-bold">@L["Tech_Diagnostic"] · @L["Diagnostic_PeriodShort", Day(Model.Period.Start), Day(Model.Period.End)]</p>
+<h1 class="sc-titre">@Model.AccountName</h1>
+<p class="mt-1">@L["Diagnostic_PlannedOn", Formatting.ShortDateTime(Model.ScheduledFor)] · @L["DiagnosticStatus_" + Model.Status]</p>
+
+<section class="sc-carte mt-4" aria-labelledby="sites-titre">
+    <h2 id="sites-titre" class="sc-sous-titre">@L["Tech_Sites", Model.Sites.Count]</h2>
+    <ul class="mt-2 grid gap-1">
+        @foreach (var site in Model.Sites)
+        {
+            <li><strong>@site.Name</strong> · @site.Place · @L["Diagnostic_AnomalyCount", Model.Points.Count(p => p.SiteId == site.Id && p.Result == ControlPointResult.Anomaly)]</li>
+        }
+    </ul>
+</section>
+
+<section id="points" class="mt-6" aria-labelledby="points-titre">
+    <h2 id="points-titre" class="sc-sous-titre">@L["Tech_Points", Model.Points.Count]</h2>
+    <ul class="mt-2 divide-y divide-ligne">
+        @foreach (var point in Model.Points)
+        {
+            <li class="flex items-start justify-between gap-3 py-2">
+                <span>
+                    <span class="block text-sm font-bold">@(point.SiteId is { } s ? siteNames.GetValueOrDefault(s) : L["Diagnostic_General"].Value) · @L["Domain_" + point.Domain]</span>
+                    @point.Label
+                    @if (point.Comment is { } comment)
+                    {
+                        <span class="block text-sm">@comment</span>
+                    }
+                </span>
+                <span class="sc-badge shrink-0 @(point.Result == ControlPointResult.Anomaly ? "bg-laterite-clair text-laterite" : "bg-baobab-clair text-baobab")">@L["ControlPoint_" + point.Result]</span>
+            </li>
+        }
+    </ul>
+</section>
+
+@if (Model.CanEdit)
+{
+    <form method="post" action="/technicien/diagnostics/@Model.Id/points" enctype="multipart/form-data" class="sc-carte mt-6 grid gap-4">
+        @Html.AntiForgeryToken()
+        <h2 class="sc-sous-titre">@L["Tech_AddPoint"]</h2>
+        <div>
+            <label class="sc-label" for="site">@L["Export_Col_Site"]</label>
+            <select id="site" name="siteId" class="sc-input">
+                @foreach (var site in Model.Sites)
+                {
+                    <option value="@site.Id">@site.Name</option>
+                }
+                <option value="">@L["Diagnostic_General"]</option>
+            </select>
+        </div>
+        <div>
+            <label class="sc-label" for="metier">@L["Export_Col_Domain"]</label>
+            <select id="metier" name="domain" class="sc-input" required>
+                @foreach (var domain in Enum.GetValues<ServiceDomain>())
+                {
+                    <option value="@domain">@L["Domain_" + domain]</option>
+                }
+            </select>
+        </div>
+        <div>
+            <label class="sc-label" for="point">@L["Tech_PointLabel"]</label>
+            <input id="point" name="label" class="sc-input" required maxlength="200" placeholder="@L["Tech_PointLabel_Placeholder"]" />
+        </div>
+        <fieldset>
+            <legend class="sc-label">@L["Diagnostic_Status"]</legend>
+            <div class="mt-2 grid grid-cols-3 gap-2">
+                @foreach (var result in results)
+                {
+                    <label class="sc-choix justify-center text-center"><input type="radio" name="result" value="@result" class="sr-only" required checked="@(result == ControlPointResult.Ok)" />@L["ControlPoint_" + result]</label>
+                }
+            </div>
+        </fieldset>
+        <div>
+            <label class="sc-label" for="commentaire">@L["Tech_PointComment"]</label>
+            <textarea id="commentaire" name="comment" rows="2" class="sc-input py-2" maxlength="1000"></textarea>
+        </div>
+        <partial name="Ui/_PhotoUploader" model='new PhotoUploaderModel("photo", L["Tech_AddPhotos"], 1, "point-photo")' />
+        <button type="submit" class="sc-btn-primaire"><sc-icon name="plus" />@L["Tech_AddPoint"]</button>
+    </form>
+
+    @if (Model.Points.Count > 0)
+    {
+        <form method="post" action="/technicien/diagnostics/@Model.Id/remettre" class="mt-8 grid gap-3">
+            @Html.AntiForgeryToken()
+            <label class="sc-label" for="reco">@L["Diagnostic_Recommendations"]</label>
+            <textarea id="reco" name="recommendations" rows="4" class="sc-input py-2" maxlength="4000">@Model.Recommendations</textarea>
+            <button type="submit" class="sc-btn w-full min-h-16 bg-baobab text-xl text-sur-accent"><sc-icon name="circle-check" class="size-6" />@L["Tech_SubmitDiagnostic"]</button>
+        </form>
+    }
+}

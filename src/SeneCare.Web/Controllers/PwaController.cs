@@ -11,8 +11,11 @@ namespace SeneCare.Web.Controllers;
 [AllowAnonymous]
 public sealed class PwaController(IFileVersionProvider versions) : Controller
 {
-    /// <summary>Forms that can be submitted offline: the worker queues them when the network fails.</summary>
-    public static readonly string[] OfflinePosts = ["/signaler", "/design/test-hors-ligne"];
+    /// <summary>
+    /// Forms that can be submitted offline: the worker queues them when the network fails.
+    /// An entry ending with « / » covers every form below it (the technician's field actions).
+    /// </summary>
+    public static readonly string[] OfflinePosts = ["/signaler", "/design/test-hors-ligne", "/technicien/"];
 
     private static readonly string Template = LoadTemplate();
 

@@ -1,6 +1,6 @@
 // Builds front-end assets that are committed to wwwroot (no CDN: one less DNS/TLS round-trip on 3G).
 // - wwwroot/img/icons.svg: sprite of the Lucide icons listed in Styles/icons.json (<use href="…#name">)
-// - wwwroot/lib: minified HTMX
+// - wwwroot/lib: minified HTMX, Leaflet, SignalR client
 // - wwwroot/fonts: Google Fonts files (latin subset, via @fontsource), self-hosted for speed and privacy
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from "node:fs";
 
@@ -27,6 +27,10 @@ mkdirSync("wwwroot/lib/leaflet/images", { recursive: true });
 for (const file of ["leaflet.js", "leaflet.css", "images/marker-icon.png", "images/marker-icon-2x.png", "images/marker-shadow.png"]) {
   copyFileSync(`node_modules/leaflet/dist/${file}`, `wwwroot/lib/leaflet/${file}`);
 }
+
+// SignalR client (live technician position, loaded only on the pages that track it).
+mkdirSync("wwwroot/lib/signalr", { recursive: true });
+copyFileSync("node_modules/@microsoft/signalr/dist/browser/signalr.min.js", "wwwroot/lib/signalr/signalr.min.js");
 
 mkdirSync("wwwroot/fonts", { recursive: true });
 for (const [pkg, file] of [

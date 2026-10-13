@@ -7,12 +7,13 @@ namespace SeneCare.Application.Media;
 public sealed record MediaContent(Stream Content, string ContentType);
 
 /// <summary>
-/// Serves a stored file only to members of the owning account, its uploader or SENECARE staff.
+/// Serves a stored file only to members of the owning account, its uploader, SENECARE back-office, or a
+/// technician who has (or had) a mission for that account.
 /// Anyone else gets « not found » (no hint that the file exists).
 /// </summary>
 public sealed class MediaAccess(IApplicationDbContext db, AccessControl access, IFileStorage storage)
 {
-    public async Task<MediaContent?> OpenAsync(Guid userId, bool isStaff, Guid mediaId, CancellationToken cancellationToken = default)
+    public async Task<MediaContent?> OpenAsync(Guid userId, bool isBackOffice, Guid mediaId, CancellationToken cancellationToken = default)
     {
         var media = await db.MediaFiles.AsNoTracking().FirstOrDefaultAsync(m => m.Id == mediaId, cancellationToken);
         if (media is null)
@@ -20,9 +21,10 @@ public sealed class MediaAccess(IApplicationDbContext db, AccessControl access, 
             return null;
         }
 
-        var allowed = isStaff
+        var allowed = isBackOffice
             || media.UploadedByUserId == userId
-            || (media.AccountId is { } accountId && await access.CanAccessAccountAsync(userId, accountId, cancellationToken));
+            || (media.AccountId is { } accountId
+                && (await access.CanAccessAccountAsync(userId, accountId, cancellationToken) || await WorksForAsync(userId, accountId, cancellationToken)));
         if (!allowed)
         {
             return null;
@@ -30,5 +32,22 @@ public sealed class MediaAccess(IApplicationDbContext db, AccessControl access, 
 
         var stream = await storage.OpenReadAsync(media.StorageKey, cancellationToken);
         return stream is null ? null : new MediaContent(stream, media.ContentType);
+    }
+
+    private async Task<bool> WorksForAsync(Guid userId, Guid accountId, CancellationToken cancellationToken)
+    {
+        var technicianId = await db.Technicians.Where(t => t.UserId == userId).Select(t => (Guid?)t.Id).FirstOrDefaultAsync(cancellationToken);
+        if (technicianId is not { } id)
+        {
+            return false;
+        }
+
+        var onRequest = await (
+                from i in db.Interventions
+                join r in db.ServiceRequests on i.RequestId equals r.Id
+                where r.AccountId == accountId && (i.LeadTechnicianId == id || i.TeamTechnicianIds.Contains(id))
+                select i.Id)
+            .AnyAsync(cancellationToken);
+        return onRequest || await db.Diagnostics.AnyAsync(d => d.AccountId == accountId && d.TechnicianId == id, cancellationToken);
     }
 }

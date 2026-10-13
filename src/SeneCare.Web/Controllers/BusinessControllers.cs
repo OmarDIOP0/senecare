@@ -98,7 +98,7 @@ public sealed class BusinessDiagnosticsController(
             return NotFound();
         }
 
-        var bytes = pdf.DiagnosticReport(BusinessDocuments.Diagnostic(detail, this.Localizer()));
+        var bytes = pdf.FieldReport(BusinessDocuments.Diagnostic(detail, this.Localizer()));
         return File(bytes, "application/pdf", $"diagnostic-{detail.Slot.Period.Start:yyyy-MM}.pdf");
     }
 

@@ -1,0 +1,77 @@
+@model IReadOnlyList<SeneCare.Application.Technicians.MissionCard>
+@using SeneCare.Application.Technicians
+@using SeneCare.Domain.Common
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "espace";
+    ViewData["Title"] = L["Tech_Missions_Title"];
+    var tourJson = ViewData["TourJson"] as string;
+    var open = Model.Count(m => !m.IsDone);
+}
+@section Scripts {
+    <script src="~/js/technician.js" asp-append-version="true" defer></script>
+}
+
+@if (tourJson is not null)
+{
+    <script type="application/json" id="sc-tour">@Html.Raw(tourJson)</script>
+    @Html.AntiForgeryToken()
+}
+
+<h1 class="sc-titre">@L["Tech_Missions_Title"]</h1>
+<p class="mt-1 text-lg">@Formatting.ShortDate(DateTimeOffset.UtcNow) · @L["Tech_Missions_Count", open]</p>
+
+@if (Model.Count == 0)
+{
+    <div class="mt-6">
+        <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Tech_None_Title"], L["Tech_None_Text"], EmptyIllustration.Tools)' />
+    </div>
+}
+
+<ol class="mt-5 grid gap-4" data-missions data-tour="missions">
+    @foreach (var m in Model)
+    {
+        var url = m.Kind == MissionKind.Diagnostic ? $"/technicien/diagnostics/{m.Id}" : $"/technicien/missions/{m.Id}";
+        var stripe = m.Urgency switch { Urgency.Critical => "bg-laterite", Urgency.High => "bg-soleil", _ => "bg-transparent" };
+        <li class="sc-carte relative overflow-hidden pl-5 @(m.IsDone ? "opacity-70" : "")" data-mission
+            data-rank="@((int)m.Urgency)" data-done="@(m.IsDone ? 1 : 0)"
+            data-lat="@m.Latitude?.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+            data-lng="@m.Longitude?.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+            <span class="absolute inset-y-0 left-0 w-2 @stripe" aria-hidden="true"></span>
+            <div class="flex items-start gap-3">
+                <span class="grid size-12 shrink-0 place-items-center rounded-md @(m.Kind == MissionKind.Diagnostic ? "bg-indigo-clair text-indigo" : "bg-laterite-clair text-laterite")">
+                    <sc-icon name="@(m.Domain is { } d ? Formatting.Icon(d) : "list-checks")" class="size-7" />
+                </span>
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-bold">
+                        @(m.Kind == MissionKind.Diagnostic ? L["Tech_Diagnostic"] : L["Domain_" + m.Domain]) · @m.Number
+                        <span class="ml-1 font-normal" data-distance hidden></span>
+                    </p>
+                    <h2 class="font-display text-xl font-bold">
+                        <a href="@url" class="text-charbon no-underline after:absolute after:inset-0" data-prefetch>@m.Title</a>
+                    </h2>
+                    <p class="mt-1">@m.Site · @m.Place</p>
+                    @if (m.Landmark is { } landmark)
+                    {
+                        <p class="text-sm"><sc-icon name="map-pin" class="size-4" /> @landmark</p>
+                    }
+                    <p class="mt-2 flex flex-wrap gap-2">
+                        @if (m.Kind == MissionKind.Intervention)
+                        {
+                            <sc-urgency value="@m.Urgency" />
+                            <sc-status value="@m.Status!.Value" />
+                        }
+                        else
+                        {
+                            <span class="sc-badge bg-indigo-clair text-indigo">@L["DiagnosticStatus_" + m.DiagnosticStatus]</span>
+                        }
+                        @if (m.At is { } at)
+                        {
+                            <span class="sc-badge bg-sable text-charbon"><sc-icon name="clock" class="size-4" />@Formatting.ShortDateTime(at)</span>
+                        }
+                    </p>
+                </div>
+            </div>
+        </li>
+    }
+</ol>

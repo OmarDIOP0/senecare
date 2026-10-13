@@ -26,7 +26,7 @@ public sealed class QuestPdfRenderer : IPdfRenderer
         QuestPDF.Settings.License = LicenseType.Community;
     }
 
-    public byte[] DiagnosticReport(DiagnosticReport report)
+    public byte[] FieldReport(FieldReport report)
     {
         ArgumentNullException.ThrowIfNull(report);
         return Document.Create(document => document.Page(page =>

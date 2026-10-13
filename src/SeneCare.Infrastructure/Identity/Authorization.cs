@@ -78,6 +78,9 @@ public static class Policies
     /// <summary>Any SENECARE staff member (technician or admin roles).</summary>
     public const string Staff = nameof(Staff);
 
+    /// <summary>SENECARE back-office (super-admin, dispatcher, finance, support) — not technicians.</summary>
+    public const string BackOffice = nameof(BackOffice);
+
     public static void AddSeneCarePolicies(this AuthorizationOptions options, params string[] authenticationSchemes)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -104,6 +107,9 @@ public static class Policies
         options.AddPolicy(AdminFinance, Registered(c =>
             c.User.IsInRole(nameof(PlatformRole.Finance)) || c.User.IsInRole(nameof(PlatformRole.SuperAdmin))));
         options.AddPolicy(SuperAdmin, Registered(c => c.User.IsInRole(nameof(PlatformRole.SuperAdmin))));
+        options.AddPolicy(BackOffice, Registered(c => Enum.GetValues<PlatformRole>()
+            .Where(r => r is not (PlatformRole.Customer or PlatformRole.Technician))
+            .Any(r => c.User.IsInRole(r.ToString()))));
         options.AddPolicy(Staff, Registered(c => Enum.GetValues<PlatformRole>()
             .Where(r => r != PlatformRole.Customer)
             .Any(r => c.User.IsInRole(r.ToString()))));

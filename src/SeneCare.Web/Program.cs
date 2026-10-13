@@ -59,6 +59,7 @@ try
         options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All));
 
     builder.Services.AddSeneCareLocalization();
+    builder.Services.AddSignalR();
     builder.Services
         .AddControllersWithViews(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()))
         .AddViewLocalization()
@@ -89,6 +90,7 @@ try
     app.MapHealthChecks("/health", new HealthCheckOptions { Predicate = check => !check.Tags.Contains(SeneCare.Infrastructure.DependencyInjection.ReadinessTag) });
     app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains(SeneCare.Infrastructure.DependencyInjection.ReadinessTag) });
 
+    app.MapHub<SeneCare.Web.Hubs.TrackingHub>(SeneCare.Web.Hubs.TrackingHub.Path);
     app.MapControllerRoute(
             name: "areas",
             pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}")

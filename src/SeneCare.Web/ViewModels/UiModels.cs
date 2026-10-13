@@ -29,7 +29,7 @@ public enum TimelineState
 
 public sealed record TimelineStep(string Label, TimelineState State, DateTimeOffset? At = null, string? Note = null);
 
-public sealed record PhotoUploaderModel(string Name, string Label, int MaxPhotos = 6);
+public sealed record PhotoUploaderModel(string Name, string Label, int MaxPhotos = 6, string? Id = null);
 
 public enum EmptyIllustration
 {

@@ -6,11 +6,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using SeneCare.Application.Abstractions;
 using SeneCare.Application.Auth;
+using SeneCare.Application.Technicians;
 using SeneCare.Infrastructure.Documents;
 using SeneCare.Infrastructure.Identity;
 using SeneCare.Infrastructure.Messaging;
 using SeneCare.Infrastructure.Persistence;
 using SeneCare.Infrastructure.Persistence.Seed;
+using SeneCare.Infrastructure.Realtime;
 using SeneCare.Infrastructure.Security;
 using SeneCare.Infrastructure.Storage;
 
@@ -42,6 +44,7 @@ public static class DependencyInjection
         services.Configure<StorageOptions>(configuration.GetSection(StorageOptions.SectionName));
         services.AddSingleton<IFileStorage, LocalFileStorage>();
         services.AddSingleton<IPdfRenderer, QuestPdfRenderer>();
+        services.AddSingleton<ILivePositions, MemoryLivePositions>();
 
         AddMessaging(services, configuration);
 

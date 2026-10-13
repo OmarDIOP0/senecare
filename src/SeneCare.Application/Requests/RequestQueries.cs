@@ -40,7 +40,10 @@ public sealed record RequestDetail(
     DateOnly? WarrantyEndsOn,
     int? RatingScore,
     string? RatingComment,
-    string? DisputeReason)
+    string? DisputeReason,
+    GeoPoint? PropertyLocation = null,
+    string? SignedByName = null,
+    DateTimeOffset? CompletedAt = null)
 {
     public bool CanChooseSlot => Summary.Status == RequestStatus.AppointmentProposed && ProposedSlots.Count > 0;
 
@@ -94,7 +97,10 @@ public sealed class RequestQueries(IApplicationDbContext db, AccessControl acces
             intervention?.WarrantyEndsOn,
             request.Rating?.Score,
             request.Rating?.Comment,
-            request.DisputeReason);
+            request.DisputeReason,
+            await db.Properties.AsNoTracking().Where(p => p.Id == request.PropertyId).Select(p => p.Address.Location).FirstOrDefaultAsync(cancellationToken),
+            intervention?.SignedByName,
+            intervention?.CompletedAt);
     }
 
     internal async Task<IReadOnlyList<RequestSummary>> SummariesAsync(IReadOnlyList<ServiceRequest> requests, CancellationToken cancellationToken)

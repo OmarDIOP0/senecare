@@ -51,6 +51,21 @@ public class ServiceRequestTests
     }
 
     [Fact]
+    public void Arrival_on_site_is_what_stops_the_sla_clock()
+    {
+        var request = Request(Urgency.Critical);
+        request.StartReview(Dispatcher, Now);
+        request.DispatchImmediately(Slot(1), Dispatcher, Now);
+        request.MarkOnTheWay(Tech, Now.AddMinutes(30));
+        request.MarkArrived(Tech, Now.AddHours(3));
+        request.StartWork(Tech, Now.AddHours(5));
+
+        Assert.Equal(RequestStatus.InProgress, request.Status);
+        Assert.Equal(Now.AddHours(3), request.RespondedAt);
+        Assert.False(request.IsSlaBreached(Now.AddDays(1)));
+    }
+
+    [Fact]
     public void Requalifying_restarts_the_sla_from_now()
     {
         var request = Request(Urgency.Normal);

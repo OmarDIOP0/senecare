@@ -364,7 +364,7 @@
   <data name="Simulation_Done" xml:space="preserve"><value>Simulation effectuée.</value></data>
   <data name="Simulation_ProposeSlots" xml:space="preserve"><value>Proposer 3 créneaux</value></data>
   <data name="Simulation_OnTheWay" xml:space="preserve"><value>Technicien en route</value></data>
-  <data name="Simulation_StartWork" xml:space="preserve"><value>Sur place</value></data>
+  <data name="Simulation_StartWork" xml:space="preserve"><value>Commencer les travaux</value></data>
   <data name="Simulation_Complete" xml:space="preserve"><value>Terminer l'intervention</value></data>
   <data name="Timeline_Received" xml:space="preserve"><value>Signalement reçu</value></data>
   <data name="Timeline_Review" xml:space="preserve"><value>Analyse par notre équipe</value></data>
@@ -602,4 +602,89 @@
   <data name="Error_diagnostic_not_anomaly" xml:space="preserve"><value>Seule une anomalie d'un rapport remis peut devenir une demande.</value></data>
   <data name="Error_diagnostic_already_converted" xml:space="preserve"><value>Cette anomalie a déjà sa demande.</value></data>
   <data name="Error_simulation_no_diagnostic" xml:space="preserve"><value>Aucun diagnostic planifié à réaliser.</value></data>
+  <data name="Status_OnSite" xml:space="preserve"><value>Technicien sur place</value></data>
+  <data name="Timeline_Note_Arrived" xml:space="preserve"><value>Le technicien est arrivé.</value></data>
+  <data name="Simulation_Assign" xml:space="preserve"><value>Confirmer et assigner au technicien démo</value></data>
+  <data name="Tracking_Title" xml:space="preserve"><value>Suivi en direct</value></data>
+  <data name="Tracking_Waiting" xml:space="preserve"><value>Le technicien est en route. Sa position s'affiche dès qu'il la partage.</value></data>
+  <data name="Tracking_Live" xml:space="preserve"><value>Position du technicien en direct.</value></data>
+  <data name="Report_Warranty" xml:space="preserve"><value>Garantie jusqu'au</value></data>
+  <data name="Tech_Missions_Title" xml:space="preserve"><value>Missions du jour</value></data>
+  <data name="Tech_Missions_Count" xml:space="preserve"><value>{0} à faire</value></data>
+  <data name="Tech_None_Title" xml:space="preserve"><value>Pas de mission pour l'instant</value></data>
+  <data name="Tech_None_Text" xml:space="preserve"><value>Les missions confiées par le dispatch apparaissent ici, même sans réseau une fois chargées.</value></data>
+  <data name="Tech_Diagnostic" xml:space="preserve"><value>Diagnostic trimestriel</value></data>
+  <data name="Tech_Address" xml:space="preserve"><value>Adresse</value></data>
+  <data name="Tech_Customer" xml:space="preserve"><value>Contact : {0}</value></data>
+  <data name="Tech_Go" xml:space="preserve"><value>Je pars : en route</value></data>
+  <data name="Tech_Arrived" xml:space="preserve"><value>Je suis sur place</value></data>
+  <data name="Tech_Start" xml:space="preserve"><value>Commencer les travaux</value></data>
+  <data name="Tech_PositionStarting" xml:space="preserve"><value>Partage de votre position avec le client…</value></data>
+  <data name="Tech_PositionShared" xml:space="preserve"><value>Position partagée avec le client.</value></data>
+  <data name="Tech_PositionDenied" xml:space="preserve"><value>Position non disponible : activez la localisation pour que le client vous suive.</value></data>
+  <data name="Tech_Request" xml:space="preserve"><value>La demande</value></data>
+  <data name="Tech_Report" xml:space="preserve"><value>Rapport</value></data>
+  <data name="Tech_PhotosBefore" xml:space="preserve"><value>Photos avant</value></data>
+  <data name="Tech_PhotosAfter" xml:space="preserve"><value>Photos après</value></data>
+  <data name="Tech_AddPhotos" xml:space="preserve"><value>Prendre des photos</value></data>
+  <data name="Tech_SendPhotos" xml:space="preserve"><value>Envoyer les photos</value></data>
+  <data name="Tech_Checklist" xml:space="preserve"><value>Check-list</value></data>
+  <data name="Tech_AddStep" xml:space="preserve"><value>Ajouter une étape</value></data>
+  <data name="Tech_Parts" xml:space="preserve"><value>Pièces utilisées</value></data>
+  <data name="Tech_PartName" xml:space="preserve"><value>Pièce (ex : robinet 1/2, disjoncteur 20 A)</value></data>
+  <data name="Tech_PartQuantity" xml:space="preserve"><value>Quantité</value></data>
+  <data name="Tech_PartUnit" xml:space="preserve"><value>Unité</value></data>
+  <data name="Tech_AddPart" xml:space="preserve"><value>Ajouter</value></data>
+  <data name="Tech_Close" xml:space="preserve"><value>Signature et clôture</value></data>
+  <data name="Tech_Signature" xml:space="preserve"><value>Signature du client (au doigt)</value></data>
+  <data name="Tech_SignatureClear" xml:space="preserve"><value>Effacer</value></data>
+  <data name="Tech_SignatureEmpty" xml:space="preserve"><value>Le client doit signer dans le cadre.</value></data>
+  <data name="Tech_SignedByName" xml:space="preserve"><value>Signé par</value></data>
+  <data name="Tech_SignedBy" xml:space="preserve"><value>Signé par {0}</value></data>
+  <data name="Tech_SaveSignature" xml:space="preserve"><value>Enregistrer la signature</value></data>
+  <data name="Tech_Findings" xml:space="preserve"><value>Constat et travaux réalisés</value></data>
+  <data name="Tech_Findings_Placeholder" xml:space="preserve"><value>Ex : joint du robinet de cuisine usé, remplacé ; plus de fuite.</value></data>
+  <data name="Tech_Findings_Hint" xml:space="preserve"><value>Le rapport ajoute tout seul les étapes cochées, les pièces et la durée.</value></data>
+  <data name="Tech_NoSignature" xml:space="preserve"><value>Pas de signature ? Pourquoi</value></data>
+  <data name="Tech_NoSignature_Placeholder" xml:space="preserve"><value>Ex : client absent, gardien présent</value></data>
+  <data name="Tech_NeedAfterPhoto" xml:space="preserve"><value>Ajoutez au moins une photo après les travaux avant de terminer.</value></data>
+  <data name="Tech_Finish" xml:space="preserve"><value>Terminé</value></data>
+  <data name="Tech_Completed" xml:space="preserve"><value>Mission terminée. Le client est invité à valider.</value></data>
+  <data name="Tech_Sites" xml:space="preserve"><value>Sites à contrôler ({0})</value></data>
+  <data name="Tech_Points" xml:space="preserve"><value>Points contrôlés ({0})</value></data>
+  <data name="Tech_AddPoint" xml:space="preserve"><value>Ajouter un point de contrôle</value></data>
+  <data name="Tech_PointLabel" xml:space="preserve"><value>Élément contrôlé</value></data>
+  <data name="Tech_PointLabel_Placeholder" xml:space="preserve"><value>Ex : tableau électrique, toiture-terrasse</value></data>
+  <data name="Tech_PointComment" xml:space="preserve"><value>Observation</value></data>
+  <data name="Tech_PointAdded" xml:space="preserve"><value>Point enregistré.</value></data>
+  <data name="Tech_SubmitDiagnostic" xml:space="preserve"><value>Remettre le rapport</value></data>
+  <data name="Tech_DiagnosticSubmitted" xml:space="preserve"><value>Rapport remis : le superviseur va le valider.</value></data>
+  <data name="Tech_History_Intro" xml:space="preserve"><value>Vos interventions terminées des 30 derniers jours.</value></data>
+  <data name="Tech_History_None" xml:space="preserve"><value>Aucun rapport</value></data>
+  <data name="Tech_History_None_Text" xml:space="preserve"><value>Vos interventions terminées s'afficheront ici.</value></data>
+  <data name="Error_mission_not_found" xml:space="preserve"><value>Mission introuvable.</value></data>
+  <data name="Error_mission_cancelled" xml:space="preserve"><value>Cette demande a été annulée.</value></data>
+  <data name="Error_mission_photos_count" xml:space="preserve"><value>Ajoutez entre 1 et 6 photos.</value></data>
+  <data name="Error_mission_signature_missing" xml:space="preserve"><value>La signature n'a pas été reçue.</value></data>
+  <data name="Error_mission_findings_required" xml:space="preserve"><value>Décrivez le constat et les travaux réalisés.</value></data>
+  <data name="Error_intervention_after_photo" xml:space="preserve"><value>Ajoutez au moins une photo après les travaux.</value></data>
+  <data name="Error_intervention_signature" xml:space="preserve"><value>Faites signer le client, ou indiquez pourquoi il n'a pas signé.</value></data>
+  <data name="Error_intervention_signed_by" xml:space="preserve"><value>Indiquez le nom de la personne qui signe.</value></data>
+  <data name="Error_intervention_not_started" xml:space="preserve"><value>Commencez d'abord les travaux.</value></data>
+  <data name="Error_intervention_completed" xml:space="preserve"><value>Cette intervention est déjà terminée.</value></data>
+  <data name="Error_intervention_photo_kind" xml:space="preserve"><value>Photo avant ou après ?</value></data>
+  <data name="Error_checklist_label" xml:space="preserve"><value>Écrivez l'étape à ajouter.</value></data>
+  <data name="Error_checklist_not_found" xml:space="preserve"><value>Étape introuvable.</value></data>
+  <data name="Error_part_quantity" xml:space="preserve"><value>Quantité invalide.</value></data>
+  <data name="Error_part_name" xml:space="preserve"><value>Indiquez le nom de la pièce.</value></data>
+  <data name="Error_part_unit" xml:space="preserve"><value>Indiquez l'unité.</value></data>
+  <data name="Error_controlpoint_incomplete" xml:space="preserve"><value>Choisissez le métier et le résultat.</value></data>
+  <data name="Error_controlpoint_label" xml:space="preserve"><value>Indiquez l'élément contrôlé.</value></data>
+  <data name="Error_controlpoint_comment" xml:space="preserve"><value>Observation trop longue.</value></data>
+  <data name="Error_diagnostic_empty" xml:space="preserve"><value>Enregistrez au moins un point de contrôle.</value></data>
+  <data name="Error_diagnostic_invalid_status" xml:space="preserve"><value>Ce diagnostic ne peut plus être modifié.</value></data>
+  <data name="Error_diagnostic_not_assigned" xml:space="preserve"><value>Ce diagnostic est confié à un autre technicien.</value></data>
+  <data name="Error_assignment_not_found" xml:space="preserve"><value>Demande ou technicien introuvable.</value></data>
+  <data name="Error_assignment_not_confirmed" xml:space="preserve"><value>Le rendez-vous doit d'abord être confirmé.</value></data>
+  <data name="Error_assignment_already_assigned" xml:space="preserve"><value>Un technicien est déjà assigné.</value></data>
 </root>

@@ -10,6 +10,7 @@ using SeneCare.Application.Payments;
 using SeneCare.Application.Properties;
 using SeneCare.Application.Requests;
 using SeneCare.Application.Subscriptions;
+using SeneCare.Application.Technicians;
 using SeneCare.Application.Users;
 
 namespace SeneCare.Application;
@@ -55,6 +56,13 @@ public static class DependencyInjection
         services.AddScoped<DiagnosticQueries>();
         services.AddScoped<ConvertAnomalyHandler>();
         services.AddScoped<BusinessExports>();
+
+        services.AddScoped<TechnicianAccess>();
+        services.AddScoped<MissionQueries>();
+        services.AddScoped<MissionActions>();
+        services.AddScoped<AssignmentHandler>();
+        services.AddScoped<DiagnosticFieldHandler>();
+        services.AddScoped<PositionSharing>();
 
         // Development tools (refused by the Web outside Development).
         services.AddScoped<SimulatedActivation>();

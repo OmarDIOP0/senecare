@@ -236,6 +236,13 @@ public sealed class ServiceRequest : AggregateRoot
     public void MarkOnTheWay(Guid technicianUserId, DateTimeOffset now) =>
         TransitionTo(RequestStatus.OnTheWay, technicianUserId, null, now);
 
+    /// <summary>« Sur place »: the technician is at the building, which is what the SLA measures.</summary>
+    public void MarkArrived(Guid technicianUserId, DateTimeOffset now)
+    {
+        TransitionTo(RequestStatus.OnSite, technicianUserId, null, now);
+        RespondedAt ??= now;
+    }
+
     public void StartWork(Guid technicianUserId, DateTimeOffset now)
     {
         TransitionTo(RequestStatus.InProgress, technicianUserId, null, now);

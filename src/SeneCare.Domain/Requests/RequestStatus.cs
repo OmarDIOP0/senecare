@@ -14,6 +14,9 @@ public enum RequestStatus
     ValidatedByCustomer = 9,
     Disputed = 10,
     Cancelled = 11,
+
+    /// <summary>Technician arrived (« Sur place »): the response time (SLA) stops here.</summary>
+    OnSite = 12,
 }
 
 /// <summary>Allowed transitions of a service request. Anything not listed here is refused.</summary>
@@ -41,7 +44,8 @@ public static class RequestStateMachine
             RequestStatus.OnTheWay,
             RequestStatus.Cancelled,
         ],
-        [RequestStatus.OnTheWay] = [RequestStatus.InProgress],
+        [RequestStatus.OnTheWay] = [RequestStatus.OnSite, RequestStatus.InProgress],
+        [RequestStatus.OnSite] = [RequestStatus.InProgress],
         [RequestStatus.InProgress] = [RequestStatus.Completed],
         [RequestStatus.Completed] = [RequestStatus.ValidatedByCustomer, RequestStatus.Disputed],
         [RequestStatus.Disputed] = [RequestStatus.UnderReview],

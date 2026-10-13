@@ -44,7 +44,7 @@ public static class Formatting
         RequestStatus.AwaitingApproval or RequestStatus.AppointmentProposed => "bg-soleil-clair text-charbon",
         RequestStatus.Submitted or RequestStatus.UnderReview => "bg-atlantique-clair text-atlantique",
         RequestStatus.AppointmentConfirmed => "bg-indigo-clair text-indigo",
-        RequestStatus.OnTheWay or RequestStatus.InProgress => "bg-soleil text-charbon",
+        RequestStatus.OnTheWay or RequestStatus.OnSite or RequestStatus.InProgress => "bg-soleil text-charbon",
         RequestStatus.Completed or RequestStatus.ValidatedByCustomer => "bg-baobab-clair text-baobab",
         RequestStatus.Disputed => "bg-laterite-clair text-laterite",
         _ => "bg-ligne text-charbon-doux",

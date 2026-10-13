@@ -4,7 +4,7 @@ using SeneCare.Domain.Common;
 
 namespace SeneCare.Application.Resources;
 
-/// <summary>Localized texts of outgoing SMS / WhatsApp messages.</summary>
+/// <summary>Localized texts produced by the back end: SMS / WhatsApp messages, field checklists, reports.</summary>
 public static class Messages
 {
     private static readonly ResourceManager ResourceManager = new("SeneCare.Application.Resources.Messages", typeof(Messages).Assembly);
@@ -12,6 +12,16 @@ public static class Messages
     public static string Otp(string code, Language language) => Format("Otp", language, code);
 
     public static string Invitation(string companyName, string link, Language language) => Format("Invitation", language, companyName, link);
+
+    /// <summary>Default field checklist for a trade (editable on site).</summary>
+    public static IReadOnlyList<string> Checklist(ServiceDomain domain, Language language) =>
+        Format("Checklist_" + domain, language).Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+    public static string ReportDone(string steps, Language language) => Format("Report_Done", language, steps);
+
+    public static string ReportParts(string parts, Language language) => Format("Report_Parts", language, parts);
+
+    public static string ReportDuration(int minutes, Language language) => Format("Report_Duration", language, minutes);
 
     private static string Format(string key, Language language, params object[] args)
     {

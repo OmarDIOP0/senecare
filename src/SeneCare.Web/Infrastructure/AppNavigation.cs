@@ -45,7 +45,7 @@ public static class AppNavigation
         {
             return new AppNav(
                 [
-                    new("espace", "/espace", "truck", "Tab_Missions", "missions"),
+                    new("espace", "/technicien", "truck", "Tab_Missions", "missions"),
                     new("rapports", "/technicien/rapports", "receipt", "Tab_Reports", "rapports"),
                     Profile,
                 ],

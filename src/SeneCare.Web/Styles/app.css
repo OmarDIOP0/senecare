@@ -264,4 +264,14 @@
       open:animate-monte sm:m-auto sm:max-w-lg sm:rounded-xl;
   }
   .sc-sheet::backdrop { background: rgb(21 18 14 / 0.55); }
+
+  /* ---- Field mode (technician): full sun, one hand, gloves -------------- */
+  /* Darker secondary text, thicker borders, bigger targets (56 px), slightly larger text. */
+  .sc-terrain { font-size: 1.0625rem; --color-charbon-doux: var(--charbon); }
+  .sc-terrain .sc-carte { @apply border-2 border-charbon/25 shadow-none; }
+  .sc-terrain :where(.sc-btn, .sc-btn-secondaire, .sc-btn-primaire, .sc-btn-danger, .sc-btn-whatsapp) { @apply min-h-14 text-lg; }
+  .sc-terrain .sc-input { @apply min-h-14 border-2 border-charbon/40; }
+  .sc-check { @apply flex min-h-14 w-full items-center gap-3 rounded-md border-2 border-ligne bg-surface px-3 text-left font-bold; }
+  .sc-check[aria-pressed="true"] { @apply border-baobab bg-baobab-clair text-baobab; }
+  .sc-signature { @apply block h-48 w-full touch-none rounded-md border-2 border-dashed border-charbon/40 bg-white; }
 }

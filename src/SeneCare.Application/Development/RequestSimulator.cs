@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using SeneCare.Application.Abstractions;
 using SeneCare.Application.Common;
+using SeneCare.Application.Resources;
+using SeneCare.Application.Technicians;
 using SeneCare.Domain.Common;
 using SeneCare.Domain.Interventions;
 using SeneCare.Domain.Platform;
@@ -23,6 +25,12 @@ public enum SimulationStep
 
     /// <summary>Closes the intervention with a report, an « after » photo and the warranty.</summary>
     Complete = 4,
+
+    /// <summary>
+    /// Confirms the first proposed slot and gives the mission to the demo technician (70 000 00 01),
+    /// who then plays it for real in the technician app.
+    /// </summary>
+    Assign = 5,
 }
 
 /// <summary>
@@ -30,7 +38,7 @@ public enum SimulationStep
 /// customer journey (slot choice, technician contact, validation…) can be tried before Phases 8–9
 /// build the real back-office and technician app.
 /// </summary>
-public sealed class RequestSimulator(IApplicationDbContext db, IFileStorage storage, Settings settings, TimeProvider clock)
+public sealed class RequestSimulator(IApplicationDbContext db, IFileStorage storage, Settings settings, AssignmentHandler assignments, TimeProvider clock)
 {
     private static readonly PhoneNumber DemoTechnicianPhone = PhoneNumber.Parse("70 000 00 01");
 
@@ -68,9 +76,24 @@ public sealed class RequestSimulator(IApplicationDbContext db, IFileStorage stor
                         now);
                     break;
 
+                case SimulationStep.Assign:
+                    if (request.Status == RequestStatus.AppointmentProposed && request.CurrentAppointment is { } proposed)
+                    {
+                        request.ConfirmAppointment(proposed.ProposedSlots.OrderBy(s => s.Start).First(), request.ReportedByUserId, now);
+                    }
+
+                    var assignee = await DemoTechnicianAsync(request.Domain, cancellationToken);
+                    await db.SaveChangesAsync(cancellationToken);
+                    var assigned = await assignments.AssignInterventionAsync(request.Id, assignee.Id, cancellationToken);
+                    return assigned.IsSuccess ? Result<Guid>.Success(request.Id) : Result<Guid>.Failure(assigned.Error);
+
                 case SimulationStep.OnTheWay:
                     var technician = await DemoTechnicianAsync(request.Domain, cancellationToken);
-                    db.Interventions.Add(new Intervention(request.Id, request.PropertyId, request.Domain, technician.Id, ["Diagnostic sur place", "Réparation", "Nettoyage du chantier"]));
+                    if (!await db.Interventions.AnyAsync(i => i.RequestId == request.Id && i.CompletedAt == null, cancellationToken))
+                    {
+                        db.Interventions.Add(new Intervention(request.Id, request.PropertyId, request.Domain, technician.Id, Messages.Checklist(request.Domain, Language.French)));
+                    }
+
                     request.MarkOnTheWay(technician.UserId, now);
                     break;
 

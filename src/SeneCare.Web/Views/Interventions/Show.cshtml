@@ -6,6 +6,23 @@
     var d = Model.Detail;
     var s = d.Summary;
     ViewData["Title"] = s.Number;
+    // Live follow-up while the technician is coming or working: position on a map, page refresh on each step.
+    var live = s.Status is RequestStatus.AppointmentConfirmed or RequestStatus.OnTheWay or RequestStatus.OnSite or RequestStatus.InProgress;
+    var onTheWay = s.Status == RequestStatus.OnTheWay;
+}
+@section Head {
+    @if (onTheWay)
+    {
+        <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" asp-append-version="true" />
+        <script src="~/lib/leaflet/leaflet.js" asp-append-version="true" defer></script>
+    }
+}
+@section Scripts {
+    @if (live)
+    {
+        <script src="~/lib/signalr/signalr.min.js" asp-append-version="true" defer></script>
+        <script src="~/js/tracking.js" asp-append-version="true" defer></script>
+    }
 }
 
 <p class="sc-surtitre">@L["Domain_" + s.Domain] · @s.Number</p>
@@ -52,6 +69,19 @@
             <a href="tel:@tech.PhoneE164" class="sc-btn-secondaire"><sc-icon name="phone" />@L["Card_Call"]</a>
             <a href="https://wa.me/@tech.PhoneE164.TrimStart('+')" class="sc-btn-whatsapp" rel="noopener"><sc-icon name="message-circle" />WhatsApp</a>
         </div>
+    </section>
+}
+
+@if (live)
+{
+    <section class="sc-carte mt-4 @(onTheWay ? "" : "hidden")" aria-labelledby="suivi-titre" data-tracking data-hub="/hubs/suivi" data-request="@s.Id"
+             data-lat="@d.PropertyLocation?.Latitude.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+             data-lng="@d.PropertyLocation?.Longitude.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+             data-text-live="@L["Tracking_Live"]">
+        <h2 id="suivi-titre" class="font-bold">@L["Tracking_Title"]</h2>
+        <p class="sc-texte-doux mt-1" data-tracking-status role="status">@L["Tracking_Waiting"]</p>
+        @* isolate: Leaflet layers stay below the tab bar. *@
+        <div class="isolate mt-3 h-56 overflow-hidden rounded-md" data-tracking-map hidden></div>
     </section>
 }
 
@@ -130,8 +160,15 @@
 @if (d.Report is not null)
 {
     <section class="sc-carte mt-6" aria-labelledby="rapport-titre">
-        <h2 id="rapport-titre" class="sc-sous-titre">@L["Request_Report"]</h2>
-        <p class="mt-2">@d.Report</p>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+            <h2 id="rapport-titre" class="sc-sous-titre">@L["Request_Report"]</h2>
+            <a href="/interventions/@s.Id/rapport.pdf" class="sc-btn-secondaire min-h-10 text-sm" download><sc-icon name="receipt" />PDF</a>
+        </div>
+        <p class="mt-2 whitespace-pre-line">@d.Report</p>
+        @if (d.SignedByName is { } signer)
+        {
+            <p class="mt-2 text-sm">@L["Tech_SignedBy", signer]</p>
+        }
         @if (d.AfterPhotoIds.Count > 0)
         {
             <ul class="mt-3 grid grid-cols-3 gap-2">

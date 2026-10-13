@@ -15,7 +15,7 @@ public static class BusinessDocuments
 {
     private const string CsvDate = "yyyy-MM-dd HH:mm";
 
-    public static DiagnosticReport Diagnostic(DiagnosticDetail detail, IStringLocalizer<SharedResource> l)
+    public static FieldReport Diagnostic(DiagnosticDetail detail, IStringLocalizer<SharedResource> l)
     {
         ArgumentNullException.ThrowIfNull(detail);
         ArgumentNullException.ThrowIfNull(l);
@@ -36,7 +36,7 @@ public static class BusinessDocuments
             facts.Add(new(l["Diagnostic_ValidatedOn"], Formatting.ShortDate(validated)));
         }
 
-        return new DiagnosticReport(
+        return new FieldReport(
             l["Diagnostic_ReportTitle", Quarter(detail.Slot.Period.Start), detail.Slot.Period.Start.Year],
             detail.AccountName,
             facts,

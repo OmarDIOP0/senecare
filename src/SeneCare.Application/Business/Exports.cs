@@ -14,7 +14,7 @@ public sealed record ReportLine(string Domain, string Label, string Result, bool
 
 public sealed record ReportSection(string Title, IReadOnlyList<ReportLine> Lines);
 
-public sealed record DiagnosticReport(
+public sealed record FieldReport(
     string Title,
     string AccountName,
     IReadOnlyList<ReportFact> Facts,

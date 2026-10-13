@@ -7,4 +7,16 @@
   <!-- Outgoing SMS / WhatsApp texts. Keep them short: one SMS = 160 GSM-7 characters (é, è, à, ù are fine; ê, ç, ô switch to 70). -->
   <data name="Otp" xml:space="preserve"><value>SeneCare : votre code est {0}. Il expire dans 5 minutes. Ne le communiquez à personne.</value></data>
   <data name="Invitation" xml:space="preserve"><value>{0} vous invite sur SeneCare pour signaler les pannes de vos locaux : {1}</value></data>
+  <!-- Field checklists by trade (« | » separates items). The technician can add items on site. -->
+  <data name="Checklist_Electricity" xml:space="preserve"><value>Couper le courant au tableau|Identifier la cause (disjoncteur, câble, prise)|Réparer ou remplacer|Tester le différentiel et les prises|Remettre le courant et vérifier avec le client</value></data>
+  <data name="Checklist_Plumbing" xml:space="preserve"><value>Fermer l'arrivée d'eau|Localiser la fuite ou le bouchon|Réparer (joint, robinet, tuyau)|Remettre en eau et vérifier l'étanchéité|Nettoyer et sécher la zone</value></data>
+  <data name="Checklist_Waterproofing" xml:space="preserve"><value>Inspecter la dalle, les acrotères et les évacuations|Nettoyer et préparer le support|Traiter fissures et joints|Appliquer l'étanchéité|Tester l'écoulement de l'eau</value></data>
+  <data name="Checklist_Masonry" xml:space="preserve"><value>Sécuriser la zone|Purger les parties abîmées|Reprendre la maçonnerie ou l'enduit|Laisser le chantier propre</value></data>
+  <data name="Checklist_Carpentry" xml:space="preserve"><value>Contrôler l'ouverture et la fermeture|Régler ou remplacer charnières et serrures|Traiter le bois ou l'alu si besoin|Vérifier avec le client</value></data>
+  <data name="Checklist_Security" xml:space="preserve"><value>Vérifier l'alimentation des caméras|Contrôler l'enregistreur et le stockage|Régler les angles et la vision de nuit|Montrer l'accès à distance au client</value></data>
+  <data name="Checklist_Outdoor" xml:space="preserve"><value>Repérer les travaux avec le client|Tailler, désherber ou planter|Vérifier l'arrosage|Évacuer les déchets verts</value></data>
+  <!-- Automatic intervention report (customer, PDF). -->
+  <data name="Report_Done" xml:space="preserve"><value>Étapes réalisées : {0}.</value></data>
+  <data name="Report_Parts" xml:space="preserve"><value>Pièces utilisées : {0}.</value></data>
+  <data name="Report_Duration" xml:space="preserve"><value>Durée sur place : {0} min.</value></data>
 </root>

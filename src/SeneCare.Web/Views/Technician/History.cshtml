@@ -1,0 +1,31 @@
+@model IReadOnlyList<SeneCare.Application.Technicians.MissionCard>
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "rapports";
+    ViewData["Title"] = L["Tab_Reports"];
+}
+
+<h1 class="sc-titre">@L["Tab_Reports"]</h1>
+<p class="mt-1">@L["Tech_History_Intro"]</p>
+
+@if (Model.Count == 0)
+{
+    <div class="mt-6">
+        <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Tech_History_None"], L["Tech_History_None_Text"], EmptyIllustration.Tools)' />
+    </div>
+}
+
+<ul class="mt-5 grid gap-3">
+    @foreach (var m in Model)
+    {
+        <li class="sc-carte relative flex items-center gap-3">
+            <span class="grid size-12 shrink-0 place-items-center rounded-md bg-baobab-clair text-baobab"><sc-icon name="@Formatting.Icon(m.Domain!.Value)" class="size-6" /></span>
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-bold">@L["Domain_" + m.Domain] · @m.Number · @(m.At is { } at ? Formatting.ShortDate(at) : "")</p>
+                <a href="/technicien/missions/@m.Id" class="font-bold text-charbon no-underline after:absolute after:inset-0">@m.Title</a>
+                <p class="text-sm">@m.Site · @m.Place</p>
+            </div>
+            <sc-icon name="chevron-right" />
+        </li>
+    }
+</ul>

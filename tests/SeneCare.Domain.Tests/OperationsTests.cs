@@ -44,6 +44,18 @@ public class DiagnosticTests
         Assert.Equal(1, diagnostic.AnomalyCount);
     }
 
+    [Fact]
+    public void Only_the_assigned_technician_can_start_the_diagnostic()
+    {
+        var diagnostic = new Diagnostic(Guid.CreateVersion7(), Guid.CreateVersion7(), DateRange.OfMonths(new DateOnly(2026, 1, 1), 3), Now);
+        var assigned = Guid.CreateVersion7();
+        diagnostic.Assign(assigned);
+
+        Assert.Throws<DomainException>(() => diagnostic.Start(Guid.CreateVersion7(), Now));
+        diagnostic.Start(assigned, Now);
+        Assert.Equal(DiagnosticStatus.InProgress, diagnostic.Status);
+    }
+
     private static Diagnostic Started()
     {
         var diagnostic = new Diagnostic(Guid.CreateVersion7(), Guid.CreateVersion7(), DateRange.OfMonths(new DateOnly(2026, 1, 1), 3), Now);

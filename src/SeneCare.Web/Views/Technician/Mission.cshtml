@@ -1,0 +1,245 @@
+@model SeneCare.Application.Technicians.MissionDetail
+@using System.Globalization
+@using SeneCare.Domain.Requests
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "espace";
+    ViewData["Title"] = Model.Number;
+    var lat = Model.Latitude?.ToString(CultureInfo.InvariantCulture);
+    var lng = Model.Longitude?.ToString(CultureInfo.InvariantCulture);
+    var destination = lat is not null ? $"{lat},{lng}" : Uri.EscapeDataString($"{Model.Site}, {Model.Place}, Sénégal");
+    var googleMaps = $"https://www.google.com/maps/dir/?api=1&destination={destination}";
+    var waze = lat is not null ? $"https://waze.com/ul?ll={lat},{lng}&navigate=yes" : $"https://waze.com/ul?q={destination}&navigate=yes";
+    var whatsApp = Model.CustomerPhoneE164.TrimStart('+');
+    var onSite = Model.Status is RequestStatus.OnSite or RequestStatus.InProgress;
+    var working = Model.Status == RequestStatus.InProgress && !Model.IsCompleted;
+    var base_ = $"/technicien/missions/{Model.InterventionId}";
+    var units = new[] { "pièce", "m", "kg", "L", "sac" };
+}
+@section Scripts {
+    @if (Model.Status == RequestStatus.OnTheWay)
+    {
+        <script src="~/lib/signalr/signalr.min.js" asp-append-version="true" defer></script>
+    }
+    <script src="~/js/technician.js" asp-append-version="true" defer></script>
+}
+
+<a href="/technicien" class="inline-flex min-h-12 items-center font-bold">← @L["Tech_Missions_Title"]</a>
+
+<header class="mt-2">
+    <p class="font-bold">@L["Domain_" + Model.Domain] · @Model.Number</p>
+    <h1 class="sc-titre">@Model.Site</h1>
+    <p class="mt-2 flex flex-wrap gap-2"><sc-urgency value="@Model.Urgency" /><sc-status value="@Model.Status" /></p>
+</header>
+
+@* ---- Where and who: the things a technician needs with one hand. ---- *@
+<section class="sc-carte mt-4" aria-labelledby="adresse-titre">
+    <h2 id="adresse-titre" class="sr-only">@L["Tech_Address"]</h2>
+    <p class="text-lg font-bold">@Model.Place</p>
+    @if (Model.Landmark is { } landmark)
+    {
+        <p class="mt-1 flex gap-2"><sc-icon name="map-pin" class="mt-1 shrink-0" />@landmark</p>
+    }
+    @if (Model.AddressDetails is { } details)
+    {
+        <p class="mt-1">@details</p>
+    }
+    @if (Model.AppointmentAt is { } at)
+    {
+        <p class="mt-1 flex gap-2"><sc-icon name="clock" class="mt-1 shrink-0" />@Formatting.ShortDateTime(at)</p>
+    }
+    <div class="mt-4 grid grid-cols-2 gap-2">
+        <a href="@googleMaps" class="sc-btn-secondaire" target="_blank" rel="noopener"><sc-icon name="navigation" />Maps</a>
+        <a href="@waze" class="sc-btn-secondaire" target="_blank" rel="noopener"><sc-icon name="navigation" />Waze</a>
+        <a href="tel:@Model.CustomerPhoneE164" class="sc-btn-secondaire"><sc-icon name="phone" />@L["Card_Call"]</a>
+        <a href="https://wa.me/@whatsApp" class="sc-btn-whatsapp" target="_blank" rel="noopener"><sc-icon name="message-circle" />WhatsApp</a>
+    </div>
+    @if (Model.CustomerName is { } customer)
+    {
+        <p class="mt-3">@L["Tech_Customer", customer]</p>
+    }
+</section>
+
+@* ---- One big button for the next status. ---- *@
+@if (!Model.IsCompleted)
+{
+    var (step, label, icon) = Model.Status switch
+    {
+        RequestStatus.AppointmentConfirmed => ("en-route", L["Tech_Go"].Value, "truck"),
+        RequestStatus.OnTheWay => ("sur-place", L["Tech_Arrived"].Value, "map-pin"),
+        RequestStatus.OnSite => ("en-cours", L["Tech_Start"].Value, "play"),
+        _ => (null, null, null),
+    };
+    if (step is not null)
+    {
+        <form method="post" action="@base_/etape/@step" class="mt-4">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="sc-btn w-full min-h-16 bg-laterite text-xl text-sur-accent" data-tour="demarrer"><sc-icon name="@icon" class="size-6" />@label</button>
+        </form>
+    }
+
+    @if (Model.Status == RequestStatus.OnTheWay)
+    {
+        <p class="sc-alert mt-3 border-atlantique bg-atlantique-clair" data-share-position data-hub="/hubs/suivi" data-intervention="@Model.InterventionId"
+           data-text-shared="@L["Tech_PositionShared"]" data-text-denied="@L["Tech_PositionDenied"]" role="status">
+            <span data-share-status>@L["Tech_PositionStarting"]</span>
+        </p>
+    }
+}
+
+<section class="mt-6" aria-labelledby="demande-titre">
+    <h2 id="demande-titre" class="sc-sous-titre">@L["Tech_Request"]</h2>
+    <p class="mt-2 whitespace-pre-line">@Model.Description</p>
+    @if (Model.RequestPhotoIds.Count > 0)
+    {
+        <div class="mt-3 flex gap-2 overflow-x-auto">
+            @foreach (var photo in Model.RequestPhotoIds)
+            {
+                <a href="/fichiers/@photo" target="_blank"><img src="/fichiers/@photo" alt="" loading="lazy" class="size-24 rounded-md object-cover" /></a>
+            }
+        </div>
+    }
+</section>
+
+@if (Model.IsCompleted)
+{
+    <section class="sc-carte mt-6 border-l-4 border-l-baobab" aria-labelledby="rapport-titre">
+        <h2 id="rapport-titre" class="sc-sous-titre">@L["Tech_Report"]</h2>
+        <p class="mt-2 whitespace-pre-line">@Model.Report</p>
+        @if (Model.SignedByName is { } signer)
+        {
+            <p class="mt-2 font-bold">@L["Tech_SignedBy", signer]</p>
+        }
+    </section>
+}
+else if (onSite)
+{
+    @* ---- Photos before ---- *@
+    <section id="photos" class="mt-6" aria-labelledby="avant-titre">
+        <h2 id="avant-titre" class="sc-sous-titre">@L["Tech_PhotosBefore"] (@Model.BeforePhotoIds.Count)</h2>
+        <partial name="_Thumbs" model="Model.BeforePhotoIds" />
+        <form method="post" action="@base_/photos" enctype="multipart/form-data" class="mt-2 grid gap-2">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="moment" value="avant" />
+            <partial name="Ui/_PhotoUploader" model='new PhotoUploaderModel("photos", L["Tech_AddPhotos"], 6, "photos-avant")' />
+            <button type="submit" class="sc-btn-secondaire">@L["Tech_SendPhotos"]</button>
+        </form>
+    </section>
+}
+
+@if (working)
+{
+    @* ---- Checklist of the trade ---- *@
+    <section id="checklist" class="mt-8" aria-labelledby="checklist-titre">
+        <h2 id="checklist-titre" class="sc-sous-titre">@L["Tech_Checklist"] (@Model.Checklist.Count(c => c.IsDone)/@Model.Checklist.Count)</h2>
+        <ul class="mt-3 grid gap-2">
+            @foreach (var item in Model.Checklist)
+            {
+                <li>
+                    <form method="post" action="@base_/checklist/@item.Id">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="done" value="@(item.IsDone ? "false" : "true")" />
+                        <button type="submit" class="sc-check" aria-pressed="@(item.IsDone ? "true" : "false")">
+                            <span class="grid size-8 shrink-0 place-items-center rounded-md border-2 @(item.IsDone ? "border-baobab bg-baobab text-sur-accent" : "border-charbon/40")">
+                                @if (item.IsDone) { <sc-icon name="check" /> }
+                            </span>
+                            @item.Label
+                        </button>
+                    </form>
+                </li>
+            }
+        </ul>
+        <form method="post" action="@base_/checklist" class="mt-2 flex gap-2">
+            @Html.AntiForgeryToken()
+            <label class="sr-only" for="nouvelle-etape">@L["Tech_AddStep"]</label>
+            <input id="nouvelle-etape" name="label" class="sc-input flex-1" placeholder="@L["Tech_AddStep"]" required maxlength="200" />
+            <button type="submit" class="sc-btn-secondaire" aria-label="@L["Tech_AddStep"]"><sc-icon name="plus" /></button>
+        </form>
+    </section>
+
+    @* ---- Parts used ---- *@
+    <section id="pieces" class="mt-8" aria-labelledby="pieces-titre">
+        <h2 id="pieces-titre" class="sc-sous-titre">@L["Tech_Parts"]</h2>
+        @if (Model.Parts.Count > 0)
+        {
+            <ul class="mt-2 divide-y divide-ligne">
+                @foreach (var part in Model.Parts)
+                {
+                    <li class="flex justify-between gap-2 py-2"><span>@part.Name</span><span class="font-bold">@part.Quantity.ToString("0.##", CultureInfo.CurrentCulture) @part.Unit</span></li>
+                }
+            </ul>
+        }
+        <form method="post" action="@base_/pieces" class="mt-2 grid grid-cols-[1fr_5rem_6rem] gap-2">
+            @Html.AntiForgeryToken()
+            <label class="sr-only" for="piece-nom">@L["Tech_PartName"]</label>
+            <input id="piece-nom" name="name" class="sc-input col-span-3" placeholder="@L["Tech_PartName"]" required maxlength="150" />
+            <label class="sr-only" for="piece-qte">@L["Tech_PartQuantity"]</label>
+            <input id="piece-qte" name="quantity" class="sc-input" inputmode="decimal" value="1" required />
+            <label class="sr-only" for="piece-unite">@L["Tech_PartUnit"]</label>
+            <select id="piece-unite" name="unit" class="sc-input">
+                @foreach (var unit in units)
+                {
+                    <option>@unit</option>
+                }
+            </select>
+            <button type="submit" class="sc-btn-secondaire"><sc-icon name="package" />@L["Tech_AddPart"]</button>
+        </form>
+    </section>
+
+    @* ---- Photos after ---- *@
+    <section class="mt-8" aria-labelledby="apres-titre">
+        <h2 id="apres-titre" class="sc-sous-titre">@L["Tech_PhotosAfter"] (@Model.AfterPhotoIds.Count)</h2>
+        <partial name="_Thumbs" model="Model.AfterPhotoIds" />
+        <form method="post" action="@base_/photos" enctype="multipart/form-data" class="mt-2 grid gap-2">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="moment" value="apres" />
+            <partial name="Ui/_PhotoUploader" model='new PhotoUploaderModel("photos", L["Tech_AddPhotos"], 6, "photos-apres")' />
+            <button type="submit" class="sc-btn-secondaire">@L["Tech_SendPhotos"]</button>
+        </form>
+    </section>
+
+    @* ---- Signature, then « Terminé » ---- *@
+    <section id="cloture" class="mt-8" aria-labelledby="cloture-titre">
+        <h2 id="cloture-titre" class="sc-sous-titre">@L["Tech_Close"]</h2>
+        @if (Model.SignedByName is { } signer)
+        {
+            <p class="sc-alert mt-2">@L["Tech_SignedBy", signer]</p>
+        }
+        else
+        {
+            <form method="post" action="@base_/signature" enctype="multipart/form-data" class="mt-2 grid gap-2">
+                @Html.AntiForgeryToken()
+                <div data-signature data-text-empty="@L["Tech_SignatureEmpty"]">
+                    <span class="sc-label">@L["Tech_Signature"]</span>
+                    <canvas class="sc-signature mt-1" aria-label="@L["Tech_Signature"]"></canvas>
+                    <input type="file" name="signature" accept="image/png" class="sr-only" tabindex="-1" aria-hidden="true" />
+                    <button type="button" class="sc-btn-discret mt-1" data-signature-clear>@L["Tech_SignatureClear"]</button>
+                </div>
+                <label class="sc-label" for="signataire">@L["Tech_SignedByName"]</label>
+                <input id="signataire" name="signedBy" class="sc-input" value="@Model.CustomerName" required maxlength="120" />
+                <button type="submit" class="sc-btn-secondaire"><sc-icon name="pen-line" />@L["Tech_SaveSignature"]</button>
+            </form>
+        }
+
+        <form method="post" action="@base_/terminer" class="mt-6 grid gap-3">
+            @Html.AntiForgeryToken()
+            <div>
+                <label class="sc-label" for="constat">@L["Tech_Findings"]</label>
+                <textarea id="constat" name="findings" rows="4" class="sc-input py-2" required maxlength="3000" placeholder="@L["Tech_Findings_Placeholder"]"></textarea>
+                <p class="sc-aide">@L["Tech_Findings_Hint"]</p>
+            </div>
+            @if (Model.SignedByName is null)
+            {
+                <div>
+                    <label class="sc-label" for="sans-signature">@L["Tech_NoSignature"]</label>
+                    <input id="sans-signature" name="noSignatureReason" class="sc-input" maxlength="300" placeholder="@L["Tech_NoSignature_Placeholder"]" />
+                </div>
+            }
+            @if (Model.AfterPhotoIds.Count == 0)
+            {
+                <p class="sc-alert border-soleil bg-soleil-clair">@L["Tech_NeedAfterPhoto"]</p>
+            }
+            <button type="submit" class="sc-btn w-full min-h-16 bg-baobab text-xl text-sur-accent"><sc-icon name="circle-check" class="size-6" />@L["Tech_Finish"]</button>
+        </form>
+    </section>
+}

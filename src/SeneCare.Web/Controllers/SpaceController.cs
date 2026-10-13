@@ -37,6 +37,11 @@ public sealed class SpaceController(
         }
 
         var nav = AppNavigation.For(User);
+        if (nav.TourKey == TourKeys.Technician)
+        {
+            return Redirect("/technicien");
+        }
+
         var runTour = !await tours.HasCompletedAsync(userId, nav.TourKey, cancellationToken);
         return View(new SpaceViewModel
         {
@@ -89,7 +94,10 @@ public sealed class SpaceController(
         return LocalRedirect("/espace");
     }
 
-    private string TourJson(string tourKey) => JsonSerializer.Serialize(new
+    private string TourJson(string tourKey) => BuildTourJson(tourKey, localizer);
+
+    /// <summary>Guided tour configuration read by app.js (also used by the technician missions page).</summary>
+    internal static string BuildTourJson(string tourKey, IStringLocalizer<SharedResource> localizer) => JsonSerializer.Serialize(new
     {
         key = tourKey,
         completeUrl = $"/visite/{tourKey}/terminee",
@@ -116,10 +124,6 @@ public sealed class SpaceController(
 [Authorize]
 public sealed class SectionsController : Controller
 {
-    [HttpGet("/technicien/rapports")]
-    [Authorize(Policy = Policies.Technician)]
-    public IActionResult Reports() => Soon("rapports", "Tab_Reports", EmptyIllustration.Tools);
-
     [HttpGet("/admin/dispatch")]
     [Authorize(Policy = Policies.AdminDispatcher)]
     public IActionResult Dispatch() => Soon("dispatch", "Tab_Dispatch", EmptyIllustration.Tools);

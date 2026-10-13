@@ -1,6 +1,6 @@
 @model PhotoUploaderModel
 @{
-    var id = Model.Name.Replace('.', '_');
+    var id = Model.Id ?? Model.Name.Replace('.', '_');
 }
 <div data-uploader data-max="@Model.MaxPhotos" data-max-bytes="307200"
      data-working-text="@L["Uploader_Working"]" data-remove-text="@L["Uploader_Remove"]" data-empty-text="@L["Uploader_Hint", Model.MaxPhotos]">

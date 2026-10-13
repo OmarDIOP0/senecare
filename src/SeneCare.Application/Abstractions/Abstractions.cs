@@ -66,7 +66,7 @@ public interface IApplicationDbContext
 /// <summary>PDF documents (QuestPDF in Infrastructure). Inputs are plain, already-authorized data.</summary>
 public interface IPdfRenderer
 {
-    byte[] DiagnosticReport(DiagnosticReport report);
+    byte[] FieldReport(FieldReport report);
 
     byte[] RequestsReport(RequestsReport report);
 }

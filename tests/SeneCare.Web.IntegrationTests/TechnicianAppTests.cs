@@ -58,12 +58,14 @@ public sealed class TechnicianAppTests(WebAppFixture app)
         await technician.SubmitAsync(mission, $"{mission}/etape/sur-place", new Dictionary<string, string>());
         await technician.SubmitAsync(mission, $"{mission}/etape/en-cours", new Dictionary<string, string>());
         Guid firstItem;
+        string firstLabel;
         await using (var db = app.Database.CreateContext())
         {
             var request = await db.ServiceRequests.SingleAsync(r => r.Id == requestId);
             Assert.Equal(RequestStatus.InProgress, request.Status);
             Assert.NotNull(request.RespondedAt); // the SLA stopped at « sur place »
-            firstItem = (await db.Interventions.SingleAsync(i => i.Id == interventionId)).Checklist.First().Id;
+            var item = (await db.Interventions.SingleAsync(i => i.Id == interventionId)).Checklist.First();
+            (firstItem, firstLabel) = (item.Id, item.Label);
         }
 
         await technician.SubmitAsync(mission, $"{mission}/checklist/{firstItem}", new Dictionary<string, string> { ["done"] = "true" });
@@ -87,13 +89,13 @@ public sealed class TechnicianAppTests(WebAppFixture app)
             Assert.Equal("Awa Ndiaye", intervention.SignedByName);
             Assert.NotNull(intervention.WarrantyEndsOn);
             Assert.StartsWith("Prise grillée remplacée, circuit testé.", intervention.Report, StringComparison.Ordinal);
-            Assert.Contains("Étapes réalisées : Couper le courant au tableau.", intervention.Report, StringComparison.Ordinal);
+            Assert.Contains($"Étapes réalisées : {firstLabel}.", intervention.Report, StringComparison.Ordinal);
             Assert.Contains("Pièces utilisées : Câble 2,5 mm² × 2,5 m.", intervention.Report, StringComparison.Ordinal);
             Assert.Equal(2, intervention.Photos.Count);
         }
 
         // A status tap queued offline and replayed after closing changes nothing.
-        await technician.SubmitAsync(mission, $"{mission}/etape/en-route", new Dictionary<string, string>());
+        await technician.SubmitAsync("/technicien", $"{mission}/etape/en-route", new Dictionary<string, string>());
         Assert.Equal(RequestStatus.Completed, await StatusAsync(requestId));
 
         var pdf = await customer.GetAsync(new Uri($"/interventions/{requestId}/rapport.pdf", UriKind.Relative));

@@ -249,6 +249,19 @@ public sealed class PersonalDataService(IApplicationDbContext db, IIdentityServi
             await storage.DeleteAsync(key, cancellationToken);
         }
 
+        // The interventions on their homes: signer's name and free-text report.
+        var requestIds = requests.Select(r => r.Id).ToList();
+        var interventions = await db.Interventions.Where(i => requestIds.Contains(i.RequestId)).ToListAsync(cancellationToken);
+        interventions.ForEach(i => i.Redact(RedactedText));
+
+        // Everything else keyed by their number or their id: sign-in codes, invitations, message history.
+        var phone = user.PhoneNumber;
+        db.OtpChallenges.RemoveRange(await db.OtpChallenges.Where(o => o.PhoneNumber == phone).ToListAsync(cancellationToken));
+        db.AccountInvitations.RemoveRange(await db.AccountInvitations.Where(i => i.PhoneNumber == phone).ToListAsync(cancellationToken));
+        db.Notifications.RemoveRange(await db.Notifications.Where(n => n.UserId == userId).ToListAsync(cancellationToken));
+
+        // Kept on purpose: payments' transaction references (Wave id, receipt / bank reference) are the
+        // accounting proof required by law; they no longer point to a named person.
         user.Anonymize(await PlaceholderAsync(cancellationToken), now);
         db.AuditLogs.Add(new AuditLog(adminId, "privacy.erase", nameof(User), userId.ToString(), true, ipAddress, null, now));
         await db.SaveChangesAsync(cancellationToken);

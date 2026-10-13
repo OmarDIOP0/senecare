@@ -13,6 +13,9 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable("users");
         builder.Property(u => u.PhoneNumber).IsRequired();
         builder.HasIndex(u => u.PhoneNumber).IsUnique();
+        builder.Property(u => u.ReferralCode).HasMaxLength(User.ReferralCodeLength);
+        builder.HasIndex(u => u.ReferralCode).IsUnique();
+        builder.HasIndex(u => u.ReferredByUserId);
         builder.Property(u => u.FullName).HasMaxLength(User.NameMaxLength);
         builder.Property(u => u.Email).HasMaxLength(User.EmailMaxLength);
         builder.PrimitiveCollection(u => u.CompletedTours);

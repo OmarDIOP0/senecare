@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SeneCare.Application.Auth;
+using SeneCare.Application.Neighborhoods;
 using SeneCare.Application.Users;
 using SeneCare.Infrastructure.Identity;
 using SeneCare.Web.Infrastructure;
@@ -15,6 +16,7 @@ namespace SeneCare.Web.Controllers;
 public sealed class RegistrationController(
     CompleteRegistrationHandler completeRegistration,
     GetUserProfileHandler getProfile,
+    ReferralService referrals,
     SignInManager<ApplicationUser> signInManager,
     UserManager<ApplicationUser> userManager) : Controller
 {
@@ -57,6 +59,13 @@ public sealed class RegistrationController(
             model.JoiningAccountName = profile?.Memberships.Count > 0 ? profile.Memberships[0].AccountName : null;
             model.IsStaff = profile is not null && IsStaff(profile);
             return View(model);
+        }
+
+        // Arrived through a neighbour's shared link: credit them (Programme Quartiers).
+        if (Request.Cookies.TryGetValue(CommunityController.ReferralCookie, out var code))
+        {
+            await referrals.AttachAsync(userId, code, cancellationToken);
+            Response.Cookies.Delete(CommunityController.ReferralCookie);
         }
 
         // Claims changed (name, roles, membership): re-issue the cookie.

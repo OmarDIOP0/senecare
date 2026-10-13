@@ -104,6 +104,11 @@
                 <partial name="Ui/_NeighborhoodGauge" model="hood" />
             }
 
+            if (client.Community is { } community && client.Referral is { } referral)
+            {
+                <partial name="_Community" model="(community, referral)" />
+            }
+
             if (client.ActiveRequest is null && client.PropertyCount > 0)
             {
                 <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Space_Client_Empty_Title"], L["Space_Client_Empty_Text"], EmptyIllustration.Tools, L["Tab_Report"], "/signaler")' />

@@ -7,6 +7,7 @@ using SeneCare.Application.Common;
 using SeneCare.Application.Development;
 using SeneCare.Application.Locations;
 using SeneCare.Application.Media;
+using SeneCare.Application.Neighborhoods;
 using SeneCare.Application.Payments;
 using SeneCare.Application.Properties;
 using SeneCare.Application.Requests;
@@ -79,6 +80,9 @@ public static class DependencyInjection
         services.AddScoped<AdviceManagement>();
         services.AddScoped<AuditQuery>();
         services.AddScoped<PersonalDataService>();
+
+        services.AddScoped<NeighborhoodCommunity>();
+        services.AddScoped<ReferralService>();
 
         // Development tools (refused by the Web outside Development).
         services.AddScoped<SimulatedActivation>();

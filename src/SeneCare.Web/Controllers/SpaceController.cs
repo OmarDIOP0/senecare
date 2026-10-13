@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using SeneCare.Application.Admin;
 using SeneCare.Application.Business;
+using SeneCare.Application.Neighborhoods;
 using SeneCare.Application.Properties;
 using SeneCare.Application.Requests;
 using SeneCare.Application.Subscriptions;
@@ -25,6 +26,8 @@ public sealed class SpaceController(
     SubscriptionQueries subscriptions,
     BusinessDashboardQuery businessDashboard,
     AdviceManagement advice,
+    NeighborhoodCommunity community,
+    ReferralService referrals,
     IStringLocalizer<SharedResource> localizer,
     TimeProvider clock) : Controller
 {
@@ -83,6 +86,8 @@ public sealed class SpaceController(
             ActiveTimeline = timeline,
             Neighborhood = await subscriptions.NeighborhoodAsync(userId, cancellationToken),
             Advice = await advice.ForMonthAsync(Formatting.ToDakar(clock.GetUtcNow()).Month, cancellationToken),
+            Community = homes.Count > 0 ? await community.OfUserAsync(userId, cancellationToken) : null,
+            Referral = homes.Count > 0 ? await referrals.StatsAsync(userId, cancellationToken) : null,
         };
     }
 

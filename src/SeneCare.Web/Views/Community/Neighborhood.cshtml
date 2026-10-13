@@ -1,0 +1,77 @@
+@model SeneCare.Application.Neighborhoods.NeighborhoodPage
+@using SeneCare.Domain.Neighborhoods
+@{
+    Layout = "_Layout";
+    var active = Model.Status == NeighborhoodProgramStatus.Active;
+    ViewData["Title"] = L["Community_PageTitle", Model.Name];
+    var origin = $"{Context.Request.Scheme}://{Context.Request.Host}";
+    var url = $"{origin}/quartier/{Model.CommuneSlug}/{Model.Slug}";
+    var summary = active
+        ? L["Community_OgActive", Model.Name, Model.Trees].Value
+        : L["Community_OgGathering", Model.Members, Model.Threshold, Model.Name].Value;
+    var cover = Model.Operations.SelectMany(o => o.PhotoIds).Select(id => (Guid?)id).FirstOrDefault();
+    var image = cover is { } coverId ? $"{origin}/quartier-photo/{coverId}" : $"{origin}/img/icons/icon-512.png";
+}
+@section Head {
+    @* WhatsApp / Facebook preview of the shared link. *@
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SENECARE" />
+    <meta property="og:title" content="@ViewData["Title"]" />
+    <meta property="og:description" content="@summary" />
+    <meta property="og:url" content="@url" />
+    <meta property="og:image" content="@image" />
+    <meta property="og:locale" content="fr_SN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="@url" />
+}
+
+<section class="relative overflow-hidden rounded-xl bg-baobab px-5 py-8 text-sable">
+    <div class="sc-motif sc-motif-bogolan absolute -top-8 -right-8 size-48 text-sable/10" aria-hidden="true"></div>
+    <p class="relative sc-surtitre text-sable/80">@L["Hood_Program"] · @Model.Commune</p>
+    <h1 class="relative mt-1 font-display text-4xl font-bold">@Model.Name</h1>
+    @if (active)
+    {
+        <p class="relative mt-3 text-lg">@L["Hood_Active", Model.Trees]</p>
+    }
+    else
+    {
+        <p class="relative mt-3"><strong class="font-display text-4xl">@Model.Members</strong> <span class="text-sable/85">/ @L["Hood_Neighbors", Model.Threshold]</span></p>
+        <progress class="relative mt-3 h-3 w-full overflow-hidden rounded-full accent-soleil" max="@Model.Threshold" value="@Model.Members" aria-label="@L["Hood_Program"]">@Model.Members / @Model.Threshold</progress>
+        <p class="relative mt-2 text-sable/85">@L["Hood_Remaining", Model.Remaining]</p>
+    }
+</section>
+
+<section class="mt-6" aria-labelledby="pourquoi-titre">
+    <h2 id="pourquoi-titre" class="sc-sous-titre">@L["Community_Why_Title"]</h2>
+    <p class="mt-2 max-w-prose">@L["Community_Why_Text"]</p>
+    <div class="mt-4 flex flex-wrap gap-2">
+        <a href="/bienvenue" class="sc-btn-primaire">@L["Community_Join"]</a>
+        <a href="/classement-quartiers" class="sc-btn-secondaire">@L["Community_Ranking"]</a>
+    </div>
+</section>
+
+<section class="mt-10" aria-labelledby="operations-titre">
+    <h2 id="operations-titre" class="sc-sous-titre">@L["Community_Operations"]</h2>
+    @if (Model.Operations.Count == 0)
+    {
+        <p class="sc-texte-doux mt-2">@L["Community_NoOperation"]</p>
+    }
+    <ol class="mt-4 grid gap-4">
+        @foreach (var o in Model.Operations)
+        {
+            <li class="sc-carte">
+                <p class="text-sm font-bold text-baobab">@Formatting.ShortDate(new DateTimeOffset(o.Date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero)) · @L["Admin_Trees", o.Trees]</p>
+                <p class="mt-1">@o.Description</p>
+                @if (o.PhotoIds.Count > 0)
+                {
+                    <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                        @foreach (var photo in o.PhotoIds)
+                        {
+                            <img src="/quartier-photo/@photo" alt="" loading="lazy" decoding="async" class="aspect-square w-full rounded-md object-cover" />
+                        }
+                    </div>
+                }
+            </li>
+        }
+    </ol>
+</section>

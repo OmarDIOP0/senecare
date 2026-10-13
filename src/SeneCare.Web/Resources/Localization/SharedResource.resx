@@ -909,4 +909,23 @@
   <data name="Error_privacy_already_erased" xml:space="preserve"><value>Les données de cette personne sont déjà effacées.</value></data>
   <data name="Error_privacy_staff" xml:space="preserve"><value>Un membre de l'équipe SENECARE se retire par la procédure RH, pas ici.</value></data>
   <data name="Error_privacy_last_manager" xml:space="preserve"><value>C'est le dernier gestionnaire de l'entreprise : il doit d'abord confier la gestion à un collègue.</value></data>
+  <data name="Community_Title" xml:space="preserve"><value>Nos voisins de {0}</value></data>
+  <data name="Community_LatestOperation" xml:space="preserve"><value>Dernière opération le {0} : {1} arbre(s) planté(s)</value></data>
+  <data name="Community_Invite_Text" xml:space="preserve"><value>Encore {0} voisin(s) et SENECARE plante et embellit le quartier tous les trois mois. Invitez vos voisins !</value></data>
+  <data name="Community_Share" xml:space="preserve"><value>Inviter sur WhatsApp</value></data>
+  <data name="Community_SeePage" xml:space="preserve"><value>Page du quartier</value></data>
+  <data name="Community_ShareText" xml:space="preserve"><value>Je suis adhérent SENECARE à {0} : entretien de la maison et, dès 500 voisins, des arbres plantés dans le quartier. Rejoins-nous : {1}</value></data>
+  <data name="Community_NoReferral" xml:space="preserve"><value>Partagez le lien : chaque voisin qui s'inscrit grâce à vous rapproche le quartier de son objectif.</value></data>
+  <data name="Community_Referrals" xml:space="preserve"><value>{0} voisin(s) inscrit(s) grâce à vous, dont {1} déjà adhérent(s). Jërëjëf !</value></data>
+  <data name="Community_PageTitle" xml:space="preserve"><value>{0} · Programme Quartiers SENECARE</value></data>
+  <data name="Community_OgActive" xml:space="preserve"><value>Le quartier {0} est actif : {1} arbres plantés avec SENECARE.</value></data>
+  <data name="Community_OgGathering" xml:space="preserve"><value>{0} / {1} voisins : aidez {2} à atteindre son objectif et à verdir le quartier.</value></data>
+  <data name="Community_Why_Title" xml:space="preserve"><value>Le principe</value></data>
+  <data name="Community_Why_Text" xml:space="preserve"><value>Chaque foyer abonné à SENECARE compte comme adhérent de son quartier. Dès que le quartier atteint son objectif, SENECARE y organise tous les trois mois une opération de reboisement ou d'embellissement, avec les habitants.</value></data>
+  <data name="Community_Join" xml:space="preserve"><value>Rejoindre SENECARE</value></data>
+  <data name="Community_Ranking" xml:space="preserve"><value>Les quartiers les plus engagés</value></data>
+  <data name="Community_Ranking_Intro" xml:space="preserve"><value>Les quartiers actifs, puis ceux qui approchent de leur objectif. Chaque voisin compte.</value></data>
+  <data name="Community_Ranking_Empty" xml:space="preserve"><value>Les premiers quartiers apparaîtront ici avec leurs premiers adhérents.</value></data>
+  <data name="Community_Operations" xml:space="preserve"><value>Opérations réalisées</value></data>
+  <data name="Community_NoOperation" xml:space="preserve"><value>Les photos des premières plantations s'afficheront ici.</value></data>
 </root>

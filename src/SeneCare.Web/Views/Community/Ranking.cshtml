@@ -1,0 +1,38 @@
+@model IReadOnlyList<SeneCare.Application.Neighborhoods.RankingRow>
+@using SeneCare.Domain.Neighborhoods
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = L["Community_Ranking"];
+}
+@section Head {
+    <meta property="og:title" content="@L["Community_Ranking"]" />
+    <meta property="og:description" content="@L["Community_Ranking_Intro"]" />
+}
+
+<h1 class="sc-titre">@L["Community_Ranking"]</h1>
+<p class="mt-2 max-w-prose">@L["Community_Ranking_Intro"]</p>
+
+@if (Model.Count == 0)
+{
+    <p class="sc-texte-doux mt-6">@L["Community_Ranking_Empty"]</p>
+}
+
+<ol class="mt-6 grid gap-2">
+    @foreach (var r in Model)
+    {
+        <li class="sc-carte relative flex items-center gap-4">
+            <span class="w-8 shrink-0 text-center font-display text-xl font-bold text-charbon-doux">@r.Rank</span>
+            <div class="min-w-0 flex-1">
+                <a href="/quartier/@r.CommuneSlug/@r.Slug" class="font-bold after:absolute after:inset-0">@r.Name <span class="font-normal text-charbon-doux">· @r.Commune</span></a>
+                <span class="mt-1 block h-2 rounded-full bg-ligne"><span class="block h-2 rounded-full bg-baobab" style="width: @r.Percent%"></span></span>
+            </div>
+            <span class="shrink-0 text-right text-sm tabular-nums">
+                @if (r.Status == NeighborhoodProgramStatus.Active)
+                {
+                    <span class="block font-bold text-baobab">@L["Admin_Trees", r.Trees]</span>
+                }
+                @r.Members / @r.Threshold
+            </span>
+        </li>
+    }
+</ol>

@@ -146,6 +146,38 @@ public sealed class User : AggregateRoot
 
     public DateTimeOffset? AnonymizedAt { get; private set; }
 
+    public const int ReferralCodeLength = 8;
+
+    /// <summary>Personal sharing code (« Programme Quartiers » invitations), created on first share.</summary>
+    public string? ReferralCode { get; private set; }
+
+    /// <summary>The neighbour whose link brought this person in (set once, at registration).</summary>
+    public Guid? ReferredByUserId { get; private set; }
+
+    public void AssignReferralCode(string code)
+    {
+        if (ReferralCode is not null)
+        {
+            return;
+        }
+
+        if (code is not { Length: ReferralCodeLength } || !code.All(char.IsAsciiLetterOrDigit))
+        {
+            throw new DomainException("user.referral_code", "Invalid referral code.");
+        }
+
+        ReferralCode = code;
+    }
+
+    /// <summary>Records who referred this person; ignored when already set or self-referral.</summary>
+    public void SetReferrer(Guid referrerUserId)
+    {
+        if (ReferredByUserId is null && referrerUserId != Id)
+        {
+            ReferredByUserId = referrerUserId;
+        }
+    }
+
     /// <summary>
     /// Right to erasure (law 2008-12): name, e-mail and phone are replaced, consents withdrawn, roles and
     /// preferences removed, the account can no longer sign in. Irreversible.
@@ -169,6 +201,7 @@ public sealed class User : AggregateRoot
         _roles.Clear();
         _completedTours.Clear();
         IsActive = false;
+        ReferralCode = null;
         AnonymizedAt = now;
     }
 

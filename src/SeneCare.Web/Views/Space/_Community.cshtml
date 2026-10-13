@@ -1,0 +1,34 @@
+@model (SeneCare.Application.Neighborhoods.NeighborhoodPage Page, SeneCare.Application.Neighborhoods.ReferralStats Referral)
+@{
+    var page = Model.Page;
+    var publicUrl = $"/quartier/{page.CommuneSlug}/{page.Slug}";
+    var shareUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{publicUrl}?parrain={Model.Referral.Code}";
+    var whatsApp = "https://wa.me/?text=" + Uri.EscapeDataString(L["Community_ShareText", page.Name, shareUrl].Value);
+    var latest = page.Operations.FirstOrDefault();
+}
+<section class="sc-carte" aria-labelledby="voisins-titre">
+    <h2 id="voisins-titre" class="sc-sous-titre">@L["Community_Title", page.Name]</h2>
+    @if (latest is not null)
+    {
+        <p class="mt-2 text-sm font-bold text-baobab">@L["Community_LatestOperation", Formatting.ShortDate(new DateTimeOffset(latest.Date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero)), latest.Trees]</p>
+        <p class="mt-1">@latest.Description</p>
+        @if (latest.PhotoIds.Count > 0)
+        {
+            <div class="mt-2 flex gap-2 overflow-x-auto">
+                @foreach (var photo in latest.PhotoIds.Take(4))
+                {
+                    <img src="/quartier-photo/@photo" alt="" loading="lazy" decoding="async" class="size-20 shrink-0 rounded-md object-cover" />
+                }
+            </div>
+        }
+    }
+    else
+    {
+        <p class="mt-1">@L["Community_Invite_Text", page.Remaining]</p>
+    }
+    <div class="mt-4 grid gap-2 sm:grid-cols-2">
+        <a href="@whatsApp" class="sc-btn-whatsapp" target="_blank" rel="noopener"><sc-icon name="message-circle" />@L["Community_Share"]</a>
+        <a href="@publicUrl" class="sc-btn-secondaire">@L["Community_SeePage"]</a>
+    </div>
+    <p class="sc-texte-doux mt-3">@(Model.Referral.Invited == 0 ? L["Community_NoReferral"] : L["Community_Referrals", Model.Referral.Invited, Model.Referral.Members])</p>
+</section>

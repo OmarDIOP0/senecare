@@ -203,6 +203,14 @@ public sealed class Intervention : AggregateRoot
 
     public void AttachReportDocument(Guid mediaFileId) => ReportMediaFileId = mediaFileId;
 
+    /// <summary>Erasure of the customer: the signer's name and the free-text report may identify them.</summary>
+    public void Redact(string placeholder)
+    {
+        SignedByName = SignedByName is null ? null : placeholder;
+        NoSignatureReason = NoSignatureReason is null ? null : placeholder;
+        Report = Report is null ? null : placeholder;
+    }
+
     /// <summary>True when a new issue of the same domain on the same property is covered by this work.</summary>
     public bool CoversUnderWarranty(Guid propertyId, ServiceDomain domain, DateOnly day) =>
         WarrantyEndsOn is { } end && PropertyId == propertyId && Domain == domain && day <= end;

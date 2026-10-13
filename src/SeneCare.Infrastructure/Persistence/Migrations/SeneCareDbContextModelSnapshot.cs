@@ -1561,12 +1561,28 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(16)")
                         .HasColumnName("phone_number");
 
+                    b.Property<string>("ReferralCode")
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)")
+                        .HasColumnName("referral_code");
+
+                    b.Property<Guid?>("ReferredByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("referred_by_user_id");
+
                     b.HasKey("Id")
                         .HasName("pk_users");
 
                     b.HasIndex("PhoneNumber")
                         .IsUnique()
                         .HasDatabaseName("ix_users_phone_number");
+
+                    b.HasIndex("ReferralCode")
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_referral_code");
+
+                    b.HasIndex("ReferredByUserId")
+                        .HasDatabaseName("ix_users_referred_by_user_id");
 
                     b.ToTable("users", (string)null);
                 });

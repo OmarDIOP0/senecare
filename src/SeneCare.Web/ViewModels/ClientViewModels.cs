@@ -82,6 +82,11 @@ public sealed class ClientHomeModel
 
     /// <summary>Advice of the month written by SENECARE (null: the built-in seasonal advice).</summary>
     public SeneCare.Domain.Content.PreventiveAdvice? Advice { get; init; }
+
+    /// <summary>The home neighborhood's public page (news, share link).</summary>
+    public SeneCare.Application.Neighborhoods.NeighborhoodPage? Community { get; init; }
+
+    public SeneCare.Application.Neighborhoods.ReferralStats? Referral { get; init; }
 }
 
 /// <summary>A subscription and, when something is due, the invoice to pay with the Wave link (+ its QR code).</summary>

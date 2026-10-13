@@ -687,4 +687,83 @@
   <data name="Error_assignment_not_found" xml:space="preserve"><value>Demande ou technicien introuvable.</value></data>
   <data name="Error_assignment_not_confirmed" xml:space="preserve"><value>Le rendez-vous doit d'abord être confirmé.</value></data>
   <data name="Error_assignment_already_assigned" xml:space="preserve"><value>Un technicien est déjà assigné.</value></data>
+  <data name="Admin_Open" xml:space="preserve"><value>Demandes ouvertes</value></data>
+  <data name="Admin_Late" xml:space="preserve"><value>En retard (SLA)</value></data>
+  <data name="Admin_Sla" xml:space="preserve"><value>Délais respectés</value></data>
+  <data name="Admin_SlaWindow" xml:space="preserve"><value>{0} demandes sur 30 jours</value></data>
+  <data name="Admin_Unpaid" xml:space="preserve"><value>Impayés</value></data>
+  <data name="Admin_UnpaidInvoices" xml:space="preserve"><value>{0} facture(s) · {1} paiement(s) à vérifier</value></data>
+  <data name="Admin_Satisfaction" xml:space="preserve"><value>Satisfaction</value></data>
+  <data name="Admin_Ratings" xml:space="preserve"><value>{0} avis sur 30 jours · {1} contestation(s)</value></data>
+  <data name="Admin_Revenue" xml:space="preserve"><value>Encaissements par mois</value></data>
+  <data name="Admin_ByUrgency" xml:space="preserve"><value>Demandes ouvertes par urgence</value></data>
+  <data name="Admin_ByStatus" xml:space="preserve"><value>Par statut</value></data>
+  <data name="Admin_ByDomain" xml:space="preserve"><value>Par métier</value></data>
+  <data name="Admin_ByZone" xml:space="preserve"><value>Par commune</value></data>
+  <data name="Admin_Neighborhoods" xml:space="preserve"><value>Adhérents par quartier</value></data>
+  <data name="DispatchStage_ToAnalyse" xml:space="preserve"><value>À analyser</value></data>
+  <data name="DispatchStage_WaitingCustomer" xml:space="preserve"><value>Créneaux proposés</value></data>
+  <data name="DispatchStage_ToAssign" xml:space="preserve"><value>À affecter</value></data>
+  <data name="DispatchStage_InProgress" xml:space="preserve"><value>En cours</value></data>
+  <data name="DispatchStage_Disputed" xml:space="preserve"><value>Contestées</value></data>
+  <data name="Dispatch_Queue" xml:space="preserve"><value>File d'attente</value></data>
+  <data name="Dispatch_Calendar" xml:space="preserve"><value>Calendrier</value></data>
+  <data name="Dispatch_Map" xml:space="preserve"><value>Carte</value></data>
+  <data name="Dispatch_Filter" xml:space="preserve"><value>Filtrer par étape</value></data>
+  <data name="Dispatch_AllToDo" xml:space="preserve"><value>Tout ce qui attend une action</value></data>
+  <data name="Dispatch_Empty_Title" xml:space="preserve"><value>Rien en attente</value></data>
+  <data name="Dispatch_Empty_Text" xml:space="preserve"><value>Toutes les demandes de cette étape sont traitées.</value></data>
+  <data name="Dispatch_Col_Request" xml:space="preserve"><value>Demande</value></data>
+  <data name="Dispatch_Col_Where" xml:space="preserve"><value>Où</value></data>
+  <data name="Dispatch_Col_Offer" xml:space="preserve"><value>Offre</value></data>
+  <data name="Dispatch_Take" xml:space="preserve"><value>Prendre en charge</value></data>
+  <data name="Dispatch_Taken" xml:space="preserve"><value>Demande prise en charge.</value></data>
+  <data name="Dispatch_Qualify" xml:space="preserve"><value>Qualifier l'urgence</value></data>
+  <data name="Dispatch_Requalify" xml:space="preserve"><value>Requalifier</value></data>
+  <data name="Dispatch_Requalify_Hint" xml:space="preserve"><value>Le délai repart de maintenant, avec celui de l'offre du client pour la nouvelle urgence.</value></data>
+  <data name="Dispatch_Requalified" xml:space="preserve"><value>Urgence modifiée.</value></data>
+  <data name="Dispatch_ProposeSlots" xml:space="preserve"><value>Proposer des créneaux</value></data>
+  <data name="Dispatch_Preferred" xml:space="preserve"><value>Préférences du client :</value></data>
+  <data name="Dispatch_AlreadyProposed" xml:space="preserve"><value>Déjà proposés :</value></data>
+  <data name="Dispatch_Slot" xml:space="preserve"><value>Créneau {0}</value></data>
+  <data name="Dispatch_Slot_Hint" xml:space="preserve"><value>Heure de début (heure de Dakar) ; chaque créneau dure 2 h. Le client choisit dans l'application.</value></data>
+  <data name="Dispatch_Send" xml:space="preserve"><value>Envoyer au client</value></data>
+  <data name="Dispatch_SlotsProposed" xml:space="preserve"><value>Créneaux envoyés au client.</value></data>
+  <data name="Dispatch_SendNow" xml:space="preserve"><value>Urgence critique : envoyer un technicien maintenant</value></data>
+  <data name="Dispatch_SendNowButton" xml:space="preserve"><value>Envoyer maintenant</value></data>
+  <data name="Dispatch_Sent" xml:space="preserve"><value>Technicien envoyé.</value></data>
+  <data name="Dispatch_AssignTitle" xml:space="preserve"><value>Affecter un technicien</value></data>
+  <data name="Dispatch_ConfirmedSlot" xml:space="preserve"><value>Rendez-vous confirmé : {0}</value></data>
+  <data name="Dispatch_NoTechnician" xml:space="preserve"><value>Aucun technicien actif n'a ce métier.</value></data>
+  <data name="Dispatch_InZone" xml:space="preserve"><value>Dans sa zone</value></data>
+  <data name="Dispatch_OutOfZone" xml:space="preserve"><value>Hors zone</value></data>
+  <data name="Dispatch_Free" xml:space="preserve"><value>Disponible</value></data>
+  <data name="Dispatch_Busy" xml:space="preserve"><value>Indisponible</value></data>
+  <data name="Dispatch_Load" xml:space="preserve"><value>{0} mission(s) en cours</value></data>
+  <data name="Dispatch_Assign" xml:space="preserve"><value>Affecter</value></data>
+  <data name="Dispatch_Assigned" xml:space="preserve"><value>Technicien affecté.</value></data>
+  <data name="Dispatch_Reopen" xml:space="preserve"><value>Rouvrir la demande</value></data>
+  <data name="Dispatch_Reopened" xml:space="preserve"><value>Demande rouverte.</value></data>
+  <data name="Dispatch_CancelRequest" xml:space="preserve"><value>Annuler la demande</value></data>
+  <data name="Dispatch_Cancelled" xml:space="preserve"><value>Demande annulée.</value></data>
+  <data name="Dispatch_Customer" xml:space="preserve"><value>Client</value></data>
+  <data name="Dispatch_Technician" xml:space="preserve"><value>Technicien : {0}</value></data>
+  <data name="Dispatch_Unassigned" xml:space="preserve"><value>Pas encore de technicien</value></data>
+  <data name="Dispatch_History" xml:space="preserve"><value>Historique</value></data>
+  <data name="Dispatch_Week" xml:space="preserve"><value>Semaine du {0}</value></data>
+  <data name="Dispatch_PrevWeek" xml:space="preserve"><value>Précédente</value></data>
+  <data name="Dispatch_NextWeek" xml:space="preserve"><value>Suivante</value></data>
+  <data name="Dispatch_Map_Legend" xml:space="preserve"><value>{0} demande(s) localisée(s) · rouge : critique, jaune : haute, bleu : normale, vert : planifiée.</value></data>
+  <data name="Dispatch_Diagnostics_None" xml:space="preserve"><value>Aucun diagnostic à planifier ou à valider.</value></data>
+  <data name="Dispatch_Reschedule" xml:space="preserve"><value>Déplacer le diagnostic</value></data>
+  <data name="Dispatch_Rescheduled" xml:space="preserve"><value>Diagnostic déplacé.</value></data>
+  <data name="Dispatch_ValidateDiagnostic" xml:space="preserve"><value>Valider le rapport</value></data>
+  <data name="Dispatch_ValidateDiagnostic_Hint" xml:space="preserve"><value>Valider débloque la facture du trimestre suivant et rend le rapport visible au client.</value></data>
+  <data name="Dispatch_DiagnosticValidated" xml:space="preserve"><value>Rapport validé.</value></data>
+  <data name="Dispatch_ReturnDiagnostic" xml:space="preserve"><value>Renvoyer au technicien</value></data>
+  <data name="Dispatch_DiagnosticReturned" xml:space="preserve"><value>Rapport renvoyé au technicien.</value></data>
+  <data name="Error_dispatch_slots_required" xml:space="preserve"><value>Indiquez au moins un créneau à venir.</value></data>
+  <data name="Error_dispatch_cancel_reason" xml:space="preserve"><value>Indiquez le motif de l'annulation.</value></data>
+  <data name="Error_dispatch_past_date" xml:space="preserve"><value>Choisissez une date à venir.</value></data>
+  <data name="Error_request_requalify" xml:space="preserve"><value>L'urgence ne peut plus changer une fois le rendez-vous confirmé.</value></data>
 </root>

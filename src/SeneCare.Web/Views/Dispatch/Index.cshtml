@@ -1,0 +1,62 @@
+@model List<SeneCare.Application.Admin.DispatchItem>
+@using SeneCare.Application.Admin
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "dispatch";
+    ViewData["Title"] = L["Tab_Dispatch"];
+    ViewData["Wide"] = true;
+    var stage = ViewData["Stage"] as DispatchStage?;
+    var counts = ViewData["Counts"] as Dictionary<DispatchStage, int> ?? [];
+    var now = DateTimeOffset.UtcNow;
+}
+
+<h1 class="sc-titre" data-tour="dispatch">@L["Tab_Dispatch"]</h1>
+<partial name="_DispatchNav" model='"file"' />
+
+<div class="mt-4 flex flex-wrap gap-2" role="group" aria-label="@L["Dispatch_Filter"]">
+    <a href="/admin/dispatch" class="sc-badge min-h-10 px-3 text-sm no-underline @(stage is null ? "bg-charbon text-sable" : "bg-sable text-charbon")">@L["Dispatch_AllToDo"]</a>
+    @foreach (var s in Enum.GetValues<DispatchStage>())
+    {
+        <a href="/admin/dispatch?etape=@s" class="sc-badge min-h-10 px-3 text-sm no-underline @(stage == s ? "bg-charbon text-sable" : "bg-sable text-charbon")">@L["DispatchStage_" + s] (@counts.GetValueOrDefault(s))</a>
+    }
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="mt-6">
+        <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Dispatch_Empty_Title"], L["Dispatch_Empty_Text"], EmptyIllustration.Tools)' />
+    </div>
+}
+else
+{
+    <div class="mt-4 overflow-x-auto rounded-lg border border-ligne bg-surface">
+        <table class="w-full min-w-[56rem] text-left text-sm">
+            <thead class="bg-sable text-xs uppercase tracking-wide">
+                <tr>
+                    <th scope="col" class="px-3 py-2">@L["Export_Col_Number"]</th>
+                    <th scope="col" class="px-3 py-2">@L["Export_Col_Urgency"]</th>
+                    <th scope="col" class="px-3 py-2">@L["Dispatch_Col_Request"]</th>
+                    <th scope="col" class="px-3 py-2">@L["Dispatch_Col_Where"]</th>
+                    <th scope="col" class="px-3 py-2">@L["Dispatch_Col_Offer"]</th>
+                    <th scope="col" class="px-3 py-2">@L["Export_Col_SlaDeadline"]</th>
+                    <th scope="col" class="px-3 py-2">@L["Export_Col_Status"]</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-ligne">
+                @foreach (var item in Model)
+                {
+                    var late = item.IsLate(now);
+                    <tr class="@(late ? "bg-laterite-clair/40" : "")">
+                        <td class="px-3 py-2 font-bold"><a href="/admin/dispatch/@item.Id">@item.Number</a><span class="block text-xs font-normal">@Formatting.ShortDateTime(item.CreatedAt)</span></td>
+                        <td class="px-3 py-2"><sc-urgency value="@item.Urgency" /></td>
+                        <td class="px-3 py-2"><span class="text-xs font-bold text-charbon-doux">@L["Domain_" + item.Domain]</span><span class="block">@item.Title</span></td>
+                        <td class="px-3 py-2">@item.Commune<span class="block text-xs">@item.AccountName · @item.Site</span></td>
+                        <td class="px-3 py-2">@item.PlanName</td>
+                        <td class="px-3 py-2 @(late ? "font-bold text-laterite" : "")">@(item.SlaDeadline is { } deadline ? Formatting.ShortDateTime(deadline) : "—")</td>
+                        <td class="px-3 py-2"><sc-status value="@item.Status" />@if (item.TechnicianName is { } tech) { <span class="block text-xs">@tech</span> }</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

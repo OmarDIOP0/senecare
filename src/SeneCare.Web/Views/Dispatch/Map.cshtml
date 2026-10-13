@@ -1,0 +1,27 @@
+@model List<SeneCare.Application.Admin.DispatchItem>
+@using System.Text.Json
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "dispatch";
+    ViewData["Title"] = L["Dispatch_Map"];
+    ViewData["Wide"] = true;
+    var points = Model.Select(i => new
+    {
+        lat = i.Latitude,
+        lng = i.Longitude,
+        url = "/admin/dispatch/" + i.Id,
+        label = $"{i.Number} · {L["Domain_" + i.Domain].Value} · {i.Site}",
+        urgency = i.Urgency.ToString(),
+    });
+}
+@section Head {
+    <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" asp-append-version="true" />
+    <script src="~/lib/leaflet/leaflet.js" asp-append-version="true" defer></script>
+    <script src="~/js/dispatch-map.js" asp-append-version="true" defer></script>
+}
+
+<h1 class="sc-titre">@L["Tab_Dispatch"]</h1>
+<partial name="_DispatchNav" model='"carte"' />
+<p class="sc-texte-doux mt-3">@L["Dispatch_Map_Legend", Model.Count]</p>
+<script type="application/json" id="dispatch-points">@Html.Raw(JsonSerializer.Serialize(points))</script>
+<div class="isolate mt-3 h-[70dvh] overflow-hidden rounded-lg border border-ligne" data-dispatch-map role="application" aria-label="@L["Dispatch_Map"]"></div>

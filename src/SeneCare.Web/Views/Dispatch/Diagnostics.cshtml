@@ -1,0 +1,54 @@
+@model IReadOnlyList<SeneCare.Application.Admin.SupervisedDiagnostic>
+@using SeneCare.Domain.Diagnostics
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "dispatch";
+    ViewData["Title"] = L["Space_Diagnostics"];
+    ViewData["Wide"] = true;
+    var technicians = ViewData["Technicians"] as IReadOnlyList<(Guid Id, string Name)> ?? [];
+}
+
+<h1 class="sc-titre">@L["Tab_Dispatch"]</h1>
+<partial name="_DispatchNav" model='"diagnostics"' />
+
+@if (Model.Count == 0)
+{
+    <div class="mt-6">
+        <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Diagnostic_None_Title"], L["Dispatch_Diagnostics_None"], EmptyIllustration.Tools)' />
+    </div>
+}
+
+<ul class="mt-4 grid gap-3 lg:grid-cols-2">
+    @foreach (var d in Model)
+    {
+        <li class="sc-carte @(d.Status == DiagnosticStatus.Submitted ? "border-l-4 border-l-soleil" : "")">
+            <div class="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                    <a href="/admin/dispatch/diagnostics/@d.Id" class="font-display text-lg font-bold">@d.AccountName</a>
+                    <p class="text-sm">@L["Diagnostic_PlannedOn", Formatting.ShortDateTime(d.ScheduledFor)] · @L["Tech_Sites", d.Sites]</p>
+                </div>
+                <span class="sc-badge bg-sable text-charbon">@L["DiagnosticStatus_" + d.Status]</span>
+            </div>
+            <p class="mt-2 text-sm">@(d.TechnicianName is { } t ? L["Dispatch_Technician", t] : L["Dispatch_Unassigned"])
+                @if (d.Points > 0)
+                {
+                    <span> · @L["Tech_Points", d.Points] · @L["Diagnostic_AnomalyCount", d.Anomalies]</span>
+                }
+            </p>
+            @if (d.Status == DiagnosticStatus.Planned)
+            {
+                <form method="post" action="/admin/dispatch/diagnostics/@d.Id/affecter" class="mt-3 flex flex-wrap gap-2">
+                    @Html.AntiForgeryToken()
+                    <label class="sr-only" for="tech-@d.Id">@L["Diagnostic_Technician"]</label>
+                    <select id="tech-@d.Id" name="technicianId" class="sc-input min-h-10 flex-1">
+                        @foreach (var (id, name) in technicians)
+                        {
+                            <option value="@id">@name</option>
+                        }
+                    </select>
+                    <button type="submit" class="sc-btn-secondaire min-h-10 text-sm">@L["Dispatch_Assign"]</button>
+                </form>
+            }
+        </li>
+    }
+</ul>

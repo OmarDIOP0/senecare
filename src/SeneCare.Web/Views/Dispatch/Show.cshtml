@@ -1,0 +1,212 @@
+@model SeneCare.Application.Admin.DispatchDetail
+@using System.Globalization
+@using SeneCare.Domain.Common
+@using SeneCare.Domain.Requests
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "dispatch";
+    ViewData["Wide"] = true;
+    var item = Model.Item;
+    ViewData["Title"] = item.Number;
+    var status = item.Status;
+    var analysing = status is RequestStatus.Submitted or RequestStatus.UnderReview;
+    var canPropose = analysing || status == RequestStatus.AppointmentProposed;
+    var toAssign = status == RequestStatus.AppointmentConfirmed && Model.InterventionId is null;
+    var critical = item.Urgency == Urgency.Critical && analysing;
+    var canCancel = status is RequestStatus.Submitted or RequestStatus.UnderReview or RequestStatus.AppointmentProposed or RequestStatus.AppointmentConfirmed;
+    string Local(DateTimeOffset at) => at.UtcDateTime.ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture);
+    var defaults = Model.PreferredSlots.Select(s => s.Start).Concat(Model.ProposedSlots.Select(s => s.Start)).Distinct().Take(3).ToList();
+    while (defaults.Count < 3)
+    {
+        defaults.Add(DateTimeOffset.UtcNow.Date.AddDays(defaults.Count + 1).AddHours(9));
+    }
+}
+
+<a href="/admin/dispatch" class="inline-flex min-h-12 items-center font-bold">← @L["Dispatch_Queue"]</a>
+<div class="mt-2 flex flex-wrap items-start justify-between gap-3">
+    <div>
+        <p class="font-bold text-charbon-doux">@L["Domain_" + item.Domain] · @item.Number · @item.PlanName</p>
+        <h1 class="sc-titre">@item.Title</h1>
+        <p class="mt-2 flex flex-wrap gap-2"><sc-urgency value="@item.Urgency" /><sc-status value="@status" />
+            @if (item.SlaDeadline is { } deadline)
+            {
+                <span class="sc-badge @(item.IsLate(DateTimeOffset.UtcNow) ? "bg-laterite text-sur-accent" : "bg-sable text-charbon")"><sc-icon name="clock" class="size-4" />@L["Request_Sla", Formatting.ShortDateTime(deadline)]</span>
+            }
+        </p>
+    </div>
+    @if (status == RequestStatus.Submitted)
+    {
+        <form method="post" action="/admin/dispatch/@item.Id/prendre">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="sc-btn-primaire">@L["Dispatch_Take"]</button>
+        </form>
+    }
+</div>
+
+<div class="mt-6 grid gap-6 lg:grid-cols-3">
+    <div class="grid content-start gap-6 lg:col-span-2">
+        <section class="sc-carte" aria-labelledby="demande-titre">
+            <h2 id="demande-titre" class="sc-sous-titre">@L["Tech_Request"]</h2>
+            <p class="mt-2 whitespace-pre-line">@Model.Description</p>
+            @if (Model.PhotoIds.Count > 0)
+            {
+                <div class="mt-3 flex gap-2 overflow-x-auto">
+                    @foreach (var photo in Model.PhotoIds)
+                    {
+                        <a href="/fichiers/@photo" target="_blank"><img src="/fichiers/@photo" alt="" loading="lazy" class="size-28 rounded-md object-cover" /></a>
+                    }
+                </div>
+            }
+            @if (Model.VoiceNoteId is { } voice)
+            {
+                <audio controls preload="none" src="/fichiers/@voice" class="mt-3 w-full"></audio>
+            }
+            @if (Model.DisputeReason is { } dispute)
+            {
+                <p class="sc-alert mt-3 border-laterite bg-laterite-clair">@L["Request_DisputedText", dispute]</p>
+            }
+        </section>
+
+        @if (analysing)
+        {
+            <section class="sc-carte" aria-labelledby="urgence-titre">
+                <h2 id="urgence-titre" class="sc-sous-titre">@L["Dispatch_Qualify"]</h2>
+                <form method="post" action="/admin/dispatch/@item.Id/urgence" class="mt-3 flex flex-wrap items-end gap-2">
+                    @Html.AntiForgeryToken()
+                    <div>
+                        <label class="sc-label" for="urgence">@L["Export_Col_Urgency"]</label>
+                        <select id="urgence" name="urgency" class="sc-input">
+                            @foreach (var u in Enum.GetValues<Urgency>())
+                            {
+                                <option value="@u" selected="@(u == item.Urgency)">@L["Urgency_" + u]</option>
+                            }
+                        </select>
+                    </div>
+                    <button type="submit" class="sc-btn-secondaire">@L["Dispatch_Requalify"]</button>
+                </form>
+                <p class="sc-aide">@L["Dispatch_Requalify_Hint"]</p>
+            </section>
+        }
+
+        @if (canPropose)
+        {
+            <section class="sc-carte" aria-labelledby="creneaux-titre">
+                <h2 id="creneaux-titre" class="sc-sous-titre">@L["Dispatch_ProposeSlots"]</h2>
+                @if (Model.PreferredSlots.Count > 0)
+                {
+                    <p class="sc-texte-doux mt-1">@L["Dispatch_Preferred"] @string.Join(" · ", Model.PreferredSlots.Select(s => Formatting.ShortDateTime(s.Start)))</p>
+                }
+                @if (Model.ProposedSlots.Count > 0)
+                {
+                    <p class="sc-texte-doux mt-1">@L["Dispatch_AlreadyProposed"] @string.Join(" · ", Model.ProposedSlots.Select(s => Formatting.ShortDateTime(s.Start)))</p>
+                }
+                <form method="post" action="/admin/dispatch/@item.Id/creneaux" class="mt-3 grid gap-2 sm:grid-cols-[1fr_1fr_1fr_auto] sm:items-end">
+                    @Html.AntiForgeryToken()
+                    @for (var i = 0; i < 3; i++)
+                    {
+                        <div>
+                            <label class="sc-label" for="slot-@i">@L["Dispatch_Slot", i + 1]</label>
+                            <input id="slot-@i" name="slots" type="datetime-local" class="sc-input" value="@Local(defaults[i])" step="1800" />
+                        </div>
+                    }
+                    <button type="submit" class="sc-btn-primaire">@L["Dispatch_Send"]</button>
+                </form>
+                <p class="sc-aide">@L["Dispatch_Slot_Hint"]</p>
+            </section>
+        }
+
+        @if (toAssign || critical)
+        {
+            <section class="sc-carte border-l-4 border-l-laterite" aria-labelledby="affecter-titre">
+                <h2 id="affecter-titre" class="sc-sous-titre">@(critical ? L["Dispatch_SendNow"] : L["Dispatch_AssignTitle"])</h2>
+                @if (Model.ConfirmedSlot is { } slot)
+                {
+                    <p class="mt-1">@L["Dispatch_ConfirmedSlot", Formatting.ShortDateTime(slot.Start)]</p>
+                }
+                @if (Model.Suggestions.Count == 0)
+                {
+                    <p class="sc-texte-doux mt-2">@L["Dispatch_NoTechnician"]</p>
+                }
+                <ul class="mt-3 divide-y divide-ligne">
+                    @foreach (var s in Model.Suggestions)
+                    {
+                        <li class="flex flex-wrap items-center justify-between gap-3 py-3">
+                            <div>
+                                <p class="font-bold">@s.Name</p>
+                                <p class="mt-1 flex flex-wrap gap-1 text-xs">
+                                    <span class="sc-badge @(s.CoversZone ? "bg-baobab-clair text-baobab" : "bg-sable text-charbon")">@(s.CoversZone ? L["Dispatch_InZone"] : L["Dispatch_OutOfZone"])</span>
+                                    @if (s.IsAvailable is { } free)
+                                    {
+                                        <span class="sc-badge @(free ? "bg-baobab-clair text-baobab" : "bg-laterite-clair text-laterite")">@(free ? L["Dispatch_Free"] : L["Dispatch_Busy"])</span>
+                                    }
+                                    <span class="sc-badge bg-sable text-charbon">@L["Dispatch_Load", s.OpenMissions]</span>
+                                    @if (s.Rating is { } rating)
+                                    {
+                                        <span class="sc-badge bg-sable text-charbon"><sc-icon name="star" class="size-3.5" />@rating.ToString("0.0", CultureInfo.CurrentCulture)</span>
+                                    }
+                                </p>
+                            </div>
+                            <form method="post" action="/admin/dispatch/@item.Id/@(critical ? "maintenant" : "affecter")">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="technicianId" value="@s.TechnicianId" />
+                                <button type="submit" class="sc-btn-secondaire min-h-10 text-sm">@(critical ? L["Dispatch_SendNowButton"] : L["Dispatch_Assign"])</button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+            </section>
+        }
+
+        @if (status == RequestStatus.Disputed)
+        {
+            <form method="post" action="/admin/dispatch/@item.Id/rouvrir">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="sc-btn-primaire">@L["Dispatch_Reopen"]</button>
+            </form>
+        }
+    </div>
+
+    <aside class="grid content-start gap-6">
+        <section class="sc-carte" aria-labelledby="client-titre">
+            <h2 id="client-titre" class="sc-sous-titre">@L["Dispatch_Customer"]</h2>
+            <p class="mt-2 font-bold">@(Model.CustomerName ?? "—")</p>
+            <p>@item.AccountName</p>
+            <p class="mt-2">@item.Site · @item.Commune</p>
+            @if (Model.Landmark is { } landmark)
+            {
+                <p class="text-sm"><sc-icon name="map-pin" class="size-4" /> @landmark</p>
+            }
+            <div class="mt-3 grid grid-cols-2 gap-2">
+                <a href="tel:@Model.CustomerPhoneE164" class="sc-btn-secondaire min-h-10 text-sm"><sc-icon name="phone" />@L["Card_Call"]</a>
+                <a href="https://wa.me/@Model.CustomerPhoneE164.TrimStart('+')" class="sc-btn-whatsapp min-h-10 text-sm" target="_blank" rel="noopener"><sc-icon name="message-circle" />WhatsApp</a>
+            </div>
+            @if (item.TechnicianName is { } technician)
+            {
+                <p class="mt-3">@L["Dispatch_Technician", technician]</p>
+            }
+        </section>
+
+        <section class="sc-carte" aria-labelledby="historique-titre">
+            <h2 id="historique-titre" class="sc-sous-titre">@L["Dispatch_History"]</h2>
+            <ol class="mt-2 grid gap-2 text-sm">
+                @foreach (var h in Model.History)
+                {
+                    <li><span class="font-bold">@L["Status_" + h.To]</span> · @Formatting.ShortDateTime(h.At)@if (h.Comment is { } comment) { <span class="block text-charbon-doux">@comment</span> }</li>
+                }
+            </ol>
+        </section>
+
+        @if (canCancel)
+        {
+            <button type="button" class="sc-btn-danger" data-sheet-open="annuler">@L["Dispatch_CancelRequest"]</button>
+            <sc-sheet id="annuler" title="@L["Dispatch_CancelRequest"]">
+                <form method="post" action="/admin/dispatch/@item.Id/annuler" class="grid gap-3">
+                    @Html.AntiForgeryToken()
+                    <label class="sc-label" for="motif">@L["Approval_Reason"]</label>
+                    <textarea id="motif" name="reason" rows="2" class="sc-input py-2" required></textarea>
+                    <button type="submit" class="sc-btn bg-laterite text-sur-accent">@L["Dispatch_CancelRequest"]</button>
+                </form>
+            </sc-sheet>
+        }
+    </aside>
+</div>

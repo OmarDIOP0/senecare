@@ -120,7 +120,7 @@ public sealed partial class WavePaymentTests(WebAppFixture app)
 
         var dispatcher = await StaffAsync(PlatformRole.Dispatcher);
         Assert.StartsWith("/acces-refuse", (await dispatcher.GetAsync(new Uri("/admin/paiements", UriKind.Relative))).Location(), StringComparison.Ordinal);
-        Assert.DoesNotContain("/admin/paiements", await dispatcher.GetStringAsync(new Uri("/espace", UriKind.Relative)), StringComparison.Ordinal);
+        Assert.DoesNotContain("/admin/paiements", await dispatcher.GetStringAsync(new Uri("/admin", UriKind.Relative)), StringComparison.Ordinal);
 
         var finance = await StaffAsync(PlatformRole.Finance);
         await finance.SubmitAsync("/admin/paiements", "/admin/paiements/lien-wave", new Dictionary<string, string> { ["link"] = WaveLink });

@@ -1,0 +1,75 @@
+@model (SeneCare.Application.Admin.SupervisedDiagnostic Diagnostic, IReadOnlyList<SeneCare.Application.Technicians.DiagnosticSiteOption> Sites, IReadOnlyList<SeneCare.Application.Technicians.FieldControlPoint> Points, string? Recommendations)
+@using System.Globalization
+@using SeneCare.Domain.Diagnostics
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "dispatch";
+    ViewData["Wide"] = true;
+    var d = Model.Diagnostic;
+    ViewData["Title"] = d.AccountName;
+    var technicians = ViewData["Technicians"] as IReadOnlyList<(Guid Id, string Name)> ?? [];
+    var names = Model.Sites.ToDictionary(s => s.Id, s => s.Name);
+}
+
+<a href="/admin/dispatch/diagnostics" class="inline-flex min-h-12 items-center font-bold">← @L["Space_Diagnostics"]</a>
+<h1 class="sc-titre mt-2">@d.AccountName</h1>
+<p class="mt-1">@L["Diagnostic_PlannedOn", Formatting.ShortDateTime(d.ScheduledFor)] · @L["DiagnosticStatus_" + d.Status] · @(d.TechnicianName is { } t ? L["Dispatch_Technician", t] : L["Dispatch_Unassigned"])</p>
+
+<div class="mt-6 grid gap-6 lg:grid-cols-3">
+    <section class="sc-carte lg:col-span-2" aria-labelledby="points-titre">
+        <h2 id="points-titre" class="sc-sous-titre">@L["Tech_Points", Model.Points.Count]</h2>
+        <ul class="mt-2 divide-y divide-ligne">
+            @foreach (var p in Model.Points.OrderBy(p => p.Result == ControlPointResult.Anomaly ? 0 : 1))
+            {
+                <li class="flex items-start justify-between gap-3 py-2">
+                    <span>
+                        <span class="block text-xs font-bold">@(p.SiteId is { } s ? names.GetValueOrDefault(s) : L["Diagnostic_General"].Value) · @L["Domain_" + p.Domain]</span>
+                        @p.Label
+                        @if (p.Comment is { } c) { <span class="block text-sm">@c</span> }
+                    </span>
+                    <span class="sc-badge shrink-0 @(p.Result == ControlPointResult.Anomaly ? "bg-laterite-clair text-laterite" : "bg-baobab-clair text-baobab")">@L["ControlPoint_" + p.Result]</span>
+                </li>
+            }
+        </ul>
+        @if (Model.Recommendations is { } reco)
+        {
+            <h3 class="mt-4 font-bold">@L["Diagnostic_Recommendations"]</h3>
+            <p class="whitespace-pre-line">@reco</p>
+        }
+    </section>
+
+    <aside class="grid content-start gap-4">
+        @if (d.Status == DiagnosticStatus.Submitted)
+        {
+            <form method="post" action="/admin/dispatch/diagnostics/@d.Id/valider">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="sc-btn w-full bg-baobab text-sur-accent"><sc-icon name="circle-check" />@L["Dispatch_ValidateDiagnostic"]</button>
+            </form>
+            <form method="post" action="/admin/dispatch/diagnostics/@d.Id/renvoyer">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="sc-btn-danger w-full">@L["Dispatch_ReturnDiagnostic"]</button>
+            </form>
+            <p class="sc-aide">@L["Dispatch_ValidateDiagnostic_Hint"]</p>
+        }
+        @if (d.Status == DiagnosticStatus.Planned)
+        {
+            <form method="post" action="/admin/dispatch/diagnostics/@d.Id/affecter" class="sc-carte grid gap-2">
+                @Html.AntiForgeryToken()
+                <label class="sc-label" for="tech">@L["Diagnostic_Technician"]</label>
+                <select id="tech" name="technicianId" class="sc-input">
+                    @foreach (var (id, name) in technicians)
+                    {
+                        <option value="@id">@name</option>
+                    }
+                </select>
+                <button type="submit" class="sc-btn-secondaire">@L["Dispatch_Assign"]</button>
+            </form>
+            <form method="post" action="/admin/dispatch/diagnostics/@d.Id/replanifier" class="sc-carte grid gap-2">
+                @Html.AntiForgeryToken()
+                <label class="sc-label" for="date">@L["Dispatch_Reschedule"]</label>
+                <input id="date" name="date" type="datetime-local" class="sc-input" value="@d.ScheduledFor.UtcDateTime.ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture)" />
+                <button type="submit" class="sc-btn-secondaire">@L["Common_Save"]</button>
+            </form>
+        }
+    </aside>
+</div>

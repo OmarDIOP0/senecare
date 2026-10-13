@@ -1,0 +1,19 @@
+@model string
+@{
+    var tabs = new[]
+    {
+        ("file", "/admin/dispatch", L["Dispatch_Queue"].Value, "clipboard-list"),
+        ("calendrier", "/admin/dispatch/calendrier", L["Dispatch_Calendar"].Value, "calendar"),
+        ("carte", "/admin/dispatch/carte", L["Dispatch_Map"].Value, "map-pin"),
+        ("diagnostics", "/admin/dispatch/diagnostics", L["Space_Diagnostics"].Value, "list-checks"),
+    };
+}
+<nav aria-label="@L["Tab_Dispatch"]" class="mt-4 flex gap-1 overflow-x-auto border-b border-ligne">
+    @foreach (var (key, url, label, icon) in tabs)
+    {
+        var active = key == Model;
+        <a href="@url" class="inline-flex min-h-12 shrink-0 items-center gap-2 border-b-4 px-3 font-bold no-underline @(active ? "border-laterite text-charbon" : "border-transparent text-charbon-doux")" aria-current="@(active ? "page" : null)">
+            <sc-icon name="@icon" class="size-4" />@label
+        </a>
+    }
+</nav>

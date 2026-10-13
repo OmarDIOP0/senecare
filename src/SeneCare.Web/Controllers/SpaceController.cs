@@ -42,6 +42,11 @@ public sealed class SpaceController(
             return Redirect("/technicien");
         }
 
+        if (nav.TourKey == TourKeys.Admin)
+        {
+            return Redirect("/admin");
+        }
+
         var runTour = !await tours.HasCompletedAsync(userId, nav.TourKey, cancellationToken);
         return View(new SpaceViewModel
         {
@@ -115,25 +120,6 @@ public sealed class SpaceController(
             text = localizer[s.TextKey].Value,
         }),
     });
-}
-
-/// <summary>
-/// Sections of the signed-in space that later phases will build. They already exist so that
-/// navigation, guided tours and PWA shortcuts work end to end.
-/// </summary>
-[Authorize]
-public sealed class SectionsController : Controller
-{
-    [HttpGet("/admin/dispatch")]
-    [Authorize(Policy = Policies.AdminDispatcher)]
-    public IActionResult Dispatch() => Soon("dispatch", "Tab_Dispatch", EmptyIllustration.Tools);
-
-    private ViewResult Soon(string navKey, string titleKey, EmptyIllustration illustration)
-    {
-        ViewData["NavActive"] = navKey;
-        ViewData["TitleKey"] = titleKey;
-        return View("Soon", illustration);
-    }
 }
 
 /// <summary>Four illustrated welcome screens, shown on first launch; replayable from the profile.</summary>

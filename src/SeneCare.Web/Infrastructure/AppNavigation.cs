@@ -29,9 +29,13 @@ public static class AppNavigation
         {
             List<NavItem> items =
             [
-                new("espace", "/espace", "house", "Tab_Dashboard", "tableau-de-bord"),
-                new("dispatch", "/admin/dispatch", "clipboard-list", "Tab_Dispatch", "dispatch"),
+                new("espace", "/admin", "house", "Tab_Dashboard", "tableau-de-bord"),
             ];
+            if (user.IsInRole(nameof(PlatformRole.Dispatcher)) || user.IsInRole(nameof(PlatformRole.SuperAdmin)))
+            {
+                items.Add(new("dispatch", "/admin/dispatch", "clipboard-list", "Tab_Dispatch", "dispatch"));
+            }
+
             if (user.IsInRole(nameof(PlatformRole.Finance)) || user.IsInRole(nameof(PlatformRole.SuperAdmin)))
             {
                 items.Add(new("paiements", "/admin/paiements", "wallet", "Tab_Payments"));

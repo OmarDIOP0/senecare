@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using SeneCare.Application.Accounts;
+using SeneCare.Application.Admin;
 using SeneCare.Application.Auth;
 using SeneCare.Application.Business;
 using SeneCare.Application.Common;
@@ -63,6 +64,11 @@ public static class DependencyInjection
         services.AddScoped<AssignmentHandler>();
         services.AddScoped<DiagnosticFieldHandler>();
         services.AddScoped<PositionSharing>();
+
+        services.AddScoped<AdminDashboardQuery>();
+        services.AddScoped<DispatchQueries>();
+        services.AddScoped<DispatchActions>();
+        services.AddScoped<DiagnosticSupervision>();
 
         // Development tools (refused by the Web outside Development).
         services.AddScoped<SimulatedActivation>();

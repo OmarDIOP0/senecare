@@ -19,7 +19,7 @@
     @foreach (var m in Model)
     {
         <li class="sc-carte relative flex items-center gap-3">
-            <span class="grid size-12 shrink-0 place-items-center rounded-md bg-baobab-clair text-baobab"><sc-icon name="@Formatting.Icon(m.Domain!.Value)" class="size-6" /></span>
+            <span class="grid size-9 shrink-0 place-items-center rounded-md bg-sourdine text-charbon-doux"><sc-icon name="@Formatting.Icon(m.Domain!.Value)" class="size-6" /></span>
             <div class="min-w-0 flex-1">
                 <p class="text-sm font-bold">@L["Domain_" + m.Domain] · @m.Number · @(m.At is { } at ? Formatting.ShortDate(at) : "")</p>
                 <a href="/technicien/missions/@m.Id" class="font-bold text-charbon no-underline after:absolute after:inset-0">@m.Title</a>

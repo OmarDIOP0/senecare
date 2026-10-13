@@ -11,12 +11,12 @@
 <article class="sc-carte relative overflow-hidden pl-5">
     <span class="absolute inset-y-0 left-0 w-1.5 @stripe" aria-hidden="true"></span>
     <div class="flex items-start gap-3">
-        <span class="grid size-12 shrink-0 place-items-center rounded-md bg-laterite-clair text-laterite">
+        <span class="grid size-9 shrink-0 place-items-center rounded-md bg-sourdine text-charbon-doux">
             <sc-icon name="@Formatting.Icon(Model.Domain)" class="size-6" />
         </span>
         <div class="min-w-0 flex-1">
             <p class="text-xs font-bold text-charbon-doux">@L["Domain_" + Model.Domain] · @Model.Number</p>
-            <h3 class="mt-0.5 font-display text-lg font-bold">
+            <h3 class="mt-0.5 text-[15px] font-semibold">
                 <a href="@Model.Url" class="text-charbon no-underline after:absolute after:inset-0 hover:underline">@Model.Title</a>
             </h3>
             <div class="mt-2 flex flex-wrap gap-1.5">

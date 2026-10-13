@@ -1,16 +1,13 @@
 @model SpaceViewModel
 @using SeneCare.Application.Users
+@using SeneCare.Domain.Billing
 @{
     Layout = "_AppLayout";
     ViewData["Title"] = L["Tab_Home"];
     ViewData["NavActive"] = "espace";
-    var intro = Model.Space switch
-    {
-        TourKeys.Business => L["Space_Business_Intro", Model.AccountName ?? string.Empty],
-        TourKeys.Technician => L["Space_Tech_Intro"],
-        TourKeys.Admin => L["Space_Admin_Intro"],
-        _ => L["Space_Client_Intro"],
-    };
+    var today = Formatting.ToDakar(DateTimeOffset.UtcNow);
+    var dateText = today.ToString("dddd d MMMM", System.Globalization.CultureInfo.CurrentCulture);
+    string Day(DateOnly d) => Formatting.ShortDate(new DateTimeOffset(d.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero));
 }
 
 @* The guided tour reads this (not executed: type="application/json"). *@
@@ -20,109 +17,103 @@
     @Html.AntiForgeryToken()
 }
 
-<section class="relative overflow-hidden rounded-xl bg-atlantique px-5 py-6 text-sable">
-    <div class="sc-motif sc-motif-wax absolute -top-6 -right-6 size-40 text-sable/10" aria-hidden="true"></div>
-    @* The only emoji of the app, once, on the home greeting (CLAUDE.md §5). *@
-    <p class="relative font-display text-2xl font-bold">@(Model.FirstName is null ? L["Space_Hello"] : L["Space_HelloName", Model.FirstName]) 👋</p>
-    <p class="relative mt-1 text-sable/85">@intro</p>
-</section>
+<header>
+    <h1 class="text-xl font-semibold tracking-tight">@(Model.FirstName is null ? L["Space_Hello"] : L["Space_HelloName", Model.FirstName])</h1>
+    <p class="mt-0.5 text-sm text-charbon-doux">
+        @if (Model.AccountName is { } account)
+        {
+            <span>@account · </span>
+        }
+        <span class="first-letter:uppercase">@dateText</span>
+    </p>
+</header>
 
-<partial name="Ui/_InstallPrompt" />
-
-<div class="mt-6 grid gap-4">
-    @switch (Model.Space)
+@if (Model.Space == TourKeys.Business)
+{
+    ViewData["Wide"] = true;
+    if (Model.Business is { } business)
     {
-        case TourKeys.Business:
-            ViewData["Wide"] = true;
-            if (Model.Business is { } business)
-            {
-                <partial name="_BusinessHome" model="business" />
-            }
-            break;
+        <partial name="_BusinessHome" model="business" />
+    }
+}
+else if (Model.Client is { } client)
+{
+    var steps = new (bool Done, string Label, string Url)[]
+    {
+        (client.PropertyCount > 0, L["Start_AddHome"].Value, "/logements/nouveau"),
+        (client.Subscription?.Status is SubscriptionStatus.Active or SubscriptionStatus.PastDue, L["Start_Activate"].Value, "/abonnement"),
+        (client.ActiveRequest is not null || client.Subscription?.Status == SubscriptionStatus.Active && client.Referral is not null, L["Start_FirstReport"].Value, "/signaler"),
+    };
+    var done = steps.Count(s => s.Done);
 
-        case TourKeys.Technician:
-            <section class="sc-carte" aria-labelledby="missions-titre">
-                <h2 id="missions-titre" class="sc-sous-titre">@L["Space_Tech_Today"]</h2>
-                <p class="sc-texte-doux mt-1">@L["Space_Tech_None"]</p>
-                <button type="button" class="sc-btn-primaire mt-4" data-tour="demarrer" disabled>
-                    <sc-icon name="navigation" />@L["Space_Tech_Start"]
-                </button>
-            </section>
-            break;
+    <div class="mt-6 grid gap-6">
+        @if (done < steps.Length && client.ActiveRequest is null)
+        {
+            <partial name="_Checklist" model="new ChecklistModel(L[\"Start_Title\"].Value, [.. steps.Select(s => new ChecklistStep(s.Label, s.Url, s.Done))])" />
+        }
 
-        case TourKeys.Admin:
-            <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Space_Admin_Empty_Title"], L["Space_Admin_Empty_Text"], EmptyIllustration.Tools, L["Tab_Dispatch"], "/admin/dispatch")' />
-            break;
-
-        default:
-            var client = Model.Client!;
-            if (client.PropertyCount == 0)
-            {
-                <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Space_NoProperty_Title"], L["Space_NoProperty_Text"], EmptyIllustration.House, L["Property_Add"], "/logements/nouveau")' />
-            }
-
-            @* The request in progress comes first: it is what the customer opens the app for. *@
-            if (client.ActiveRequest is { } active)
-            {
-                <section aria-labelledby="en-cours-titre" class="grid gap-3">
+        @if (client.ActiveRequest is { } active)
+        {
+            <section aria-labelledby="en-cours-titre">
+                <div class="flex items-center justify-between gap-2">
                     <h2 id="en-cours-titre" class="sc-sous-titre">@L["Space_InProgress"]</h2>
+                    <a href="/interventions" class="text-sm">@L["Biz_AllRequests"]</a>
+                </div>
+                <div class="mt-3 grid gap-3">
                     <partial name="Ui/_InterventionCard" model='new InterventionCardModel(active.Number, active.Domain, active.Title, active.Status, active.Urgency, "/interventions/" + active.Id, active.AppointmentAt, active.Technician?.Name, active.Technician?.PhoneE164)' />
                     <div class="sc-carte"><partial name="Ui/_Timeline" model="client.ActiveTimeline" /></div>
+                </div>
+            </section>
+        }
+
+        <div class="grid gap-4 md:grid-cols-2">
+            @if (client.Subscription is { } subscription)
+            {
+                <section class="sc-carte" aria-labelledby="abonnement-titre" data-tour="abonnement">
+                    <div class="flex items-center justify-between gap-2">
+                        <h2 id="abonnement-titre" class="text-sm font-medium text-charbon-doux">@L["Space_Subscription"]</h2>
+                        <span class="sc-badge @SubscriptionBadge(subscription.Status)">@L["SubscriptionStatus_" + subscription.Status]</span>
+                    </div>
+                    <p class="mt-2 text-[15px] font-medium">@subscription.PlanName</p>
+                    <p class="text-sm text-charbon-doux">
+                        @if (subscription.NextDueDate is { } due)
+                        {
+                            @L["Subscription_NextDue", Day(due)]
+                        }
+                        else
+                        {
+                            @L["Space_Subscription_Text"]
+                        }
+                    </p>
+                    <a href="/abonnement" class="sc-btn-secondaire mt-3">@(subscription.Status == SubscriptionStatus.PendingRegistration ? L["Pay_Action"] : L["Space_ManageSubscription"])</a>
                 </section>
             }
 
-            <a href="/abonnement" data-tour="abonnement" class="sc-carte flex items-center gap-4 text-charbon no-underline">
-                <span class="grid size-12 place-items-center rounded-md bg-baobab-clair text-baobab"><sc-icon name="wallet" class="size-6" /></span>
-                <span class="flex-1">
-                    <span class="block font-bold">@L["Space_Subscription"]</span>
-                    @if (client.Subscription is { } subscription)
-                    {
-                        <span class="mt-1 flex flex-wrap items-center gap-2">
-                            <span class="sc-badge @SubscriptionBadge(subscription.Status)">@L["SubscriptionStatus_" + subscription.Status]</span>
-                            @if (subscription.NextDueDate is { } due)
-                            {
-                                <span class="sc-texte-doux">@L["Subscription_NextDue", Formatting.ShortDate(new DateTimeOffset(due.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero))]</span>
-                            }
-                        </span>
-                    }
-                    else
-                    {
-                        <span class="sc-texte-doux">@L["Space_Subscription_Text"]</span>
-                    }
-                </span>
-                <sc-icon name="chevron-right" class="text-charbon-doux" />
-            </a>
-            <aside class="sc-carte border-l-4 border-l-soleil" aria-labelledby="conseil-titre">
-                <p class="sc-surtitre text-charbon-doux">@L["Space_Advice"]</p>
-                <h2 id="conseil-titre" class="mt-1 font-display text-lg font-bold">
-                    @(client.Advice?.Title ?? (Model.IsRainySeason ? L["Space_Advice_Rain_Title"] : L["Space_Advice_PreRain_Title"]))
-                </h2>
-                <p class="mt-1">@(client.Advice?.Body ?? (Model.IsRainySeason ? L["Space_Advice_Rain_Text"] : L["Space_Advice_PreRain_Text"]))</p>
-            </aside>
-            if (client.Neighborhood is { } hood)
-            {
-                <partial name="Ui/_NeighborhoodGauge" model="hood" />
-            }
+            <section class="sc-carte" aria-labelledby="conseil-titre">
+                <h2 id="conseil-titre" class="text-sm font-medium text-charbon-doux">@L["Space_Advice"]</h2>
+                <p class="mt-2 text-[15px] font-medium">@(client.Advice?.Title ?? (Model.IsRainySeason ? L["Space_Advice_Rain_Title"] : L["Space_Advice_PreRain_Title"]))</p>
+                <p class="mt-1 text-sm text-charbon-doux">@(client.Advice?.Body ?? (Model.IsRainySeason ? L["Space_Advice_Rain_Text"] : L["Space_Advice_PreRain_Text"]))</p>
+            </section>
+        </div>
 
-            if (client.Community is { } community && client.Referral is { } referral)
-            {
-                <partial name="_Community" model="(community, referral)" />
-            }
+        @if (client.Neighborhood is { } hood)
+        {
+            <partial name="Ui/_NeighborhoodGauge" model="hood" />
+        }
 
-            if (client.ActiveRequest is null && client.PropertyCount > 0)
-            {
-                <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Space_Client_Empty_Title"], L["Space_Client_Empty_Text"], EmptyIllustration.Tools, L["Tab_Report"], "/signaler")' />
-            }
-            break;
-    }
-</div>
+        @if (client.Community is { } community && client.Referral is { } referral)
+        {
+            <partial name="_Community" model="(community, referral)" />
+        }
+    </div>
+}
 
 @functions {
-    private static string SubscriptionBadge(SeneCare.Domain.Billing.SubscriptionStatus status) => status switch
+    private static string SubscriptionBadge(SubscriptionStatus status) => status switch
     {
-        SeneCare.Domain.Billing.SubscriptionStatus.Active => "bg-baobab-clair text-baobab",
-        SeneCare.Domain.Billing.SubscriptionStatus.PastDue => "bg-soleil text-charbon",
-        SeneCare.Domain.Billing.SubscriptionStatus.Suspended => "bg-laterite text-sur-accent",
-        _ => "bg-atlantique-clair text-atlantique",
+        SubscriptionStatus.Active => "bg-baobab-clair text-baobab",
+        SubscriptionStatus.PastDue => "bg-soleil-clair text-soleil",
+        SubscriptionStatus.Suspended => "bg-rouge-clair text-rouge",
+        _ => "bg-sourdine text-charbon-doux",
     };
 }

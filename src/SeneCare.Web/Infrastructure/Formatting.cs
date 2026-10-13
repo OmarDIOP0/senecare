@@ -38,24 +38,23 @@ public static class Formatting
         _ => "wrench",
     };
 
-    /// <summary>Badge colours per status: blue = waiting on us, sun = on the way, green = done, ochre = needs attention.</summary>
+    /// <summary>Discreet tinted badges: blue = with SENECARE, amber = waiting / on the way, green = done, red = problem.</summary>
     public static string BadgeClass(RequestStatus status) => status switch
     {
-        RequestStatus.AwaitingApproval or RequestStatus.AppointmentProposed => "bg-soleil-clair text-charbon",
+        RequestStatus.AwaitingApproval or RequestStatus.AppointmentProposed => "bg-soleil-clair text-soleil",
         RequestStatus.Submitted or RequestStatus.UnderReview => "bg-atlantique-clair text-atlantique",
         RequestStatus.AppointmentConfirmed => "bg-indigo-clair text-indigo",
-        RequestStatus.OnTheWay or RequestStatus.OnSite or RequestStatus.InProgress => "bg-soleil text-charbon",
+        RequestStatus.OnTheWay or RequestStatus.OnSite or RequestStatus.InProgress => "bg-soleil-clair text-soleil",
         RequestStatus.Completed or RequestStatus.ValidatedByCustomer => "bg-baobab-clair text-baobab",
-        RequestStatus.Disputed => "bg-laterite-clair text-laterite",
-        _ => "bg-ligne text-charbon-doux",
+        RequestStatus.Disputed => "bg-rouge-clair text-rouge",
+        _ => "bg-sourdine text-charbon-doux",
     };
 
     public static string BadgeClass(Urgency urgency) => urgency switch
     {
-        Urgency.Critical => "bg-laterite text-sur-accent",
-        Urgency.High => "bg-soleil text-charbon",
-        Urgency.Normal => "bg-atlantique-clair text-atlantique",
-        _ => "bg-ligne text-charbon-doux",
+        Urgency.Critical => "bg-rouge-clair text-rouge",
+        Urgency.High => "bg-soleil-clair text-soleil",
+        _ => "bg-sourdine text-charbon-doux",
     };
 
     public static string Icon(Urgency urgency) => urgency switch

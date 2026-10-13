@@ -25,12 +25,12 @@
     <div><dt class="sc-texte-doux">@L["Diagnostic_Date"]</dt><dd class="font-bold">@Formatting.ShortDate(Model.Slot.ScheduledFor)</dd></div>
     <div><dt class="sc-texte-doux">@L["Diagnostic_Status"]</dt><dd class="font-bold">@L["DiagnosticStatus_" + Model.Slot.Status]</dd></div>
     <div><dt class="sc-texte-doux">@L["Diagnostic_Technician"]</dt><dd class="font-bold">@(Model.TechnicianName ?? "—")</dd></div>
-    <div><dt class="sc-texte-doux">@L["Diagnostic_Anomalies"]</dt><dd class="font-display text-2xl font-bold @(Model.Slot.Anomalies > 0 ? "text-laterite" : "text-baobab")">@Model.Slot.Anomalies</dd></div>
+    <div><dt class="sc-texte-doux">@L["Diagnostic_Anomalies"]</dt><dd class="text-2xl font-bold @(Model.Slot.Anomalies > 0 ? "text-laterite" : "text-baobab")">@Model.Slot.Anomalies</dd></div>
 </dl>
 
 @if (!string.IsNullOrWhiteSpace(Model.Recommendations))
 {
-    <aside class="sc-carte mt-4 border-l-4 border-l-laterite" aria-labelledby="reco-titre">
+    <aside class="sc-carte mt-4" aria-labelledby="reco-titre">
         <h2 id="reco-titre" class="sc-surtitre">@L["Diagnostic_Recommendations"]</h2>
         <p class="mt-1 whitespace-pre-line">@Model.Recommendations</p>
     </aside>
@@ -55,7 +55,7 @@
                                     <p class="text-sm">@comment</p>
                                 }
                             </div>
-                            <span class="sc-badge shrink-0 @(anomaly ? "bg-laterite-clair text-laterite" : point.Result == ControlPointResult.Ok ? "bg-baobab-clair text-baobab" : "bg-sable text-charbon")">@L["ControlPoint_" + point.Result]</span>
+                            <span class="sc-badge shrink-0 @(anomaly ? "bg-laterite-clair text-laterite" : point.Result == ControlPointResult.Ok ? "bg-baobab-clair text-baobab" : "bg-sourdine text-charbon-doux")">@L["ControlPoint_" + point.Result]</span>
                         </div>
                         @if (point.PhotoIds.Count > 0)
                         {

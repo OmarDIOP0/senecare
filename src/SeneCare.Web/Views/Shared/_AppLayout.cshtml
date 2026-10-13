@@ -1,11 +1,20 @@
-@* Signed-in space: compact header, role-based tab bar (bottom on mobile, left rail on desktop). *@
+@* Signed-in space: sidebar + topbar on desktop, compact header + bottom tab bar on phones. *@
+@inject SeneCare.Application.Users.GetUserProfileHandler Profiles
+@inject SeneCare.Application.Users.NotificationInbox Inbox
 @{
     var nav = AppNavigation.For(User);
     var active = ViewData["NavActive"] as string ?? "espace";
-    // Business dashboards and reports use the desktop width; everything else stays a readable column.
-    var width = ViewData["Wide"] is true ? "max-w-screen-xl" : "max-w-screen-md";
+    var userId = User.GetUserId();
+    var profile = userId is { } id ? await Profiles.HandleAsync(id, Context.RequestAborted) : null;
+    var shell = new ShellModel(
+        nav,
+        active,
+        ViewData["Title"] as string,
+        profile,
+        userId is { } uid ? await Inbox.UnreadCountAsync(uid, Context.RequestAborted) : 0);
     // Technicians work outside: stronger contrast and bigger targets everywhere in their app.
     var terrain = nav.TourKey == SeneCare.Application.Users.TourKeys.Technician ? "sc-terrain" : string.Empty;
+    var width = ViewData["Wide"] is true ? "max-w-[1200px]" : "max-w-3xl";
 }
 <!DOCTYPE html>
 <html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
@@ -13,23 +22,18 @@
     <partial name="Ui/_Head" />
     @await RenderSectionAsync("Head", required: false)
 </head>
-<body class="min-h-dvh lg:pl-60 @terrain">
-    <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-atlantique focus:px-4 focus:py-3 focus:text-sable">@L["Layout_SkipToContent"]</a>
-    <header class="sticky top-0 z-30 border-b border-ligne bg-sable/95 backdrop-blur">
-        <div class="mx-auto flex w-full @width items-center justify-between gap-2 px-4 py-2">
-            <div class="lg:invisible"><partial name="Ui/_Brand" /></div>
-            <div class="flex items-center gap-1">
-                <partial name="Ui/_AppStatus" />
-                <button type="button" class="sc-btn-icone" data-theme-toggle aria-label="@L["Theme_Toggle"]">
-                    <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" /></svg>
-                </button>
-            </div>
-        </div>
-    </header>
-    <main id="contenu" class="mx-auto w-full @width px-4 pt-6 pb-32 lg:pb-12">
-        @RenderBody()
-    </main>
-    <partial name="Ui/_TabBar" model="new TabBarModel(nav, active)" />
+<body class="sc-app min-h-dvh @terrain">
+    <a href="#contenu" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-surface focus:px-3 focus:py-2 focus:text-charbon">@L["Layout_SkipToContent"]</a>
+    <partial name="Ui/_Sidebar" model="shell" />
+    <div class="lg:pl-60">
+        <partial name="Ui/_Topbar" model="shell" />
+        <partial name="Ui/_InstallPrompt" />
+        <main id="contenu" class="w-full @width px-4 pt-5 pb-28 lg:px-8 lg:pt-8 lg:pb-12">
+            @RenderBody()
+        </main>
+    </div>
+    <partial name="Ui/_TabBar" model="shell" />
+    <partial name="Ui/_CommandPalette" model="shell" />
     <partial name="Ui/_Toasts" />
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -19,8 +19,8 @@
         <form id="plan-@plan.Id" method="post" action="/admin/offres/@plan.Id" class="sc-carte grid gap-3">
             @Html.AntiForgeryToken()
             <div class="flex items-center justify-between gap-2">
-                <h2 class="font-display text-xl font-bold">@plan.Code</h2>
-                <span class="sc-badge bg-sable text-charbon">@(plan.Segment == SeneCare.Domain.Accounts.AccountKind.Business ? L["Register_ProfileBusiness"] : L["Register_ProfileHousehold"]) · @L["Offer_Billing", plan.BillingPeriodMonths]</span>
+                <h2 class="text-base font-semibold">@plan.Code</h2>
+                <span class="sc-badge bg-sourdine text-charbon-doux">@(plan.Segment == SeneCare.Domain.Accounts.AccountKind.Business ? L["Register_ProfileBusiness"] : L["Register_ProfileHousehold"]) · @L["Offer_Billing", plan.BillingPeriodMonths]</span>
             </div>
             <div>
                 <label class="sc-label" for="nom-@plan.Id">@L["Admin_PlanName"]</label>

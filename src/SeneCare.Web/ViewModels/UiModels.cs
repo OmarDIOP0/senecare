@@ -42,10 +42,35 @@ public enum EmptyIllustration
 public sealed record EmptyStateModel(string Title, string Text, EmptyIllustration Illustration, string? ActionLabel = null, string? ActionUrl = null);
 
 /// <summary>Bottom tab bar (mobile) / side rail (desktop), with the central action (« Signaler »).</summary>
-public sealed record TabBarModel(SeneCare.Web.Infrastructure.AppNav Nav, string ActiveKey, bool Demo = false);
+/// <summary>Everything the app shell shows: navigation, who is signed in, organisation, unread notifications.</summary>
+public sealed record ShellModel(
+    SeneCare.Web.Infrastructure.AppNav Nav,
+    string ActiveKey,
+    string? PageTitle,
+    SeneCare.Application.Users.UserProfileDto? Profile,
+    int UnreadNotifications)
+{
+    public string DisplayName => Profile?.FullName ?? (Profile is null ? string.Empty : "+221 " + Profile.Phone);
+
+    /// <summary>« Awa Ndiaye » → « AN ».</summary>
+    public string Initials
+    {
+        get
+        {
+            var words = (Profile?.FullName ?? "?").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            return string.Concat(words.Take(2).Select(w => char.ToUpperInvariant(w[0])));
+        }
+    }
+
+    public SeneCare.Web.Infrastructure.NavItem? ActiveItem =>
+        Nav.Items.FirstOrDefault(i => i.Key == ActiveKey) ?? (ActiveKey == SeneCare.Web.Infrastructure.AppNavigation.Settings.Key ? SeneCare.Web.Infrastructure.AppNavigation.Settings : null);
+}
 
 /// <summary>Technician form fields: empty for a new technician, filled when editing.</summary>
 public sealed record TechnicianFieldsModel(SeneCare.Application.Admin.TechnicianRow? Row);
 
 /// <summary>Preventive advice form (new when <see cref="Id"/> is null).</summary>
 public sealed record AdviceFormModel(Guid? Id, string? Title, string? Body, IReadOnlyCollection<int> Months, SeneCare.Domain.Common.ServiceDomain? Domain);
+
+/// <summary>Page title + grey description + main action on the right.</summary>
+public sealed record PageHeaderModel(string Title, string? Description = null, string? ActionLabel = null, string? ActionUrl = null, string? ActionIcon = null);

@@ -14,11 +14,11 @@
 <section aria-label="@L["Biz_Figures"]" class="grid grid-cols-2 gap-3 lg:grid-cols-4">
     <a href="/entreprise/sites" class="sc-carte text-charbon no-underline" data-tour="sites">
         <p class="sc-texte-doux">@L["Biz_Sites"]</p>
-        <p class="mt-1 font-display text-3xl font-bold">@Model.SiteCount</p>
+        <p class="mt-1 text-2xl font-bold">@Model.SiteCount</p>
     </a>
     <a href="/interventions" class="sc-carte text-charbon no-underline">
         <p class="sc-texte-doux">@L["Biz_Open"]</p>
-        <p class="mt-1 font-display text-3xl font-bold">@Model.OpenTotal</p>
+        <p class="mt-1 text-2xl font-bold">@Model.OpenTotal</p>
         <p class="mt-1 flex flex-wrap gap-1">
             @foreach (var urgency in urgencies.Where(u => Model.OpenByUrgency.GetValueOrDefault(u) > 0))
             {
@@ -28,21 +28,21 @@
     </a>
     <div class="sc-carte">
         <p class="sc-texte-doux">@L["Biz_Sla"]</p>
-        <p class="mt-1 font-display text-3xl font-bold @(Model.Sla.Rate is < 90 ? "text-laterite" : "text-baobab")">@(Model.Sla.Rate is { } rate ? rate + " %" : "—")</p>
+        <p class="mt-1 text-2xl font-bold @(Model.Sla.Rate is < 90 ? "text-laterite" : "text-baobab")">@(Model.Sla.Rate is { } rate ? rate + " %" : "—")</p>
         <p class="sc-texte-doux">@(Model.Sla.LateNow > 0 ? L["Biz_LateNow", Model.Sla.LateNow] : L["Biz_SlaWindow", Model.Sla.Measured])</p>
     </div>
     @if (isManager && Model.SpentThisYear is { } spent)
     {
         <div class="sc-carte">
             <p class="sc-texte-doux">@L["Biz_Spent", DateTime.UtcNow.Year]</p>
-            <p class="mt-1 font-display text-2xl font-bold"><sc-amount value="@spent.Amount" /></p>
+            <p class="mt-1 text-2xl font-bold"><sc-amount value="@spent.Amount" /></p>
         </div>
     }
     else
     {
         <a href="/entreprise/diagnostics" class="sc-carte text-charbon no-underline">
             <p class="sc-texte-doux">@L["Biz_NextDiagnostic"]</p>
-            <p class="mt-1 font-display text-xl font-bold">@(Model.NextDiagnostic is { } nd ? Formatting.ShortDate(nd.ScheduledFor) : "—")</p>
+            <p class="mt-1 text-base font-semibold">@(Model.NextDiagnostic is { } nd ? Formatting.ShortDate(nd.ScheduledFor) : "—")</p>
         </a>
     }
 </section>
@@ -52,7 +52,7 @@
         @* ---- Approvals first: someone is waiting. ---- *@
         @if (Model.PendingApprovals.Count > 0)
         {
-            <section aria-labelledby="valider-titre" class="sc-carte border-l-4 border-l-soleil">
+            <section aria-labelledby="valider-titre" class="sc-carte">
                 <h2 id="valider-titre" class="sc-sous-titre">@L["Biz_ToApprove", Model.PendingApprovals.Count]</h2>
                 <ul class="mt-3 divide-y divide-ligne">
                     @foreach (var request in Model.PendingApprovals)
@@ -122,11 +122,10 @@
     <aside class="grid content-start gap-6">
         @* ---- Offer and service level, read from the plan configuration. ---- *@
         <section aria-labelledby="offre-titre" class="sc-carte relative overflow-hidden">
-            <div class="sc-motif sc-motif-manjak absolute -top-4 -right-4 size-24 text-laterite/10" aria-hidden="true"></div>
             <h2 id="offre-titre" class="sc-surtitre">@L["Biz_Offer"]</h2>
             @if (Model.Subscription is { } sub)
             {
-                <p class="mt-1 font-display text-2xl font-bold">@sub.Plan.Name</p>
+                <p class="mt-1 text-2xl font-bold">@sub.Plan.Name</p>
                 <p class="mt-1 flex flex-wrap items-center gap-2">
                     <span class="sc-badge @(sub.Status == SubscriptionStatus.Active ? "bg-baobab-clair text-baobab" : "bg-atlantique-clair text-atlantique")">@L["SubscriptionStatus_" + sub.Status]</span>
                     @if (sub.NextDueDate is { } due && isManager)
@@ -158,7 +157,7 @@
         </section>
 
         <a href="/entreprise/diagnostics" data-tour="diagnostics" class="sc-carte flex items-center gap-4 text-charbon no-underline">
-            <span class="grid size-12 shrink-0 place-items-center rounded-md bg-indigo-clair text-indigo"><sc-icon name="calendar-check" class="size-6" /></span>
+            <span class="grid size-9 shrink-0 place-items-center rounded-md bg-sourdine text-charbon-doux"><sc-icon name="calendar-check" class="size-6" /></span>
             <span class="flex-1">
                 <span class="block font-bold">@L["Space_Diagnostics"]</span>
                 @if (Model.NextDiagnostic is { } next)
@@ -180,7 +179,7 @@
         @if (isManager)
         {
             <a href="/entreprise/equipe" class="sc-carte flex items-center gap-4 text-charbon no-underline">
-                <span class="grid size-12 shrink-0 place-items-center rounded-md bg-baobab-clair text-baobab"><sc-icon name="users" class="size-6" /></span>
+                <span class="grid size-9 shrink-0 place-items-center rounded-md bg-sourdine text-charbon-doux"><sc-icon name="users" class="size-6" /></span>
                 <span class="flex-1">
                     <span class="block font-bold">@L["Tab_Team"]</span>
                     <span class="sc-texte-doux block">@(Model.RequiresApproval ? L["Team_ApprovalIsOn"] : L["Team_ApprovalIsOff"])</span>

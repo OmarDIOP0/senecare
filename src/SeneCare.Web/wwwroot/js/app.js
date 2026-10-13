@@ -10,14 +10,17 @@
     if (saved === "light" || saved === "dark") root.dataset.theme = saved;
   } catch { /* storage unavailable: keep the system theme */ }
 
+  // Avatar menu / « Plus »: light, dark, or follow the phone.
   document.addEventListener("click", (event) => {
-    const toggle = event.target.closest("[data-theme-toggle]");
-    if (!toggle) return;
-    const dark = root.dataset.theme
-      ? root.dataset.theme !== "dark"
-      : !matchMedia("(prefers-color-scheme: dark)").matches;
-    root.dataset.theme = dark ? "dark" : "light";
-    try { localStorage.setItem("sc-theme", root.dataset.theme); } catch { /* ignore */ }
+    const choice = event.target.closest("[data-theme-set]");
+    if (!choice) return;
+    const value = choice.dataset.themeSet;
+    if (value === "system") delete root.dataset.theme;
+    else root.dataset.theme = value;
+    try {
+      if (value === "system") localStorage.removeItem("sc-theme");
+      else localStorage.setItem("sc-theme", value);
+    } catch { /* ignore */ }
   });
 
   // ---- Phone: « 771234567 » → « 77 123 45 67 » while typing. ----
@@ -81,8 +84,8 @@
     if (!region) return;
     const toast = document.createElement("div");
     toast.className =
-      "pointer-events-auto flex max-w-md items-center gap-3 rounded-md px-4 py-3 font-bold shadow-carte transition-opacity duration-200 " +
-      (kind === "erreur" ? "bg-laterite text-sur-accent" : "bg-charbon text-sable");
+      "pointer-events-auto flex max-w-md items-center gap-3 rounded-lg border px-3 py-2.5 text-sm font-medium shadow-sm transition-opacity duration-200 " +
+      (kind === "erreur" ? "border-rouge/30 bg-rouge-clair text-rouge" : "border-ligne bg-surface text-charbon");
     toast.setAttribute("role", kind === "erreur" ? "alert" : "status");
     toast.textContent = text;
     region.append(toast);
@@ -223,13 +226,13 @@
     if (!pill) return;
     const waiting = pending ?? (await self.scOutbox?.count().catch(() => 0)) ?? 0;
     const set = (text, classes, icon) => {
-      pill.className = "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold " + classes;
+      pill.className = "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium " + classes;
       pill.textContent = text;
       if (icon) pill.prepend(icon);
       pill.hidden = false;
     };
     if (!navigator.onLine) {
-      set(pill.dataset.textOffline, "bg-soleil text-charbon");
+      set(pill.dataset.textOffline, "bg-soleil-clair text-soleil");
     } else if (waiting > 0) {
       set(pill.dataset.textPending.replace("{0}", waiting), "bg-atlantique-clair text-atlantique");
     } else if (pill.dataset.wasOffline === "1") {
@@ -431,5 +434,118 @@
     document.addEventListener("keydown", onKey);
     addEventListener("resize", () => steps[index] && show());
     show();
+  });
+
+  // ==========================================================================
+  // App shell
+  // ==========================================================================
+
+  // ---- Menus (<details data-menu>): one open at a time, Esc / outside click closes, lazy content. ----
+  const menus = () => document.querySelectorAll("details[data-menu][open]");
+  document.addEventListener("click", (event) => {
+    menus().forEach((menu) => { if (!menu.contains(event.target)) menu.open = false; });
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") menus().forEach((menu) => { menu.open = false; menu.querySelector("summary")?.focus(); });
+  });
+  document.addEventListener("toggle", async (event) => {
+    const menu = event.target;
+    if (!(menu instanceof HTMLDetailsElement) || !menu.open || !menu.dataset.load) return;
+    const target = menu.querySelector("[data-load-target]");
+    try {
+      const response = await fetch(menu.dataset.load, { credentials: "same-origin", headers: { "HX-Request": "true" } });
+      if (response.ok && target) target.innerHTML = await response.text();
+      menu.querySelector("summary .bg-laterite")?.remove(); // read now
+    } catch { /* offline: keep the placeholder */ }
+  }, true);
+
+  // ---- Ctrl+K: quick navigation. ----
+  const palette = () => document.getElementById("palette");
+  const openPalette = () => {
+    const dialog = palette();
+    if (!dialog || dialog.open) return;
+    dialog.showModal();
+    const input = dialog.querySelector("[data-palette-input]");
+    input.value = "";
+    filterPalette("");
+    input.focus();
+  };
+  const filterPalette = (query) => {
+    const dialog = palette();
+    const words = query.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+    let visible = 0;
+    dialog.querySelectorAll("[data-palette-item]").forEach((item, index) => {
+      const text = item.textContent.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+      const show = !words || text.includes(words);
+      item.parentElement.hidden = !show;
+      item.classList.toggle("bg-sourdine", show && visible === 0);
+      if (show) visible++;
+    });
+    dialog.querySelector("[data-palette-empty]").classList.toggle("hidden", visible > 0);
+  };
+  document.addEventListener("keydown", (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault();
+      openPalette();
+    }
+  });
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("[data-palette-open]")) openPalette();
+    if (event.target instanceof HTMLDialogElement && event.target.id === "palette") event.target.close();
+  });
+  document.addEventListener("input", (event) => {
+    if (event.target.matches("[data-palette-input]")) filterPalette(event.target.value);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (!event.target.matches?.("[data-palette-input]")) return;
+    const items = [...palette().querySelectorAll("[data-palette-item]")].filter((i) => !i.parentElement.hidden);
+    const current = items.findIndex((i) => i.classList.contains("bg-sourdine"));
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      const next = items[(current + (event.key === "ArrowDown" ? 1 : items.length - 1)) % items.length];
+      items.forEach((i) => i.classList.toggle("bg-sourdine", i === next));
+      next?.scrollIntoView({ block: "nearest" });
+    } else if (event.key === "Enter" && items[current]) {
+      event.preventDefault();
+      location.href = items[current].href;
+    }
+  });
+
+  // ---- Tables: click a header to sort, type to filter rows, select to filter a column. ----
+  document.addEventListener("click", (event) => {
+    const header = event.target.closest("th[data-sort]");
+    if (!header) return;
+    const table = header.closest("table");
+    const body = table.tBodies[0];
+    const column = [...header.parentElement.children].indexOf(header);
+    const ascending = header.getAttribute("aria-sort") !== "ascending";
+    table.querySelectorAll("th[aria-sort]").forEach((th) => th.removeAttribute("aria-sort"));
+    header.setAttribute("aria-sort", ascending ? "ascending" : "descending");
+    const value = (row) => {
+      const cell = row.children[column];
+      return cell?.dataset.value ?? cell?.textContent.trim() ?? "";
+    };
+    const collator = new Intl.Collator("fr", { numeric: true, sensitivity: "base" });
+    [...body.rows]
+      .sort((a, b) => (ascending ? 1 : -1) * collator.compare(value(a), value(b)))
+      .forEach((row) => body.append(row));
+  });
+  const filterTable = (scope) => {
+    const table = document.getElementById(scope.dataset.tableControls);
+    if (!table) return;
+    const search = scope.querySelector("[data-table-search]")?.value.trim().toLowerCase() ?? "";
+    const filters = [...scope.querySelectorAll("[data-table-filter]")].filter((f) => f.value);
+    let shown = 0;
+    table.querySelectorAll("[data-row]").forEach((row) => {
+      const match = (!search || row.textContent.toLowerCase().includes(search))
+        && filters.every((f) => row.dataset[f.dataset.tableFilter] === f.value);
+      row.hidden = !match;
+      if (match) shown++;
+    });
+    document.querySelectorAll(`[data-table-empty="${table.id}"]`).forEach((el) => (el.hidden = shown > 0));
+  };
+  document.addEventListener("input", (event) => {
+    const scope = event.target.closest("[data-table-controls]");
+    if (scope) filterTable(scope);
   });
 })();

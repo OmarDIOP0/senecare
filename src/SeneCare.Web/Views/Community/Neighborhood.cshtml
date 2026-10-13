@@ -28,14 +28,14 @@
 <section class="relative overflow-hidden rounded-xl bg-baobab px-5 py-8 text-sable">
     <div class="sc-motif sc-motif-bogolan absolute -top-8 -right-8 size-48 text-sable/10" aria-hidden="true"></div>
     <p class="relative sc-surtitre text-sable/80">@L["Hood_Program"] · @Model.Commune</p>
-    <h1 class="relative mt-1 font-display text-4xl font-bold">@Model.Name</h1>
+    <h1 class="relative mt-1 text-2xl font-bold">@Model.Name</h1>
     @if (active)
     {
         <p class="relative mt-3 text-lg">@L["Hood_Active", Model.Trees]</p>
     }
     else
     {
-        <p class="relative mt-3"><strong class="font-display text-4xl">@Model.Members</strong> <span class="text-sable/85">/ @L["Hood_Neighbors", Model.Threshold]</span></p>
+        <p class="relative mt-3"><strong class="text-2xl">@Model.Members</strong> <span class="text-sable/85">/ @L["Hood_Neighbors", Model.Threshold]</span></p>
         <progress class="relative mt-3 h-3 w-full overflow-hidden rounded-full accent-soleil" max="@Model.Threshold" value="@Model.Members" aria-label="@L["Hood_Program"]">@Model.Members / @Model.Threshold</progress>
         <p class="relative mt-2 text-sable/85">@L["Hood_Remaining", Model.Remaining]</p>
     }

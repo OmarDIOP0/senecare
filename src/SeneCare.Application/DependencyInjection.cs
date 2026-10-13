@@ -35,6 +35,7 @@ public static class DependencyInjection
         services.AddScoped<AcceptInvitationHandler>();
         services.AddScoped<GetUserProfileHandler>();
         services.AddScoped<GetTeamHandler>();
+        services.AddScoped<NotificationInbox>();
         services.AddScoped<SearchNeighborhoodsHandler>();
         services.AddScoped<TourProgressHandler>();
 

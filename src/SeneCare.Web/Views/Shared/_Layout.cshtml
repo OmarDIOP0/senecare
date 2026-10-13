@@ -5,22 +5,19 @@
     @await RenderSectionAsync("Head", required: false)
 </head>
 <body class="min-h-dvh">
-    <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-atlantique focus:px-4 focus:py-3 focus:text-sable">@L["Layout_SkipToContent"]</a>
-    <header class="border-b border-ligne bg-sable">
-        <nav class="mx-auto flex w-full max-w-screen-lg items-center justify-between gap-2 px-4 py-2">
+    <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-surface focus:px-3 focus:py-2 focus:text-charbon">@L["Layout_SkipToContent"]</a>
+    <header class="border-b border-ligne bg-surface">
+        <nav class="mx-auto flex h-14 w-full max-w-screen-lg items-center justify-between gap-2 px-4">
             <partial name="Ui/_Brand" />
             <div class="flex items-center gap-1">
                 <partial name="Ui/_AppStatus" />
-                <button type="button" class="sc-btn-icone" data-theme-toggle aria-label="@L["Theme_Toggle"]">
-                    <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" /></svg>
-                </button>
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <a href="/espace" class="inline-flex min-h-cible items-center px-2 font-bold">@L["Nav_Space"]</a>
+                    <a href="/espace" class="sc-btn-secondaire">@L["Nav_Space"]</a>
                 }
                 else
                 {
-                    <a href="/connexion" class="inline-flex min-h-cible items-center px-2 font-bold">@L["Nav_SignIn"]</a>
+                    <a href="/connexion" class="sc-btn-secondaire">@L["Nav_SignIn"]</a>
                 }
             </div>
         </nav>

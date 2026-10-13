@@ -16,25 +16,25 @@
 <section aria-label="@L["Biz_Figures"]" class="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-5">
     <a href="@(dispatch ? "/admin/dispatch" : null)" class="sc-carte text-charbon no-underline">
         <p class="sc-texte-doux">@L["Admin_Open"]</p>
-        <p class="mt-1 font-display text-3xl font-bold">@Model.Open</p>
+        <p class="mt-1 text-2xl font-bold">@Model.Open</p>
     </a>
     <a href="@(dispatch ? "/admin/dispatch" : null)" class="sc-carte text-charbon no-underline">
         <p class="sc-texte-doux">@L["Admin_Late"]</p>
-        <p class="mt-1 font-display text-3xl font-bold @(Model.LateNow > 0 ? "text-laterite" : "")">@Model.LateNow</p>
+        <p class="mt-1 text-2xl font-bold @(Model.LateNow > 0 ? "text-laterite" : "")">@Model.LateNow</p>
     </a>
     <div class="sc-carte">
         <p class="sc-texte-doux">@L["Admin_Sla"]</p>
-        <p class="mt-1 font-display text-3xl font-bold @(Model.SlaRate is < 90 ? "text-laterite" : "text-baobab")">@(Model.SlaRate is { } r ? r + " %" : "—")</p>
+        <p class="mt-1 text-2xl font-bold @(Model.SlaRate is < 90 ? "text-laterite" : "text-baobab")">@(Model.SlaRate is { } r ? r + " %" : "—")</p>
         <p class="sc-texte-doux">@L["Admin_SlaWindow", Model.SlaMeasured]</p>
     </div>
     <a href="@(finance ? "/admin/paiements" : null)" class="sc-carte text-charbon no-underline">
         <p class="sc-texte-doux">@L["Admin_Unpaid"]</p>
-        <p class="mt-1 font-display text-2xl font-bold"><sc-amount value="@Model.Unpaid.Amount" /></p>
+        <p class="mt-1 text-2xl font-bold"><sc-amount value="@Model.Unpaid.Amount" /></p>
         <p class="sc-texte-doux">@L["Admin_UnpaidInvoices", Model.UnpaidInvoices, Model.PendingPayments]</p>
     </a>
     <div class="sc-carte">
         <p class="sc-texte-doux">@L["Admin_Satisfaction"]</p>
-        <p class="mt-1 font-display text-3xl font-bold">@(Model.AverageRating is { } avg ? avg.ToString("0.0", CultureInfo.CurrentCulture) + " / 5" : "—")</p>
+        <p class="mt-1 text-2xl font-bold">@(Model.AverageRating is { } avg ? avg.ToString("0.0", CultureInfo.CurrentCulture) + " / 5" : "—")</p>
         <p class="sc-texte-doux">@L["Admin_Ratings", Model.Ratings, Model.Disputes]</p>
     </div>
 </section>

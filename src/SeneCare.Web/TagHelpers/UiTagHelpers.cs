@@ -31,12 +31,13 @@ public sealed class IconTagHelper(IFileVersionProvider versions) : TagHelper
         output.TagName = "svg";
         output.TagMode = TagMode.StartTagAndEndTag;
         var existingClass = output.Attributes["class"]?.Value?.ToString();
-        // An SVG without explicit size renders at 300×150: default to 20 px unless a size-* class is given.
+        // An SVG without explicit size renders at 300×150: default to 18 px unless a size-* class is given.
         var hasSize = existingClass?.Split(' ').Any(c => c.StartsWith("size-", StringComparison.Ordinal) || c.Contains(":size-", StringComparison.Ordinal)) ?? false;
-        output.Attributes.SetAttribute("class", ("shrink-0 " + (hasSize ? string.Empty : "size-5 ") + existingClass).Trim());
+        output.Attributes.SetAttribute("class", ("shrink-0 " + (hasSize ? string.Empty : "size-[18px] ") + existingClass).Trim());
         output.Attributes.SetAttribute("fill", "none");
         output.Attributes.SetAttribute("stroke", "currentColor");
-        output.Attributes.SetAttribute("stroke-width", "2");
+        // Lucide at 1.75: the lighter line of current product UIs.
+        output.Attributes.SetAttribute("stroke-width", "1.75");
         output.Attributes.SetAttribute("stroke-linecap", "round");
         output.Attributes.SetAttribute("stroke-linejoin", "round");
         if (string.IsNullOrEmpty(Label))
@@ -104,7 +105,7 @@ public sealed class UrgencyBadgeTagHelper(IStringLocalizer<SharedResource> local
         output.TagMode = TagMode.StartTagAndEndTag;
         output.Attributes.SetAttribute("class", "sc-badge " + Formatting.BadgeClass(Value));
         output.Content.SetHtmlContent(
-            $"<svg class=\"size-3.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><use href=\"{sprite}#{Formatting.Icon(Value)}\"></use></svg>");
+            $"<svg class=\"size-3\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><use href=\"{sprite}#{Formatting.Icon(Value)}\"></use></svg>");
         output.Content.Append(localizer["Urgency_" + Value]);
     }
 }

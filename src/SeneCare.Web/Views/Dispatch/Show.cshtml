@@ -30,7 +30,7 @@
         <p class="mt-2 flex flex-wrap gap-2"><sc-urgency value="@item.Urgency" /><sc-status value="@status" />
             @if (item.SlaDeadline is { } deadline)
             {
-                <span class="sc-badge @(item.IsLate(DateTimeOffset.UtcNow) ? "bg-laterite text-sur-accent" : "bg-sable text-charbon")"><sc-icon name="clock" class="size-4" />@L["Request_Sla", Formatting.ShortDateTime(deadline)]</span>
+                <span class="sc-badge @(item.IsLate(DateTimeOffset.UtcNow) ? "bg-laterite text-sur-accent" : "bg-sourdine text-charbon-doux")"><sc-icon name="clock" class="size-4" />@L["Request_Sla", Formatting.ShortDateTime(deadline)]</span>
             }
         </p>
     </div>
@@ -117,7 +117,7 @@
 
         @if (toAssign || critical)
         {
-            <section class="sc-carte border-l-4 border-l-laterite" aria-labelledby="affecter-titre">
+            <section class="sc-carte" aria-labelledby="affecter-titre">
                 <h2 id="affecter-titre" class="sc-sous-titre">@(critical ? L["Dispatch_SendNow"] : L["Dispatch_AssignTitle"])</h2>
                 @if (Model.ConfirmedSlot is { } slot)
                 {
@@ -134,15 +134,15 @@
                             <div>
                                 <p class="font-bold">@s.Name</p>
                                 <p class="mt-1 flex flex-wrap gap-1 text-xs">
-                                    <span class="sc-badge @(s.CoversZone ? "bg-baobab-clair text-baobab" : "bg-sable text-charbon")">@(s.CoversZone ? L["Dispatch_InZone"] : L["Dispatch_OutOfZone"])</span>
+                                    <span class="sc-badge @(s.CoversZone ? "bg-baobab-clair text-baobab" : "bg-sourdine text-charbon-doux")">@(s.CoversZone ? L["Dispatch_InZone"] : L["Dispatch_OutOfZone"])</span>
                                     @if (s.IsAvailable is { } free)
                                     {
                                         <span class="sc-badge @(free ? "bg-baobab-clair text-baobab" : "bg-laterite-clair text-laterite")">@(free ? L["Dispatch_Free"] : L["Dispatch_Busy"])</span>
                                     }
-                                    <span class="sc-badge bg-sable text-charbon">@L["Dispatch_Load", s.OpenMissions]</span>
+                                    <span class="sc-badge bg-sourdine text-charbon-doux">@L["Dispatch_Load", s.OpenMissions]</span>
                                     @if (s.Rating is { } rating)
                                     {
-                                        <span class="sc-badge bg-sable text-charbon"><sc-icon name="star" class="size-3.5" />@rating.ToString("0.0", CultureInfo.CurrentCulture)</span>
+                                        <span class="sc-badge bg-sourdine text-charbon-doux"><sc-icon name="star" class="size-3.5" />@rating.ToString("0.0", CultureInfo.CurrentCulture)</span>
                                     }
                                 </p>
                             </div>

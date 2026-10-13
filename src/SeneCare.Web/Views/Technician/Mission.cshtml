@@ -35,7 +35,7 @@
 @* ---- Where and who: the things a technician needs with one hand. ---- *@
 <section class="sc-carte mt-4" aria-labelledby="adresse-titre">
     <h2 id="adresse-titre" class="sr-only">@L["Tech_Address"]</h2>
-    <p class="text-lg font-bold">@Model.Place</p>
+    <p class="text-[15px] font-semibold">@Model.Place</p>
     @if (Model.Landmark is { } landmark)
     {
         <p class="mt-1 flex gap-2"><sc-icon name="map-pin" class="mt-1 shrink-0" />@landmark</p>
@@ -103,7 +103,7 @@
 
 @if (Model.IsCompleted)
 {
-    <section class="sc-carte mt-6 border-l-4 border-l-baobab" aria-labelledby="rapport-titre">
+    <section class="sc-carte mt-6" aria-labelledby="rapport-titre">
         <h2 id="rapport-titre" class="sc-sous-titre">@L["Tech_Report"]</h2>
         <p class="mt-2 whitespace-pre-line">@Model.Report</p>
         @if (Model.SignedByName is { } signer)

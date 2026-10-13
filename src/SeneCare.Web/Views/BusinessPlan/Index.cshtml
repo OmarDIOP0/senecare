@@ -23,13 +23,13 @@
     @foreach (var offer in Model)
     {
         var isRecommended = offer.Code == recommended;
-        <section class="sc-carte flex flex-col @(isRecommended ? "border-2 border-laterite" : "")" aria-labelledby="offre-@offer.Code">
+        <section class="sc-carte flex flex-col @(isRecommended ? "border-laterite" : "")" aria-labelledby="offre-@offer.Code">
             @if (isRecommended)
             {
                 <p class="sc-surtitre">@L["Offer_Popular"]</p>
             }
-            <h2 id="offre-@offer.Code" class="font-display text-2xl font-bold">@offer.Name</h2>
-            <p class="mt-2"><sc-amount value="@offer.MonthlyPrice.Amount" class="font-display text-3xl font-bold text-laterite" /> <span class="text-charbon-doux">@L["Offer_PerMonth"]</span></p>
+            <h2 id="offre-@offer.Code" class="text-2xl font-bold">@offer.Name</h2>
+            <p class="mt-2"><sc-amount value="@offer.MonthlyPrice.Amount" class="text-2xl font-bold text-laterite" /> <span class="text-charbon-doux">@L["Offer_PerMonth"]</span></p>
             <p class="sc-texte-doux">@L["Offer_Billing", offer.BillingPeriodMonths]</p>
 
             <h3 class="mt-4 text-sm font-bold">@L["Offer_Delays"]</h3>

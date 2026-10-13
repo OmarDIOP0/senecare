@@ -23,7 +23,7 @@
                 <li class="flex flex-wrap justify-between gap-2 py-2">
                     <span><span class="font-bold">@(m.Name ?? "—")</span> · +221 @m.Phone</span>
                     <span class="flex items-center gap-2">
-                        <span class="sc-badge bg-sable text-charbon">@L["Role_" + m.Role]</span>
+                        <span class="sc-badge bg-sourdine text-charbon-doux">@L["Role_" + m.Role]</span>
                         @if (User.IsInRole("SuperAdmin"))
                         {
                             <a href="/admin/donnees/@m.UserId/export.json" class="text-sm font-bold" download>@L["Admin_ExportData"]</a>
@@ -61,7 +61,7 @@
             {
                 <li class="flex flex-wrap justify-between gap-2 py-2">
                     <span><span class="font-bold">@sub.Plan</span> · <sc-amount value="@sub.MonthlyPrice.Amount" /> @L["Offer_PerMonth"]@if (sub.NextDueDate is { } due) { <span class="block text-sm">@L["Subscription_NextDue", Day(due)]</span> }</span>
-                    <span class="sc-badge bg-sable text-charbon">@L["SubscriptionStatus_" + sub.Status]</span>
+                    <span class="sc-badge bg-sourdine text-charbon-doux">@L["SubscriptionStatus_" + sub.Status]</span>
                 </li>
             }
         </ul>

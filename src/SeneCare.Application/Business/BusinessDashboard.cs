@@ -31,9 +31,14 @@ public sealed record BusinessDashboard(
     Money? SpentThisYear,
     SubscriptionState? Subscription,
     IReadOnlyList<RequestSummary> PendingApprovals,
-    IReadOnlyList<RequestSummary> OpenRequests)
+    IReadOnlyList<RequestSummary> OpenRequests,
+    int TeamSize = 1,
+    int RequestCount = 0)
 {
     public int OpenTotal => OpenByUrgency.Values.Sum();
+
+    /// <summary>Start-up checklist: site, team, plan, first report.</summary>
+    public int StepsDone => (SiteCount > 0 ? 1 : 0) + (TeamSize > 1 ? 1 : 0) + (Subscription is not null ? 1 : 0) + (RequestCount > 0 ? 1 : 0);
 }
 
 /// <summary>
@@ -121,7 +126,9 @@ public sealed class BusinessDashboardQuery(
                 ? null
                 : new SubscriptionState(subscription.Id, plan, subscription.Status, subscription.CurrentPeriod, subscription.NextDueDate),
             await requests.SummariesAsync(pending, cancellationToken),
-            await requests.SummariesAsync([.. open.Where(r => r.Status != RequestStatus.AwaitingApproval).Take(6)], cancellationToken));
+            await requests.SummariesAsync([.. open.Where(r => r.Status != RequestStatus.AwaitingApproval).Take(10)], cancellationToken),
+            member.Account.Members.Count,
+            await db.ServiceRequests.CountAsync(r => siteIds.Contains(r.PropertyId), cancellationToken));
     }
 
     private static DiagnosticSlot Slot(Diagnostic d) => new(d.Id, d.ScheduledFor, d.Status, d.PeriodCovered, d.AnomalyCount);

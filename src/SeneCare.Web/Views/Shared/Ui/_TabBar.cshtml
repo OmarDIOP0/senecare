@@ -1,50 +1,74 @@
-@model TabBarModel
+@model ShellModel
 @{
-    var items = Model.Nav.Items;
+    var items = Model.Nav.Mobile;
     var primary = Model.Nav.Primary;
-    // The central action sits in the middle of the bar on mobile; first on the desktop rail.
-    var middle = items.Count / 2;
-    var columns = (items.Count + (primary is null ? 0 : 1)) switch
-    {
-        3 => "grid-cols-3",
-        4 => "grid-cols-4",
-        _ => "grid-cols-5",
-    };
-    var position = Model.Demo
-        ? "relative"
-        : "fixed inset-x-0 bottom-0 z-40 lg:inset-y-0 lg:right-auto lg:w-60";
+    // Primary action in the middle: [a, b, Signaler, c, Plus] — or [a, b, c?, Plus] without one.
+    IReadOnlyList<NavItem> before = primary is null ? items : items.Take(2).ToList();
+    IReadOnlyList<NavItem> after = primary is null ? Array.Empty<NavItem>() : items.Skip(2).ToList();
+    var moreActive = Model.ActiveKey == AppNavigation.Settings.Key || Model.Nav.More.Any(i => i.Key == Model.ActiveKey);
+    string Tab(bool active) => active ? "text-charbon" : "text-charbon-pale";
 }
-<nav aria-label="@L["Tab_NavLabel"]" class="@position border-t border-ligne bg-surface pb-[env(safe-area-inset-bottom)] lg:border-t-0 lg:border-r">
-    <div class="hidden px-6 pt-6 pb-4 lg:block"><partial name="Ui/_Brand" /></div>
-    <ul class="mx-auto grid @columns max-w-md items-end lg:flex lg:max-w-none lg:flex-col lg:items-stretch lg:gap-1 lg:px-3">
-        @for (var i = 0; i < items.Count; i++)
+<nav aria-label="@L["Tab_NavLabel"]" class="fixed inset-x-0 bottom-0 z-40 border-t border-ligne bg-surface pb-[env(safe-area-inset-bottom)] lg:hidden">
+    <ul class="mx-auto flex max-w-md">
+        @foreach (var item in before)
         {
-            if (i == middle && primary is not null)
-            {
-                <li class="flex justify-center lg:order-first lg:mb-4 lg:block">
-                    <a href="@primary.Url" data-tour="@primary.Tour" class="-mt-6 flex flex-col items-center gap-1 pb-2.5 text-xs font-bold text-laterite no-underline lg:mt-0 lg:flex-row lg:justify-center lg:gap-2 lg:rounded-md lg:bg-laterite lg:px-4 lg:py-3 lg:text-base lg:text-sur-accent">
-                        <span class="grid size-14 place-items-center rounded-full bg-laterite text-sur-accent shadow-carte ring-4 ring-sable lg:size-auto lg:shadow-none lg:ring-0">
-                            <sc-icon name="@primary.Icon" class="size-7 lg:size-5" />
-                        </span>
-                        @L[primary.LabelKey]
-                    </a>
-                </li>
-            }
-
-            var item = items[i];
             var active = item.Key == Model.ActiveKey;
-            <li>
+            <li class="flex-1">
                 <a href="@item.Url" data-tour="@item.Tour" aria-current="@(active ? "page" : null)"
-                   class="flex min-h-16 flex-col items-center justify-center gap-0.5 text-xs no-underline lg:min-h-cible lg:flex-row lg:justify-start lg:gap-3 lg:rounded-md lg:px-3 lg:text-base
-                          @(active ? "font-bold text-laterite lg:bg-laterite-clair" : "text-charbon-doux hover:text-charbon")">
-                    <sc-icon name="@item.Icon" class="size-6" />
-                    <span>@L[item.LabelKey]</span>
-                    @if (active)
-                    {
-                        <span class="mt-0.5 h-1 w-6 rounded-full bg-laterite lg:hidden" aria-hidden="true"></span>
-                    }
+                   class="flex h-14 flex-col items-center justify-center gap-0.5 text-[11px] font-medium no-underline hover:no-underline @Tab(active)">
+                    <sc-icon name="@item.Icon" class="size-5 @(active ? "text-laterite" : "")" />@L[item.LabelKey]
                 </a>
             </li>
         }
+        @if (primary is not null)
+        {
+            <li class="flex flex-1 items-center justify-center">
+                <a href="@primary.Url" data-tour="@primary.Tour" class="flex h-10 items-center gap-1.5 rounded-md bg-laterite px-3 text-[13px] font-medium text-sur-accent no-underline hover:no-underline">
+                    <sc-icon name="@primary.Icon" class="size-4" />@L[primary.LabelKey]
+                </a>
+            </li>
+        }
+        @foreach (var item in after)
+        {
+            var active = item.Key == Model.ActiveKey;
+            <li class="flex-1">
+                <a href="@item.Url" data-tour="@item.Tour" aria-current="@(active ? "page" : null)"
+                   class="flex h-14 flex-col items-center justify-center gap-0.5 text-[11px] font-medium no-underline hover:no-underline @Tab(active)">
+                    <sc-icon name="@item.Icon" class="size-5 @(active ? "text-laterite" : "")" />@L[item.LabelKey]
+                </a>
+            </li>
+        }
+        <li class="flex-1">
+            <button type="button" data-sheet-open="plus" class="flex h-14 w-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium @Tab(moreActive)">
+                <sc-icon name="list-checks" class="size-5 @(moreActive ? "text-laterite" : "")" />@L["Shell_More"]
+            </button>
+        </li>
     </ul>
 </nav>
+
+<sc-sheet id="plus" title="@L["Shell_More"]">
+    <ul class="grid gap-0.5">
+        @foreach (var item in Model.Nav.More.Append(AppNavigation.Settings))
+        {
+            <li>
+                <a href="@item.Url" class="sc-menu-item min-h-11"><sc-icon name="@item.Icon" class="size-[18px] text-charbon-doux" />@L[item.LabelKey]</a>
+            </li>
+        }
+        <li>
+            <form method="post" action="/visite/rejouer">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="sc-menu-item min-h-11"><sc-icon name="info" class="size-[18px] text-charbon-doux" />@L["Shell_Help"]</button>
+            </form>
+        </li>
+    </ul>
+    <p class="mt-4 px-2 text-xs text-charbon-doux">@L["Shell_Theme"]</p>
+    <div class="mt-1 grid grid-cols-3 gap-1" role="group" aria-label="@L["Shell_Theme"]">
+        <button type="button" class="sc-btn-secondaire" data-theme-set="light">@L["Shell_ThemeLight"]</button>
+        <button type="button" class="sc-btn-secondaire" data-theme-set="dark">@L["Shell_ThemeDark"]</button>
+        <button type="button" class="sc-btn-secondaire" data-theme-set="system">@L["Shell_ThemeSystem"]</button>
+    </div>
+    <form method="post" action="/deconnexion" class="mt-4">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="sc-btn-secondaire w-full"><sc-icon name="log-out" class="size-4" />@L["Account_SignOut"]</button>
+    </form>
+</sc-sheet>

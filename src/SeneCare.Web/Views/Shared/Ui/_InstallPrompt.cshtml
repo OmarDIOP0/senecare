@@ -1,33 +1,27 @@
-@* « Installer l'application »: shown by app.js only when installable (Android prompt) or on iPhone Safari. *@
-<section data-install hidden class="sc-carte mt-4 flex items-start gap-3" aria-labelledby="installer-titre">
-    <span class="grid size-12 shrink-0 place-items-center rounded-md bg-laterite-clair text-laterite"><partial name="Ui/_BrandMark" /></span>
-    <div class="flex-1">
-        <h2 id="installer-titre" class="font-bold">@L["Install_Title"]</h2>
-        <p class="sc-texte-doux">@L["Install_Text"]</p>
-        <div class="mt-3 flex flex-wrap gap-2">
-            <button type="button" class="sc-btn bg-laterite text-sur-accent" data-install-accept>@L["Install_Button"]</button>
-            <button type="button" class="sc-btn-discret" data-install-dismiss>@L["Install_Later"]</button>
-        </div>
-    </div>
-</section>
+@* « Installer l'application »: phones only, a thin dismissible bar (dismissal remembered by app.js). *@
+<div data-install hidden class="flex items-center gap-3 border-b border-ligne bg-surface px-4 py-2 text-sm lg:hidden!">
+    <p class="flex-1">@L["Install_Title"]</p>
+    <button type="button" class="font-medium text-laterite" data-install-accept>@L["Install_Button"]</button>
+    <button type="button" class="sc-btn-icone size-8" data-install-dismiss aria-label="@L["Install_Later"]"><sc-icon name="x" class="size-4" /></button>
+</div>
 
 <sc-sheet id="installer-iphone" title="@L["Install_Ios_Title"]">
-    <ol class="space-y-4">
-        <li class="flex items-center gap-4">
-            <span class="grid size-12 shrink-0 place-items-center rounded-md bg-atlantique-clair text-atlantique">
-                @* iOS « Partager » symbol (square with arrow), drawn here: it is not in our icon set. *@
-                <svg viewBox="0 0 24 24" class="size-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4" /><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1" /></svg>
+    <ol class="grid gap-3 text-sm">
+        <li class="flex items-center gap-3">
+            <span class="grid size-8 shrink-0 place-items-center rounded-md bg-sourdine text-charbon-doux">
+                @* iOS « Partager » symbol (square with arrow): not in our icon set. *@
+                <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4" /><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1" /></svg>
             </span>
-            <p>@L["Install_Ios_Step1"]</p>
+            @L["Install_Ios_Step1"]
         </li>
-        <li class="flex items-center gap-4">
-            <span class="grid size-12 shrink-0 place-items-center rounded-md bg-atlantique-clair text-atlantique"><sc-icon name="plus" class="size-7" /></span>
-            <p>@L["Install_Ios_Step2"]</p>
+        <li class="flex items-center gap-3">
+            <span class="grid size-8 shrink-0 place-items-center rounded-md bg-sourdine text-charbon-doux"><sc-icon name="plus" class="size-4" /></span>
+            @L["Install_Ios_Step2"]
         </li>
-        <li class="flex items-center gap-4">
-            <span class="grid size-12 shrink-0 place-items-center rounded-md bg-laterite-clair text-laterite"><partial name="Ui/_BrandMark" /></span>
-            <p>@L["Install_Ios_Step3"]</p>
+        <li class="flex items-center gap-3">
+            <span class="grid size-8 shrink-0 place-items-center rounded-md bg-sourdine text-charbon-doux"><sc-icon name="check" class="size-4" /></span>
+            @L["Install_Ios_Step3"]
         </li>
     </ol>
-    <button type="button" class="sc-btn-primaire mt-6 w-full" data-sheet-close>@L["Install_Ios_Ok"]</button>
+    <button type="button" class="sc-btn-primaire mt-4 w-full" data-sheet-close>@L["Install_Ios_Ok"]</button>
 </sc-sheet>

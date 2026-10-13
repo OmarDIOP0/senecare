@@ -47,7 +47,7 @@
                         @(m.Kind == MissionKind.Diagnostic ? L["Tech_Diagnostic"] : L["Domain_" + m.Domain]) · @m.Number
                         <span class="ml-1 font-normal" data-distance hidden></span>
                     </p>
-                    <h2 class="font-display text-xl font-bold">
+                    <h2 class="text-base font-semibold">
                         <a href="@url" class="text-charbon no-underline after:absolute after:inset-0" data-prefetch>@m.Title</a>
                     </h2>
                     <p class="mt-1">@m.Site · @m.Place</p>
@@ -67,7 +67,7 @@
                         }
                         @if (m.At is { } at)
                         {
-                            <span class="sc-badge bg-sable text-charbon"><sc-icon name="clock" class="size-4" />@Formatting.ShortDateTime(at)</span>
+                            <span class="sc-badge bg-sourdine text-charbon-doux"><sc-icon name="clock" class="size-4" />@Formatting.ShortDateTime(at)</span>
                         }
                     </p>
                 </div>

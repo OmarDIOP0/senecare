@@ -33,9 +33,9 @@
             <div class="flex flex-wrap items-start justify-between gap-2">
                 <div>
                     <p class="sc-surtitre">@sub.PlanName</p>
-                    <h2 class="font-display text-lg font-bold">@string.Join(", ", sub.PropertyNames)</h2>
+                    <h2 class="text-[15px] font-semibold">@string.Join(", ", sub.PropertyNames)</h2>
                 </div>
-                <span class="sc-badge @(sub.Status switch { SubscriptionStatus.Active => "bg-baobab-clair text-baobab", SubscriptionStatus.PastDue => "bg-soleil text-charbon", SubscriptionStatus.Suspended => "bg-laterite text-sur-accent", _ => "bg-atlantique-clair text-atlantique" })">@L["SubscriptionStatus_" + sub.Status]</span>
+                <span class="sc-badge @(sub.Status switch { SubscriptionStatus.Active => "bg-baobab-clair text-baobab", SubscriptionStatus.PastDue => "bg-soleil-clair text-soleil", SubscriptionStatus.Suspended => "bg-rouge-clair text-rouge", _ => "bg-atlantique-clair text-atlantique" })">@L["SubscriptionStatus_" + sub.Status]</span>
             </div>
 
             <dl class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
@@ -58,7 +58,7 @@
             {
                 <div class="mt-5 rounded-md border-2 border-ligne bg-sable p-4" aria-labelledby="payer-@due.InvoiceId">
                     <h3 id="payer-@due.InvoiceId" class="font-bold">@(due.IsRegistration ? L["Pay_TitleFirst"] : L["Pay_TitleRenewal"])</h3>
-                    <p class="mt-1 font-display text-3xl font-bold text-laterite"><sc-amount value="@due.Amount.Amount" /></p>
+                    <p class="mt-1 text-2xl font-bold text-laterite"><sc-amount value="@due.Amount.Amount" /></p>
                     <p class="sc-texte-doux">@L["Pay_Invoice", due.Number]</p>
 
                     @if (due.Declaration is { Status: PaymentStatus.Pending } pending)

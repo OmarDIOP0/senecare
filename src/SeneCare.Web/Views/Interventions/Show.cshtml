@@ -45,7 +45,7 @@
 @* ---- What the customer must do now ---- *@
 @if (d.CanChooseSlot)
 {
-    <section class="sc-carte mt-6 border-l-4 border-l-soleil" aria-labelledby="creneau-titre">
+    <section class="sc-carte mt-6" aria-labelledby="creneau-titre">
         <h2 id="creneau-titre" class="sc-sous-titre">@L["Request_ChooseSlot"]</h2>
         <form method="post" asp-action="ChooseSlot" asp-route-id="@s.Id" class="mt-3 grid gap-2">
             @foreach (var slot in d.ProposedSlots)
@@ -87,7 +87,7 @@
 
 @if (d.CanValidate)
 {
-    <section class="sc-carte mt-6 border-l-4 border-l-baobab" aria-labelledby="valider-titre">
+    <section class="sc-carte mt-6" aria-labelledby="valider-titre">
         <h2 id="valider-titre" class="sc-sous-titre">@L["Request_ValidateTitle"]</h2>
         <p class="mt-1 text-charbon-doux">@L["Request_ValidateText"]</p>
         <form method="post" asp-action="Validate" asp-route-id="@s.Id" class="mt-4 grid gap-4">
@@ -98,7 +98,7 @@
                     {
                         <label class="sc-choix size-12 justify-center px-0" title="@L["Rating_Label", star]">
                             <input type="radio" name="score" value="@star" class="sr-only" required checked="@(star == 5)" />
-                            <span aria-hidden="true" class="font-display text-lg">@star</span><span class="sr-only">@L["Rating_Label", star]</span>
+                            <span aria-hidden="true" class="text-lg">@star</span><span class="sr-only">@L["Rating_Label", star]</span>
                         </label>
                     }
                 </div>
@@ -210,7 +210,7 @@
 @if (Model.CanSimulate && s.IsOpen)
 {
     @* Development only: plays the dispatcher and technician (Phases 8–9 bring the real tools). *@
-    <section class="mt-10 rounded-md border-2 border-dashed border-indigo/50 p-4" aria-label="Simulateur">
+    <section class="mt-10 rounded-md border border-dashed border-indigo/50 p-4" aria-label="Simulateur">
         <p class="sc-surtitre text-indigo">Simulateur (développement)</p>
         <div class="mt-3 flex flex-wrap gap-2">
             @foreach (var step in Enum.GetValues<SimulationStep>())

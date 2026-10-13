@@ -1,10 +1,10 @@
 @* Connection indicator + « new version » banner. Shown/hidden by app.js; invisible when everything is fine. *@
-<p data-connection hidden role="status" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold"
+<p data-connection hidden role="status" class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium"
    data-text-offline="@L["Connection_Offline"]" data-text-pending="@L["Connection_Pending"]" data-text-online="@L["Connection_Online"]"></p>
 
 <div data-update-banner hidden role="alert"
-     class="fixed inset-x-3 top-3 z-50 mx-auto flex max-w-md items-center gap-3 rounded-md bg-atlantique px-4 py-3 text-sur-accent shadow-carte">
-    <sc-icon name="info" class="size-6" />
-    <p class="flex-1 font-bold">@L["Update_Available"]</p>
-    <button type="button" class="sc-btn min-h-10 bg-sur-accent px-3 text-atlantique" data-update-apply>@L["Update_Apply"]</button>
+     class="fixed inset-x-3 bottom-20 z-50 mx-auto flex max-w-md items-center gap-3 rounded-lg border border-ligne bg-surface px-3 py-2 text-sm shadow-sm lg:bottom-6">
+    <sc-icon name="info" class="size-4 text-charbon-doux" />
+    <p class="flex-1">@L["Update_Available"]</p>
+    <button type="button" class="sc-btn-primaire" data-update-apply>@L["Update_Apply"]</button>
 </div>

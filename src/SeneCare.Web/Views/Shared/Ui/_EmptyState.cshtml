@@ -1,11 +1,22 @@
 @model EmptyStateModel
-<section class="sc-carte flex flex-col items-center px-6 py-8 text-center">
-    <div class="sc-motif sc-motif-bogolan mb-6 h-3 w-24 text-laterite/35" aria-hidden="true"></div>
-    <partial name="Ui/_Illustration" model="Model.Illustration" />
-    <h2 class="sc-sous-titre mt-4">@Model.Title</h2>
-    <p class="mt-2 max-w-sm text-charbon-doux">@Model.Text</p>
-    @if (Model.ActionLabel is not null && Model.ActionUrl is not null)
+@* Empty state in the flow of the page: small icon, title, one useful sentence, one action. No illustration. *@
+@{
+    var icon = Model.Illustration switch
     {
-        <a href="@Model.ActionUrl" class="sc-btn-primaire mt-6">@Model.ActionLabel</a>
-    }
+        EmptyIllustration.House => "building-2",
+        EmptyIllustration.Tree => "sprout",
+        EmptyIllustration.Phone => "phone",
+        _ => "clipboard-list",
+    };
+}
+<section class="flex items-start gap-4 rounded-lg border border-dashed border-ligne px-5 py-6">
+    <span class="grid size-10 shrink-0 place-items-center rounded-md bg-sourdine text-charbon-doux"><sc-icon name="@icon" class="size-5" /></span>
+    <div class="min-w-0">
+        <h2 class="text-[15px] font-semibold">@Model.Title</h2>
+        <p class="mt-1 max-w-prose text-sm text-charbon-doux">@Model.Text</p>
+        @if (Model.ActionLabel is not null && Model.ActionUrl is not null)
+        {
+            <a href="@Model.ActionUrl" class="sc-btn-primaire mt-4">@Model.ActionLabel</a>
+        }
+    </div>
 </section>

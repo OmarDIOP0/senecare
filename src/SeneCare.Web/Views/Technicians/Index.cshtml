@@ -19,12 +19,12 @@
         <li class="sc-carte relative @(t.IsActive ? "" : "opacity-60")">
             <div class="flex flex-wrap items-start justify-between gap-2">
                 <div>
-                    <a href="/admin/techniciens/@t.Id" class="font-display text-lg font-bold after:absolute after:inset-0">@(string.IsNullOrEmpty(t.Name) ? "+221 " + t.Phone : t.Name)</a>
+                    <a href="/admin/techniciens/@t.Id" class="text-[15px] font-semibold after:absolute after:inset-0">@(string.IsNullOrEmpty(t.Name) ? "+221 " + t.Phone : t.Name)</a>
                     <p class="text-sm">+221 @t.Phone · @L["Dispatch_Load", t.OpenMissions]@(t.Rating is { } r ? " · ★ " + r.ToString("0.0", CultureInfo.CurrentCulture) : "")</p>
                 </div>
                 <span class="flex gap-1">
                     @if (t.IsCertified) { <span class="sc-badge bg-baobab-clair text-baobab"><sc-icon name="shield-check" class="size-3.5" />@L["Admin_Certified"]</span> }
-                    @if (!t.IsActive) { <span class="sc-badge bg-sable text-charbon">@L["Admin_Inactive"]</span> }
+                    @if (!t.IsActive) { <span class="sc-badge bg-sourdine text-charbon-doux">@L["Admin_Inactive"]</span> }
                 </span>
             </div>
             <p class="mt-2 flex flex-wrap gap-1">

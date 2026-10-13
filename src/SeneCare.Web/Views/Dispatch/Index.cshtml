@@ -14,10 +14,10 @@
 <partial name="_DispatchNav" model='"file"' />
 
 <div class="mt-4 flex flex-wrap gap-2" role="group" aria-label="@L["Dispatch_Filter"]">
-    <a href="/admin/dispatch" class="sc-badge min-h-10 px-3 text-sm no-underline @(stage is null ? "bg-charbon text-sable" : "bg-sable text-charbon")">@L["Dispatch_AllToDo"]</a>
+    <a href="/admin/dispatch" class="sc-badge min-h-10 px-3 text-sm no-underline @(stage is null ? "bg-charbon text-sable" : "bg-sourdine text-charbon-doux")">@L["Dispatch_AllToDo"]</a>
     @foreach (var s in Enum.GetValues<DispatchStage>())
     {
-        <a href="/admin/dispatch?etape=@s" class="sc-badge min-h-10 px-3 text-sm no-underline @(stage == s ? "bg-charbon text-sable" : "bg-sable text-charbon")">@L["DispatchStage_" + s] (@counts.GetValueOrDefault(s))</a>
+        <a href="/admin/dispatch?etape=@s" class="sc-badge min-h-10 px-3 text-sm no-underline @(stage == s ? "bg-charbon text-sable" : "bg-sourdine text-charbon-doux")">@L["DispatchStage_" + s] (@counts.GetValueOrDefault(s))</a>
     }
 </div>
 

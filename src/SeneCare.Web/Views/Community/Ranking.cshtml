@@ -21,7 +21,7 @@
     @foreach (var r in Model)
     {
         <li class="sc-carte relative flex items-center gap-4">
-            <span class="w-8 shrink-0 text-center font-display text-xl font-bold text-charbon-doux">@r.Rank</span>
+            <span class="w-8 shrink-0 text-center text-base font-semibold text-charbon-doux">@r.Rank</span>
             <div class="min-w-0 flex-1">
                 <a href="/quartier/@r.CommuneSlug/@r.Slug" class="font-bold after:absolute after:inset-0">@r.Name <span class="font-normal text-charbon-doux">· @r.Commune</span></a>
                 <span class="mt-1 block h-2 rounded-full bg-ligne"><span class="block h-2 rounded-full bg-baobab" style="width: @r.Percent%"></span></span>

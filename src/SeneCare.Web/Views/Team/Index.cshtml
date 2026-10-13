@@ -32,7 +32,7 @@
                         {
                             @foreach (var siteId in member.SiteIds.Where(siteNames.ContainsKey))
                             {
-                                <span class="sc-badge bg-sable text-charbon">@siteNames[siteId]</span>
+                                <span class="sc-badge bg-sourdine text-charbon-doux">@siteNames[siteId]</span>
                             }
                         }
                     </p>
@@ -78,7 +78,7 @@
     <p class="sc-texte-doux mt-1">@L["Team_ApprovalText"]</p>
     <form method="post" asp-action="Approval" class="mt-3 flex flex-wrap items-center gap-3">
         <input type="hidden" name="required" value="@(!Model.RequiresApproval ? "true" : "false")" />
-        <span class="sc-badge @(Model.RequiresApproval ? "bg-baobab-clair text-baobab" : "bg-sable text-charbon")">@(Model.RequiresApproval ? L["Team_ApprovalIsOn"] : L["Team_ApprovalIsOff"])</span>
+        <span class="sc-badge @(Model.RequiresApproval ? "bg-baobab-clair text-baobab" : "bg-sourdine text-charbon-doux")">@(Model.RequiresApproval ? L["Team_ApprovalIsOn"] : L["Team_ApprovalIsOff"])</span>
         <button type="submit" class="sc-btn-secondaire min-h-10 text-sm">@(Model.RequiresApproval ? L["Team_ApprovalDisable"] : L["Team_ApprovalEnable"])</button>
     </form>
 </section>

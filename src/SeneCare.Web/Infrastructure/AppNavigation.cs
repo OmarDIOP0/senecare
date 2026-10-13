@@ -9,13 +9,24 @@ namespace SeneCare.Web.Infrastructure;
 /// <param name="Tour">Value of <c>data-tour</c> so the guided tour can point at it.</param>
 public sealed record NavItem(string Key, string Url, string Icon, string LabelKey, string? Tour = null);
 
-/// <summary>Navigation of the signed-in space: tabs + optional central action, and the matching guided tour.</summary>
-public sealed record AppNav(IReadOnlyList<NavItem> Items, NavItem? Primary, string TourKey);
+/// <summary>
+/// Navigation of the signed-in space. <see cref="Items"/> fill the desktop sidebar; <see cref="MobileKeys"/>
+/// (at most three) go in the phone tab bar around <see cref="Primary"/>, everything else under « Plus ».
+/// </summary>
+public sealed record AppNav(IReadOnlyList<NavItem> Items, NavItem? Primary, string TourKey, IReadOnlyList<string> MobileKeys)
+{
+    public IReadOnlyList<NavItem> Mobile => [.. MobileKeys.Select(k => Items.First(i => i.Key == k))];
+
+    /// <summary>Items reachable on a phone through « Plus ».</summary>
+    public IReadOnlyList<NavItem> More => [.. Items.Where(i => !MobileKeys.Contains(i.Key))];
+}
 
 public static class AppNavigation
 {
     private static readonly NavItem Report = new("signaler", "/signaler", "plus", "Tab_Report", "signaler");
-    private static readonly NavItem Profile = new("profil", "/compte", "circle-user", "Tab_Profile", "profil");
+
+    /// <summary>Account settings: bottom of the sidebar, « Plus » on phones.</summary>
+    public static readonly NavItem Settings = new("profil", "/compte", "circle-user", "Tab_Settings", "profil");
 
     /// <summary>
     /// One navigation per kind of user. Priority when someone has several roles:
@@ -42,8 +53,7 @@ public static class AppNavigation
             }
 
             items.Add(new("gestion", "/admin/gestion", "building-2", "Tab_Management"));
-            items.Add(Profile);
-            return new AppNav(items, null, TourKeys.Admin);
+            return new AppNav(items, null, TourKeys.Admin, [.. items.Take(3).Select(i => i.Key)]);
         }
 
         if (user.IsInRole(nameof(PlatformRole.Technician)))
@@ -52,44 +62,47 @@ public static class AppNavigation
                 [
                     new("espace", "/technicien", "truck", "Tab_Missions", "missions"),
                     new("rapports", "/technicien/rapports", "receipt", "Tab_Reports", "rapports"),
-                    Profile,
                 ],
                 null,
-                TourKeys.Technician);
+                TourKeys.Technician,
+                ["espace", "rapports"]);
         }
 
         if (IsBusiness(user))
         {
             // Money and team are the manager's; site managers and employees follow their requests instead.
-            return new AppNav(
-                IsBusinessManager(user)
-                    ?
-                    [
-                        new("espace", "/espace", "house", "Tab_Home"),
-                        new("sites", "/entreprise/sites", "building-2", "Tab_Sites", "sites"),
-                        new("equipe", "/entreprise/equipe", "users", "Tab_Team", "equipe"),
-                        new("factures", "/entreprise/factures", "receipt", "Tab_Invoices", "factures"),
-                    ]
-                    :
+            return IsBusinessManager(user)
+                ? new AppNav(
                     [
                         new("espace", "/espace", "house", "Tab_Home"),
                         new("sites", "/entreprise/sites", "building-2", "Tab_Sites", "sites"),
                         new("interventions", "/interventions", "clipboard-list", "Tab_Requests", "suivi"),
-                        Profile,
+                        new("equipe", "/entreprise/equipe", "users", "Tab_Team", "equipe"),
+                        new("factures", "/entreprise/factures", "receipt", "Tab_Invoices", "factures"),
                     ],
-                Report,
-                TourKeys.Business);
+                    Report,
+                    TourKeys.Business,
+                    ["espace", "sites", "factures"])
+                : new AppNav(
+                    [
+                        new("espace", "/espace", "house", "Tab_Home"),
+                        new("sites", "/entreprise/sites", "building-2", "Tab_Sites", "sites"),
+                        new("interventions", "/interventions", "clipboard-list", "Tab_Requests", "suivi"),
+                    ],
+                    Report,
+                    TourKeys.Business,
+                    ["espace", "sites", "interventions"]);
         }
 
         return new AppNav(
             [
                 new("espace", "/espace", "house", "Tab_Home"),
-                new("interventions", "/interventions", "clipboard-list", "Tab_Interventions", "suivi"),
+                new("interventions", "/interventions", "clipboard-list", "Tab_Requests", "suivi"),
                 new("logements", "/logements", "building-2", "Tab_Property", "logement"),
-                Profile,
             ],
             Report,
-            TourKeys.Client);
+            TourKeys.Client,
+            ["espace", "interventions", "logements"]);
     }
 
     public static bool IsBusiness(ClaimsPrincipal user) =>

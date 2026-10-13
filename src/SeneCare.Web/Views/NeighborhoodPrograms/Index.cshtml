@@ -34,7 +34,7 @@
         <li class="sc-carte relative">
             <div class="flex items-start justify-between gap-2">
                 <a href="/admin/quartiers/@p.NeighborhoodId" class="font-bold after:absolute after:inset-0">@p.Neighborhood <span class="font-normal text-charbon-doux">· @p.Commune</span></a>
-                <span class="sc-badge @(p.Status == NeighborhoodProgramStatus.Active ? "bg-baobab-clair text-baobab" : "bg-sable text-charbon")">@L["ProgramStatus_" + p.Status]</span>
+                <span class="sc-badge @(p.Status == NeighborhoodProgramStatus.Active ? "bg-baobab-clair text-baobab" : "bg-sourdine text-charbon-doux")">@L["ProgramStatus_" + p.Status]</span>
             </div>
             <p class="mt-2 text-sm tabular-nums">@L["Admin_Members", p.Members, p.Threshold] · @L["Admin_Trees", p.Trees]</p>
             <span class="mt-1 block h-2 rounded-full bg-ligne"><span class="block h-2 rounded-full bg-baobab" style="width: @pct%"></span></span>

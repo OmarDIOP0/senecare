@@ -334,6 +334,18 @@ public sealed class ServiceRequest : AggregateRoot
         }
     }
 
+    /// <summary>
+    /// Erasure of the person who wrote the review (not the reporter, e.g. a company manager):
+    /// the comment, the consent and the attribution go; the score stays for statistics.
+    /// </summary>
+    public void RedactRating()
+    {
+        if (Rating is { } rating)
+        {
+            Rating = new Rating(rating.Score, null, rating.GivenAt);
+        }
+    }
+
     /// <summary>True when the technician was not on site in time (or still isn't, past the deadline).</summary>
     public bool IsSlaBreached(DateTimeOffset now) =>
         SlaDeadline is { } deadline && (RespondedAt ?? now) > deadline;

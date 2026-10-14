@@ -96,8 +96,12 @@ public class ServiceRequestTests
         Assert.NotEqual(request.ReportedByUserId, request.Rating.AuthorUserId);
         Assert.True(request.Rating.IsPublic);
 
-        request.Redact("[supprimé]");
+        // Erasure of the manager only: the review goes, the employee's request stays.
+        request.RedactRating();
         Assert.False(request.Rating.IsPublic);
+        Assert.Null(request.Rating.Comment);
+        Assert.Equal(5, request.Rating.Score);
+        Assert.NotEqual("[supprimé]", request.Description);
     }
 
     [Fact]

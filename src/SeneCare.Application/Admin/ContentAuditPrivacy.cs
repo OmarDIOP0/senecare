@@ -142,7 +142,13 @@ public sealed class PersonalDataService(IApplicationDbContext db, IIdentityServi
         var accounts = await db.CustomerAccounts.AsNoTracking().Where(a => a.Members.Any(m => m.UserId == userId)).ToListAsync(cancellationToken);
         var accountIds = accounts.Select(a => a.Id).ToList();
         var properties = await db.Properties.AsNoTracking().Where(p => accountIds.Contains(p.AccountId)).ToListAsync(cancellationToken);
-        var requests = await db.ServiceRequests.AsNoTracking().Where(r => r.ReportedByUserId == userId).ToListAsync(cancellationToken);
+        // Requests they reported, and those on which they wrote the review (a manager validating for the team).
+        var requests = await db.ServiceRequests.AsNoTracking()
+            .Where(r => r.ReportedByUserId == userId || (r.Rating != null && r.Rating.AuthorUserId == userId))
+            .ToListAsync(cancellationToken);
+        // Ratings given before authors were recorded belong to the reporter.
+        bool OwnRating(Domain.Requests.ServiceRequest r) =>
+            r.Rating is { } rating && (rating.AuthorUserId == userId || (rating.AuthorUserId is null && r.ReportedByUserId == userId));
         var invoices = await db.Invoices.AsNoTracking().Where(i => accountIds.Contains(i.AccountId)).ToListAsync(cancellationToken);
         var invoiceIds = invoices.Select(i => i.Id).ToList();
         var payments = await db.Payments.AsNoTracking().Where(p => invoiceIds.Contains(p.InvoiceId)).ToListAsync(cancellationToken);
@@ -157,7 +163,19 @@ public sealed class PersonalDataService(IApplicationDbContext db, IIdentityServi
             [.. user.Consents.Select(c => (object)new { Type = c.Type.ToString(), c.PolicyVersion, c.GivenAt, c.WithdrawnAt })],
             [.. accounts.Select(a => (object)new { a.Id, Kind = a.Kind.ToString(), a.DisplayName, a.Ninea, a.CreatedAt, Role = a.FindMember(userId)!.Role.ToString() })],
             [.. properties.Select(p => (object)new { p.Id, p.Name, Kind = p.Kind.ToString(), p.Address.Landmark, p.Address.Details, p.Address.Location?.Latitude, p.Address.Location?.Longitude, p.CreatedAt })],
-            [.. requests.Select(r => (object)new { r.Number, Domain = r.Domain.ToString(), r.Description, Urgency = r.Urgency.ToString(), Status = r.Status.ToString(), r.CreatedAt, Rating = r.Rating?.Score, RatingComment = r.Rating?.Comment })],
+            [.. requests.Select(r => (object)new
+            {
+                r.Number,
+                Domain = r.Domain.ToString(),
+                // Someone else's request (they only reviewed it): their words, not the reporter's.
+                Description = r.ReportedByUserId == userId ? r.Description : null,
+                Urgency = r.Urgency.ToString(),
+                Status = r.Status.ToString(),
+                r.CreatedAt,
+                Rating = OwnRating(r) ? r.Rating!.Score : (int?)null,
+                RatingComment = OwnRating(r) ? r.Rating!.Comment : null,
+                RatingPublicationConsent = OwnRating(r) && r.Rating!.PublicationConsent,
+            })],
             [.. invoices.Select(i => (object)new { i.Number, Total = i.Total.Amount, Status = i.Status.ToString(), i.DueDate, i.PaidAt })],
             [.. payments.Select(p => (object)new { Amount = p.Amount.Amount, Channel = p.Channel.ToString(), Status = p.Status.ToString(), p.CreatedAt, p.CustomerReference })]);
     }
@@ -239,6 +257,12 @@ public sealed class PersonalDataService(IApplicationDbContext db, IIdentityServi
 
             request.Redact(RedactedText);
         }
+
+        // Reviews they wrote on someone else's request: only the review goes, the request stays.
+        var reviewed = await db.ServiceRequests
+            .Where(r => r.Rating != null && r.Rating.AuthorUserId == userId && r.ReportedByUserId != userId && !households.Contains(r.AccountId))
+            .ToListAsync(cancellationToken);
+        reviewed.ForEach(r => r.RedactRating());
 
         // Photos, voice notes, signatures: what they uploaded, and everything about their own homes.
         var media = await db.MediaFiles

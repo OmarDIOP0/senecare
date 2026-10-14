@@ -85,3 +85,9 @@ public sealed record ChecklistModel(string Title, IReadOnlyList<ChecklistStep> S
 
 /// <summary>Photo of the public site; falls back to a named placeholder until the file is added.</summary>
 public sealed record PhotoModel(string Path, string Alt, string Class, int Width = 900, int Height = 675, string? Icon = null, bool Eager = false);
+
+/// <summary>A customer review card (published review or sample content).</summary>
+public sealed record ReviewCardModel(string Author, string Place, DateTimeOffset Date, int Rating, string Trade, string Text);
+
+/// <summary>Header of a public page: breadcrumb, title, introduction, optional photo.</summary>
+public sealed record SiteHeroModel(string Title, string Text, string? Crumb = null, PhotoModel? Photo = null, string? ActionLabel = null, string? ActionUrl = null);

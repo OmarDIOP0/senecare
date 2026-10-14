@@ -1,0 +1,63 @@
+@model SeneCare.Application.Public.PublicHome
+@using SeneCare.Domain.Neighborhoods
+@{
+    ViewData["Title"] = L["Site_Hoods_Title"];
+    ViewData["FullWidth"] = true;
+    var ranking = (IReadOnlyList<SeneCare.Application.Neighborhoods.RankingRow>)ViewData["Ranking"]!;
+}
+<partial name="Site/_PageHero" model='new SiteHeroModel(L["Site_Hoods_Heading", Model.NeighborhoodThreshold].Value, L["Site_Hoods_Text"].Value, L["Public_Nav_Neighborhoods"].Value)' />
+
+<section class="mx-auto w-full max-w-7xl px-4 pt-14 lg:px-6" aria-labelledby="principe-quartiers">
+    <h2 id="principe-quartiers" class="sc-section-titre">@L["Community_Why_Title"]</h2>
+    <ol class="mt-6 grid gap-5 md:grid-cols-3">
+        @foreach (var (index, key) in new[] { "Community_Step1", "Community_Step2", "Community_Step3" }.Index())
+        {
+            <li class="rounded-lg border border-ligne bg-surface p-5 shadow-xs">
+                <span class="grid size-9 place-items-center rounded-full bg-baobab font-bold text-white">@(index + 1)</span>
+                <h3 class="mt-3 text-base">@L[key + "_Title"]</h3>
+                <p class="mt-1.5 text-[15px] text-charbon-doux">@L[key + "_Text", Model.NeighborhoodThreshold]</p>
+            </li>
+        }
+    </ol>
+</section>
+
+<section class="mx-auto w-full max-w-7xl px-4 pt-14 lg:px-6" aria-labelledby="classement-court">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <h2 id="classement-court" class="sc-section-titre">@L["Community_Ranking"]</h2>
+        <a href="/classement-quartiers" class="sc-lien">@L["Site_Hoods_FullRanking"]</a>
+    </div>
+    @if (ranking.Count == 0)
+    {
+        <p class="mt-4 text-[15px] text-charbon-doux">@L["Community_Ranking_Empty"]</p>
+    }
+    else
+    {
+        <ol class="mt-6 grid gap-3">
+            @foreach (var r in ranking.Take(5))
+            {
+                <li class="relative flex items-center gap-4 rounded-lg border border-ligne bg-surface p-4 shadow-xs">
+                    <span class="grid size-9 shrink-0 place-items-center rounded-full bg-sourdine font-bold">@r.Rank</span>
+                    <div class="min-w-0 flex-1">
+                        <a href="/quartier/@r.CommuneSlug/@r.Slug" class="font-bold text-charbon no-underline after:absolute after:inset-0 hover:no-underline">@r.Name</a>
+                        <span class="text-[15px] text-charbon-doux"> · @r.Commune</span>
+                        <span class="mt-2 block h-2 overflow-hidden rounded-full bg-sourdine"><span class="block h-full rounded-full bg-baobab" style="width: @(Math.Max(r.Percent, 2))%"></span></span>
+                    </div>
+                    <span class="shrink-0 text-[15px] font-semibold tabular-nums">@r.Members <span class="font-normal text-charbon-doux">/ @r.Threshold</span></span>
+                </li>
+            }
+        </ol>
+    }
+</section>
+
+<section class="mx-auto w-full max-w-7xl px-4 pt-14 lg:px-6" aria-labelledby="zones-titre">
+    <h2 id="zones-titre" class="sc-section-titre">@L["Site_Footer_Areas"]</h2>
+    <p class="mt-2 text-[15px] text-charbon-doux">@L["Site_Hoods_AreasText"]</p>
+    <ul class="mt-5 flex flex-wrap gap-2">
+        @foreach (var hood in Site.Neighborhoods)
+        {
+            <li class="rounded-md border border-ligne bg-surface px-3 py-1.5 text-[15px] shadow-xs">@hood</li>
+        }
+    </ul>
+</section>
+
+<partial name="Site/_CtaBand" />

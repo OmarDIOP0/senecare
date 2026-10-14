@@ -1,0 +1,34 @@
+@{
+    ViewData["Title"] = L["Site_Trades_Title"];
+    ViewData["FullWidth"] = true;
+    ViewData["PhotoCredits"] = true;
+}
+<partial name="Site/_PageHero" model='new SiteHeroModel(L["Site_Trades_Title"].Value, L["Site_Trades_Text"].Value, L["Public_Nav_Trades"].Value)' />
+
+<section class="mx-auto w-full max-w-7xl px-4 pt-12 lg:px-6">
+    <ul class="grid gap-5 lg:grid-cols-2">
+        @foreach (var trade in Site.Trades)
+        {
+            <li class="grid overflow-hidden rounded-lg border border-ligne bg-surface shadow-xs sm:grid-cols-[13rem_1fr]">
+                <partial name="Site/_Photo" model='new PhotoModel(trade.Image, trade.Name, "aspect-[16/9] h-full w-full sm:aspect-auto", Icon: Formatting.Icon(trade.Domain))' />
+                <div class="flex flex-col p-5">
+                    <h2 class="flex items-center gap-2 text-xl"><sc-icon name="@Formatting.Icon(trade.Domain)" class="size-5 text-laterite" />@trade.Name</h2>
+                    <p class="mt-2 text-[15px] text-charbon-doux">@trade.Intro</p>
+                    <ul class="mt-3 grid gap-1 text-[15px] sm:grid-cols-2">
+                        @foreach (var example in trade.Examples.Take(4))
+                        {
+                            <li class="flex items-start gap-1.5"><sc-icon name="check" class="mt-1 size-4 text-laterite" />@example</li>
+                        }
+                    </ul>
+                    @if (Site.Visible(trade))
+                    {
+                        <p class="mt-3 text-sm text-charbon-doux"><span class="font-semibold text-charbon">@trade.Delay</span> · @trade.StartingPrice <partial name="Site/_SampleTag" model="trade.Sample" /></p>
+                    }
+                    <a href="/metiers/@trade.Slug" class="sc-lien mt-4 inline-flex items-center gap-1 self-start">@L["Site_SeeTrade"]<sc-icon name="arrow-right" class="size-4" /></a>
+                </div>
+            </li>
+        }
+    </ul>
+</section>
+
+<partial name="Site/_CtaBand" />

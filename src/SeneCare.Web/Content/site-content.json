@@ -1,0 +1,189 @@
+{
+  "_notice": "CONTENUS D'EXEMPLE A REMPLACER PAR LES VRAIS AVANT LA MISE EN LIGNE. Chaque bloc marque \"sample\": true n'est affiche qu'en developpement (avec l'etiquette « Exemple ») et reste masque en production tant qu'il n'est pas remplace et passe a false. Les montants des abonnements (inscription, mensualite) et les delais d'intervention viennent de la base (Admin > Offres) ; ce fichier ne porte que les textes et les avantages complementaires.",
+
+  "contact": {
+    "sample": true,
+    "phoneDisplay": "+221 33 800 00 00",
+    "phoneLink": "+221338000000",
+    "whatsApp": "221770000000",
+    "email": "contact@senecare.sn",
+    "address": "Sacré-Cœur 3, Villa n° 0000, Dakar",
+    "hours": "Lun–Sam 8h–20h",
+    "emergencies": "Urgences 7j/7",
+    "areas": "Dakar, Rufisque, Thiès, Mbour",
+    "social": [
+      { "name": "Facebook", "url": "https://www.facebook.com/" },
+      { "name": "Instagram", "url": "https://www.instagram.com/" },
+      { "name": "LinkedIn", "url": "https://www.linkedin.com/" }
+    ]
+  },
+
+  "trades": [
+    {
+      "slug": "plomberie",
+      "domain": "Plumbing",
+      "name": "Plomberie",
+      "summary": "Fuites, robinets, chasse d'eau, surpresseur, chauffe-eau.",
+      "intro": "Une fuite sous l'évier, un surpresseur qui ne démarre plus après une coupure SDE, un chauffe-eau qui chauffe mal : nos plombiers interviennent avec les pièces courantes dans le camion.",
+      "examples": [ "Fuite sous évier ou lavabo", "Robinet ou mitigeur à changer", "Chasse d'eau qui coule en continu", "Surpresseur ou pompe en panne", "Chauffe-eau électrique ou solaire", "Débouchage d'évacuation" ],
+      "delay": "Sous 24 h, 4 h pour une fuite importante",
+      "startingPrice": "Déplacement + diagnostic à partir de 10 000 FCFA",
+      "image": "/images/metier-plomberie.webp",
+      "sample": true
+    },
+    {
+      "slug": "electricite",
+      "domain": "Electricity",
+      "name": "Électricité",
+      "summary": "Coupures, disjoncteur, prises, tableau, éclairage.",
+      "intro": "Le disjoncteur saute dès que la clim démarre, une prise noircie, un tableau ancien : nos électriciens cherchent la cause avant de remplacer, et vous expliquent ce qu'ils font.",
+      "examples": [ "Disjoncteur qui saute", "Prise ou interrupteur abîmé", "Tableau électrique à remettre aux normes", "Éclairage intérieur et extérieur", "Court-circuit, odeur de brûlé", "Ligne dédiée pour climatiseur" ],
+      "delay": "Sous 24 h, 4 h en cas de coupure ou de court-circuit",
+      "startingPrice": "Déplacement + diagnostic à partir de 10 000 FCFA",
+      "image": "/images/metier-electricite.webp",
+      "sample": true
+    },
+    {
+      "slug": "etancheite",
+      "domain": "Waterproofing",
+      "name": "Étanchéité",
+      "summary": "Dalles, toits-terrasses, infiltrations, avant l'hivernage.",
+      "intro": "Une tache d'humidité au plafond après la première pluie, une dalle qui fissure : on traite la cause, de préférence avant juillet, quand les pluies n'ont pas encore commencé.",
+      "examples": [ "Infiltration par la dalle", "Toit-terrasse à refaire", "Fissures et joints", "Évacuations d'eaux pluviales bouchées", "Murs humides", "Contrôle avant l'hivernage" ],
+      "delay": "Diagnostic sous 48 h, urgence 24 h pendant l'hivernage",
+      "startingPrice": "Diagnostic d'étanchéité à partir de 15 000 FCFA",
+      "image": "/images/metier-etancheite.webp",
+      "sample": true
+    },
+    {
+      "slug": "maconnerie",
+      "domain": "Masonry",
+      "name": "Maçonnerie",
+      "summary": "Fissures, enduits, carrelage, petits travaux.",
+      "intro": "Enduit qui se décolle, carreaux fendus dans la cuisine, muret de clôture à reprendre : les petits travaux de maçonnerie qu'on repousse, faits proprement.",
+      "examples": [ "Reprise de fissures", "Enduit et crépissage", "Carrelage à remplacer", "Muret, clôture, marches", "Scellement de portail", "Petite démolition" ],
+      "delay": "Visite sous 48 h, travaux planifiés avec vous",
+      "startingPrice": "Visite et devis à partir de 10 000 FCFA",
+      "image": "/images/metier-maconnerie.webp",
+      "sample": true
+    },
+    {
+      "slug": "menuiserie",
+      "domain": "Carpentry",
+      "name": "Menuiserie",
+      "summary": "Portes, fenêtres, placards, serrures, volets.",
+      "intro": "Une porte qui frotte depuis l'hivernage, une serrure qui coince, un placard dont la porte est tombée : bois, alu ou métal, on ajuste, on répare ou on remplace.",
+      "examples": [ "Porte qui frotte ou ferme mal", "Serrure à changer", "Fenêtre alu qui coince", "Placard et étagères", "Volets et persiennes", "Moustiquaires" ],
+      "delay": "Sous 48 h, 24 h pour une porte qui ne ferme plus",
+      "startingPrice": "Déplacement + diagnostic à partir de 10 000 FCFA",
+      "image": "/images/metier-menuiserie.webp",
+      "sample": true
+    },
+    {
+      "slug": "securite",
+      "domain": "Security",
+      "name": "Sécurité",
+      "summary": "Caméras, interphone, éclairage extérieur.",
+      "intro": "Caméras qui ne remontent plus d'image, interphone muet, projecteur de cour grillé : on remet en service et on vous montre comment consulter les enregistrements sur votre téléphone.",
+      "examples": [ "Caméras de surveillance", "Enregistreur et accès sur téléphone", "Interphone et visiophone", "Projecteurs et détecteurs", "Câblage extérieur", "Clôture électrique (contrôle)" ],
+      "delay": "Sous 48 h",
+      "startingPrice": "Déplacement + diagnostic à partir de 15 000 FCFA",
+      "image": "/images/metier-securite.webp",
+      "sample": true
+    },
+    {
+      "slug": "espaces-exterieurs",
+      "domain": "Outdoor",
+      "name": "Espaces extérieurs",
+      "summary": "Jardin, cour, clôture, portail.",
+      "intro": "Haies, arrosage, cour à nettoyer après l'hivernage, portail qui grince : l'entretien régulier des extérieurs, à la demande ou à chaque visite.",
+      "examples": [ "Taille des haies et arbustes", "Arrosage et goutte-à-goutte", "Nettoyage de cour", "Portail et clôture", "Gazon", "Évacuation des déchets verts" ],
+      "delay": "Planifié dans la semaine",
+      "startingPrice": "Passage à partir de 10 000 FCFA",
+      "image": "/images/metier-espaces-exterieurs.webp",
+      "sample": true
+    }
+  ],
+
+  "technicians": {
+    "sample": true,
+    "items": [
+      { "firstName": "Mamadou", "trade": "Plombier", "years": 12, "quote": "Neuf fois sur dix, une fuite sous l'évier, c'est le joint du siphon. Je regarde toujours ça avant de parler de remplacer quoi que ce soit." },
+      { "firstName": "Ibrahima", "trade": "Électricien", "years": 9, "quote": "Quand le disjoncteur saute avec la clim, je vérifie d'abord la section des câbles. Beaucoup de maisons ont été câblées pour des ventilateurs, pas pour trois climatiseurs." },
+      { "firstName": "Aïssatou", "trade": "Responsable des interventions", "years": 7, "quote": "C'est moi qui vous rappelle après chaque demande. Si le créneau ne vous va pas, on en trouve un autre, même le samedi." },
+      { "firstName": "Cheikh", "trade": "Étancheur", "years": 15, "quote": "Une dalle se prépare en mai, pas en août. En juillet, on ne fait plus que des réparations d'urgence." }
+    ]
+  },
+
+  "exampleJob": {
+    "sample": true,
+    "neighborhood": "Mermoz, Dakar",
+    "trade": "Électricité",
+    "problem": "Le disjoncteur général sautait chaque soir vers 21 h, au moment où les trois climatiseurs tournaient en même temps.",
+    "work": "Contrôle du tableau, câble de la chambre du fond sous-dimensionné, création d'une ligne dédiée de 2,5 mm² avec disjoncteur 20 A.",
+    "duration": "2 h 30 sur place, le lendemain du signalement",
+    "price": "35 000 FCFA (pièces et main-d'œuvre), inclus dans l'abonnement pour la main-d'œuvre"
+  },
+
+  "reviews": {
+    "sample": true,
+    "items": [
+      { "author": "Fatou D.", "neighborhood": "Sacré-Cœur", "date": "2026-09-14", "rating": 5, "trade": "Plomberie", "text": "Fuite sous l'évier depuis une semaine, j'avais mis une bassine. Le plombier est venu le lendemain matin, il a changé le joint et le flexible, 40 minutes en tout. Il a même essuyé derrière lui." },
+      { "author": "Moussa N.", "neighborhood": "Ouakam", "date": "2026-08-22", "rating": 4, "trade": "Électricité", "text": "Le disjoncteur sautait tous les soirs avec la clim. Problème réglé, ligne refaite pour la chambre. Seul bémol il est arrivé avec 45 min de retard mais il avait prévenu sur WhatsApp." },
+      { "author": "Awa S.", "neighborhood": "Almadies", "date": "2026-07-03", "rating": 5, "trade": "Étanchéité", "text": "On a fait contrôler la terrasse avant l'hivernage comme ils conseillaient. Deux fissures reprises. Première saison des pluies sans tache au plafond du salon, ça faisait 3 ans." },
+      { "author": "Ousmane B.", "neighborhood": "Point E", "date": "2026-09-30", "rating": 5, "trade": "Plomberie", "text": "Chauffe-eau qui ne chauffait plus. Résistance changée, le technicien m'a montré l'ancienne toute entartrée. Prix annoncé avant de commencer, pas de surprise." },
+      { "author": "Khady F.", "neighborhood": "Thiès, Grand Standing", "date": "2026-06-18", "rating": 4, "trade": "Menuiserie", "text": "Porte d'entrée qui frottait et serrure dure. Bien réglé. J'aurais aimé un créneau plus tôt dans la semaine mais le travail est propre." },
+      { "author": "Pape M.", "neighborhood": "Mermoz", "date": "2026-10-02", "rating": 5, "trade": "Sécurité", "text": "Les caméras ne marchaient plus depuis la coupure. Ils ont tout remis et installé l'appli sur mon téléphone et celui de ma femme. Très patient pour expliquer." }
+    ]
+  },
+
+  "figures": {
+    "sample": true,
+    "items": [
+      { "value": "1 200+", "label": "interventions réalisées" },
+      { "value": "4,7 / 5", "label": "note moyenne des clients" },
+      { "value": "24 h", "label": "délai moyen d'intervention" },
+      { "value": "35", "label": "quartiers desservis" }
+    ]
+  },
+
+  "faq": {
+    "sample": true,
+    "items": [
+    { "question": "Comment je fais une demande d'intervention ?", "answer": "Depuis l'application ou ce site : vous choisissez le métier, vous décrivez le problème, vous ajoutez une photo. Ça marche même sans réseau : la demande part dès que la connexion revient." },
+    { "question": "Faut-il un mot de passe ?", "answer": "Non. Vous vous connectez avec votre numéro de téléphone et un code reçu par SMS ou WhatsApp." },
+    { "question": "Comment je paie ?", "answer": "Par Wave, directement depuis votre espace. Vous recevez la facture et le reçu dans l'application." },
+    { "question": "Vous intervenez dans quels quartiers ?", "answer": "Dakar et sa banlieue, Rufisque, Thiès et Mbour. Si votre quartier n'est pas dans la liste, écrivez-nous sur WhatsApp : on vous dit si on peut venir." },
+    { "question": "Je saurai qui vient chez moi ?", "answer": "Oui : nom et numéro du technicien avant son arrivée, suivi de sa position en route, et vous pouvez l'appeler ou lui écrire sur WhatsApp." },
+    { "question": "Et si le problème revient après l'intervention ?", "answer": "L'intervention est garantie : vous demandez une reprise depuis l'historique de votre logement, sans frais de déplacement." },
+    { "question": "Les pièces sont comprises dans l'abonnement ?", "answer": "La main-d'œuvre est comprise. Les pièces vous sont annoncées avec leur prix avant la pose, sauf dans les formules entreprise qui incluent un forfait pièces." },
+    { "question": "Je peux arrêter mon abonnement ?", "answer": "Oui, à la fin de la période en cours, depuis votre espace ou en écrivant au service client." }
+    ]
+  },
+
+  "plans": {
+    "sample": true,
+    "_comment": "Avantages complementaires par code d'offre (HOME, ESSENTIEL, PROFESSIONNEL, PREMIUM). Les montants et les delais viennent de la base.",
+    "household": {
+      "oneOffLabel": "Sans abonnement",
+      "oneOffPrice": "Déplacement + diagnostic à partir de 10 000 FCFA, travaux sur devis",
+      "rows": [
+        { "label": "Main-d'œuvre des dépannages", "oneOff": "Facturée à chaque fois", "plan": "Comprise" },
+        { "label": "Visite de contrôle avant l'hivernage", "oneOff": "Non", "plan": "1 par an" },
+        { "label": "Suivi WhatsApp et rapport photo", "oneOff": "Oui", "plan": "Oui" },
+        { "label": "Carnet d'entretien du logement", "oneOff": "Non", "plan": "Oui" },
+        { "label": "Garantie sur l'intervention", "oneOff": "30 jours", "plan": "90 jours" }
+      ]
+    },
+    "business": {
+      "ESSENTIEL": { "sites": "1 site", "parts": "Pièces facturées", "contact": "Service client", "report": "Rapport par intervention" },
+      "PROFESSIONNEL": { "sites": "Jusqu'à 3 sites", "parts": "Forfait pièces 100 000 FCFA / trimestre", "contact": "Interlocuteur dédié", "report": "Rapport mensuel" },
+      "PREMIUM": { "sites": "Jusqu'à 10 sites", "parts": "Forfait pièces 300 000 FCFA / trimestre", "contact": "Interlocuteur dédié + astreinte nuit", "report": "Rapport mensuel + réunion trimestrielle" }
+    }
+  },
+
+  "neighborhoods": [
+    "Almadies", "Ngor", "Ouakam", "Mermoz", "Sacré-Cœur", "Point E", "Fann", "Plateau", "Médina", "Liberté",
+    "Grand Yoff", "Parcelles Assainies", "Yoff", "HLM", "Pikine", "Guédiawaye", "Keur Massar", "Rufisque", "Thiès", "Mbour", "Saly"
+  ]
+}

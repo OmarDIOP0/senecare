@@ -1,0 +1,145 @@
+@model SeneCare.Application.Public.PublicHome
+@using SeneCare.Domain.Accounts
+@{
+    ViewData["Title"] = L["Site_Nav_Pricing"];
+    ViewData["FullWidth"] = true;
+    var home = Model.Plans.FirstOrDefault(p => p.Segment == AccountKind.Household);
+    var business = Model.Plans.Where(p => p.Segment == AccountKind.Business).ToList();
+    var extras = Site.Plans;
+    var showExtras = Site.Visible(extras);
+    string Delay(TimeSpan? t) => t is not { } d ? "—" : d.TotalHours < 48 ? L["Home_Hours", (int)d.TotalHours] : L["Home_Days", (int)d.TotalDays];
+    BusinessExtras? Extra(string code) => extras.Business.TryGetValue(code, out var e) ? e : null;
+}
+<partial name="Site/_PageHero" model='new SiteHeroModel(L["Site_Pricing_Heading"].Value, L["Site_Pricing_Text"].Value, L["Site_Nav_Pricing"].Value)' />
+
+@* ---- Households: without subscription vs Maisons & Villas ---- *@
+@if (home is not null)
+{
+    <section id="particuliers" class="mx-auto w-full max-w-5xl scroll-mt-24 px-4 pt-14 lg:px-6" aria-labelledby="tarifs-particuliers">
+        <div class="flex flex-wrap items-center gap-3">
+            <h2 id="tarifs-particuliers" class="sc-section-titre">@L["Public_Nav_Households"]</h2>
+            <partial name="Site/_SampleTag" model="extras.Sample" />
+        </div>
+        <div class="mt-6 overflow-x-auto rounded-lg border border-ligne bg-surface shadow-xs">
+            <table class="sc-table min-w-[36rem]">
+                <thead>
+                    <tr>
+                        <th scope="col" class="w-2/5"><span class="sr-only">@L["Site_Pricing_Feature"]</span></th>
+                        @if (showExtras)
+                        {
+                            <th scope="col" class="text-sm text-charbon">@extras.Household.OneOffLabel</th>
+                        }
+                        <th scope="col" class="bg-laterite-clair text-sm text-charbon">@home.Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row" class="bg-transparent text-sm font-semibold text-charbon">@L["Site_Pricing_Price"]</th>
+                        @if (showExtras)
+                        {
+                            <td>@extras.Household.OneOffPrice</td>
+                        }
+                        <td class="bg-laterite-clair/40"><span class="text-lg font-bold"><sc-amount value="@home.MonthlyPrice.Amount" /></span> @L["Home_Offer_PerMonth"]<br /><span class="text-sm text-charbon-doux">@L["Home_Offer_Registration", Formatting.Fcfa(home.RegistrationFee)]</span></td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="bg-transparent text-sm font-semibold text-charbon">@L["Site_Pricing_Critical"]</th>
+                        @if (showExtras)
+                        {
+                            <td>@L["Site_Pricing_DependsAvailability"]</td>
+                        }
+                        <td class="bg-laterite-clair/40">@Delay(home.CriticalDelay)</td>
+                    </tr>
+                    @if (showExtras)
+                    {
+                        @foreach (var row in extras.Household.Rows)
+                        {
+                            <tr>
+                                <th scope="row" class="bg-transparent text-sm font-semibold text-charbon">@row.Label</th>
+                                <td>@row.OneOff</td>
+                                <td class="bg-laterite-clair/40">@row.Plan</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <a href="/connexion" class="sc-btn-primaire mt-5 px-6">@L["Site_Households_Subscribe"]</a>
+    </section>
+}
+
+@* ---- Businesses: the three plans, progressive ---- *@
+@if (business.Count > 0)
+{
+    <section id="entreprises" class="mx-auto w-full max-w-5xl scroll-mt-24 px-4 pt-14 lg:px-6" aria-labelledby="tarifs-entreprises">
+        <div class="flex flex-wrap items-center gap-3">
+            <h2 id="tarifs-entreprises" class="sc-section-titre">@L["Public_Nav_Business"]</h2>
+            <partial name="Site/_SampleTag" model="extras.Sample" />
+        </div>
+        <p class="mt-2 text-[15px] text-charbon-doux">@L["Site_Pricing_BusinessNote", Formatting.Fcfa(business[0].RegistrationFee)]</p>
+        <div class="mt-6 overflow-x-auto rounded-lg border border-ligne bg-surface shadow-xs">
+            <table class="sc-table min-w-[44rem]">
+                <thead>
+                    <tr>
+                        <th scope="col" class="w-1/4"><span class="sr-only">@L["Site_Pricing_Feature"]</span></th>
+                        @foreach (var (index, plan) in business.Index())
+                        {
+                            <th scope="col" class="text-sm text-charbon @(index == 1 ? "bg-laterite-clair" : "")">@plan.Name</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row" class="bg-transparent text-sm font-semibold text-charbon">@L["Site_Pricing_Monthly"]</th>
+                        @foreach (var (index, plan) in business.Index())
+                        {
+                            <td class="@(index == 1 ? "bg-laterite-clair/40" : "")"><span class="text-lg font-bold"><sc-amount value="@plan.MonthlyPrice.Amount" /></span></td>
+                        }
+                    </tr>
+                    <tr>
+                        <th scope="row" class="bg-transparent text-sm font-semibold text-charbon">@L["Site_Pricing_Critical"]</th>
+                        @foreach (var (index, plan) in business.Index())
+                        {
+                            <td class="@(index == 1 ? "bg-laterite-clair/40" : "")">@Delay(plan.CriticalDelay)</td>
+                        }
+                    </tr>
+                    <tr>
+                        <th scope="row" class="bg-transparent text-sm font-semibold text-charbon">@L["Site_Pricing_Visits"]</th>
+                        @foreach (var (index, plan) in business.Index())
+                        {
+                            <td class="@(index == 1 ? "bg-laterite-clair/40" : "")">@(plan.IncludedVisitsPerPeriod is { } visits ? L["Offer_VisitsCount", visits] : L["Offer_VisitsUnlimited"])</td>
+                        }
+                    </tr>
+                    <tr>
+                        <th scope="row" class="bg-transparent text-sm font-semibold text-charbon">@L["Site_Pricing_Diagnostic"]</th>
+                        @foreach (var (index, plan) in business.Index())
+                        {
+                            <td class="@(index == 1 ? "bg-laterite-clair/40" : "")">@(plan.DiagnosticRequired ? L["Site_Pricing_DiagnosticYes"] : "—")</td>
+                        }
+                    </tr>
+                    @if (showExtras)
+                    {
+                        @foreach (var (label, pick) in new (string, Func<BusinessExtras, string>)[]
+                        {
+                            (L["Site_Pricing_Sites"].Value, e => e.Sites),
+                            (L["Site_Pricing_Parts"].Value, e => e.Parts),
+                            (L["Site_Pricing_Contact"].Value, e => e.Contact),
+                            (L["Site_Pricing_Report"].Value, e => e.Report),
+                        })
+                        {
+                            <tr>
+                                <th scope="row" class="bg-transparent text-sm font-semibold text-charbon">@label</th>
+                                @foreach (var (index, plan) in business.Index())
+                                {
+                                    <td class="@(index == 1 ? "bg-laterite-clair/40" : "")">@(Extra(plan.Code) is { } e ? pick(e) : "—")</td>
+                                }
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <a href="/connexion" class="sc-btn-primaire mt-5 px-6">@L["Site_Business_Cta"]</a>
+    </section>
+}
+
+<partial name="Site/_CtaBand" />

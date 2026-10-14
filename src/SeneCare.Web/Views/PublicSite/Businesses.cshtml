@@ -1,0 +1,73 @@
+@model SeneCare.Application.Public.PublicHome
+@using SeneCare.Domain.Accounts
+@{
+    ViewData["Title"] = L["Site_Business_Title"];
+    ViewData["FullWidth"] = true;
+    var plans = Model.Plans.Where(p => p.Segment == AccountKind.Business).ToList();
+    string Delay(TimeSpan t) => t.TotalHours < 48 ? L["Home_Hours", (int)t.TotalHours] : L["Home_Days", (int)t.TotalDays];
+}
+<partial name="Site/_PageHero" model='new SiteHeroModel(L["Site_Business_Heading"].Value, L["Site_Business_Text"].Value, L["Public_Nav_Business"].Value, ActionLabel: L["Site_Business_Cta"].Value, ActionUrl: "/connexion")' />
+
+@* ---- Who it is for ---- *@
+<section class="mx-auto w-full max-w-7xl px-4 pt-14 lg:px-6" aria-labelledby="pour-qui-titre">
+    <h2 id="pour-qui-titre" class="sc-section-titre">@L["Site_Business_ForTitle"]</h2>
+    <ul class="mt-6 flex flex-wrap gap-2">
+        @foreach (var key in new[] { "Site_Business_For1", "Site_Business_For2", "Site_Business_For3", "Site_Business_For4", "Site_Business_For5", "Site_Business_For6" })
+        {
+            <li class="rounded-md border border-ligne bg-surface px-4 py-2 font-semibold shadow-xs">@L[key]</li>
+        }
+    </ul>
+</section>
+
+@* ---- What the company account does (features that exist in the app) ---- *@
+<section class="mt-14 bg-sourdine py-14" aria-labelledby="fonctions-titre">
+    <div class="mx-auto w-full max-w-7xl px-4 lg:px-6">
+        <h2 id="fonctions-titre" class="sc-section-titre">@L["Site_Business_FeaturesTitle"]</h2>
+        <ul class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            @foreach (var (icon, key) in new[] { ("building-2", "Site_Business_F1"), ("users", "Site_Business_F2"), ("badge-check", "Site_Business_F3"), ("list-checks", "Site_Business_F4"), ("timer", "Site_Business_F5"), ("receipt", "Site_Business_F6") })
+            {
+                <li class="rounded-lg border border-ligne bg-surface p-5 shadow-xs">
+                    <sc-icon name="@icon" class="size-6 text-laterite" />
+                    <h3 class="mt-3 text-base">@L[key + "_Title"]</h3>
+                    <p class="mt-1.5 text-[15px] text-charbon-doux">@L[key + "_Text"]</p>
+                </li>
+            }
+        </ul>
+    </div>
+</section>
+
+@* ---- Plans: short summary, details on /tarifs ---- *@
+@if (plans.Count > 0)
+{
+    <section class="mx-auto w-full max-w-7xl px-4 pt-14 lg:px-6" aria-labelledby="formules-titre">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+            <h2 id="formules-titre" class="sc-section-titre">@L["Site_Business_PlansTitle"]</h2>
+            <a href="/tarifs#entreprises" class="sc-lien">@L["Site_ComparePrices"]</a>
+        </div>
+        <ul class="mt-6 grid gap-5 md:grid-cols-3">
+            @foreach (var plan in plans)
+            {
+                Site.Plans.Business.TryGetValue(plan.Code, out var extra);
+                <li class="flex flex-col rounded-lg border border-ligne bg-surface p-5 shadow-xs">
+                    <h3 class="text-lg">@plan.Name</h3>
+                    <p class="mt-2 text-2xl font-bold text-atlantique"><sc-amount value="@plan.MonthlyPrice.Amount" /> <span class="text-sm font-normal text-charbon-doux">@L["Home_Offer_PerMonth"]</span></p>
+                    <ul class="mt-4 grid gap-1.5 text-[15px]">
+                        @if (plan.CriticalDelay is { } critical)
+                        {
+                            <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-4 text-baobab" />@L["Home_Offer_Critical", Delay(critical)]</li>
+                        }
+                        <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-4 text-baobab" />@(plan.IncludedVisitsPerPeriod is { } visits ? L["Offer_VisitsCount", visits] : L["Offer_VisitsUnlimited"])</li>
+                        @if (extra is not null && Site.Visible(Site.Plans))
+                        {
+                            <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-4 text-baobab" />@extra.Sites</li>
+                            <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-4 text-baobab" />@extra.Contact</li>
+                        }
+                    </ul>
+                </li>
+            }
+        </ul>
+        <p class="mt-3 text-sm text-charbon-doux">@L["Home_Offer_Business_Text", Formatting.Fcfa(plans[0].RegistrationFee)] @L["Site_Business_Diagnostic"]</p>
+    </section>
+}
+
+<partial name="Site/_CtaBand" />

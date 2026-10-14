@@ -1,0 +1,86 @@
+@model SeneCare.Application.Public.PublicHome
+@using SeneCare.Domain.Accounts
+@{
+    ViewData["Title"] = L["Site_Households_Title"];
+    ViewData["FullWidth"] = true;
+    var plan = Model.Plans.FirstOrDefault(p => p.Segment == AccountKind.Household);
+    var extras = Site.Plans.Household;
+}
+<partial name="Site/_PageHero" model='new SiteHeroModel(L["Site_Households_Heading"].Value, L["Site_Households_Text"].Value, L["Public_Nav_Households"].Value, ActionLabel: L["Site_RequestJob"].Value, ActionUrl: "/demander")' />
+
+@* ---- What the subscription changes, concretely ---- *@
+<section class="mx-auto w-full max-w-7xl px-4 pt-14 lg:px-6" aria-labelledby="inclus-titre">
+    <h2 id="inclus-titre" class="sc-section-titre">@L["Site_Households_IncludedTitle"]</h2>
+    <ul class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        @foreach (var (icon, key) in new[] { ("wrench", "Site_Households_Inc1"), ("cloud-rain", "Site_Households_Inc2"), ("history", "Site_Households_Inc3"), ("message-circle", "Site_Households_Inc4") })
+        {
+            <li class="rounded-lg border border-ligne bg-surface p-5 shadow-xs">
+                <sc-icon name="@icon" class="size-6 text-laterite" />
+                <h3 class="mt-3 text-base">@L[key + "_Title"]</h3>
+                <p class="mt-1.5 text-[15px] text-charbon-doux">@L[key + "_Text"]</p>
+            </li>
+        }
+    </ul>
+</section>
+
+@* ---- Price (from the database) ---- *@
+@if (plan is not null)
+{
+    <section class="mx-auto w-full max-w-7xl px-4 pt-14 lg:px-6" aria-labelledby="prix-titre">
+        <div class="grid gap-6 rounded-lg border border-ligne bg-surface p-6 shadow-xs sm:p-8 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+            <div>
+                <h2 id="prix-titre" class="sc-section-titre">@plan.Name</h2>
+                <p class="mt-2 text-[15px] text-charbon-doux">@L["Site_Households_PlanText"]</p>
+                @if (Site.Visible(Site.Plans))
+                {
+                    <ul class="mt-4 grid gap-2 text-[15px] sm:grid-cols-2">
+                        @foreach (var row in extras.Rows)
+                        {
+                            <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-4 text-baobab" /><span><span class="font-semibold">@row.Label</span> : @row.Plan</span></li>
+                        }
+                    </ul>
+                    <p class="mt-2"><partial name="Site/_SampleTag" model="Site.Plans.Sample" /></p>
+                }
+            </div>
+            <div class="rounded-lg bg-sourdine p-6">
+                <p class="text-sm text-charbon-doux">@L["Home_Offer_From"]</p>
+                <p class="mt-1 text-3xl font-bold text-atlantique"><sc-amount value="@plan.MonthlyPrice.Amount" /> <span class="text-base font-normal text-charbon-doux">@L["Home_Offer_PerMonth"]</span></p>
+                <p class="mt-1 text-sm text-charbon-doux">@L["Home_Offer_Registration", Formatting.Fcfa(plan.RegistrationFee)]</p>
+                <a href="/connexion" class="sc-btn-primaire mt-5 w-full">@L["Site_Households_Subscribe"]</a>
+                <a href="/tarifs" class="sc-lien mt-3 block text-center text-sm">@L["Site_ComparePrices"]</a>
+            </div>
+        </div>
+    </section>
+}
+
+@* ---- Rainy season and diaspora: two situations that are specific here ---- *@
+<section class="mx-auto grid w-full max-w-7xl gap-5 px-4 pt-14 lg:grid-cols-2 lg:px-6">
+    <div class="rounded-lg border border-ligne bg-surface p-6 shadow-xs">
+        <sc-icon name="cloud-rain" class="size-7 text-atlantique" />
+        <h2 class="mt-3 text-xl font-bold text-atlantique">@L["Site_Households_Rain_Title"]</h2>
+        <p class="mt-2 text-[15px] text-charbon-doux">@L["Site_Households_Rain_Text"]</p>
+        <a href="/metiers/etancheite" class="sc-lien mt-4 inline-block">@L["Site_Households_Rain_Link"]</a>
+    </div>
+    <div class="rounded-lg border border-ligne bg-surface p-6 shadow-xs">
+        <sc-icon name="house" class="size-7 text-atlantique" />
+        <h2 class="mt-3 text-xl font-bold text-atlantique">@L["Site_Households_Diaspora_Title"]</h2>
+        <p class="mt-2 text-[15px] text-charbon-doux">@L["Site_Households_Diaspora_Text"]</p>
+    </div>
+</section>
+
+@* ---- Trades ---- *@
+<section class="mx-auto w-full max-w-7xl px-4 pt-14 lg:px-6" aria-labelledby="metiers-particuliers-titre">
+    <h2 id="metiers-particuliers-titre" class="sc-section-titre">@L["Site_Households_TradesTitle"]</h2>
+    <ul class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
+        @foreach (var trade in Site.Trades)
+        {
+            <li>
+                <a href="/metiers/@trade.Slug" class="flex h-full flex-col items-center gap-2 rounded-lg border border-ligne bg-surface p-4 text-center font-semibold text-charbon no-underline shadow-xs hover:border-laterite hover:no-underline">
+                    <sc-icon name="@Formatting.Icon(trade.Domain)" class="size-6 text-laterite" />@trade.Name
+                </a>
+            </li>
+        }
+    </ul>
+</section>
+
+<partial name="Site/_CtaBand" />

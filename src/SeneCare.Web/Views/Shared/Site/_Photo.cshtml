@@ -1,0 +1,18 @@
+@model PhotoModel
+@* A real photo when the file exists in wwwroot, otherwise a neutral placeholder naming the expected file. *@
+@if (Site.HasImage(Model.Path))
+{
+    <img src="@Model.Path" alt="@Model.Alt" width="@Model.Width" height="@Model.Height" loading="@(Model.Eager ? "eager" : "lazy")" decoding="async" class="@Model.Class object-cover" />
+}
+else
+{
+    <div class="@Model.Class grid place-items-center bg-sourdine text-charbon-pale" role="img" aria-label="@Model.Alt">
+        <span class="grid justify-items-center gap-2 p-4 text-center">
+            <sc-icon name="@(Model.Icon ?? "camera")" class="size-8" />
+            @if (Site.ShowSamples)
+            {
+                <span class="hidden text-xs font-semibold break-all text-charbon-doux sm:block">@Model.Path</span>
+            }
+        </span>
+    </div>
+}

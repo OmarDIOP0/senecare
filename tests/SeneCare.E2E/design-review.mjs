@@ -206,6 +206,13 @@ const screens = [
   { name: "accueil-maison", path: "/espace", state: homeState },
   // Public home: the welcome screens were already seen on this device.
   { name: "accueil-public", path: "/", state: { cookies: [{ name: "sc_bienvenue", value: "1", url: base }], origins: [] } },
+  { name: "metiers", path: "/metiers", state: undefined },
+  { name: "metier-plomberie", path: "/metiers/plomberie", state: undefined },
+  { name: "particuliers", path: "/particuliers", state: undefined },
+  { name: "entreprises", path: "/entreprises", state: undefined },
+  { name: "quartiers", path: "/quartiers", state: undefined },
+  { name: "tarifs", path: "/tarifs", state: undefined },
+  { name: "faq", path: "/faq", state: undefined },
   { name: "classement", path: "/classement-quartiers", state: undefined },
   { name: "quartier", path: "/quartier/ngor/almadies", state: undefined },
   { name: "confidentialite", path: "/confidentialite", state: undefined },
@@ -249,6 +256,8 @@ for (const scheme of ["light", "dark"]) {
       await context.addInitScript(() => {
         try { localStorage.setItem("sc-install-later", String(Date.now())); } catch { /* ignore */ }
       });
+      // Light by default: the dark captures choose the dark theme like a user would.
+      await context.addInitScript((theme) => { try { localStorage.setItem("sc-theme", theme); } catch { /* ignore */ } }, scheme);
       const page = await context.newPage();
       await page.goto(base + screen.path, { waitUntil: "networkidle" });
       // The guided tour overlay (z-60…62) would hide the screen.

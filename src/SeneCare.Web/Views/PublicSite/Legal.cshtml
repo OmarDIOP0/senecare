@@ -1,0 +1,17 @@
+@* TO WRITE before going live (with a lawyer): the structure is ready, the content is not. *@
+@{
+    ViewData["Title"] = L["Site_Legal"];
+    ViewData["FullWidth"] = true;
+}
+<partial name="Site/_PageHero" model='new SiteHeroModel(L["Site_Legal"].Value, L["Site_LegalDraft"].Value, L["Site_Legal"].Value)' />
+
+<article class="mx-auto mt-12 w-full max-w-3xl space-y-4 rounded-lg border border-ligne bg-surface p-6 text-[15px] leading-relaxed shadow-xs sm:p-10 [&_h2]:pt-2 [&_h2]:text-lg [&_h2]:text-atlantique">
+    <partial name="Site/_SampleTag" model="true" />
+    <h2>@L["Site_Legal_Publisher"]</h2>
+    <p>@L["Site_Legal_PublisherText"]</p>
+    <h2>@L["Site_Legal_Hosting"]</h2>
+    <p>@L["Site_Legal_ToComplete"]</p>
+    <h2>@L["Site_Legal_Contact"]</h2>
+    <p>@L["Site_Legal_ToComplete"]</p>
+    <p class="text-sm text-charbon-doux">@L["Site_Legal_SeePrivacy"] <a href="/confidentialite">@L["Public_Footer_Privacy"]</a>.</p>
+</article>

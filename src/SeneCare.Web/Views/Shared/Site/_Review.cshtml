@@ -1,0 +1,17 @@
+@model ReviewCardModel
+<figure class="flex h-full flex-col rounded-lg border border-ligne bg-surface p-5 shadow-xs">
+    <div class="flex items-center justify-between gap-3">
+        <span class="inline-flex gap-0.5" role="img" aria-label="@L["Home_Review_Stars", Model.Rating]">
+            @for (var i = 1; i <= 5; i++)
+            {
+                <sc-icon name="star" class="size-4 @(i <= Model.Rating ? "fill-ocre text-ocre" : "text-charbon-pale")" />
+            }
+        </span>
+        <span class="text-sm text-charbon-doux">@Model.Trade</span>
+    </div>
+    <blockquote class="mt-3 flex-1 text-[15px]">@Model.Text</blockquote>
+    <figcaption class="mt-4 border-t border-ligne pt-3 text-sm">
+        <span class="font-bold">@Model.Author</span>
+        <span class="text-charbon-doux"> · @Model.Place · @Formatting.ShortDate(Model.Date)</span>
+    </figcaption>
+</figure>

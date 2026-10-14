@@ -1,0 +1,16 @@
+@* Last call at the bottom of a public page: request a job, or call / WhatsApp. *@
+<section class="mx-auto w-full max-w-7xl px-4 pt-16 lg:px-6">
+    <div class="flex flex-col items-start gap-5 rounded-lg border border-ligne bg-sourdine p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+            <h2 class="text-xl font-bold text-atlantique sm:text-2xl">@L["Site_Cta_Title"]</h2>
+            <p class="mt-1.5 text-[15px] text-charbon-doux">@L["Site_Cta_Text"]</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <a href="/demander" class="sc-btn-primaire px-6">@L["Site_RequestJob"]</a>
+            @if (Site.Visible(Site.Contact))
+            {
+                <a href="tel:@Site.Contact.PhoneLink" class="sc-btn-secondaire"><sc-icon name="phone" class="size-4 text-laterite" />@Site.Contact.PhoneDisplay</a>
+            }
+        </div>
+    </div>
+</section>

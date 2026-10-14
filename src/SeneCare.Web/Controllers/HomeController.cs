@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SeneCare.Application.Public;
+using SeneCare.Domain.Common;
 using SeneCare.Web.ViewModels;
 
 namespace SeneCare.Web.Controllers;
@@ -33,7 +34,7 @@ public sealed class HomeController(GetPublicHomeHandler publicHome) : Controller
     /// pre-selected; through the phone sign-in first when needed, with the number already typed.
     /// </summary>
     [HttpGet("/demander")]
-    public IActionResult Request(ServiceDomain? metier, string? telephone)
+    public IActionResult RequestJob(ServiceDomain? metier, string? telephone)
     {
         var report = metier is { } domain ? $"/signaler?domaine={domain}" : "/signaler";
         if (User.Identity?.IsAuthenticated == true)

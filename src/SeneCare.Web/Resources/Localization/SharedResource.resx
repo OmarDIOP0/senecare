@@ -992,8 +992,8 @@
   <data name="Public_Footer_Privacy" xml:space="preserve"><value>Données personnelles</value></data>
   <data name="Public_Footer_Country" xml:space="preserve"><value>Dakar, Sénégal</value></data>
   <data name="Home_Hero_Eyebrow" xml:space="preserve"><value>Maisons, villas et bureaux entretenus toute l'année</value></data>
-  <data name="Home_Hero_Title" xml:space="preserve"><value>Vous signalez. Nous intervenons.</value></data>
-  <data name="Home_Hero_Text" xml:space="preserve"><value>Un robinet qui fuit, une coupure, une infiltration avant l'hivernage : prenez une photo, nos techniciens s'occupent du reste. Votre maison ou vos locaux restent en bon état, mois après mois.</value></data>
+  <data name="Home_Hero_Title" xml:space="preserve"><value>Dépannage et entretien de votre maison à Dakar et Thiès</value></data>
+  <data name="Home_Hero_Text" xml:space="preserve"><value>Plomberie, électricité, étanchéité, menuiserie : un technicien chez vous, à l'heure annoncée, avec un prix expliqué avant les travaux.</value></data>
   <data name="Home_Hero_SeeOffers" xml:space="preserve"><value>Voir les offres</value></data>
   <data name="Home_Demo_Place" xml:space="preserve"><value>Villa, Ngor</value></data>
   <data name="Home_Demo_Title" xml:space="preserve"><value>Fuite sous l'évier de la cuisine</value></data>
@@ -1006,7 +1006,7 @@
   <data name="Home_Promise_WhatsApp" xml:space="preserve"><value>Suivi par WhatsApp et SMS</value></data>
   <data name="Home_Promise_Wave" xml:space="preserve"><value>Paiement par Wave</value></data>
   <data name="Home_Trades_Eyebrow" xml:space="preserve"><value>Nos métiers</value></data>
-  <data name="Home_Trades_Title" xml:space="preserve"><value>Tout le bâtiment, avec un seul abonnement</value></data>
+  <data name="Home_Trades_Title" xml:space="preserve"><value>Nos métiers</value></data>
   <data name="Home_Trade_Electricity" xml:space="preserve"><value>Coupures, courts-circuits, prises et tableaux électriques.</value></data>
   <data name="Home_Trade_Plumbing" xml:space="preserve"><value>Fuites, robinets, chasses d'eau, surpresseurs et canalisations.</value></data>
   <data name="Home_Trade_Waterproofing" xml:space="preserve"><value>Dalles, toits-terrasses et infiltrations, surtout avant l'hivernage.</value></data>
@@ -1015,18 +1015,18 @@
   <data name="Home_Trade_Security" xml:space="preserve"><value>Caméras, interphones et éclairage extérieur.</value></data>
   <data name="Home_Trade_Outdoor" xml:space="preserve"><value>Jardins, cours, clôtures et portails.</value></data>
   <data name="Home_Trade_Report" xml:space="preserve"><value>Signaler</value></data>
-  <data name="Home_Trades_Unsure_Title" xml:space="preserve"><value>Vous ne savez pas qui appeler ?</value></data>
-  <data name="Home_Trades_Unsure_Text" xml:space="preserve"><value>Décrivez le problème avec une photo. Nous trouvons le bon métier pour vous.</value></data>
+  <data name="Home_Trades_Unsure_Title" xml:space="preserve"><value>Vous ne savez pas quel métier choisir ?</value></data>
+  <data name="Home_Trades_Unsure_Text" xml:space="preserve"><value>Décrivez le problème avec une photo, on envoie le bon technicien.</value></data>
   <data name="Home_Steps_Eyebrow" xml:space="preserve"><value>Comment ça marche</value></data>
-  <data name="Home_Steps_Title" xml:space="preserve"><value>De votre signalement au rapport, en quatre étapes</value></data>
-  <data name="Home_Step1_Title" xml:space="preserve"><value>Vous signalez</value></data>
-  <data name="Home_Step1_Text" xml:space="preserve"><value>Une photo, quelques mots, l'urgence. Depuis votre téléphone, même hors connexion.</value></data>
-  <data name="Home_Step2_Title" xml:space="preserve"><value>Nous analysons</value></data>
-  <data name="Home_Step2_Text" xml:space="preserve"><value>Notre équipe qualifie la demande et choisit le technicien du bon métier.</value></data>
-  <data name="Home_Step3_Title" xml:space="preserve"><value>Nous intervenons</value></data>
-  <data name="Home_Step3_Text" xml:space="preserve"><value>Vous choisissez un créneau, suivez le technicien et l'appelez en un geste.</value></data>
+  <data name="Home_Steps_Title" xml:space="preserve"><value>Comment ça marche</value></data>
+  <data name="Home_Step1_Title" xml:space="preserve"><value>Vous décrivez le problème</value></data>
+  <data name="Home_Step1_Text" xml:space="preserve"><value>En ligne ou sur WhatsApp, avec une photo. Ça marche même sans réseau : la demande part au retour de la connexion.</value></data>
+  <data name="Home_Step2_Title" xml:space="preserve"><value>On vous propose un créneau</value></data>
+  <data name="Home_Step2_Text" xml:space="preserve"><value>Un conseiller qualifie la demande et vous propose trois créneaux, le jour même pour une urgence.</value></data>
+  <data name="Home_Step3_Title" xml:space="preserve"><value>Le technicien intervient</value></data>
+  <data name="Home_Step3_Text" xml:space="preserve"><value>Vous recevez son nom et son numéro, vous le suivez en route. Le prix des pièces est annoncé avant la pose.</value></data>
   <data name="Home_Step4_Title" xml:space="preserve"><value>Vous validez</value></data>
-  <data name="Home_Step4_Text" xml:space="preserve"><value>Photos avant et après, rapport et historique dans le carnet de votre logement.</value></data>
+  <data name="Home_Step4_Text" xml:space="preserve"><value>Rapport avec photos avant et après, facture et paiement Wave dans l'application.</value></data>
   <data name="Home_Offers_Eyebrow" xml:space="preserve"><value>Nos offres</value></data>
   <data name="Home_Offers_Title" xml:space="preserve"><value>Un abonnement clair, sans surprise</value></data>
   <data name="Home_Offer_Household_Text" xml:space="preserve"><value>Pour votre maison ou votre villa : tous les métiers, un suivi de chaque intervention et des conseils avant chaque saison.</value></data>
@@ -1045,7 +1045,7 @@
   <data name="Home_Hood_Title" xml:space="preserve"><value>À partir de {0} voisins inscrits, nous reboisons votre quartier</value></data>
   <data name="Home_Hood_Text" xml:space="preserve"><value>Tous les trois mois, une opération de plantation et d'embellissement. Invitez vos voisins et suivez la progression de votre quartier.</value></data>
   <data name="Home_Hood_Cta" xml:space="preserve"><value>Voir le classement des quartiers</value></data>
-  <data name="Home_Figures_Title" xml:space="preserve"><value>Nos engagements</value></data>
+  <data name="Home_Figures_Title" xml:space="preserve"><value>SeneCare en chiffres</value></data>
   <data name="Home_Figures_Done" xml:space="preserve"><value>Interventions réalisées</value></data>
   <data name="Home_Figures_Rating" xml:space="preserve"><value>Note moyenne ({0} avis)</value></data>
   <data name="Home_Figures_Neighborhoods" xml:space="preserve"><value>Quartiers couverts</value></data>
@@ -1055,7 +1055,7 @@
   <data name="Home_Commit_Diagnostic_Value" xml:space="preserve"><value>3 mois</value></data>
   <data name="Home_Commit_Hood" xml:space="preserve"><value>Voisins pour reboiser un quartier</value></data>
   <data name="Home_Advice_Eyebrow" xml:space="preserve"><value>Conseils</value></data>
-  <data name="Home_Advice_Title" xml:space="preserve"><value>Les bons réflexes de saison</value></data>
+  <data name="Home_Advice_Title" xml:space="preserve"><value>Conseils d'entretien</value></data>
   <data name="Home_Cta_Title" xml:space="preserve"><value>Prenez soin de votre bâtiment avant qu'il ne coûte cher</value></data>
   <data name="Home_Cta_Text" xml:space="preserve"><value>Inscription en deux minutes avec votre numéro de téléphone.</value></data>
   <data name="Home_Hours" xml:space="preserve"><value>{0} h</value></data>
@@ -1064,8 +1064,8 @@
   <data name="Rating_PublishConsent" xml:space="preserve"><value>J'accepte que mon avis soit publié sur le site SENECARE</value></data>
   <data name="Rating_PublishConsent_Hint" xml:space="preserve"><value>Seuls votre prénom, l'initiale de votre nom et votre commune apparaissent. Vous pouvez retirer votre accord à tout moment auprès du service client.</value></data>
   <data name="Home_Reviews_Eyebrow" xml:space="preserve"><value>Avis clients</value></data>
-  <data name="Home_Reviews_Title" xml:space="preserve"><value>Ce que disent nos clients</value></data>
-  <data name="Home_Reviews_Note" xml:space="preserve"><value>Avis publiés avec l'accord de nos clients, après une intervention réalisée.</value></data>
+  <data name="Home_Reviews_Title" xml:space="preserve"><value>Avis de nos clients</value></data>
+  <data name="Home_Reviews_Note" xml:space="preserve"><value>Avis publiés avec l'accord des clients, après une intervention réalisée.</value></data>
   <data name="Home_Review_Stars" xml:space="preserve"><value>{0} sur 5</value></data>
   <data name="Admin_Reviews_Title" xml:space="preserve"><value>Avis clients</value></data>
   <data name="Admin_Reviews_Description" xml:space="preserve"><value>Avis que les clients ont accepté de publier. Masquez ceux qui contiennent une insulte ou des données personnelles.</value></data>
@@ -1082,7 +1082,7 @@
   <data name="Home_Photo_Electrician_Alt" xml:space="preserve"><value>Électricien avec casque et gants vérifiant un boîtier électrique</value></data>
   <data name="Home_Photo_Technician_Alt" xml:space="preserve"><value>Technicien en tenue de travail bleue</value></data>
   <data name="Home_Techs_Eyebrow" xml:space="preserve"><value>Nos techniciens</value></data>
-  <data name="Home_Techs_Title" xml:space="preserve"><value>Des techniciens identifiés, qui viennent chez vous à l'heure</value></data>
+  <data name="Home_Techs_Title" xml:space="preserve"><value>Nos techniciens</value></data>
   <data name="Home_Techs_Known_Title" xml:space="preserve"><value>Vous savez qui vient</value></data>
   <data name="Home_Techs_Known_Text" xml:space="preserve"><value>Nom et numéro du technicien avant son arrivée, joignable par appel ou WhatsApp.</value></data>
   <data name="Home_Techs_Tracking_Title" xml:space="preserve"><value>Vous le suivez en route</value></data>
@@ -1107,4 +1107,133 @@
   <data name="Community_Operations_Eyebrow" xml:space="preserve"><value>Sur le terrain</value></data>
   <data name="Community_Ranking_Cta_Title" xml:space="preserve"><value>Votre quartier n'est pas encore dans la liste ?</value></data>
   <data name="Community_Ranking_Cta_Text" xml:space="preserve"><value>Il apparaît dès le premier foyer abonné.</value></data>
+  <data name="Site_SampleTag" xml:space="preserve"><value>Exemple</value></data>
+  <data name="Site_SampleTag_Hint" xml:space="preserve"><value>Contenu d'exemple à remplacer avant la mise en ligne (masqué en production).</value></data>
+  <data name="Site_Theme" xml:space="preserve"><value>Thème d'affichage</value></data>
+  <data name="Site_Nav_Pricing" xml:space="preserve"><value>Tarifs</value></data>
+  <data name="Site_AllTrades" xml:space="preserve"><value>Tous nos métiers</value></data>
+  <data name="Site_RequestJob" xml:space="preserve"><value>Demander une intervention</value></data>
+  <data name="Site_SeeTrade" xml:space="preserve"><value>Voir le détail</value></data>
+  <data name="Site_Faq" xml:space="preserve"><value>Questions fréquentes</value></data>
+  <data name="Site_FaqAll" xml:space="preserve"><value>Toutes les questions</value></data>
+  <data name="Site_Legal" xml:space="preserve"><value>Mentions légales</value></data>
+  <data name="Site_Terms" xml:space="preserve"><value>Conditions générales</value></data>
+  <data name="Site_Footer_Areas" xml:space="preserve"><value>Quartiers desservis</value></data>
+  <data name="Site_Footer_AllAreas" xml:space="preserve"><value>Toutes les zones</value></data>
+  <data name="Site_Footer_Program" xml:space="preserve"><value>Programme Quartiers</value></data>
+  <data name="Site_Footer_Help" xml:space="preserve"><value>Aide</value></data>
+  <data name="Site_Footer_Contact" xml:space="preserve"><value>Contact</value></data>
+  <data name="Home_Hero_Point1" xml:space="preserve"><value>Intervention sous 24 h, 4 h en urgence</value></data>
+  <data name="Home_Hero_Point2" xml:space="preserve"><value>Nom et numéro du technicien avant son arrivée</value></data>
+  <data name="Home_Hero_Point3" xml:space="preserve"><value>Paiement par Wave, facture dans l'application</value></data>
+  <data name="Home_Hero_Point4" xml:space="preserve"><value>Intervention garantie, reprise sans déplacement facturé</value></data>
+  <data name="Home_QuickForm_Title" xml:space="preserve"><value>Décrivez votre besoin, on s'occupe du reste</value></data>
+  <data name="Home_QuickForm_Trade" xml:space="preserve"><value>Métier</value></data>
+  <data name="Home_QuickForm_TradeAny" xml:space="preserve"><value>Je ne sais pas</value></data>
+  <data name="Home_QuickForm_Area" xml:space="preserve"><value>Quartier</value></data>
+  <data name="Home_QuickForm_AreaPlaceholder" xml:space="preserve"><value>Ex. : Mermoz, Ouakam, Thiès</value></data>
+  <data name="Home_QuickForm_PhoneHelp" xml:space="preserve"><value>Vous recevrez un code par SMS pour suivre votre demande. Pas de mot de passe.</value></data>
+  <data name="Home_Trades_Text" xml:space="preserve"><value>Les dépannages et l'entretien courant d'une maison ou de locaux, par des techniciens du métier.</value></data>
+  <data name="Home_Techs_Text" xml:space="preserve"><value>Des techniciens salariés, formés à leur métier, qui interviennent dans leur zone.</value></data>
+  <data name="Home_Techs_Years" xml:space="preserve"><value>{0} ans de métier</value></data>
+  <data name="Home_Example_Title" xml:space="preserve"><value>Une intervention, en détail</value></data>
+  <data name="Home_Example_PhotoAlt" xml:space="preserve"><value>Électricien contrôlant un tableau électrique</value></data>
+  <data name="Home_Example_Problem" xml:space="preserve"><value>Le problème</value></data>
+  <data name="Home_Example_Work" xml:space="preserve"><value>Ce qui a été fait</value></data>
+  <data name="Home_Example_Duration" xml:space="preserve"><value>Durée</value></data>
+  <data name="Home_Example_Price" xml:space="preserve"><value>Prix</value></data>
+  <data name="Site_Breadcrumb" xml:space="preserve"><value>Fil d'Ariane</value></data>
+  <data name="Site_ComparePrices" xml:space="preserve"><value>Comparer les formules</value></data>
+  <data name="Site_Cta_Title" xml:space="preserve"><value>Un problème dans la maison ou au bureau ?</value></data>
+  <data name="Site_Cta_Text" xml:space="preserve"><value>Décrivez-le en deux minutes, on vous rappelle pour fixer le créneau.</value></data>
+  <data name="Site_Trades_Title" xml:space="preserve"><value>Nos métiers</value></data>
+  <data name="Site_Trades_Text" xml:space="preserve"><value>Sept métiers du bâtiment, pour les dépannages comme pour l'entretien régulier. Chaque technicien intervient dans son métier.</value></data>
+  <data name="Site_Trade_PageTitle" xml:space="preserve"><value>{0} à Dakar et Thiès</value></data>
+  <data name="Site_Trade_Heading" xml:space="preserve"><value>{0} : dépannage et entretien</value></data>
+  <data name="Site_Trade_Delay" xml:space="preserve"><value>Délai d'intervention</value></data>
+  <data name="Site_Trade_Price" xml:space="preserve"><value>Prix de départ</value></data>
+  <data name="Site_Trade_WhatWeDo" xml:space="preserve"><value>Ce que nous faisons</value></data>
+  <data name="Site_Trade_Other" xml:space="preserve"><value>Votre problème n'est pas dans la liste ?</value></data>
+  <data name="Site_Trade_Describe" xml:space="preserve"><value>Décrivez-le, on vous dit si on peut intervenir.</value></data>
+  <data name="Site_Trade_HowTitle" xml:space="preserve"><value>Comment se passe l'intervention</value></data>
+  <data name="Site_Trade_How1" xml:space="preserve"><value>Vous envoyez une photo et quelques mots. On vous rappelle pour confirmer le problème et proposer un créneau.</value></data>
+  <data name="Site_Trade_How2" xml:space="preserve"><value>Le technicien arrive avec les pièces courantes. Il vous annonce le prix des pièces avant de les poser.</value></data>
+  <data name="Site_Trade_How3" xml:space="preserve"><value>Photos avant et après, rapport et facture dans l'application. Si le problème revient, la reprise est garantie.</value></data>
+  <data name="Site_Trade_Reviews" xml:space="preserve"><value>Avis sur nos interventions de {0}</value></data>
+  <data name="Site_Trade_Others" xml:space="preserve"><value>Nos autres métiers</value></data>
+  <data name="Site_Households_Title" xml:space="preserve"><value>Particuliers</value></data>
+  <data name="Site_Households_Heading" xml:space="preserve"><value>L'entretien de votre maison ou de votre villa, toute l'année</value></data>
+  <data name="Site_Households_Text" xml:space="preserve"><value>Un abonnement mensuel couvre la main-d'œuvre des dépannages et une visite avant l'hivernage. Vous signalez depuis votre téléphone, on s'occupe du reste.</value></data>
+  <data name="Site_Households_IncludedTitle" xml:space="preserve"><value>Ce que l'abonnement change pour vous</value></data>
+  <data name="Site_Households_Inc1_Title" xml:space="preserve"><value>Main-d'œuvre comprise</value></data>
+  <data name="Site_Households_Inc1_Text" xml:space="preserve"><value>Plus de négociation à chaque dépannage : la main-d'œuvre est comprise, seules les pièces sont facturées, au prix annoncé avant la pose.</value></data>
+  <data name="Site_Households_Inc2_Title" xml:space="preserve"><value>Visite avant l'hivernage</value></data>
+  <data name="Site_Households_Inc2_Text" xml:space="preserve"><value>Dalle, gouttières, évacuations : un contrôle en mai-juin, avant les premières pluies.</value></data>
+  <data name="Site_Households_Inc3_Title" xml:space="preserve"><value>Carnet du logement</value></data>
+  <data name="Site_Households_Inc3_Text" xml:space="preserve"><value>Chaque intervention, avec ses photos et sa garantie, reste dans l'historique de la maison. Utile pour louer ou vendre.</value></data>
+  <data name="Site_Households_Inc4_Title" xml:space="preserve"><value>Suivi sur WhatsApp</value></data>
+  <data name="Site_Households_Inc4_Text" xml:space="preserve"><value>Créneau, arrivée du technicien, rapport : vous êtes prévenu par WhatsApp ou SMS, sans avoir à rappeler.</value></data>
+  <data name="Site_Households_PlanText" xml:space="preserve"><value>Pour une maison ou une villa, avec les sept métiers et le suivi de chaque intervention.</value></data>
+  <data name="Site_Households_Subscribe" xml:space="preserve"><value>Créer mon compte</value></data>
+  <data name="Site_Households_Rain_Title" xml:space="preserve"><value>Préparer l'hivernage</value></data>
+  <data name="Site_Households_Rain_Text" xml:space="preserve"><value>La plupart des infiltrations se préparent en mai, pas en août. On contrôle la dalle, les joints et les évacuations, et on traite ce qui doit l'être avant les premières pluies.</value></data>
+  <data name="Site_Households_Rain_Link" xml:space="preserve"><value>Voir l'étanchéité</value></data>
+  <data name="Site_Households_Diaspora_Title" xml:space="preserve"><value>Vous vivez à l'étranger ?</value></data>
+  <data name="Site_Households_Diaspora_Text" xml:space="preserve"><value>Suivez l'entretien de la maison familiale depuis l'application : photos avant et après, rapport, paiement en ligne. Vos proches sur place n'ont pas à s'en occuper.</value></data>
+  <data name="Site_Households_TradesTitle" xml:space="preserve"><value>Nos métiers pour votre maison</value></data>
+  <data name="Site_Business_Title" xml:space="preserve"><value>Entreprises</value></data>
+  <data name="Site_Business_Heading" xml:space="preserve"><value>La maintenance de vos bureaux, boutiques et entrepôts</value></data>
+  <data name="Site_Business_Text" xml:space="preserve"><value>Un contrat de maintenance avec des délais d'intervention écrits, un diagnostic technique chaque trimestre et un seul compte pour tous vos sites et vos équipes.</value></data>
+  <data name="Site_Business_Cta" xml:space="preserve"><value>Créer un compte entreprise</value></data>
+  <data name="Site_Business_ForTitle" xml:space="preserve"><value>Pour qui</value></data>
+  <data name="Site_Business_For1" xml:space="preserve"><value>Bureaux</value></data>
+  <data name="Site_Business_For2" xml:space="preserve"><value>Boutiques et agences</value></data>
+  <data name="Site_Business_For3" xml:space="preserve"><value>Entrepôts</value></data>
+  <data name="Site_Business_For4" xml:space="preserve"><value>Écoles et centres de formation</value></data>
+  <data name="Site_Business_For5" xml:space="preserve"><value>Cliniques et cabinets</value></data>
+  <data name="Site_Business_For6" xml:space="preserve"><value>Résidences et immeubles</value></data>
+  <data name="Site_Business_FeaturesTitle" xml:space="preserve"><value>Ce que fait le compte entreprise</value></data>
+  <data name="Site_Business_F1_Title" xml:space="preserve"><value>Tous vos sites</value></data>
+  <data name="Site_Business_F1_Text" xml:space="preserve"><value>Chaque site avec son adresse, son point de repère et son historique d'interventions.</value></data>
+  <data name="Site_Business_F2_Title" xml:space="preserve"><value>Vos équipes</value></data>
+  <data name="Site_Business_F2_Text" xml:space="preserve"><value>Gestionnaire, responsables de site, employés déclarants : chacun voit et signale ce qui le concerne.</value></data>
+  <data name="Site_Business_F3_Title" xml:space="preserve"><value>Validation des demandes</value></data>
+  <data name="Site_Business_F3_Text" xml:space="preserve"><value>Si vous le souhaitez, une demande d'un employé attend l'accord du responsable avant de partir chez nous.</value></data>
+  <data name="Site_Business_F4_Title" xml:space="preserve"><value>Diagnostic trimestriel</value></data>
+  <data name="Site_Business_F4_Text" xml:space="preserve"><value>Un technicien contrôle tous vos sites chaque trimestre ; le trimestre suivant n'est facturé qu'après ce diagnostic.</value></data>
+  <data name="Site_Business_F5_Title" xml:space="preserve"><value>Délais écrits</value></data>
+  <data name="Site_Business_F5_Text" xml:space="preserve"><value>Un délai d'intervention par niveau d'urgence, suivi demande par demande dans votre tableau de bord.</value></data>
+  <data name="Site_Business_F6_Title" xml:space="preserve"><value>Exports et factures</value></data>
+  <data name="Site_Business_F6_Text" xml:space="preserve"><value>Demandes et factures exportables en CSV et PDF pour votre comptabilité.</value></data>
+  <data name="Site_Business_PlansTitle" xml:space="preserve"><value>Trois formules, selon votre parc</value></data>
+  <data name="Site_Business_Diagnostic" xml:space="preserve"><value>Diagnostic technique obligatoire tous les 3 mois, avant le paiement du trimestre suivant.</value></data>
+  <data name="Site_Hoods_Title" xml:space="preserve"><value>Programme Quartiers</value></data>
+  <data name="Site_Hoods_Heading" xml:space="preserve"><value>À {0} foyers abonnés, votre quartier est reboisé</value></data>
+  <data name="Site_Hoods_Text" xml:space="preserve"><value>Chaque foyer abonné compte pour son quartier. Quand l'objectif est atteint, SENECARE organise une opération de plantation ou d'embellissement tous les trois mois, avec les habitants.</value></data>
+  <data name="Site_Hoods_FullRanking" xml:space="preserve"><value>Voir tout le classement</value></data>
+  <data name="Site_Hoods_AreasText" xml:space="preserve"><value>Nos techniciens interviennent dans ces quartiers. Le vôtre n'y est pas ? Écrivez-nous sur WhatsApp, on vous dit si on peut venir.</value></data>
+  <data name="Site_Pricing_Heading" xml:space="preserve"><value>Tarifs</value></data>
+  <data name="Site_Pricing_Text" xml:space="preserve"><value>Des montants en FCFA, sans frais cachés. Les pièces vous sont toujours annoncées avant la pose.</value></data>
+  <data name="Site_Pricing_Feature" xml:space="preserve"><value>Prestation</value></data>
+  <data name="Site_Pricing_Price" xml:space="preserve"><value>Prix</value></data>
+  <data name="Site_Pricing_Monthly" xml:space="preserve"><value>Abonnement mensuel</value></data>
+  <data name="Site_Pricing_Critical" xml:space="preserve"><value>Urgence critique (coupure, grosse fuite)</value></data>
+  <data name="Site_Pricing_DependsAvailability" xml:space="preserve"><value>Selon disponibilité</value></data>
+  <data name="Site_Pricing_Visits" xml:space="preserve"><value>Visites préventives</value></data>
+  <data name="Site_Pricing_Diagnostic" xml:space="preserve"><value>Diagnostic technique</value></data>
+  <data name="Site_Pricing_DiagnosticYes" xml:space="preserve"><value>Tous les 3 mois</value></data>
+  <data name="Site_Pricing_Sites" xml:space="preserve"><value>Sites couverts</value></data>
+  <data name="Site_Pricing_Parts" xml:space="preserve"><value>Pièces</value></data>
+  <data name="Site_Pricing_Contact" xml:space="preserve"><value>Interlocuteur</value></data>
+  <data name="Site_Pricing_Report" xml:space="preserve"><value>Suivi</value></data>
+  <data name="Site_Pricing_BusinessNote" xml:space="preserve"><value>Inscription : {0}. Facturation par trimestre.</value></data>
+  <data name="Site_Faq_Text" xml:space="preserve"><value>Les réponses aux questions qu'on nous pose le plus souvent. Pour le reste, écrivez-nous sur WhatsApp.</value></data>
+  <data name="Site_Faq_Soon" xml:space="preserve"><value>Les questions fréquentes arrivent bientôt.</value></data>
+  <data name="Site_LegalDraft" xml:space="preserve"><value>Page en cours de rédaction.</value></data>
+  <data name="Site_Legal_Publisher" xml:space="preserve"><value>Éditeur</value></data>
+  <data name="Site_Legal_PublisherText" xml:space="preserve"><value>Le service SeneCare est édité par SENE DESIGN.</value></data>
+  <data name="Site_Legal_Hosting" xml:space="preserve"><value>Hébergement</value></data>
+  <data name="Site_Legal_Contact" xml:space="preserve"><value>Contact</value></data>
+  <data name="Site_Legal_ToComplete" xml:space="preserve"><value>À compléter avant la mise en ligne.</value></data>
+  <data name="Site_Legal_SeePrivacy" xml:space="preserve"><value>Pour vos données personnelles, voir la</value></data>
 </root>

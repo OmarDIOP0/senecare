@@ -1,0 +1,12 @@
+@* Light / Dark / System. Applied before the first paint by Ui/_Head, remembered in localStorage by app.js. *@
+<details class="relative" data-menu>
+    <summary class="sc-btn-icone list-none [&::-webkit-details-marker]:hidden" aria-label="@L["Site_Theme"]" title="@L["Site_Theme"]">
+        <span class="dark:hidden"><sc-icon name="sun" class="size-5" /></span>
+        <span class="hidden dark:inline"><sc-icon name="moon" class="size-5" /></span>
+    </summary>
+    <div class="sc-menu right-0 w-48">
+        <button type="button" class="sc-menu-item aria-pressed:font-semibold aria-pressed:text-laterite" data-theme-set="light"><sc-icon name="sun" class="size-4" />@L["Shell_ThemeLight"]</button>
+        <button type="button" class="sc-menu-item aria-pressed:font-semibold aria-pressed:text-laterite" data-theme-set="dark"><sc-icon name="moon" class="size-4" />@L["Shell_ThemeDark"]</button>
+        <button type="button" class="sc-menu-item aria-pressed:font-semibold aria-pressed:text-laterite" data-theme-set="system"><sc-icon name="monitor" class="size-4" />@L["Shell_ThemeSystem"]</button>
+    </div>
+</details>

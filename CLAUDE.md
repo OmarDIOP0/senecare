@@ -85,57 +85,49 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
   hors du code.
 - Docker + docker-compose (web, api, postgres, redis éventuel).
 
-## 5. Direction visuelle — chaleureuse et grand public (structure HomeServe, finition WURUS)
-Références validées par l'utilisateur : homeserve.fr (structure du site vitrine : menu par univers,
-bloc d'accueil, cartes métiers, étapes, offres, engagements, conseils) et wurus.app (palette crème /
-brun / ocre, typographies, formes en pilule). On s'inspire, on ne copie ni logo, ni textes, ni marque.
-Le « Made in Sénégal » passe par le contenu (quartiers, points de repère, Wave, +221 77 123 45 67,
-hivernage, Senelec), pas par des motifs décoratifs.
+## 5. Direction visuelle — un vrai service d'entretien et de dépannage, sobre et concret
+Références validées : homeserve.fr et vbs.services (structure et ton d'un site de services qui existe
+depuis des années). Objectif : jamais l'air « généré par une IA ».
 
-Tokens (Styles/app.css, noms conservés) :
-- Fond page `--sable` #F7F1E2 (crème), surfaces `--surface` #FFFDF7, blocs atténués `--sourdine` #F3EBD6,
-  bordures `--ligne` #E9DDC9 (1px).
-- Texte brun : `charbon` #160A04, `charbon-doux` #6B5C4A (texte secondaire, AA), `charbon-pale` #9A8A74
-  (icônes et séparateurs seulement, jamais du texte), placeholder #7A6C5B.
-- Action `--laterite` #A84B22 : bouton primaire, élément actif, focus, petit trait sous les titres publics.
-- Touches `--ocre` #C7932D / `--ocre-clair` #F3E6CF / `--ocre-texte` #7D5A12 : offre mise en avant,
-  sur-titres (`.sc-eyebrow`), tuiles d'icônes publiques. Texte sur fond ocre = brun (`text-sur-ocre`), jamais blanc.
-- `--atlantique` : liens et information. Statuts en badges pilules teintés : `baobab`, `soleil`, `rouge`.
-- AUCUNE section sombre en mode clair. Le brun expresso (#100804 / #20140D / #2A1A10) n'existe qu'en mode sombre.
-- Typo auto-hébergée : **Unbounded 700** pour h1, `.sc-titre`, titres de sections publiques et logo
-  (`font-display` / `font-logo`, tracking -0.02em) ; **Bricolage Grotesque 400/600/700** pour tout le reste
-  (`font-medium` = 600). Corps 16px mobile, 15px desktop. Chiffres comparés en `tabular-nums`.
-- Formes : boutons et badges en pilule (`rounded-full`), contrôles 12px, cartes 22px (`rounded-lg`),
-  blocs de section publics 28–32px (`rounded-2xl/3xl`). Pas d'ombre sur les cartes ; `shadow-sm` chaude
-  pour menus et popovers. Boutons 44px mobile, 40px desktop, 56px en mode terrain.
-- Icônes Lucide 18px, trait 1.75 (`<sc-icon>`).
+Thème et tokens (Styles/app.css, noms conservés, aucune couleur en dur dans les vues) :
+- Clair par défaut : fond blanc #FFFFFF, sections alternées gris très clair `--sourdine` #F5F6F8,
+  bordures #E5E7EB, texte #1F2937 (jamais de noir pur), texte secondaire #4B5563.
+- Une seule couleur de marque, l'orange SeneCare `--laterite` #C2410C (boutons principaux, liens actifs,
+  icônes), utilisée avec parcimonie. Couleur secondaire bleu nuit `--atlantique` #1E3A5F (titres de section)
+  et `--nuit` #15294A (bandeau de contact, pied de page). Statuts : `baobab`, `soleil`, `rouge`.
+- Sélecteur de thème Clair / Sombre / Système dans l'en-tête (`Site/_ThemeSwitch`), mémorisé dans
+  localStorage (`sc-theme`), appliqué par un script dans `Ui/_Head` avant le premier rendu (pas de flash).
+  Sombre = anthracite neutre (#18191C / #222429).
+- Typo : Inter auto-hébergée (400/600/700), seule famille, logo compris. h1 ≤ 44px desktop, gras 700.
+- Formes : coins 6px (contrôles) / 8px (cartes), ombres légères (`shadow-xs`), bordures fines grises.
+- INTERDIT : dégradés, glassmorphism, lueurs, grandes cartes très arrondies, traits colorés sous les titres,
+  sur-titres « eyebrow », slogans en phrases courtes ponctuées, emojis, animations d'apparition.
 
-Site public (`_Layout`, `Home/Index`) :
-- En-tête : logo, Particuliers · Entreprises · Quartiers · Nos métiers · Conseils (ancres de l'accueil),
-  « Se connecter » + « Créer mon compte » ; menu repliable sur mobile. Pied de page à colonnes.
-- Accueil : bloc d'accueil ocre clair (photo + aperçu de suivi construit avec de vrais composants),
-  3 promesses, cartes métiers, 4 étapes avec photo, « Nos techniciens », offres lues en base (jamais de prix
-  en dur), Programme Quartiers (seuil lu en base), engagements, avis clients, conseils, dernier appel.
-- Photos : provisoirement Unsplash (licence libre), dans `wwwroot/img/photos/`, WebP ≤ 150 Ko, recadrées,
-  `loading="lazy"` sauf celle du bloc d'accueil, photographes crédités en pied de page. Une photo de banque
-  d'images n'est jamais présentée comme un technicien SENECARE nommé. À remplacer par de vraies photos.
-- Chiffres publics : uniquement réels (`PublicFigures.HasEnough`), sinon les engagements de service.
-- Avis clients : publiés seulement avec la case « J'accepte que mon avis soit publié » (décochée par défaut),
-  prénom + initiale + commune, les plus récents quelle que soit la note ; modération `/admin/avis`
-  (masquer / republier, journalisé). Jamais de faux avis ni de faux chiffres.
+Structure du site public (`_Layout`, `PublicSiteController`, `Views/PublicSite`) :
+- Bandeau de contact (téléphone, WhatsApp, horaires, zones) ; en-tête blanc : logo, menu « Nos métiers »
+  (sous-menu des 7 métiers), Particuliers, Entreprises, Quartiers, Tarifs, Espace client, thème,
+  bouton « Demander une intervention » (`/demander` → connexion par code → `/signaler?domaine=`).
+- Accueil : hero clair (titre descriptif + formulaire rapide métier/quartier/téléphone + photo de technicien),
+  métiers avec photo, comment ça marche, techniciens, exemple d'intervention, avis, chiffres, conseils, FAQ.
+- Pages propres : `/metiers`, `/metiers/{slug}`, `/particuliers`, `/entreprises`, `/quartiers`, `/tarifs`
+  (tableaux comparatifs), `/faq`, `/mentions-legales`, `/cgu`, `/confidentialite`.
+- Pied de page dense sur fond bleu nuit (métiers, quartiers, entreprise, aide, contact, mentions).
+- Mobile d'abord : menu burger, barre fixe « Appeler » + « WhatsApp » en bas des pages publiques.
 
-Espace connecté :
-- Même palette et mêmes polices. Desktop ≥ 1024px : sidebar 240px (logo, organisation, « Signaler »,
-  navigation, Aide / Paramètres / carte utilisateur) + topbar (fil d'Ariane, Ctrl+K, notifications, avatar).
-  Mobile : barre d'onglets (3 onglets + « Signaler » au centre + « Plus »).
-- En-tête de page `Ui/_PageHeader`, listes en `.sc-table` sur desktop et cartes sur mobile,
-  état vide `Ui/_EmptyState`, KPI jamais à 0 ni « — » (checklist de démarrage sur un compte vide).
-- Pas de motifs décoratifs ni d'emojis dans l'app (motifs tolérés sur connexion et onboarding, très discrets).
+Contenus (`Content/site-content.json`, chargé par `SiteContent`) :
+- Contact, métiers (texte, exemples, délai, prix de départ, photo), techniciens, exemple d'intervention,
+  avis, chiffres, FAQ, avantages des formules par code d'offre, quartiers desservis.
+- Les blocs `"sample": true` sont des CONTENUS D'EXEMPLE : affichés en développement avec l'étiquette
+  « Exemple », masqués en production tant qu'ils ne sont pas remplacés. Jamais de faux avis, faux chiffres,
+  certifications ou partenariats publiés.
+- Montants des abonnements et délais d'intervention : toujours depuis la base (Admin › Offres).
+- Photos : `wwwroot/images/` (WebP ≤ 150 Ko) ; un fichier absent affiche une tuile neutre (`Site/_Photo`).
 
-Rédaction : microcopie courte et concrète, verbes d'action, accents corrects, pas de point d'exclamation
-dans l'app. Accessibilité : contrastes AA, focus visible (anneau latérite), libellés ARIA, prefers-reduced-motion.
-Revue visuelle : `tests/SeneCare.E2E/design-review.mjs` capture chaque écran (1440 / 390, clair / sombre)
-dans `docs/design-review/`.
+Espace connecté : même thème et mêmes tokens ; sidebar + topbar desktop, barre d'onglets mobile,
+`Ui/_PageHeader`, `.sc-table`, `Ui/_EmptyState`, KPI jamais à 0 ni « — ».
+Formulaires : fond blanc, bordure grise 1px, label au-dessus, aide dessous, focus visible, erreurs en rouge.
+Accessibilité : contrastes AA dans les deux thèmes, focus visible, `alt` sur les images, libellés ARIA.
+Revue visuelle : `tests/SeneCare.E2E/design-review.mjs` (1440 / 390, clair / sombre) dans `docs/design-review/`.
 
 ## 6. Règles de travail
 - Une phase à la fois. Avant de coder : plan court + liste des fichiers.

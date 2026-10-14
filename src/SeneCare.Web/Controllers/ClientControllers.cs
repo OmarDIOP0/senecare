@@ -66,8 +66,8 @@ public sealed class ReportController(PropertyQueries properties, CreateRequestHa
 {
     [HttpGet("")]
     [OfflinePage]
-    public async Task<IActionResult> Index(Guid? logement, CancellationToken cancellationToken) =>
-        View(await BuildAsync(new ReportFormModel { PropertyId = logement }, cancellationToken));
+    public async Task<IActionResult> Index(Guid? logement, ServiceDomain? domaine, CancellationToken cancellationToken) =>
+        View(await BuildAsync(new ReportFormModel { PropertyId = logement, Domain = domaine }, cancellationToken));
 
     [HttpPost("")]
     [RequestSizeLimit(64 * 1024 * 1024)]

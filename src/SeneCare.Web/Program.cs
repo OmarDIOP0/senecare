@@ -60,6 +60,9 @@ try
 
     builder.Services.AddSeneCareLocalization();
     builder.Services.AddSignalR();
+    // Public site texts (Content/site-content.json): sample blocks only shown in development.
+    builder.Services.AddSingleton(SeneCare.Web.Infrastructure.SiteContent.Load(
+        builder.Environment.ContentRootPath, builder.Environment.WebRootPath ?? string.Empty, builder.Environment.IsDevelopment()));
     builder.Services
         .AddControllersWithViews(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()))
         .AddViewLocalization()

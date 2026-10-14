@@ -3,24 +3,25 @@
 (() => {
   "use strict";
 
-  // ---- Theme: follows the phone, unless the user chose (stored per device). ----
+  // ---- Theme: light by default; « dark »; or « system » (follows the phone). ----
+  // The first value is applied by an inline script in <head> before the first paint.
   const root = document.documentElement;
-  try {
-    const saved = localStorage.getItem("sc-theme");
-    if (saved === "light" || saved === "dark") root.dataset.theme = saved;
-  } catch { /* storage unavailable: keep the system theme */ }
+  const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  const storedTheme = () => { try { return localStorage.getItem("sc-theme") ?? "light"; } catch { return "light"; } };
+  const applyTheme = (choice) => {
+    root.dataset.theme = choice === "dark" || (choice === "system" && darkQuery.matches) ? "dark" : "light";
+    document.querySelectorAll("[data-theme-set]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.themeSet === choice)));
+  };
+  applyTheme(storedTheme());
+  darkQuery.addEventListener("change", () => { if (storedTheme() === "system") applyTheme("system"); });
 
-  // Avatar menu / « Plus »: light, dark, or follow the phone.
   document.addEventListener("click", (event) => {
     const choice = event.target.closest("[data-theme-set]");
     if (!choice) return;
     const value = choice.dataset.themeSet;
-    if (value === "system") delete root.dataset.theme;
-    else root.dataset.theme = value;
-    try {
-      if (value === "system") localStorage.removeItem("sc-theme");
-      else localStorage.setItem("sc-theme", value);
-    } catch { /* ignore */ }
+    try { localStorage.setItem("sc-theme", value); } catch { /* ignore */ }
+    applyTheme(value);
+    choice.closest("details")?.removeAttribute("open");
   });
 
   // ---- Phone: « 771234567 » → « 77 123 45 67 » while typing. ----

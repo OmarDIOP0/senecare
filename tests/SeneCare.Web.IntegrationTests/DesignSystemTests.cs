@@ -62,8 +62,8 @@ public class DesignPageTests(SeneCareWebFactory factory) : IClassFixture<SeneCar
     [InlineData("/img/motifs/wax.svg")]
     [InlineData("/img/motifs/manjak.svg")]
     [InlineData("/img/motifs/bogolan.svg")]
-    [InlineData("/fonts/bricolage-grotesque-latin-400-normal.woff2")]
-    [InlineData("/fonts/unbounded-latin-700-normal.woff2")]
+    [InlineData("/fonts/inter-latin-400-normal.woff2")]
+    [InlineData("/fonts/inter-latin-700-normal.woff2")]
     [InlineData("/lib/htmx.min.js")]
     [InlineData("/js/app.js")]
     public async Task Design_assets_are_self_hosted(string path)

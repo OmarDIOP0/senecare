@@ -28,6 +28,28 @@ public sealed class HomeController(GetPublicHomeHandler publicHome) : Controller
         return View(await publicHome.HandleAsync(cancellationToken));
     }
 
+    /// <summary>
+    /// « Demander une intervention » (header and quick form): straight to the report form with the trade
+    /// pre-selected; through the phone sign-in first when needed, with the number already typed.
+    /// </summary>
+    [HttpGet("/demander")]
+    public IActionResult Request(ServiceDomain? metier, string? telephone)
+    {
+        var report = metier is { } domain ? $"/signaler?domaine={domain}" : "/signaler";
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            return LocalRedirect(report);
+        }
+
+        var signIn = $"/connexion?returnUrl={Uri.EscapeDataString(report)}";
+        if (!string.IsNullOrWhiteSpace(telephone))
+        {
+            signIn += $"&phone={Uri.EscapeDataString(telephone.Trim())}";
+        }
+
+        return LocalRedirect(signIn);
+    }
+
     [HttpGet("/confidentialite")]
     public IActionResult Privacy() => View();
 

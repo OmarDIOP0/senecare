@@ -82,3 +82,6 @@ public sealed record ChecklistModel(string Title, IReadOnlyList<ChecklistStep> S
 {
     public int Done => Steps.Count(s => s.Done);
 }
+
+/// <summary>Photo of the public site; falls back to a named placeholder until the file is added.</summary>
+public sealed record PhotoModel(string Path, string Alt, string Class, int Width = 900, int Height = 675, string? Icon = null, bool Eager = false);

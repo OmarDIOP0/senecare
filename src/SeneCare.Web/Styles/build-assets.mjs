@@ -34,11 +34,10 @@ copyFileSync("node_modules/@microsoft/signalr/dist/browser/signalr.min.js", "www
 
 mkdirSync("wwwroot/fonts", { recursive: true });
 for (const [pkg, file] of [
-  // Text: Bricolage Grotesque. Titles: Unbounded (bold only).
-  ["bricolage-grotesque", "bricolage-grotesque-latin-400-normal.woff2"],
-  ["bricolage-grotesque", "bricolage-grotesque-latin-600-normal.woff2"],
-  ["bricolage-grotesque", "bricolage-grotesque-latin-700-normal.woff2"],
-  ["unbounded", "unbounded-latin-700-normal.woff2"],
+  // One family for everything: Inter 400 / 600 / 700.
+  ["inter", "inter-latin-400-normal.woff2"],
+  ["inter", "inter-latin-600-normal.woff2"],
+  ["inter", "inter-latin-700-normal.woff2"],
 ]) {
   copyFileSync(`node_modules/@fontsource/${pkg}/files/${file}`, `wwwroot/fonts/${file}`);
 }

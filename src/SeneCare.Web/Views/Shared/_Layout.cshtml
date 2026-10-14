@@ -1,15 +1,17 @@
-@* Public pages: header with the sections of the home page, footer. ViewData["FullWidth"] lets a page draw its own sections. *@
+@* Public site: thin contact bar, white header with the trades menu, dense footer, call / WhatsApp bar on phones.
+   ViewData["FullWidth"] lets a page draw its own full-width sections. Contact details come from Content/site-content.json. *@
 @{
     var signedIn = User.Identity?.IsAuthenticated == true;
     var onSignIn = Context.Request.Path.StartsWithSegments("/connexion");
     var fullWidth = ViewData["FullWidth"] is true;
-    var sections = new (string Href, string Label)[]
+    var contact = Site.Contact;
+    var showContact = Site.Visible(contact);
+    var menu = new (string Href, string Label)[]
     {
-        ("/#particuliers", L["Public_Nav_Households"].Value),
-        ("/#entreprises", L["Public_Nav_Business"].Value),
-        ("/#quartiers", L["Public_Nav_Neighborhoods"].Value),
-        ("/#metiers", L["Public_Nav_Trades"].Value),
-        ("/#conseils", L["Public_Nav_Advice"].Value),
+        ("/particuliers", L["Public_Nav_Households"].Value),
+        ("/entreprises", L["Public_Nav_Business"].Value),
+        ("/quartiers", L["Public_Nav_Neighborhoods"].Value),
+        ("/tarifs", L["Site_Nav_Pricing"].Value),
     };
 }
 <!DOCTYPE html>
@@ -18,88 +20,183 @@
     <partial name="Ui/_Head" />
     @await RenderSectionAsync("Head", required: false)
 </head>
-<body class="flex min-h-dvh flex-col">
+<body class="flex min-h-dvh flex-col pb-16 lg:pb-0">
     <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-surface focus:px-3 focus:py-2 focus:text-charbon">@L["Layout_SkipToContent"]</a>
-    @* Two rows on desktop, like a services site: brand + client space + main action, then the sections. *@
+
+    @* ---- Thin contact bar ---- *@
+    @if (showContact)
+    {
+        <div class="bg-nuit text-sm text-sur-nuit">
+            <div class="mx-auto flex min-h-9 w-full max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-1.5 lg:px-6">
+                <div class="flex flex-wrap items-center gap-x-5 gap-y-1">
+                    <a href="tel:@contact.PhoneLink" class="inline-flex items-center gap-1.5 font-semibold text-white no-underline hover:underline"><sc-icon name="phone" class="size-4" />@contact.PhoneDisplay</a>
+                    <a href="@contact.WhatsAppUrl" class="inline-flex items-center gap-1.5 text-white no-underline hover:underline" target="_blank" rel="noopener"><sc-icon name="message-circle" class="size-4" />WhatsApp</a>
+                    <partial name="Site/_SampleTag" model="contact.Sample" />
+                </div>
+                <div class="hidden flex-wrap items-center gap-x-5 md:flex">
+                    <span class="inline-flex items-center gap-1.5"><sc-icon name="clock" class="size-4" />@contact.Hours · @contact.Emergencies</span>
+                    <span class="inline-flex items-center gap-1.5"><sc-icon name="map-pin" class="size-4" />@contact.Areas</span>
+                </div>
+            </div>
+        </div>
+    }
+
+    @* ---- Header ---- *@
     <header class="sticky top-0 z-40 border-b border-ligne bg-surface">
-        <div class="mx-auto flex h-16 w-full max-w-[1440px] items-center justify-between gap-4 px-4 lg:h-20 lg:px-10">
+        <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 lg:h-[4.5rem] lg:px-6">
             <partial name="Ui/_Brand" />
-            <div class="flex items-center gap-2 lg:gap-6">
+            <nav class="hidden items-center gap-1 lg:flex" aria-label="@L["Public_Nav_Label"]">
+                <details class="relative" data-menu>
+                    <summary class="flex cursor-pointer list-none items-center gap-1 rounded-md px-3 py-2 text-[15px] font-semibold text-charbon hover:bg-sourdine [&::-webkit-details-marker]:hidden">
+                        @L["Public_Nav_Trades"]<sc-icon name="chevron-down" class="size-4 text-charbon-doux" />
+                    </summary>
+                    <div class="sc-menu left-0 w-72">
+                        @foreach (var trade in Site.Trades)
+                        {
+                            <a href="/metiers/@trade.Slug" class="sc-menu-item items-start py-2">
+                                <sc-icon name="@Formatting.Icon(trade.Domain)" class="mt-0.5 size-4 text-laterite" />
+                                <span><span class="block font-semibold">@trade.Name</span><span class="block text-xs text-charbon-doux">@trade.Summary</span></span>
+                            </a>
+                        }
+                        <a href="/metiers" class="sc-menu-item mt-1 border-t border-ligne pt-2 font-semibold text-laterite">@L["Site_AllTrades"]</a>
+                    </div>
+                </details>
+                @foreach (var (href, label) in menu)
+                {
+                    <a href="@href" class="rounded-md px-3 py-2 text-[15px] font-semibold text-charbon no-underline hover:bg-sourdine hover:no-underline">@label</a>
+                }
+            </nav>
+            <div class="flex items-center gap-1 sm:gap-2">
                 <partial name="Ui/_AppStatus" />
+                <partial name="Site/_ThemeSwitch" />
                 @if (signedIn)
                 {
-                    <a href="/espace" class="sc-btn-primaire lg:min-h-12 lg:px-7 lg:text-base">@L["Nav_Space"]<sc-icon name="arrow-right" class="size-4" /></a>
+                    <a href="/espace" class="sc-btn-secondaire hidden sm:inline-flex">@L["Nav_Space"]</a>
                 }
                 else if (!onSignIn)
                 {
-                    <a href="/connexion" class="hidden items-center gap-2 text-base font-semibold text-laterite no-underline hover:underline sm:inline-flex"><sc-icon name="circle-user" class="size-6" />@L["Public_ClientSpace"]</a>
-                    <a href="/connexion" class="sc-btn-icone text-laterite sm:hidden" aria-label="@L["Public_ClientSpace"]"><sc-icon name="circle-user" class="size-6" /></a>
-                    <a href="/connexion" class="sc-btn-primaire hidden sm:inline-flex lg:min-h-12 lg:px-7 lg:text-base">@L["Public_Join"]<sc-icon name="arrow-right" class="size-4" /></a>
+                    <a href="/connexion" class="hidden items-center gap-1.5 rounded-md px-3 py-2 text-[15px] font-semibold text-charbon no-underline hover:bg-sourdine hover:no-underline md:inline-flex"><sc-icon name="circle-user" class="size-5" />@L["Public_ClientSpace"]</a>
                 }
+                <a href="/demander" class="sc-btn-primaire hidden sm:inline-flex">@L["Site_RequestJob"]</a>
                 <details class="relative lg:hidden" data-menu>
                     <summary class="sc-btn-icone list-none [&::-webkit-details-marker]:hidden" aria-label="@L["Public_Nav_Label"]"><sc-icon name="menu" /></summary>
-                    <div class="sc-menu right-0 w-64">
-                        @foreach (var (href, label) in sections)
+                    <div class="sc-menu right-0 max-h-[75dvh] w-72 overflow-y-auto">
+                        <p class="px-2.5 pt-1 pb-1 text-xs font-semibold text-charbon-doux">@L["Public_Nav_Trades"]</p>
+                        @foreach (var trade in Site.Trades)
+                        {
+                            <a href="/metiers/@trade.Slug" class="sc-menu-item"><sc-icon name="@Formatting.Icon(trade.Domain)" class="size-4 text-laterite" />@trade.Name</a>
+                        }
+                        <div class="my-1 border-t border-ligne"></div>
+                        @foreach (var (href, label) in menu)
                         {
                             <a href="@href" class="sc-menu-item font-semibold">@label</a>
                         }
-                        @if (!signedIn && !onSignIn)
-                        {
-                            <a href="/connexion" class="sc-menu-item border-t border-ligne">@L["Public_ClientSpace"]</a>
-                        }
+                        <div class="my-1 border-t border-ligne"></div>
+                        <a href="@(signedIn ? "/espace" : "/connexion")" class="sc-menu-item"><sc-icon name="circle-user" class="size-4" />@(signedIn ? L["Nav_Space"] : L["Public_ClientSpace"])</a>
+                        <a href="/demander" class="sc-btn-primaire mt-1.5 w-full">@L["Site_RequestJob"]</a>
                     </div>
                 </details>
             </div>
         </div>
-        <nav class="mx-auto hidden w-full max-w-[1440px] px-10 lg:block" aria-label="@L["Public_Nav_Label"]">
-            <ul class="flex items-center gap-2 pb-3">
-                @foreach (var (href, label) in sections)
-                {
-                    <li><a href="@href" class="inline-flex items-center gap-1 rounded-full px-4 py-2 text-base font-semibold text-charbon no-underline hover:bg-sourdine hover:no-underline">@label</a></li>
-                }
-            </ul>
-        </nav>
     </header>
-    <main id="contenu" class="@(fullWidth ? "w-full flex-1" : $"mx-auto w-full flex-1 {(ViewData["Wide"] is true ? "max-w-screen-lg" : "max-w-screen-md")} px-4 py-8")">
+
+    <main id="contenu" class="@(fullWidth ? "w-full flex-1" : $"mx-auto w-full flex-1 {(ViewData["Wide"] is true ? "max-w-screen-lg" : "max-w-screen-md")} px-4 py-10")">
         @RenderBody()
     </main>
-    <footer class="mt-16 border-t border-ligne bg-surface">
-        <div class="mx-auto grid w-full max-w-6xl gap-8 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4 lg:px-6">
-            <div class="sm:col-span-2">
-                <partial name="Ui/_Brand" />
-                <p class="mt-3 max-w-sm text-[15px] text-charbon-doux">@L["App_Promise"]</p>
-                <p class="mt-2 text-sm font-semibold text-ocre-texte">@L["App_Signature"]</p>
-            </div>
+
+    @* ---- Footer: trades, neighbourhoods, company, help, contact ---- *@
+    <footer class="mt-20 bg-nuit text-sur-nuit [&_a]:text-sur-nuit [&_a:hover]:text-white">
+        <div class="mx-auto grid w-full max-w-7xl gap-10 px-4 py-14 sm:grid-cols-2 lg:grid-cols-5 lg:px-6">
             <div>
-                <h2 class="text-sm font-bold">@L["Public_Footer_Offers"]</h2>
-                <ul class="mt-3 grid gap-2 text-[15px]">
-                    @foreach (var (href, label) in sections.Take(3))
+                <h2 class="text-sm font-bold text-white">@L["Public_Nav_Trades"]</h2>
+                <ul class="mt-4 grid gap-2.5 text-[15px]">
+                    @foreach (var trade in Site.Trades)
                     {
-                        <li><a href="@href" class="text-charbon-doux hover:text-charbon">@label</a></li>
+                        <li><a href="/metiers/@trade.Slug" class="no-underline hover:underline">@trade.Name</a></li>
                     }
                 </ul>
             </div>
             <div>
-                <h2 class="text-sm font-bold">@L["App_Name"]</h2>
-                <ul class="mt-3 grid gap-2 text-[15px]">
-                    <li><a href="/classement-quartiers" class="text-charbon-doux hover:text-charbon">@L["Public_Footer_Ranking"]</a></li>
-                    <li><a href="/confidentialite" class="text-charbon-doux hover:text-charbon">@L["Public_Footer_Privacy"]</a></li>
-                    <li><a href="/connexion" class="text-charbon-doux hover:text-charbon">@L["Nav_SignIn"]</a></li>
+                <h2 class="text-sm font-bold text-white">@L["Site_Footer_Areas"]</h2>
+                <ul class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5 text-[15px] lg:grid-cols-1">
+                    @foreach (var hood in Site.Neighborhoods.Take(12))
+                    {
+                        <li>@hood</li>
+                    }
+                    <li><a href="/quartiers" class="font-semibold no-underline hover:underline">@L["Site_Footer_AllAreas"]</a></li>
                 </ul>
             </div>
+            <div>
+                <h2 class="text-sm font-bold text-white">@L["App_Name"]</h2>
+                <ul class="mt-4 grid gap-2.5 text-[15px]">
+                    <li><a href="/particuliers" class="no-underline hover:underline">@L["Public_Nav_Households"]</a></li>
+                    <li><a href="/entreprises" class="no-underline hover:underline">@L["Public_Nav_Business"]</a></li>
+                    <li><a href="/tarifs" class="no-underline hover:underline">@L["Site_Nav_Pricing"]</a></li>
+                    <li><a href="/quartiers" class="no-underline hover:underline">@L["Site_Footer_Program"]</a></li>
+                    <li><a href="/classement-quartiers" class="no-underline hover:underline">@L["Public_Footer_Ranking"]</a></li>
+                </ul>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-white">@L["Site_Footer_Help"]</h2>
+                <ul class="mt-4 grid gap-2.5 text-[15px]">
+                    <li><a href="/faq" class="no-underline hover:underline">@L["Site_Faq"]</a></li>
+                    <li><a href="/connexion" class="no-underline hover:underline">@L["Public_ClientSpace"]</a></li>
+                    <li><a href="/demander" class="no-underline hover:underline">@L["Site_RequestJob"]</a></li>
+                    <li><a href="/confidentialite" class="no-underline hover:underline">@L["Public_Footer_Privacy"]</a></li>
+                </ul>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold text-white">@L["Site_Footer_Contact"]</h2>
+                @if (showContact)
+                {
+                    <ul class="mt-4 grid gap-2.5 text-[15px]">
+                        <li><a href="tel:@contact.PhoneLink" class="inline-flex items-center gap-2 font-semibold no-underline hover:underline"><sc-icon name="phone" class="size-4" />@contact.PhoneDisplay</a></li>
+                        <li><a href="@contact.WhatsAppUrl" class="inline-flex items-center gap-2 no-underline hover:underline" target="_blank" rel="noopener"><sc-icon name="message-circle" class="size-4" />WhatsApp</a></li>
+                        <li><a href="mailto:@contact.Email" class="inline-flex items-center gap-2 no-underline hover:underline"><sc-icon name="mail" class="size-4" />@contact.Email</a></li>
+                        <li class="flex items-start gap-2"><sc-icon name="map-pin" class="mt-0.5 size-4" />@contact.Address</li>
+                        <li class="flex items-start gap-2"><sc-icon name="clock" class="mt-0.5 size-4" />@contact.Hours<br />@contact.Emergencies</li>
+                    </ul>
+                    <p class="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+                        @foreach (var social in contact.Social)
+                        {
+                            <a href="@social.Url" target="_blank" rel="noopener" class="underline">@social.Name</a>
+                        }
+                    </p>
+                }
+                else
+                {
+                    <p class="mt-4 text-[15px]"><a href="/connexion" class="underline">@L["Public_ClientSpace"]</a></p>
+                }
+            </div>
         </div>
-        <p class="border-t border-ligne px-4 py-4 text-center text-sm text-charbon-doux">
-            © @DateTime.UtcNow.Year SENE DESIGN · @L["Public_Footer_Country"]
+        <div class="border-t border-white/10">
+            <div class="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-5 text-sm lg:px-6">
+                <p>© @DateTime.UtcNow.Year SENE DESIGN · @L["App_Signature"]</p>
+                <p class="flex flex-wrap gap-x-5 gap-y-1">
+                    <a href="/mentions-legales" class="no-underline hover:underline">@L["Site_Legal"]</a>
+                    <a href="/cgu" class="no-underline hover:underline">@L["Site_Terms"]</a>
+                    <a href="/confidentialite" class="no-underline hover:underline">@L["Public_Footer_Privacy"]</a>
+                </p>
+            </div>
             @if (ViewData["PhotoCredits"] is true)
             {
                 @* Unsplash licence: attribution not required, given anyway. *@
-                <span class="mt-1 block text-xs">@L["Public_Footer_Photos"]
-                    <a href="https://unsplash.com/@@nci" class="text-charbon-doux underline" rel="noopener">National Cancer Institute</a>,
-                    <a href="https://unsplash.com/@@emmages" class="text-charbon-doux underline" rel="noopener">Emmanuel Ikwuegbu</a>,
-                    <a href="https://unsplash.com/@@divaris" class="text-charbon-doux underline" rel="noopener">Divaris Shirichena</a> / Unsplash</span>
+                <p class="mx-auto w-full max-w-7xl px-4 pb-5 text-xs lg:px-6">@L["Public_Footer_Photos"]
+                    <a href="https://unsplash.com/@@emmages" rel="noopener" class="underline">Emmanuel Ikwuegbu</a>,
+                    <a href="https://unsplash.com/@@mkumbwajr" rel="noopener" class="underline">Ali Mkumbwa</a> / Unsplash</p>
             }
-        </p>
+        </div>
     </footer>
+
+    @* ---- Phones: call and WhatsApp always at hand ---- *@
+    @if (showContact)
+    {
+        <div class="fixed inset-x-0 bottom-0 z-40 grid grid-cols-2 gap-2 border-t border-ligne bg-surface p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] lg:hidden">
+            <a href="tel:@contact.PhoneLink" class="sc-btn-secondaire min-h-12"><sc-icon name="phone" class="size-5 text-laterite" />@L["Card_Call"]</a>
+            <a href="@contact.WhatsAppUrl" class="sc-btn-primaire min-h-12" target="_blank" rel="noopener"><sc-icon name="message-circle" class="size-5" />WhatsApp</a>
+        </div>
+    }
+
     <partial name="Ui/_Toasts" />
     @await RenderSectionAsync("Scripts", required: false)
 </body>

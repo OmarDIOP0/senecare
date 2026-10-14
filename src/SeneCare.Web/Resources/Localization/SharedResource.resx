@@ -980,4 +980,84 @@
   <data name="Site_Photos" xml:space="preserve"><value>Photos du site (facultatif)</value></data>
   <data name="Site_Save" xml:space="preserve"><value>Enregistrer le site</value></data>
   <data name="Site_Name_Placeholder" xml:space="preserve"><value>Ex. : Siège Plateau, Agence de Thiès</value></data>
+  <data name="Public_Nav_Label" xml:space="preserve"><value>Navigation principale</value></data>
+  <data name="Public_Nav_Households" xml:space="preserve"><value>Particuliers</value></data>
+  <data name="Public_Nav_Business" xml:space="preserve"><value>Entreprises</value></data>
+  <data name="Public_Nav_Neighborhoods" xml:space="preserve"><value>Quartiers</value></data>
+  <data name="Public_Nav_Trades" xml:space="preserve"><value>Nos métiers</value></data>
+  <data name="Public_Nav_Advice" xml:space="preserve"><value>Conseils</value></data>
+  <data name="Public_Join" xml:space="preserve"><value>Créer mon compte</value></data>
+  <data name="Public_Footer_Offers" xml:space="preserve"><value>Nos offres</value></data>
+  <data name="Public_Footer_Ranking" xml:space="preserve"><value>Classement des quartiers</value></data>
+  <data name="Public_Footer_Privacy" xml:space="preserve"><value>Données personnelles</value></data>
+  <data name="Public_Footer_Country" xml:space="preserve"><value>Dakar, Sénégal</value></data>
+  <data name="Home_Hero_Eyebrow" xml:space="preserve"><value>Entretien et dépannage du bâtiment</value></data>
+  <data name="Home_Hero_Title" xml:space="preserve"><value>Vous signalez. Nous intervenons.</value></data>
+  <data name="Home_Hero_Text" xml:space="preserve"><value>Un robinet qui fuit, une coupure, une infiltration avant l'hivernage : prenez une photo, nos techniciens s'occupent du reste. Votre maison ou vos locaux restent en bon état, mois après mois.</value></data>
+  <data name="Home_Hero_SeeOffers" xml:space="preserve"><value>Voir les offres</value></data>
+  <data name="Home_Demo_Place" xml:space="preserve"><value>Villa, Ngor</value></data>
+  <data name="Home_Demo_Title" xml:space="preserve"><value>Fuite sous l'évier de la cuisine</value></data>
+  <data name="Home_Demo_Step1" xml:space="preserve"><value>Signalement reçu</value></data>
+  <data name="Home_Demo_Step2" xml:space="preserve"><value>Rendez-vous confirmé, jeudi 10 h</value></data>
+  <data name="Home_Demo_Step3" xml:space="preserve"><value>Technicien en route</value></data>
+  <data name="Home_Demo_Step4" xml:space="preserve"><value>Intervention et rapport</value></data>
+  <data name="Home_Demo_Paid" xml:space="preserve"><value>Abonnement payé par Wave</value></data>
+  <data name="Home_Promise_Offline" xml:space="preserve"><value>Signalez même sans réseau</value></data>
+  <data name="Home_Promise_WhatsApp" xml:space="preserve"><value>Suivi par WhatsApp et SMS</value></data>
+  <data name="Home_Promise_Wave" xml:space="preserve"><value>Paiement par Wave</value></data>
+  <data name="Home_Trades_Eyebrow" xml:space="preserve"><value>Nos métiers</value></data>
+  <data name="Home_Trades_Title" xml:space="preserve"><value>Tout le bâtiment, avec un seul abonnement</value></data>
+  <data name="Home_Trade_Electricity" xml:space="preserve"><value>Coupures, courts-circuits, prises et tableaux électriques.</value></data>
+  <data name="Home_Trade_Plumbing" xml:space="preserve"><value>Fuites, robinets, chasses d'eau, surpresseurs et canalisations.</value></data>
+  <data name="Home_Trade_Waterproofing" xml:space="preserve"><value>Dalles, toits-terrasses et infiltrations, surtout avant l'hivernage.</value></data>
+  <data name="Home_Trade_Masonry" xml:space="preserve"><value>Fissures, enduits, carrelage et petits travaux de maçonnerie.</value></data>
+  <data name="Home_Trade_Carpentry" xml:space="preserve"><value>Portes, fenêtres, placards, serrures et volets.</value></data>
+  <data name="Home_Trade_Security" xml:space="preserve"><value>Caméras, interphones et éclairage extérieur.</value></data>
+  <data name="Home_Trade_Outdoor" xml:space="preserve"><value>Jardins, cours, clôtures et portails.</value></data>
+  <data name="Home_Trade_Report" xml:space="preserve"><value>Signaler</value></data>
+  <data name="Home_Trades_Unsure_Title" xml:space="preserve"><value>Vous ne savez pas qui appeler ?</value></data>
+  <data name="Home_Trades_Unsure_Text" xml:space="preserve"><value>Décrivez le problème avec une photo. Nous trouvons le bon métier pour vous.</value></data>
+  <data name="Home_Steps_Eyebrow" xml:space="preserve"><value>Comment ça marche</value></data>
+  <data name="Home_Steps_Title" xml:space="preserve"><value>De votre signalement au rapport, en quatre étapes</value></data>
+  <data name="Home_Step1_Title" xml:space="preserve"><value>Vous signalez</value></data>
+  <data name="Home_Step1_Text" xml:space="preserve"><value>Une photo, quelques mots, l'urgence. Depuis votre téléphone, même hors connexion.</value></data>
+  <data name="Home_Step2_Title" xml:space="preserve"><value>Nous analysons</value></data>
+  <data name="Home_Step2_Text" xml:space="preserve"><value>Notre équipe qualifie la demande et choisit le technicien du bon métier.</value></data>
+  <data name="Home_Step3_Title" xml:space="preserve"><value>Nous intervenons</value></data>
+  <data name="Home_Step3_Text" xml:space="preserve"><value>Vous choisissez un créneau, suivez le technicien et l'appelez en un geste.</value></data>
+  <data name="Home_Step4_Title" xml:space="preserve"><value>Vous validez</value></data>
+  <data name="Home_Step4_Text" xml:space="preserve"><value>Photos avant et après, rapport et historique dans le carnet de votre logement.</value></data>
+  <data name="Home_Offers_Eyebrow" xml:space="preserve"><value>Nos offres</value></data>
+  <data name="Home_Offers_Title" xml:space="preserve"><value>Un abonnement clair, sans surprise</value></data>
+  <data name="Home_Offer_Household_Text" xml:space="preserve"><value>Pour votre maison ou votre villa : tous les métiers, un suivi de chaque intervention et des conseils avant chaque saison.</value></data>
+  <data name="Home_Offer_AllTrades" xml:space="preserve"><value>Les 7 métiers du bâtiment</value></data>
+  <data name="Home_Offer_Critical" xml:space="preserve"><value>Urgence critique : intervention sous {0}</value></data>
+  <data name="Home_Offer_Tracking" xml:space="preserve"><value>Suivi en direct et rapport photo</value></data>
+  <data name="Home_Offer_Registration" xml:space="preserve"><value>Inscription : {0}</value></data>
+  <data name="Home_Offer_From" xml:space="preserve"><value>Abonnement</value></data>
+  <data name="Home_Offer_PerMonth" xml:space="preserve"><value>par mois</value></data>
+  <data name="Home_Offer_Household_Cta" xml:space="preserve"><value>Protéger ma maison</value></data>
+  <data name="Home_Offer_Business_Title" xml:space="preserve"><value>Bureaux, boutiques, entrepôts : tous vos sites</value></data>
+  <data name="Home_Offer_Business_Text" xml:space="preserve"><value>Un compte pour toute l'entreprise, vos équipes signalent, vous validez. Inscription : {0}.</value></data>
+  <data name="Home_Offer_Diagnostic" xml:space="preserve"><value>Diagnostic technique tous les 3 mois</value></data>
+  <data name="Home_Offer_MultiSite" xml:space="preserve"><value>Plusieurs sites et une équipe</value></data>
+  <data name="Home_Offer_Business_Cta" xml:space="preserve"><value>Choisir cette formule</value></data>
+  <data name="Home_Hood_Title" xml:space="preserve"><value>À partir de {0} voisins inscrits, nous reboisons votre quartier</value></data>
+  <data name="Home_Hood_Text" xml:space="preserve"><value>Tous les trois mois, une opération de plantation et d'embellissement. Invitez vos voisins et suivez la progression de votre quartier.</value></data>
+  <data name="Home_Hood_Cta" xml:space="preserve"><value>Voir le classement des quartiers</value></data>
+  <data name="Home_Figures_Title" xml:space="preserve"><value>Nos engagements</value></data>
+  <data name="Home_Figures_Done" xml:space="preserve"><value>Interventions réalisées</value></data>
+  <data name="Home_Figures_Rating" xml:space="preserve"><value>Note moyenne ({0} avis)</value></data>
+  <data name="Home_Figures_Neighborhoods" xml:space="preserve"><value>Quartiers couverts</value></data>
+  <data name="Home_Commit_Critical" xml:space="preserve"><value>Urgence critique, au plus vite</value></data>
+  <data name="Home_Commit_Trades" xml:space="preserve"><value>Métiers du bâtiment</value></data>
+  <data name="Home_Commit_Diagnostic" xml:space="preserve"><value>Diagnostic des entreprises</value></data>
+  <data name="Home_Commit_Diagnostic_Value" xml:space="preserve"><value>3 mois</value></data>
+  <data name="Home_Commit_Hood" xml:space="preserve"><value>Voisins pour reboiser un quartier</value></data>
+  <data name="Home_Advice_Eyebrow" xml:space="preserve"><value>Conseils</value></data>
+  <data name="Home_Advice_Title" xml:space="preserve"><value>Les bons réflexes de saison</value></data>
+  <data name="Home_Cta_Title" xml:space="preserve"><value>Prenez soin de votre bâtiment avant qu'il ne coûte cher</value></data>
+  <data name="Home_Cta_Text" xml:space="preserve"><value>Inscription en deux minutes avec votre numéro de téléphone.</value></data>
+  <data name="Home_Hours" xml:space="preserve"><value>{0} h</value></data>
+  <data name="Home_Days" xml:space="preserve"><value>{0} jours</value></data>
 </root>

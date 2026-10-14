@@ -1,7 +1,262 @@
+@model SeneCare.Application.Public.PublicHome
+@using SeneCare.Domain.Accounts
+@using SeneCare.Domain.Common
 @{
     ViewData["Title"] = L["Home_Title"];
+    ViewData["FullWidth"] = true;
+    var households = Model.Plans.Where(p => p.Segment == AccountKind.Household).ToList();
+    var companies = Model.Plans.Where(p => p.Segment == AccountKind.Business).ToList();
+    // The fastest critical-urgency commitment among the offers, if any is configured.
+    var fastest = Model.Plans.Where(p => p.CriticalDelay is not null).Select(p => p.CriticalDelay!.Value).DefaultIfEmpty().Min();
+    string Delay(TimeSpan t) => t.TotalHours < 48 ? L["Home_Hours", (int)t.TotalHours] : L["Home_Days", (int)t.TotalDays];
+    var domains = Enum.GetValues<ServiceDomain>();
+    var steps = new[] { ("Home_Step1_Title", "Home_Step1_Text"), ("Home_Step2_Title", "Home_Step2_Text"), ("Home_Step3_Title", "Home_Step3_Text"), ("Home_Step4_Title", "Home_Step4_Text") };
 }
 
-<h1 class="text-2xl font-semibold tracking-tight">@L["App_Name"]</h1>
-<p class="mt-2 text-lg">@L["App_Promise"]</p>
-<p class="mt-1 text-laterite">@L["App_Signature"]</p>
+@* ---- Welcome block: promise + a glimpse of the follow-up the customer gets ---- *@
+<section class="mx-auto w-full max-w-6xl px-4 pt-6 lg:px-6 lg:pt-10">
+    <div class="grid items-center gap-10 rounded-3xl bg-ocre-clair px-6 py-10 sm:px-10 lg:grid-cols-[1.15fr_1fr] lg:px-14 lg:py-16">
+        <div>
+            <p class="sc-eyebrow">@L["Home_Hero_Eyebrow"]</p>
+            <h1 class="mt-4 text-[2rem] leading-[1.08] font-bold sm:text-5xl lg:text-[3.5rem]">@L["Home_Hero_Title"]</h1>
+            <span class="sc-trait" aria-hidden="true"></span>
+            <p class="mt-5 max-w-xl text-lg text-charbon-doux">@L["Home_Hero_Text"]</p>
+            <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+                <a href="/connexion" class="sc-btn-primaire min-h-12 px-6 text-base">@L["Public_Join"]</a>
+                <a href="#offres" class="sc-lien">@L["Home_Hero_SeeOffers"]</a>
+            </div>
+        </div>
+
+        @* Product glimpse, made of real interface pieces (no stock photo). *@
+        <div class="relative mx-auto w-full max-w-sm" aria-hidden="true">
+            <div class="rounded-lg border border-ligne bg-surface p-5">
+                <div class="flex items-start gap-3">
+                    <span class="grid size-10 shrink-0 place-items-center rounded-md bg-sourdine text-charbon"><sc-icon name="droplet" /></span>
+                    <div class="min-w-0">
+                        <p class="text-sm text-charbon-doux">@L["Domain_Plumbing"] · @L["Home_Demo_Place"]</p>
+                        <p class="font-semibold">@L["Home_Demo_Title"]</p>
+                    </div>
+                </div>
+                <ol class="mt-5 grid gap-3 text-[15px]">
+                    <li class="flex items-center gap-3"><span class="grid size-6 place-items-center rounded-full bg-baobab text-sur-accent"><sc-icon name="check" class="size-3.5" /></span>@L["Home_Demo_Step1"]</li>
+                    <li class="flex items-center gap-3"><span class="grid size-6 place-items-center rounded-full bg-baobab text-sur-accent"><sc-icon name="check" class="size-3.5" /></span>@L["Home_Demo_Step2"]</li>
+                    <li class="flex items-center gap-3 font-semibold"><span class="grid size-6 place-items-center rounded-full border-2 border-laterite"><span class="size-2 rounded-full bg-laterite"></span></span>@L["Home_Demo_Step3"]</li>
+                    <li class="flex items-center gap-3 text-charbon-doux"><span class="size-6 rounded-full border-2 border-ligne"></span>@L["Home_Demo_Step4"]</li>
+                </ol>
+                <div class="mt-5 flex gap-2">
+                    <span class="sc-btn-secondaire flex-1"><sc-icon name="phone" class="size-4" />@L["Card_Call"]</span>
+                    <span class="sc-btn-secondaire flex-1"><sc-icon name="message-circle" class="size-4" />WhatsApp</span>
+                </div>
+            </div>
+            <div class="absolute -bottom-5 -left-4 flex items-center gap-2 rounded-full border border-ligne bg-surface px-4 py-2 text-sm font-semibold sm:-left-8">
+                <sc-icon name="wallet" class="size-4 text-ocre-texte" />@L["Home_Demo_Paid"]
+            </div>
+        </div>
+    </div>
+
+    <ul class="mt-6 grid gap-3 sm:grid-cols-3">
+        <li class="flex items-center gap-3 rounded-lg border border-ligne bg-surface px-5 py-4">
+            <sc-icon name="wifi-off" class="shrink-0 text-laterite" /><span class="text-[15px] font-semibold">@L["Home_Promise_Offline"]</span>
+        </li>
+        <li class="flex items-center gap-3 rounded-lg border border-ligne bg-surface px-5 py-4">
+            <sc-icon name="message-circle" class="shrink-0 text-laterite" /><span class="text-[15px] font-semibold">@L["Home_Promise_WhatsApp"]</span>
+        </li>
+        <li class="flex items-center gap-3 rounded-lg border border-ligne bg-surface px-5 py-4">
+            <sc-icon name="wallet" class="shrink-0 text-laterite" /><span class="text-[15px] font-semibold">@L["Home_Promise_Wave"]</span>
+        </li>
+    </ul>
+</section>
+
+@* ---- Trades ---- *@
+<section id="metiers" class="mx-auto w-full max-w-6xl scroll-mt-24 px-4 pt-20 lg:px-6" aria-labelledby="metiers-titre">
+    <p class="sc-eyebrow">@L["Home_Trades_Eyebrow"]</p>
+    <h2 id="metiers-titre" class="mt-3 max-w-2xl font-display text-2xl leading-tight tracking-[-0.02em] sm:text-[2rem]">@L["Home_Trades_Title"]</h2>
+    <span class="sc-trait" aria-hidden="true"></span>
+    <ul class="mt-10 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        @foreach (var domain in domains)
+        {
+            <li>
+                <a href="/signaler" class="group flex h-full flex-col rounded-lg border border-ligne bg-surface p-4 text-charbon no-underline transition-colors hover:border-charbon/25 hover:no-underline sm:p-6">
+                    <span class="grid size-10 place-items-center rounded-md bg-ocre-clair sm:size-12"><sc-icon name="@Formatting.Icon(domain)" class="size-5 sm:size-6" /></span>
+                    <span class="mt-4 text-base font-bold sm:mt-5 sm:text-lg">@L["Domain_" + domain]</span>
+                    <span class="mt-1.5 hidden flex-1 text-[15px] text-charbon-doux sm:block">@L["Home_Trade_" + domain]</span>
+                    <span class="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-laterite sm:mt-5">@L["Home_Trade_Report"]<sc-icon name="arrow-right" class="size-4 transition-transform group-hover:translate-x-0.5" /></span>
+                </a>
+            </li>
+        }
+        <li class="col-span-2 sm:col-span-1">
+            <a href="/signaler" class="flex h-full flex-col justify-between rounded-lg bg-laterite p-5 text-sur-accent no-underline hover:bg-laterite-fonce hover:no-underline sm:p-6">
+                <span class="text-lg font-bold">@L["Home_Trades_Unsure_Title"]</span>
+                <span class="mt-2 text-[15px] opacity-90">@L["Home_Trades_Unsure_Text"]</span>
+                <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold">@L["Home_Trade_Report"]<sc-icon name="arrow-right" class="size-4" /></span>
+            </a>
+        </li>
+    </ul>
+</section>
+
+@* ---- How it works ---- *@
+<section class="mx-auto w-full max-w-6xl px-4 pt-20 lg:px-6" aria-labelledby="etapes-titre">
+    <p class="sc-eyebrow">@L["Home_Steps_Eyebrow"]</p>
+    <h2 id="etapes-titre" class="mt-3 max-w-2xl font-display text-2xl leading-tight tracking-[-0.02em] sm:text-[2rem]">@L["Home_Steps_Title"]</h2>
+    <span class="sc-trait" aria-hidden="true"></span>
+    <ol class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        @foreach (var (index, (title, text)) in steps.Index())
+        {
+            <li class="rounded-lg border border-ligne bg-surface p-6">
+                <span class="grid size-11 place-items-center rounded-full bg-laterite font-display text-lg text-sur-accent">@(index + 1)</span>
+                <h3 class="mt-5 text-lg">@L[title]</h3>
+                <p class="mt-2 text-[15px] text-charbon-doux">@L[text]</p>
+            </li>
+        }
+    </ol>
+</section>
+
+@* ---- Offers (prices from the database) ---- *@
+<section id="offres" class="mx-auto w-full max-w-6xl scroll-mt-24 px-4 pt-20 lg:px-6" aria-labelledby="offres-titre">
+    <p class="sc-eyebrow">@L["Home_Offers_Eyebrow"]</p>
+    <h2 id="offres-titre" class="mt-3 max-w-2xl font-display text-2xl leading-tight tracking-[-0.02em] sm:text-[2rem]">@L["Home_Offers_Title"]</h2>
+    <span class="sc-trait" aria-hidden="true"></span>
+
+    @if (households.Count > 0)
+    {
+        <div id="particuliers" class="mt-10 grid scroll-mt-24 gap-6 rounded-3xl border border-ligne bg-surface p-6 sm:p-10 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+                <p class="sc-eyebrow">@L["Public_Nav_Households"]</p>
+                @foreach (var plan in households)
+                {
+                    <h3 class="mt-3 font-display text-xl tracking-[-0.02em] sm:text-2xl">@plan.Name</h3>
+                    <p class="mt-3 text-[15px] text-charbon-doux">@L["Home_Offer_Household_Text"]</p>
+                    <ul class="mt-5 grid gap-2 text-[15px] sm:grid-cols-2">
+                        <li class="flex items-center gap-2"><sc-icon name="check" class="size-4 text-baobab" />@L["Home_Offer_AllTrades"]</li>
+                        @if (plan.CriticalDelay is { } delay)
+                        {
+                            <li class="flex items-center gap-2"><sc-icon name="check" class="size-4 text-baobab" />@L["Home_Offer_Critical", Delay(delay)]</li>
+                        }
+                        <li class="flex items-center gap-2"><sc-icon name="check" class="size-4 text-baobab" />@L["Home_Offer_Tracking"]</li>
+                        <li class="flex items-center gap-2"><sc-icon name="check" class="size-4 text-baobab" />@L["Home_Offer_Registration", Formatting.Fcfa(plan.RegistrationFee)]</li>
+                    </ul>
+                }
+            </div>
+            @foreach (var plan in households.Take(1))
+            {
+                <div class="rounded-lg bg-ocre-clair p-6 lg:min-w-72">
+                    <p class="text-sm font-semibold text-charbon-doux">@L["Home_Offer_From"]</p>
+                    <p class="mt-1 font-display text-3xl tracking-[-0.02em]"><sc-amount value="@plan.MonthlyPrice.Amount" /></p>
+                    <p class="text-sm text-charbon-doux">@L["Home_Offer_PerMonth"]</p>
+                    <a href="/connexion" class="sc-btn-primaire mt-5 w-full">@L["Home_Offer_Household_Cta"]</a>
+                </div>
+            }
+        </div>
+    }
+
+    @if (companies.Count > 0)
+    {
+        <div id="entreprises" class="mt-6 scroll-mt-24 rounded-3xl border border-ligne bg-surface p-6 sm:p-10">
+            <p class="sc-eyebrow">@L["Public_Nav_Business"]</p>
+            <h3 class="mt-3 font-display text-xl tracking-[-0.02em] sm:text-2xl">@L["Home_Offer_Business_Title"]</h3>
+            <p class="mt-3 max-w-2xl text-[15px] text-charbon-doux">@L["Home_Offer_Business_Text", Formatting.Fcfa(companies[0].RegistrationFee)]</p>
+            <ul class="mt-8 grid gap-4 @(companies.Count >= 3 ? "md:grid-cols-3" : companies.Count == 2 ? "md:grid-cols-2" : "")">
+                @foreach (var (index, plan) in companies.Index())
+                {
+                    var featured = companies.Count == 3 && index == 1;
+                    <li class="flex flex-col rounded-lg border p-6 @(featured ? "border-ocre bg-ocre-clair" : "border-ligne bg-sable")">
+                        <h4 class="text-lg font-bold">@plan.Name</h4>
+                        <p class="mt-3 font-display text-2xl tracking-[-0.02em]"><sc-amount value="@plan.MonthlyPrice.Amount" /></p>
+                        <p class="text-sm text-charbon-doux">@L["Home_Offer_PerMonth"]</p>
+                        <ul class="mt-5 grid flex-1 content-start gap-2 text-[15px]">
+                            @if (plan.CriticalDelay is { } delay)
+                            {
+                                <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-4 shrink-0 text-baobab" />@L["Home_Offer_Critical", Delay(delay)]</li>
+                            }
+                            <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-4 shrink-0 text-baobab" />@(plan.IncludedVisitsPerPeriod is { } visits ? L["Offer_VisitsCount", visits] : L["Offer_VisitsUnlimited"])</li>
+                            @if (plan.DiagnosticRequired)
+                            {
+                                <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-4 shrink-0 text-baobab" />@L["Home_Offer_Diagnostic"]</li>
+                            }
+                            <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-4 shrink-0 text-baobab" />@L["Home_Offer_MultiSite"]</li>
+                        </ul>
+                        <a href="/connexion" class="@(featured ? "sc-btn-primaire" : "sc-btn-secondaire") mt-6 w-full">@L["Home_Offer_Business_Cta"]</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</section>
+
+@* ---- Neighborhood program ---- *@
+<section id="quartiers" class="mx-auto w-full max-w-6xl scroll-mt-24 px-4 pt-6 lg:px-6" aria-labelledby="quartiers-titre">
+    <div class="grid gap-6 rounded-3xl bg-baobab-clair p-6 sm:p-10 lg:grid-cols-[1fr_auto] lg:items-center">
+        <div>
+            <p class="text-xs font-bold tracking-[0.16em] text-baobab uppercase">@L["Public_Nav_Neighborhoods"]</p>
+            <h2 id="quartiers-titre" class="mt-3 max-w-2xl font-display text-xl leading-tight tracking-[-0.02em] sm:text-2xl">@L["Home_Hood_Title", Model.NeighborhoodThreshold]</h2>
+            <p class="mt-3 max-w-2xl text-[15px] text-charbon-doux">@L["Home_Hood_Text"]</p>
+        </div>
+        <a href="/classement-quartiers" class="sc-btn-secondaire self-start lg:self-center"><sc-icon name="sprout" class="size-4 text-baobab" />@L["Home_Hood_Cta"]</a>
+    </div>
+</section>
+
+@* ---- Real figures, or the commitments while there are not enough ---- *@
+<section class="mx-auto w-full max-w-6xl px-4 pt-20 lg:px-6" aria-labelledby="chiffres-titre">
+    <h2 id="chiffres-titre" class="max-w-2xl font-display text-2xl leading-tight tracking-[-0.02em] sm:text-[2rem]">@L["Home_Figures_Title"]</h2>
+    <span class="sc-trait" aria-hidden="true"></span>
+    <dl class="mt-10 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        @if (Model.Figures.HasEnough)
+        {
+            <div class="rounded-lg border border-ligne bg-surface p-4 sm:p-6"><dt class="text-sm text-charbon-doux sm:text-[15px]">@L["Home_Figures_Done"]</dt><dd class="mt-2 font-display text-2xl sm:text-3xl tabular-nums">@Model.Figures.CompletedInterventions.ToString("N0", System.Globalization.CultureInfo.CurrentCulture)</dd></div>
+            <div class="rounded-lg border border-ligne bg-surface p-4 sm:p-6"><dt class="text-sm text-charbon-doux sm:text-[15px]">@L["Home_Figures_Rating", Model.Figures.Ratings]</dt><dd class="mt-2 font-display text-2xl sm:text-3xl tabular-nums">@Model.Figures.AverageRating!.Value.ToString("0.0", System.Globalization.CultureInfo.CurrentCulture) / 5</dd></div>
+            <div class="rounded-lg border border-ligne bg-surface p-4 sm:p-6"><dt class="text-sm text-charbon-doux sm:text-[15px]">@L["Home_Figures_Neighborhoods"]</dt><dd class="mt-2 font-display text-2xl sm:text-3xl tabular-nums">@Model.Figures.Neighborhoods</dd></div>
+        }
+        else
+        {
+            @if (fastest > TimeSpan.Zero)
+            {
+                <div class="rounded-lg border border-ligne bg-surface p-4 sm:p-6"><dt class="text-sm text-charbon-doux sm:text-[15px]">@L["Home_Commit_Critical"]</dt><dd class="mt-2 font-display text-2xl sm:text-3xl">@Delay(fastest)</dd></div>
+            }
+            <div class="rounded-lg border border-ligne bg-surface p-4 sm:p-6"><dt class="text-sm text-charbon-doux sm:text-[15px]">@L["Home_Commit_Trades"]</dt><dd class="mt-2 font-display text-2xl sm:text-3xl tabular-nums">@domains.Length</dd></div>
+            <div class="rounded-lg border border-ligne bg-surface p-4 sm:p-6"><dt class="text-sm text-charbon-doux sm:text-[15px]">@L["Home_Commit_Diagnostic"]</dt><dd class="mt-2 font-display text-2xl sm:text-3xl">@L["Home_Commit_Diagnostic_Value"]</dd></div>
+        }
+        <div class="rounded-lg border border-ocre bg-ocre-clair p-4 sm:p-6"><dt class="text-sm text-charbon-doux sm:text-[15px]">@L["Home_Commit_Hood"]</dt><dd class="mt-2 font-display text-2xl sm:text-3xl tabular-nums">@Model.NeighborhoodThreshold</dd></div>
+    </dl>
+</section>
+
+@* ---- Seasonal advice (the built-in rainy-season advice while none is published) ---- *@
+@{
+    var advices = Model.Advice.Count > 0
+        ? Model.Advice
+        : [
+            new SeneCare.Application.Public.PublicAdvice(L["Space_Advice_PreRain_Title"].Value, L["Space_Advice_PreRain_Text"].Value, ServiceDomain.Waterproofing),
+            new SeneCare.Application.Public.PublicAdvice(L["Space_Advice_Rain_Title"].Value, L["Space_Advice_Rain_Text"].Value, ServiceDomain.Plumbing),
+        ];
+}
+@if (advices.Count > 0)
+{
+    <section id="conseils" class="mx-auto w-full max-w-6xl scroll-mt-24 px-4 pt-20 lg:px-6" aria-labelledby="conseils-titre">
+        <p class="sc-eyebrow">@L["Home_Advice_Eyebrow"]</p>
+        <h2 id="conseils-titre" class="mt-3 max-w-2xl font-display text-2xl leading-tight tracking-[-0.02em] sm:text-[2rem]">@L["Home_Advice_Title"]</h2>
+        <span class="sc-trait" aria-hidden="true"></span>
+        <ul class="mt-10 grid gap-4 @(advices.Count >= 3 ? "md:grid-cols-3" : "md:grid-cols-2")">
+            @foreach (var advice in advices)
+            {
+                <li class="rounded-lg border border-ligne bg-surface p-6">
+                    @if (advice.Domain is { } domain)
+                    {
+                        <span class="sc-badge bg-ocre-clair text-ocre-texte"><sc-icon name="@Formatting.Icon(domain)" class="size-3.5" />@L["Domain_" + domain]</span>
+                    }
+                    <h3 class="mt-4 text-lg">@advice.Title</h3>
+                    <p class="mt-2 text-[15px] text-charbon-doux">@advice.Body</p>
+                </li>
+            }
+        </ul>
+    </section>
+}
+
+@* ---- Last call ---- *@
+<section class="mx-auto w-full max-w-6xl px-4 pt-20 lg:px-6">
+    <div class="flex flex-col items-start gap-6 rounded-3xl bg-laterite-clair p-6 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+            <h2 class="max-w-xl font-display text-xl leading-tight tracking-[-0.02em] sm:text-2xl">@L["Home_Cta_Title"]</h2>
+            <p class="mt-2 text-[15px] text-charbon-doux">@L["Home_Cta_Text"]</p>
+        </div>
+        <a href="/connexion" class="sc-btn-primaire min-h-12 px-6 text-base">@L["Public_Join"]<sc-icon name="arrow-right" class="size-4" /></a>
+    </div>
+</section>

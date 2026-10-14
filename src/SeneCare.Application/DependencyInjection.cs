@@ -27,6 +27,7 @@ public static class DependencyInjection
         services.AddScoped<MediaUploader>();
         services.AddScoped<MediaAccess>();
 
+        services.AddScoped<Public.GetPublicHomeHandler>();
         services.AddScoped<RequestOtpHandler>();
         services.AddScoped<VerifyOtpHandler>();
         services.AddScoped<CompleteRegistrationHandler>();

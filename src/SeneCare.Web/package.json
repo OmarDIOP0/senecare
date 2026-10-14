@@ -8,9 +8,7 @@
     "icons:build": "node Styles/build-icons.mjs"
   },
   "devDependencies": {
-    "@fontsource/atkinson-hyperlegible": "5.3.0",
     "@fontsource/bricolage-grotesque": "5.3.0",
-    "@fontsource/inter": "5.3.0",
     "@microsoft/signalr": "10.0.11",
     "@resvg/resvg-js": "2.6.2",
     "@tailwindcss/cli": "4.1.13",
@@ -18,5 +16,8 @@
     "leaflet": "1.9.4",
     "lucide-static": "1.55.0",
     "tailwindcss": "4.1.13"
+  },
+  "dependencies": {
+    "@fontsource/unbounded": "5.2.8"
   }
 }

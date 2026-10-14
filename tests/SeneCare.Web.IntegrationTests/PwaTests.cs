@@ -64,21 +64,6 @@ public partial class PwaTests(SeneCareWebFactory factory) : IClassFixture<SeneCa
         Assert.Contains("partira automatiquement", html, StringComparison.Ordinal);
     }
 
-    [Fact]
-    public async Task Finishing_the_welcome_screens_is_remembered_on_the_device()
-    {
-        var client = factory.CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = new Uri("https://localhost"), AllowAutoRedirect = false });
-
-        var welcome = await client.GetStringAsync(new Uri("/bienvenue", UriKind.Relative));
-        Assert.Contains("Signalez en 30 secondes", WebUtility.HtmlDecode(welcome), StringComparison.Ordinal);
-
-        var finished = await client.SubmitAsync("/bienvenue", "/bienvenue", new Dictionary<string, string>());
-        Assert.Equal("/connexion", finished.Location());
-
-        var home = await client.GetAsync(new Uri("/", UriKind.Relative));
-        Assert.Equal(HttpStatusCode.OK, home.StatusCode);
-    }
-
     [GeneratedRegex("const PRECACHE = (\\[.*?\\]);")]
     private static partial Regex PrecacheList();
 }

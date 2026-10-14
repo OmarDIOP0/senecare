@@ -85,47 +85,52 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
   hors du code.
 - Docker + docker-compose (web, api, postgres, redis éventuel).
 
-## 5. Direction visuelle — produit SaaS sobre (Linear, Stripe, Vercel, Notion, Mercury, Attio, Wave)
-Le « Made in Sénégal » passe par le contenu (quartiers, points de repère, Wave / Orange Money,
-+221 77 123 45 67, vocabulaire du quotidien), PAS par la décoration. Ne jamais faire « généré par une IA ».
-
-INTERDIT dans l'application :
-- Bannière « hero », emojis, motifs décoratifs (wax, manjak, bogolan, cercles) dans les écrans connectés
-  (tolérés uniquement sur connexion et onboarding, très discrets), illustrations clichés dans les états vides.
-- rounded-2xl/3xl, grosses ombres, dégradés, glassmorphism, cartes dans des cartes,
-  icônes dans des ronds colorés partout, contenu centré dans une carte géante.
-- KPI à 0 ou « — » : un compte vide montre une checklist de démarrage, pas des chiffres.
-- Texte de bouton en police display grasse. Fond beige.
+## 5. Direction visuelle — chaleureuse et grand public (structure HomeServe, finition WURUS)
+Références validées par l'utilisateur : homeserve.fr (structure du site vitrine : menu par univers,
+bloc d'accueil, cartes métiers, étapes, offres, engagements, conseils) et wurus.app (palette crème /
+brun / ocre, typographies, formes en pilule). On s'inspire, on ne copie ni logo, ni textes, ni marque.
+Le « Made in Sénégal » passe par le contenu (quartiers, points de repère, Wave, +221 77 123 45 67,
+hivernage, Senelec), pas par des motifs décoratifs.
 
 Tokens (Styles/app.css, noms conservés) :
-- Fond page `--sable` #FAFAF9, surfaces `--surface` blanc, bordures `--ligne` #E7E5E4 (1px).
-- Texte #1C1917 (`charbon`), #57534E (`charbon-doux`), #A8A29E (`charbon-pale`) ; survol `--sourdine` #F5F5F4.
-- Accent `--laterite` #A84B22 UNIQUEMENT : bouton primaire, élément actif, focus. Jamais en grande surface.
-- `--atlantique` : liens et information. Statuts en badges discrets teintés : vert `baobab`,
-  ambre `soleil`, rouge `rouge`. Mode sombre neutre froid (#0C0A09 / #1C1917).
-- Typo : Inter auto-hébergée (400/500/600) pour toute l'app ; la display (Bricolage) = logo seul
-  (`font-logo`). Desktop corps 14px, petits textes 13px, titres de page 20–24px semibold ;
-  mobile 15–16px. Chiffres en `tabular-nums`.
-- Rayons 6px (contrôles, badges) / 8px (cartes, dialogues). Aucune ombre sur les cartes ;
-  `shadow-sm` seulement pour menus et popovers. Boutons 36px desktop, 44px mobile (56px en mode terrain).
+- Fond page `--sable` #F7F1E2 (crème), surfaces `--surface` #FFFDF7, blocs atténués `--sourdine` #F3EBD6,
+  bordures `--ligne` #E9DDC9 (1px).
+- Texte brun : `charbon` #160A04, `charbon-doux` #6B5C4A (texte secondaire, AA), `charbon-pale` #9A8A74
+  (icônes et séparateurs seulement, jamais du texte), placeholder #7A6C5B.
+- Action `--laterite` #A84B22 : bouton primaire, élément actif, focus, petit trait sous les titres publics.
+- Touches `--ocre` #C7932D / `--ocre-clair` #F3E6CF / `--ocre-texte` #7D5A12 : offre mise en avant,
+  sur-titres (`.sc-eyebrow`), tuiles d'icônes publiques. Texte sur fond ocre = brun (`text-sur-ocre`), jamais blanc.
+- `--atlantique` : liens et information. Statuts en badges pilules teintés : `baobab`, `soleil`, `rouge`.
+- AUCUNE section sombre en mode clair. Le brun expresso (#100804 / #20140D / #2A1A10) n'existe qu'en mode sombre.
+- Typo auto-hébergée : **Unbounded 700** pour h1, `.sc-titre`, titres de sections publiques et logo
+  (`font-display` / `font-logo`, tracking -0.02em) ; **Bricolage Grotesque 400/600/700** pour tout le reste
+  (`font-medium` = 600). Corps 16px mobile, 15px desktop. Chiffres comparés en `tabular-nums`.
+- Formes : boutons et badges en pilule (`rounded-full`), contrôles 12px, cartes 22px (`rounded-lg`),
+  blocs de section publics 28–32px (`rounded-2xl/3xl`). Pas d'ombre sur les cartes ; `shadow-sm` chaude
+  pour menus et popovers. Boutons 44px mobile, 40px desktop, 56px en mode terrain.
 - Icônes Lucide 18px, trait 1.75 (`<sc-icon>`).
 
-Coque :
-- Desktop ≥ 1024px : sidebar 240px blanche (logo, organisation, bouton « Signaler » compact,
-  navigation 36px, Aide / Paramètres / carte utilisateur en bas) + topbar 56px (fil d'Ariane,
-  recherche Ctrl+K, notifications, menu avatar contenant le thème). Contenu aligné à gauche, max ~1200px.
-- Mobile : barre d'onglets en bas (3 onglets + « Signaler » au centre + « Plus »), header compact.
-- En-tête de page standard (`Ui/_PageHeader`) : titre + description grise + action principale à droite.
-- Listes : tableaux (`.sc-table`, tri, recherche, filtres, menu « … ») sur desktop, cartes compactes sur mobile.
-- État vide (`Ui/_EmptyState`) dans le flux : icône 20px dans un carré gris 40px, titre, une phrase, un bouton.
-- « Installer l'application » : jamais sur desktop ; fine barre refermable sur mobile.
+Site public (`_Layout`, `Home/Index`) :
+- En-tête : logo, Particuliers · Entreprises · Quartiers · Nos métiers · Conseils (ancres de l'accueil),
+  « Se connecter » + « Créer mon compte » ; menu repliable sur mobile. Pied de page à colonnes.
+- Accueil : bloc d'accueil ocre clair avec un aperçu de suivi construit avec de vrais composants (pas de photo),
+  3 promesses, cartes métiers, 4 étapes numérotées, offres lues en base (jamais de prix en dur),
+  Programme Quartiers (seuil lu en base), engagements, conseils, dernier appel.
+- Chiffres publics : uniquement réels (`PublicFigures.HasEnough`), sinon les engagements de service.
+  Jamais de faux avis ni de faux chiffres ; pas d'avis clients publiés sans consentement explicite.
 
-Rédaction : microcopie courte et concrète, verbes d'action (« Ajouter un site », « Inviter », « Payer »),
-pas de phrases marketing ni de points d'exclamation dans l'app, accents corrects.
-Accessibilité : contrastes AA, focus visible (anneau latérite), libellés ARIA, tailles relatives,
-respect de prefers-reduced-motion.
+Espace connecté :
+- Même palette et mêmes polices. Desktop ≥ 1024px : sidebar 240px (logo, organisation, « Signaler »,
+  navigation, Aide / Paramètres / carte utilisateur) + topbar (fil d'Ariane, Ctrl+K, notifications, avatar).
+  Mobile : barre d'onglets (3 onglets + « Signaler » au centre + « Plus »).
+- En-tête de page `Ui/_PageHeader`, listes en `.sc-table` sur desktop et cartes sur mobile,
+  état vide `Ui/_EmptyState`, KPI jamais à 0 ni « — » (checklist de démarrage sur un compte vide).
+- Pas de motifs décoratifs ni d'emojis dans l'app (motifs tolérés sur connexion et onboarding, très discrets).
+
+Rédaction : microcopie courte et concrète, verbes d'action, accents corrects, pas de point d'exclamation
+dans l'app. Accessibilité : contrastes AA, focus visible (anneau latérite), libellés ARIA, prefers-reduced-motion.
 Revue visuelle : `tests/SeneCare.E2E/design-review.mjs` capture chaque écran (1440 / 390, clair / sombre)
-dans `docs/design-review/` ; se demander « est-ce que ça pourrait être une page de Linear, Stripe ou Vercel ? ».
+dans `docs/design-review/`.
 
 ## 6. Règles de travail
 - Une phase à la fois. Avant de coder : plan court + liste des fichiers.

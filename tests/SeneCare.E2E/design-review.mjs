@@ -161,6 +161,8 @@ const screens = [
   { name: "factures", path: "/abonnement", state: companyState },
   { name: "signaler", path: "/signaler", state: companyState },
   { name: "accueil-maison", path: "/espace", state: homeState },
+  // Public home: the welcome screens were already seen on this device.
+  { name: "accueil-public", path: "/", state: { cookies: [{ name: "sc_bienvenue", value: "1", url: base }], origins: [] } },
   { name: "connexion", path: "/connexion", state: undefined },
   { name: "onboarding", path: "/bienvenue", state: undefined },
   { name: "demande", path: firstLink(companyRequests, /^\/interventions\/[0-9a-f-]{36}$/), state: companyState },

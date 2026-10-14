@@ -1,30 +1,91 @@
+@* Public pages: header with the sections of the home page, footer. ViewData["FullWidth"] lets a page draw its own sections. *@
+@{
+    var signedIn = User.Identity?.IsAuthenticated == true;
+    var onSignIn = Context.Request.Path.StartsWithSegments("/connexion");
+    var fullWidth = ViewData["FullWidth"] is true;
+    var sections = new (string Href, string Label)[]
+    {
+        ("/#particuliers", L["Public_Nav_Households"].Value),
+        ("/#entreprises", L["Public_Nav_Business"].Value),
+        ("/#quartiers", L["Public_Nav_Neighborhoods"].Value),
+        ("/#metiers", L["Public_Nav_Trades"].Value),
+        ("/#conseils", L["Public_Nav_Advice"].Value),
+    };
+}
 <!DOCTYPE html>
 <html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
 <head>
     <partial name="Ui/_Head" />
     @await RenderSectionAsync("Head", required: false)
 </head>
-<body class="min-h-dvh">
+<body class="flex min-h-dvh flex-col">
     <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-surface focus:px-3 focus:py-2 focus:text-charbon">@L["Layout_SkipToContent"]</a>
-    <header class="border-b border-ligne bg-surface">
-        <nav class="mx-auto flex h-14 w-full max-w-screen-lg items-center justify-between gap-2 px-4">
+    <header class="sticky top-0 z-40 border-b border-ligne bg-surface">
+        <nav class="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 lg:h-[4.5rem] lg:px-6" aria-label="@L["Public_Nav_Label"]">
             <partial name="Ui/_Brand" />
-            <div class="flex items-center gap-1">
+            <ul class="hidden items-center gap-1 lg:flex">
+                @foreach (var (href, label) in sections)
+                {
+                    <li><a href="@href" class="rounded-full px-3.5 py-2 text-[15px] font-semibold text-charbon no-underline hover:bg-sourdine hover:no-underline">@label</a></li>
+                }
+            </ul>
+            <div class="flex items-center gap-2">
                 <partial name="Ui/_AppStatus" />
-                @if (User.Identity?.IsAuthenticated == true)
+                @if (signedIn)
                 {
-                    <a href="/espace" class="sc-btn-secondaire">@L["Nav_Space"]</a>
+                    <a href="/espace" class="sc-btn-primaire">@L["Nav_Space"]</a>
                 }
-                else if (!Context.Request.Path.StartsWithSegments("/connexion"))
+                else if (!onSignIn)
                 {
-                    <a href="/connexion" class="sc-btn-secondaire">@L["Nav_SignIn"]</a>
+                    <a href="/connexion" class="sc-btn-secondaire hidden sm:inline-flex">@L["Nav_SignIn"]</a>
+                    <a href="/connexion" class="sc-btn-primaire">@L["Public_Join"]</a>
                 }
+                <details class="relative lg:hidden" data-menu>
+                    <summary class="sc-btn-icone list-none [&::-webkit-details-marker]:hidden" aria-label="@L["Public_Nav_Label"]"><sc-icon name="menu" /></summary>
+                    <div class="sc-menu right-0 w-64">
+                        @foreach (var (href, label) in sections)
+                        {
+                            <a href="@href" class="sc-menu-item font-semibold">@label</a>
+                        }
+                        @if (!signedIn && !onSignIn)
+                        {
+                            <a href="/connexion" class="sc-menu-item border-t border-ligne">@L["Nav_SignIn"]</a>
+                        }
+                    </div>
+                </details>
             </div>
         </nav>
     </header>
-    <main id="contenu" class="mx-auto w-full @(ViewData["Wide"] is true ? "max-w-screen-lg" : "max-w-screen-md") px-4 py-8">
+    <main id="contenu" class="@(fullWidth ? "w-full flex-1" : $"mx-auto w-full flex-1 {(ViewData["Wide"] is true ? "max-w-screen-lg" : "max-w-screen-md")} px-4 py-8")">
         @RenderBody()
     </main>
+    <footer class="mt-16 border-t border-ligne bg-surface">
+        <div class="mx-auto grid w-full max-w-6xl gap-8 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4 lg:px-6">
+            <div class="sm:col-span-2">
+                <partial name="Ui/_Brand" />
+                <p class="mt-3 max-w-sm text-[15px] text-charbon-doux">@L["App_Promise"]</p>
+                <p class="mt-2 text-sm font-semibold text-ocre-texte">@L["App_Signature"]</p>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold">@L["Public_Footer_Offers"]</h2>
+                <ul class="mt-3 grid gap-2 text-[15px]">
+                    @foreach (var (href, label) in sections.Take(3))
+                    {
+                        <li><a href="@href" class="text-charbon-doux hover:text-charbon">@label</a></li>
+                    }
+                </ul>
+            </div>
+            <div>
+                <h2 class="text-sm font-bold">@L["App_Name"]</h2>
+                <ul class="mt-3 grid gap-2 text-[15px]">
+                    <li><a href="/classement-quartiers" class="text-charbon-doux hover:text-charbon">@L["Public_Footer_Ranking"]</a></li>
+                    <li><a href="/confidentialite" class="text-charbon-doux hover:text-charbon">@L["Public_Footer_Privacy"]</a></li>
+                    <li><a href="/connexion" class="text-charbon-doux hover:text-charbon">@L["Nav_SignIn"]</a></li>
+                </ul>
+            </div>
+        </div>
+        <p class="border-t border-ligne px-4 py-4 text-center text-sm text-charbon-doux">© @DateTime.UtcNow.Year SENE DESIGN · @L["Public_Footer_Country"]</p>
+    </footer>
     <partial name="Ui/_Toasts" />
     @await RenderSectionAsync("Scripts", required: false)
 </body>

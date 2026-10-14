@@ -20,25 +20,21 @@
 </head>
 <body class="flex min-h-dvh flex-col">
     <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-surface focus:px-3 focus:py-2 focus:text-charbon">@L["Layout_SkipToContent"]</a>
+    @* Two rows on desktop, like a services site: brand + client space + main action, then the sections. *@
     <header class="sticky top-0 z-40 border-b border-ligne bg-surface">
-        <nav class="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 lg:h-[4.5rem] lg:px-6" aria-label="@L["Public_Nav_Label"]">
+        <div class="mx-auto flex h-16 w-full max-w-[1440px] items-center justify-between gap-4 px-4 lg:h-20 lg:px-10">
             <partial name="Ui/_Brand" />
-            <ul class="hidden items-center gap-1 lg:flex">
-                @foreach (var (href, label) in sections)
-                {
-                    <li><a href="@href" class="rounded-full px-3.5 py-2 text-[15px] font-semibold text-charbon no-underline hover:bg-sourdine hover:no-underline">@label</a></li>
-                }
-            </ul>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 lg:gap-6">
                 <partial name="Ui/_AppStatus" />
                 @if (signedIn)
                 {
-                    <a href="/espace" class="sc-btn-primaire">@L["Nav_Space"]</a>
+                    <a href="/espace" class="sc-btn-primaire lg:min-h-12 lg:px-7 lg:text-base">@L["Nav_Space"]<sc-icon name="arrow-right" class="size-4" /></a>
                 }
                 else if (!onSignIn)
                 {
-                    <a href="/connexion" class="sc-btn-secondaire hidden sm:inline-flex">@L["Nav_SignIn"]</a>
-                    <a href="/connexion" class="sc-btn-primaire">@L["Public_Join"]</a>
+                    <a href="/connexion" class="hidden items-center gap-2 text-base font-semibold text-laterite no-underline hover:underline sm:inline-flex"><sc-icon name="circle-user" class="size-6" />@L["Public_ClientSpace"]</a>
+                    <a href="/connexion" class="sc-btn-icone text-laterite sm:hidden" aria-label="@L["Public_ClientSpace"]"><sc-icon name="circle-user" class="size-6" /></a>
+                    <a href="/connexion" class="sc-btn-primaire hidden sm:inline-flex lg:min-h-12 lg:px-7 lg:text-base">@L["Public_Join"]<sc-icon name="arrow-right" class="size-4" /></a>
                 }
                 <details class="relative lg:hidden" data-menu>
                     <summary class="sc-btn-icone list-none [&::-webkit-details-marker]:hidden" aria-label="@L["Public_Nav_Label"]"><sc-icon name="menu" /></summary>
@@ -49,11 +45,19 @@
                         }
                         @if (!signedIn && !onSignIn)
                         {
-                            <a href="/connexion" class="sc-menu-item border-t border-ligne">@L["Nav_SignIn"]</a>
+                            <a href="/connexion" class="sc-menu-item border-t border-ligne">@L["Public_ClientSpace"]</a>
                         }
                     </div>
                 </details>
             </div>
+        </div>
+        <nav class="mx-auto hidden w-full max-w-[1440px] px-10 lg:block" aria-label="@L["Public_Nav_Label"]">
+            <ul class="flex items-center gap-2 pb-3">
+                @foreach (var (href, label) in sections)
+                {
+                    <li><a href="@href" class="inline-flex items-center gap-1 rounded-full px-4 py-2 text-base font-semibold text-charbon no-underline hover:bg-sourdine hover:no-underline">@label</a></li>
+                }
+            </ul>
         </nav>
     </header>
     <main id="contenu" class="@(fullWidth ? "w-full flex-1" : $"mx-auto w-full flex-1 {(ViewData["Wide"] is true ? "max-w-screen-lg" : "max-w-screen-md")} px-4 py-8")">
@@ -90,7 +94,7 @@
             {
                 @* Unsplash licence: attribution not required, given anyway. *@
                 <span class="mt-1 block text-xs">@L["Public_Footer_Photos"]
-                    <a href="https://unsplash.com/@@sweder_etc" class="text-charbon-doux underline" rel="noopener">Sweder Breet</a>,
+                    <a href="https://unsplash.com/@@nci" class="text-charbon-doux underline" rel="noopener">National Cancer Institute</a>,
                     <a href="https://unsplash.com/@@emmages" class="text-charbon-doux underline" rel="noopener">Emmanuel Ikwuegbu</a>,
                     <a href="https://unsplash.com/@@divaris" class="text-charbon-doux underline" rel="noopener">Divaris Shirichena</a> / Unsplash</span>
             }

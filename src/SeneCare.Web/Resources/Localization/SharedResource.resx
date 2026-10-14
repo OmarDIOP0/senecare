@@ -991,7 +991,7 @@
   <data name="Public_Footer_Ranking" xml:space="preserve"><value>Classement des quartiers</value></data>
   <data name="Public_Footer_Privacy" xml:space="preserve"><value>Données personnelles</value></data>
   <data name="Public_Footer_Country" xml:space="preserve"><value>Dakar, Sénégal</value></data>
-  <data name="Home_Hero_Eyebrow" xml:space="preserve"><value>Entretien et dépannage du bâtiment</value></data>
+  <data name="Home_Hero_Eyebrow" xml:space="preserve"><value>Maisons, villas et bureaux entretenus toute l'année</value></data>
   <data name="Home_Hero_Title" xml:space="preserve"><value>Vous signalez. Nous intervenons.</value></data>
   <data name="Home_Hero_Text" xml:space="preserve"><value>Un robinet qui fuit, une coupure, une infiltration avant l'hivernage : prenez une photo, nos techniciens s'occupent du reste. Votre maison ou vos locaux restent en bon état, mois après mois.</value></data>
   <data name="Home_Hero_SeeOffers" xml:space="preserve"><value>Voir les offres</value></data>
@@ -1092,4 +1092,7 @@
   <data name="Home_Techs_Warranty_Title" xml:space="preserve"><value>Un historique et une garantie</value></data>
   <data name="Home_Techs_Warranty_Text" xml:space="preserve"><value>Tout reste dans le carnet de votre logement ; une reprise sous garantie se demande en un geste.</value></data>
   <data name="Public_Footer_Photos" xml:space="preserve"><value>Photos :</value></data>
+  <data name="Home_Photo_Family_Alt" xml:space="preserve"><value>Une famille souriante joue à un jeu de société dans son salon</value></data>
+  <data name="Home_Demo_Arrival" xml:space="preserve"><value>arrivée vers 10 h</value></data>
+  <data name="Public_ClientSpace" xml:space="preserve"><value>Espace client</value></data>
 </root>

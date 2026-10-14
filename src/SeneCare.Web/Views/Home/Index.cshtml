@@ -13,47 +13,32 @@
     var steps = new[] { ("Home_Step1_Title", "Home_Step1_Text"), ("Home_Step2_Title", "Home_Step2_Text"), ("Home_Step3_Title", "Home_Step3_Text"), ("Home_Step4_Title", "Home_Step4_Text") };
 }
 
-@* ---- Welcome block: promise + a glimpse of the follow-up the customer gets ---- *@
-<section class="mx-auto w-full max-w-6xl px-4 pt-6 lg:px-6 lg:pt-10">
-    <div class="grid items-center gap-10 rounded-3xl bg-ocre-clair px-6 py-10 sm:px-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:py-14 lg:pr-10 lg:pl-14">
-        <div>
-            <p class="sc-eyebrow">@L["Home_Hero_Eyebrow"]</p>
-            <h1 class="mt-4 text-[2rem] leading-[1.08] font-bold sm:text-5xl lg:text-[3.5rem]">@L["Home_Hero_Title"]</h1>
-            <span class="sc-trait" aria-hidden="true"></span>
-            <p class="mt-5 max-w-xl text-lg text-charbon-doux">@L["Home_Hero_Text"]</p>
+@* ---- Welcome banner (HomeServe-like): wide photo, cream card overlapping on the left ---- *@
+<section class="mx-auto w-full max-w-[1440px]">
+    <div class="relative">
+        <div class="relative lg:ml-[36%] xl:ml-[40%]">
+            <img src="~/img/photos/accueil-famille.webp" width="1500" height="940" alt="@L["Home_Photo_Family_Alt"]"
+                 fetchpriority="high" decoding="async"
+                 class="aspect-[4/3] w-full object-cover object-[40%_center] sm:aspect-[16/9] lg:aspect-auto lg:h-[620px] lg:rounded-bl-[2.5rem] lg:object-left" />
+            <p class="absolute right-4 bottom-4 hidden items-center gap-2 rounded-full bg-surface px-4 py-2 text-sm font-semibold sm:flex lg:right-8 lg:bottom-8" aria-hidden="true">
+                <span class="grid size-6 place-items-center rounded-full border-2 border-laterite"><span class="size-2 rounded-full bg-laterite"></span></span>@L["Home_Demo_Step3"] · @L["Home_Demo_Arrival"]
+            </p>
+        </div>
+        <div class="relative mx-4 -mt-16 rounded-3xl bg-ocre-clair p-6 sm:mx-8 sm:p-10 lg:absolute lg:top-1/2 lg:left-10 lg:mx-0 lg:mt-0 lg:w-[34rem] lg:-translate-y-1/2 lg:p-12 xl:left-16">
+            <p class="text-base font-semibold">@L["Home_Hero_Eyebrow"]</p>
+            <h1 class="mt-4 text-[2rem] leading-[1.08] font-bold sm:text-5xl lg:text-[3rem]">@L["Home_Hero_Title"]</h1>
+            <span class="sc-trait mt-5 h-1.5 w-14" aria-hidden="true"></span>
+            <p class="mt-6 text-lg">@L["Home_Hero_Text"]</p>
             <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-                <a href="/connexion" class="sc-btn-primaire min-h-12 px-6 text-base">@L["Public_Join"]</a>
+                <a href="/connexion" class="sc-btn-primaire min-h-14 px-8 text-lg">@L["Public_Join"]</a>
                 <a href="#offres" class="sc-lien">@L["Home_Hero_SeeOffers"]</a>
             </div>
         </div>
-
-        @* Photo (Unsplash, credited in the footer) + a glimpse of the follow-up, made of real interface pieces. *@
-        <div class="relative">
-            <img src="~/img/photos/accueil-rue.webp" width="720" height="840" alt="@L["Home_Photo_Street_Alt"]"
-                 fetchpriority="high" decoding="async"
-                 class="aspect-square w-full rounded-2xl object-cover sm:aspect-[5/4] lg:aspect-[6/7]" />
-            <div class="absolute top-4 right-4 flex items-center gap-2 rounded-full bg-surface px-4 py-2 text-sm font-semibold" aria-hidden="true">
-                <sc-icon name="wallet" class="size-4 text-ocre-texte" />@L["Home_Demo_Paid"]
-            </div>
-            <div class="relative mx-3 -mt-20 rounded-lg border border-ligne bg-surface p-5 sm:mx-auto sm:max-w-sm lg:absolute lg:-bottom-8 lg:-left-16 lg:mt-0 lg:w-80" aria-hidden="true">
-                <div class="flex items-start gap-3">
-                    <span class="grid size-10 shrink-0 place-items-center rounded-md bg-ocre-clair text-charbon"><sc-icon name="droplet" /></span>
-                    <div class="min-w-0">
-                        <p class="text-sm text-charbon-doux">@L["Domain_Plumbing"] · @L["Home_Demo_Place"]</p>
-                        <p class="font-semibold">@L["Home_Demo_Title"]</p>
-                    </div>
-                </div>
-                <ol class="mt-4 grid gap-2.5 text-[15px]">
-                    <li class="flex items-center gap-3"><span class="grid size-6 place-items-center rounded-full bg-baobab text-sur-accent"><sc-icon name="check" class="size-3.5" /></span>@L["Home_Demo_Step1"]</li>
-                    <li class="flex items-center gap-3"><span class="grid size-6 place-items-center rounded-full bg-baobab text-sur-accent"><sc-icon name="check" class="size-3.5" /></span>@L["Home_Demo_Step2"]</li>
-                    <li class="flex items-center gap-3 font-semibold"><span class="grid size-6 place-items-center rounded-full border-2 border-laterite"><span class="size-2 rounded-full bg-laterite"></span></span>@L["Home_Demo_Step3"]</li>
-                    <li class="flex items-center gap-3 text-charbon-doux"><span class="size-6 rounded-full border-2 border-ligne"></span>@L["Home_Demo_Step4"]</li>
-                </ol>
-            </div>
-        </div>
     </div>
+</section>
 
-    <ul class="mt-6 grid gap-3 sm:grid-cols-3">
+<section class="mx-auto w-full max-w-6xl px-4 pt-8 lg:px-6 lg:pt-12">
+    <ul class="grid gap-3 sm:grid-cols-3">
         <li class="flex items-center gap-3 rounded-lg border border-ligne bg-surface px-5 py-4">
             <sc-icon name="wifi-off" class="shrink-0 text-laterite" /><span class="text-[15px] font-semibold">@L["Home_Promise_Offline"]</span>
         </li>

@@ -161,11 +161,13 @@ public sealed class AuthController(
             }
         }
 
-        // Persistent cookie: on mobile data, nobody wants a new SMS every visit.
-        await signInManager.SignInAsync(identityUser, isPersistent: true);
+        // Customers: persistent cookie, on mobile data nobody wants a new code every visit. A number without an
+        // account yet only gets a browser-session cookie, so a typo or an abandoned sign-up does not stick for 30 days.
+        var registered = await IsRegisteredAsync(identityUser);
+        await signInManager.SignInAsync(identityUser, isPersistent: registered);
 
         var returnUrl = TempData[ReturnUrlKey] as string;
-        if (await IsRegisteredAsync(identityUser))
+        if (registered)
         {
             // Already a customer who went through « Créer mon compte »: straight to the space.
             TempData.Remove(SignupProfileKey);

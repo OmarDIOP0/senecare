@@ -110,7 +110,8 @@ public sealed class RegistrationController(
 
         // Claims changed (name, roles, membership): re-issue the cookie.
         var identityUser = await userManager.FindByIdAsync(userId.ToString());
-        await signInManager.RefreshSignInAsync(identityUser!);
+        // Now a customer: the long-lived cookie (the sign-in before was for this browser session only).
+        await signInManager.SignInAsync(identityUser!, isPersistent: true);
 
         if (withProperty)
         {

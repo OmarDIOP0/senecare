@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SeneCare.Application.Public;
 using SeneCare.Domain.Common;
+using SeneCare.Infrastructure.Identity;
 using SeneCare.Web.ViewModels;
 
 namespace SeneCare.Web.Controllers;
@@ -16,7 +17,8 @@ public sealed class HomeController(GetPublicHomeHandler publicHome) : Controller
     /// </summary>
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        if (User.Identity?.IsAuthenticated == true)
+        // Signed in but sign-up not finished: the public home stays visible (the space would send back to it).
+        if (User.Identity?.IsAuthenticated == true && User.IsRegistered())
         {
             return LocalRedirect("/espace");
         }

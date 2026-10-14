@@ -16,6 +16,15 @@
     <script src="~/js/map.js" asp-append-version="true" defer></script>
 }
 
+@* Signed in with this number but not registered yet: every page leads here, so offer a way out. *@
+<div class="mb-6 flex flex-wrap items-center justify-between gap-2 rounded-md bg-sourdine px-4 py-2.5 text-sm">
+    <span class="text-charbon-doux">@L["Register_SignedInAs", Model.Phone is { } current ? "+221 " + current : ""]</span>
+    <form method="post" action="/deconnexion">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="sc-lien font-semibold">@L["Register_OtherNumber"]</button>
+    </form>
+</div>
+
 <form method="post" enctype="multipart/form-data" class="grid gap-8" novalidate data-wizard data-wizard-start="@Model.StartStep" data-text-neighborhood="@L["Error_address_neighborhood"]">
     <div asp-validation-summary="All" class="sc-error" role="alert"></div>
 

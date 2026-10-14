@@ -36,7 +36,7 @@ public sealed class AuthController(
     [HttpGet("/connexion")]
     public IActionResult SignIn(string? returnUrl, string? phone)
     {
-        if (User.Identity?.IsAuthenticated == true && TempData.Peek(InvitationController.InvitationKey) is null)
+        if (User.Identity?.IsAuthenticated == true && User.IsRegistered() && TempData.Peek(InvitationController.InvitationKey) is null)
         {
             return LocalRedirect(SafeReturnUrl(returnUrl));
         }

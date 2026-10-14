@@ -31,6 +31,7 @@
   <data name="Code_Label" xml:space="preserve"><value>Code à 6 chiffres</value></data>
   <data name="Code_Digit" xml:space="preserve"><value>Chiffre {0} sur 6</value></data>
   <data name="Code_DevelopmentHint" xml:space="preserve"><value>Test en développement, code :</value></data>
+  <data name="Form_Expired" xml:space="preserve"><value>La page avait expiré (connexion ou autre onglet), nous l'avons rechargée. Recommencez votre dernière action.</value></data>
   <data name="Code_Submit" xml:space="preserve"><value>Valider</value></data>
   <data name="Code_Resend" xml:space="preserve"><value>Renvoyer le code</value></data>
   <data name="Code_ChangeNumber" xml:space="preserve"><value>Changer de numéro</value></data>
@@ -1300,6 +1301,8 @@
   <data name="Register_StepPhone_Title" xml:space="preserve"><value>Votre numéro de téléphone</value></data>
   <data name="Register_StepPhone_Text" xml:space="preserve"><value>Il vous sert à vous connecter : nous vous envoyons un code sur WhatsApp, sans mot de passe.</value></data>
   <data name="Register_HaveAccount" xml:space="preserve"><value>Déjà inscrit ?</value></data>
+  <data name="Register_SignedInAs" xml:space="preserve"><value>Connecté avec le {0}</value></data>
+  <data name="Register_OtherNumber" xml:space="preserve"><value>Utiliser un autre numéro</value></data>
   <data name="Register_SignInLink" xml:space="preserve"><value>Se connecter</value></data>
   <data name="SignIn_Eyebrow" xml:space="preserve"><value>Espace client</value></data>
   <data name="SignIn_NoAccount" xml:space="preserve"><value>Pas encore de compte ?</value></data>

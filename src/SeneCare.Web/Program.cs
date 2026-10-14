@@ -64,7 +64,12 @@ try
     builder.Services.AddSingleton(SeneCare.Web.Infrastructure.SiteContent.Load(
         builder.Environment.ContentRootPath, builder.Environment.WebRootPath ?? string.Empty, builder.Environment.IsDevelopment()));
     builder.Services
-        .AddControllersWithViews(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()))
+        .AddControllersWithViews(options =>
+        {
+            options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+            // Outdated form token: back to the page with a message, never a blank « HTTP 400 ».
+            options.Filters.Add<SeneCare.Web.Infrastructure.AntiforgeryRecoveryFilter>();
+        })
         .AddViewLocalization()
         .AddDataAnnotationsLocalization(options =>
             options.DataAnnotationLocalizerProvider = (_, factory) => factory.Create(typeof(SharedResource)));

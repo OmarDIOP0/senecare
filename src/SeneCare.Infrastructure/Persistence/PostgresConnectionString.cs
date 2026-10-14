@@ -25,9 +25,19 @@ public static class PostgresConnectionString
             Database = Uri.UnescapeDataString(uri.AbsolutePath.TrimStart('/')),
             Username = Uri.UnescapeDataString(credentials[0]),
             Password = credentials.Length > 1 ? Uri.UnescapeDataString(credentials[1]) : null,
-            // Internal network of the host: TLS when offered, plain otherwise.
+            // Internal network of the host: TLS when offered, plain otherwise (unless the URL says « sslmode=… »).
             SslMode = SslMode.Prefer,
         };
+        foreach (var pair in uri.Query.TrimStart('?').Split('&', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var parts = pair.Split('=', 2);
+            if (parts.Length == 2 && parts[0].Equals("sslmode", StringComparison.OrdinalIgnoreCase)
+                && Enum.TryParse<SslMode>(Uri.UnescapeDataString(parts[1]).Replace("-", string.Empty, StringComparison.Ordinal), ignoreCase: true, out var mode))
+            {
+                builder.SslMode = mode;
+            }
+        }
+
         return builder.ConnectionString;
     }
 }

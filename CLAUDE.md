@@ -88,8 +88,8 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
 - Logs : Serilog. Santé : HealthChecks. Configuration par environnement + secrets
   hors du code.
 - Docker + docker-compose (web, api, postgres, redis éventuel).
-- Déploiement de test sur Render : `Dockerfile` (racine) + Blueprint `render.yaml` (web Docker + Postgres, offre
-  gratuite, région Frankfurt, `ASPNETCORE_ENVIRONMENT=Staging` → bandeau « Version de test » et code affiché).
+- Déploiement de test sur Render : `Dockerfile` (racine) + Blueprint `render.yaml` (web Docker, offre gratuite,
+  région Frankfurt ; base Postgres existante collée à la création, une seule base gratuite par compte Render ; `ASPNETCORE_ENVIRONMENT=Staging` → bandeau « Version de test » et code affiché).
   Derrière le proxy : en-têtes X-Forwarded-* pris en compte, port lu dans `$PORT`, adresse `postgresql://…`
   acceptée (`PostgresConnectionString`), clés Data Protection en base (table `data_protection_keys`).
   Limites de l'offre gratuite : mise en veille, photos perdues au redémarrage, base expirant après 30 jours.

@@ -17,10 +17,15 @@ const out = resolve(import.meta.dirname, "..", "..", "docs", "design-review", la
 mkdirSync(out, { recursive: true });
 
 // ---- Server -----------------------------------------------------------------
+const randomPhone = () => "77" + String(Math.floor(1_000_000 + Math.random() * 8_999_999));
+// A fresh SuperAdmin for this run, granted at start-up (Bootstrap:SuperAdminPhones, local server only).
+const adminPhone = randomPhone();
+// The technician played by the development simulator (RequestSimulator).
+const technicianPhone = "700000001";
 const log = [];
 const server = spawn("dotnet", ["run", "--no-build", "--project", join(root, "src", "SeneCare.Web"), "--urls", base], {
   // Each run signs up three accounts from localhost: lift the per-IP OTP limit for this local server only.
-  env: { ...process.env, ASPNETCORE_ENVIRONMENT: "Development", DOTNET_ENVIRONMENT: "Development", Otp__MaxPerIpPerHour: "1000" },
+  env: { ...process.env, ASPNETCORE_ENVIRONMENT: "Development", DOTNET_ENVIRONMENT: "Development", Otp__MaxPerIpPerHour: "1000", Bootstrap__SuperAdminPhones: adminPhone },
 });
 server.stdout.on("data", (d) => log.push(d.toString()));
 server.stderr.on("data", (d) => log.push(d.toString()));
@@ -39,7 +44,6 @@ if (!started) {
   process.exit(1);
 }
 
-const randomPhone = () => "77" + String(Math.floor(1_000_000 + Math.random() * 8_999_999));
 const formatted = (p) => `${p.slice(0, 2)} ${p.slice(2, 5)} ${p.slice(5, 7)} ${p.slice(7)}`;
 const codeFor = async (phone) => {
   for (let i = 0; i < 30; i++) {
@@ -61,6 +65,26 @@ process.on("uncaughtException", (e) => {
 // ---- Flows ---------------------------------------------------------------------
 // Microsoft Edge (installed with Windows): no browser download needed.
 const browser = await chromium.launch({ channel: process.env.PW_CHANNEL ?? "msedge" });
+
+async function signIn(context, phone) {
+  const page = await context.newPage();
+  await page.goto(`${base}/connexion`);
+  await page.fill("input[type=tel]", phone);
+  await page.locator("input[type=tel]").press("Enter");
+  await page.waitForURL(/connexion\/code/, { timeout: 120000 });
+  await page.fill("input[name=Code]", await codeFor(phone));
+  await page.locator("input[name=Code]").press("Enter");
+  await page.waitForURL((url) => !url.pathname.endsWith("/connexion/code"), { timeout: 120000 });
+  // Staff accounts only confirm their name and the privacy policy.
+  if (page.url().includes("/inscription")) {
+    const name = page.locator("input[name=FullName]");
+    if (!(await name.inputValue())) await name.fill("Fatou Sow");
+    await page.check("input[name=AcceptsPrivacyPolicy]");
+    await name.press("Enter");
+    await page.waitForURL((url) => !url.pathname.startsWith("/inscription"), { timeout: 120000 });
+  }
+  return page;
+}
 
 async function signUp(context, profile, name, company) {
   const page = await context.newPage();
@@ -152,6 +176,25 @@ await home.goto(`${base}/logements`);
 const homeProperties = await home.evaluate(() => [...document.querySelectorAll("a[href]")].map((a) => a.getAttribute("href")));
 function firstLink(links, pattern) { return links.find((l) => pattern.test(l)) ?? "/"; }
 
+// A mission for the demo technician: slots proposed, then assigned (development simulator).
+await company.goto(base + firstLink(companyRequests, /^\/interventions\/[0-9a-f-]{36}$/));
+for (const step of ["ProposeSlots", "Assign"]) {
+  await company.click(`form[action$='/simulation/${step}'] button`);
+  await company.waitForLoadState("networkidle");
+}
+
+const technicianContext = await browser.newContext(sw);
+const technician = await signIn(technicianContext, technicianPhone);
+await technician.goto(`${base}/technicien`);
+const missions = await technician.evaluate(() => [...document.querySelectorAll("a[href]")].map((a) => a.getAttribute("href")));
+const technicianState = await technicianContext.storageState();
+
+const adminContext = await browser.newContext(sw);
+const admin = await signIn(adminContext, adminPhone);
+await admin.goto(`${base}/admin/dispatch`);
+const dispatchLinks = await admin.evaluate(() => [...document.querySelectorAll("a[href]")].map((a) => a.getAttribute("href")));
+const adminState = await adminContext.storageState();
+
 // ---- Captures ----------------------------------------------------------------------
 const screens = [
   { name: "accueil-entreprise-vide", path: "/espace", state: emptyState },
@@ -171,6 +214,15 @@ const screens = [
   { name: "nouveau-site", path: "/logements/nouveau", state: companyState },
   { name: "compte", path: "/compte", state: homeState },
   { name: "logement", path: firstLink(homeProperties, /^\/logements\/[0-9a-f-]{36}$/), state: homeState },
+  { name: "technicien", path: "/technicien", state: technicianState },
+  { name: "technicien-mission", path: firstLink(missions, /^\/technicien\/missions\/[0-9a-f-]{36}$/), state: technicianState },
+  { name: "admin", path: "/admin", state: adminState },
+  { name: "admin-dispatch", path: "/admin/dispatch", state: adminState },
+  { name: "admin-demande", path: firstLink(dispatchLinks, /^\/admin\/dispatch\/[0-9a-f-]{36}$/), state: adminState },
+  { name: "admin-clients", path: "/admin/clients", state: adminState },
+  { name: "admin-techniciens", path: "/admin/techniciens", state: adminState },
+  { name: "admin-paiements", path: "/admin/paiements", state: adminState },
+  { name: "admin-offres", path: "/admin/offres", state: adminState },
 ];
 // --only=name1,name2 recaptures a subset.
 const only = process.argv.find((a) => a.startsWith("--only="))?.slice(7).split(",");

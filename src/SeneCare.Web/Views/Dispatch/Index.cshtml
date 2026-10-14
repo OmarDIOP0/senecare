@@ -47,7 +47,7 @@ else
                 {
                     var late = item.IsLate(now);
                     <tr class="@(late ? "bg-rouge-clair/50" : "")">
-                        <td class="px-3 py-2 font-medium"><a href="/admin/dispatch/@item.Id">@item.Number</a><span class="block text-xs font-normal">@Formatting.ShortDateTime(item.CreatedAt)</span></td>
+                        <td class="px-3 py-2 font-medium whitespace-nowrap"><a href="/admin/dispatch/@item.Id">@item.Number</a><span class="block text-xs font-normal">@Formatting.ShortDateTime(item.CreatedAt)</span></td>
                         <td class="px-3 py-2"><sc-urgency value="@item.Urgency" /></td>
                         <td class="px-3 py-2"><span class="text-xs font-medium text-charbon-doux">@L["Domain_" + item.Domain]</span><span class="block">@item.Title</span></td>
                         <td class="px-3 py-2">@item.Commune<span class="block text-xs">@item.AccountName · @item.Site</span></td>

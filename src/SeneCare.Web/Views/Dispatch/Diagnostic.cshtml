@@ -16,7 +16,7 @@
 <p class="mt-1">@L["Diagnostic_PlannedOn", Formatting.ShortDateTime(d.ScheduledFor)] · @L["DiagnosticStatus_" + d.Status] · @(d.TechnicianName is { } t ? L["Dispatch_Technician", t] : L["Dispatch_Unassigned"])</p>
 
 <div class="mt-6 grid gap-6 lg:grid-cols-3">
-    <section class="sc-carte lg:col-span-2" aria-labelledby="points-titre">
+    <section class="min-w-0 sc-carte lg:col-span-2" aria-labelledby="points-titre">
         <h2 id="points-titre" class="sc-sous-titre">@L["Tech_Points", Model.Points.Count]</h2>
         <ul class="mt-2 divide-y divide-ligne">
             @foreach (var p in Model.Points.OrderBy(p => p.Result == ControlPointResult.Anomaly ? 0 : 1))

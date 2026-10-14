@@ -11,7 +11,7 @@
 <p class="mt-1">+221 @Model.Phone · @L["Dispatch_Load", Model.OpenMissions]</p>
 
 <div class="mt-6 grid gap-6 lg:grid-cols-3">
-    <form method="post" action="/admin/techniciens/@Model.Id" class="sc-carte grid gap-4 lg:col-span-2">
+    <form method="post" action="/admin/techniciens/@Model.Id" class="min-w-0 sc-carte grid gap-4 lg:col-span-2">
         @Html.AntiForgeryToken()
         <partial name="_Fields" model="new TechnicianFieldsModel(Model)" />
         <button type="submit" class="sc-btn-primaire">@L["Common_Save"]</button>

@@ -1060,4 +1060,5 @@
   <data name="Home_Cta_Text" xml:space="preserve"><value>Inscription en deux minutes avec votre numéro de téléphone.</value></data>
   <data name="Home_Hours" xml:space="preserve"><value>{0} h</value></data>
   <data name="Home_Days" xml:space="preserve"><value>{0} jours</value></data>
+  <data name="Admin_NoRevenue" xml:space="preserve"><value>Aucun encaissement sur les six derniers mois. Les paiements vérifiés apparaîtront ici.</value></data>
 </root>

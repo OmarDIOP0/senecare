@@ -15,7 +15,7 @@
 <p class="mt-1">@p.Commune · @L["ProgramStatus_" + p.Status] · @L["Admin_Members", p.Members, p.Threshold] · @L["Admin_Trees", p.Trees]</p>
 
 <div class="mt-6 grid gap-6 lg:grid-cols-3">
-    <div class="grid content-start gap-4 lg:col-span-2">
+    <div class="min-w-0 grid content-start gap-4 lg:col-span-2">
         <h2 class="sc-sous-titre">@L["Admin_Operations"]</h2>
         @if (Model.Operations.Count == 0)
         {

@@ -54,19 +54,26 @@
 </section>
 
 <div class="mt-6 grid gap-6 lg:grid-cols-3">
-    <section class="sc-carte lg:col-span-2" aria-labelledby="ca-titre">
+    <section class="min-w-0 sc-carte lg:col-span-2" aria-labelledby="ca-titre">
         <h2 id="ca-titre" class="sc-sous-titre">@L["Admin_Revenue"]</h2>
+        @if (Model.Revenue.All(r => r.Amount.Amount == 0))
+        {
+            <p class="sc-texte-doux mt-2">@L["Admin_NoRevenue"]</p>
+        }
+        else
+        {
         <ol class="mt-4 flex h-48 items-end gap-3" aria-label="@L["Admin_Revenue"]">
             @foreach (var month in Model.Revenue)
             {
                 var height = (int)Math.Round(100.0 * month.Amount.Amount / maxRevenue);
                 <li class="flex h-full flex-1 flex-col items-center justify-end gap-1">
                     <span class="text-xs font-medium tabular-nums">@(month.Amount.Amount >= 1_000_000 ? (month.Amount.Amount / 1_000_000.0).ToString("0.#", CultureInfo.CurrentCulture) + " M" : (month.Amount.Amount / 1000).ToString("N0", CultureInfo.CurrentCulture) + " k")</span>
-                    <span class="w-full rounded-t-sm bg-charbon-pale" style="height: @(Math.Max(height, 2))%" title="@Formatting.Fcfa(month.Amount)"></span>
-                    <span class="text-xs">@Month(month.Year, month.Month)</span>
+                    <span class="w-full rounded-t-md bg-ocre" style="height: @(Math.Max(height, 2))%" title="@Formatting.Fcfa(month.Amount)"></span>
+                    <span class="text-xs text-charbon-doux">@Month(month.Year, month.Month)</span>
                 </li>
             }
         </ol>
+        }
     </section>
 
     <section class="sc-carte" aria-labelledby="urgence-titre">

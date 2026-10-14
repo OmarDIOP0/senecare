@@ -241,6 +241,10 @@
     @apply text-atlantique underline-offset-2 hover:underline;
   }
 
+  input[type=checkbox], input[type=radio], progress {
+    accent-color: var(--laterite);
+  }
+
   .tabular-nums, input[type=number] {
     font-variant-numeric: tabular-nums;
   }

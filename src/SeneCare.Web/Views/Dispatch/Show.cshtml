@@ -44,7 +44,7 @@
 </div>
 
 <div class="mt-6 grid gap-6 lg:grid-cols-3">
-    <div class="grid content-start gap-6 lg:col-span-2">
+    <div class="grid min-w-0 content-start gap-6 lg:col-span-2">
         <section class="sc-carte" aria-labelledby="demande-titre">
             <h2 id="demande-titre" class="sc-sous-titre">@L["Tech_Request"]</h2>
             <p class="mt-2 whitespace-pre-line">@Model.Description</p>
@@ -100,7 +100,7 @@
                 {
                     <p class="sc-texte-doux mt-1">@L["Dispatch_AlreadyProposed"] @string.Join(" · ", Model.ProposedSlots.Select(s => Formatting.ShortDateTime(s.Start)))</p>
                 }
-                <form method="post" action="/admin/dispatch/@item.Id/creneaux" class="mt-3 grid gap-2 sm:grid-cols-[1fr_1fr_1fr_auto] sm:items-end">
+                <form method="post" action="/admin/dispatch/@item.Id/creneaux" class="mt-3 grid gap-3 sm:grid-cols-3">
                     @Html.AntiForgeryToken()
                     @for (var i = 0; i < 3; i++)
                     {
@@ -109,7 +109,7 @@
                             <input id="slot-@i" name="slots" type="datetime-local" class="sc-input" value="@Local(defaults[i])" step="1800" />
                         </div>
                     }
-                    <button type="submit" class="sc-btn-primaire">@L["Dispatch_Send"]</button>
+                    <button type="submit" class="sc-btn-primaire justify-self-start sm:col-span-3">@L["Dispatch_Send"]</button>
                 </form>
                 <p class="sc-aide">@L["Dispatch_Slot_Hint"]</p>
             </section>

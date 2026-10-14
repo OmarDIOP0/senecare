@@ -115,6 +115,7 @@ internal sealed class ServiceRequestConfiguration : IEntityTypeConfiguration<Ser
             b.Property(x => x.GivenAt).HasColumnName("rating_given_at");
             b.Property(x => x.PublicationConsent).HasColumnName("rating_publication_consent");
             b.Property(x => x.IsHidden).HasColumnName("rating_is_hidden");
+            b.Property(x => x.AuthorUserId).HasColumnName("rating_author_user_id");
             b.Ignore(x => x.IsPublic);
         });
 

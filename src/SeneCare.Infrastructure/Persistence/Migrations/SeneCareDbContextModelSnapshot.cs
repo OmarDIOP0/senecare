@@ -2433,6 +2433,10 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                                 .HasColumnType("uuid")
                                 .HasColumnName("id");
 
+                            b1.Property<Guid?>("AuthorUserId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("rating_author_user_id");
+
                             b1.Property<string>("Comment")
                                 .HasMaxLength(1000)
                                 .HasColumnType("character varying(1000)")

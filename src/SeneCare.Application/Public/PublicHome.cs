@@ -98,7 +98,8 @@ public sealed class GetPublicHomeHandler(IApplicationDbContext db, Settings sett
         var reviews = (await (
                     from r in db.ServiceRequests.AsNoTracking()
                     where r.Rating != null && r.Rating.PublicationConsent && !r.Rating.IsHidden && r.Rating.Comment != null
-                    join u in db.Users on r.ReportedByUserId equals u.Id
+                    // Attributed to whoever gave the rating and the consent, not to the reporter.
+                    join u in db.Users on r.Rating!.AuthorUserId equals (Guid?)u.Id
                     where u.FullName != null && u.AnonymizedAt == null
                     join p in db.Properties on r.PropertyId equals p.Id
                     join n in db.Neighborhoods on p.Address.NeighborhoodId equals n.Id

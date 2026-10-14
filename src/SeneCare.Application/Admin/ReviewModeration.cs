@@ -20,7 +20,7 @@ public sealed class ReviewModeration(IApplicationDbContext db, TimeProvider cloc
         await (
                 from r in db.ServiceRequests.AsNoTracking()
                 where r.Rating != null && r.Rating.PublicationConsent && r.Rating.Comment != null
-                join u in db.Users on r.ReportedByUserId equals u.Id
+                join u in db.Users on r.Rating!.AuthorUserId equals (Guid?)u.Id
                 join p in db.Properties on r.PropertyId equals p.Id
                 join n in db.Neighborhoods on p.Address.NeighborhoodId equals n.Id
                 join c in db.Communes on n.CommuneId equals c.Id

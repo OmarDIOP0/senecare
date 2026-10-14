@@ -78,6 +78,29 @@ public class ServiceRequestTests
     }
 
     [Fact]
+    public void A_review_belongs_to_whoever_validated_and_consented_not_to_the_reporter()
+    {
+        var manager = Guid.NewGuid();
+        var request = Request();
+        request.StartReview(Dispatcher, Now);
+        request.ProposeAppointment([Slot(24)], Dispatcher, Now);
+        request.ConfirmAppointment(Slot(24), UserId, Now.AddHours(1));
+        request.MarkOnTheWay(Tech, Now.AddHours(23));
+        request.StartWork(Tech, Now.AddHours(24));
+        request.Complete(Tech, Now.AddHours(25));
+
+        // The employee (UserId) reported; the manager validates and agrees to publish.
+        request.ValidateByCustomer(manager, new Rating(5, "Équipe sérieuse", Now.AddHours(26), publicationConsent: true), Now.AddHours(26));
+
+        Assert.Equal(manager, request.Rating!.AuthorUserId);
+        Assert.NotEqual(request.ReportedByUserId, request.Rating.AuthorUserId);
+        Assert.True(request.Rating.IsPublic);
+
+        request.Redact("[supprimé]");
+        Assert.False(request.Rating.IsPublic);
+    }
+
+    [Fact]
     public void Full_happy_path_is_recorded_in_history()
     {
         var request = Request();

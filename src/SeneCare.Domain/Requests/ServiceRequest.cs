@@ -35,13 +35,21 @@ public sealed record Rating
 
     public DateTimeOffset GivenAt { get; private init; }
 
+    /// <summary>
+    /// Who gave the rating (and the consent): the review is attributed to this person only, never to the
+    /// reporter when someone else — e.g. a company manager — validated the work.
+    /// </summary>
+    public Guid? AuthorUserId { get; private init; }
+
     /// <summary>« J'accepte que mon avis soit publié » (loi 2008-12: explicit consent).</summary>
     public bool PublicationConsent { get; private init; }
 
     /// <summary>Moderation: hidden by SENECARE (insult, personal details…), kept for statistics.</summary>
     public bool IsHidden { get; private init; }
 
-    public bool IsPublic => PublicationConsent && !IsHidden && Comment is not null;
+    public bool IsPublic => PublicationConsent && !IsHidden && Comment is not null && AuthorUserId is not null;
+
+    public Rating By(Guid authorUserId) => this with { AuthorUserId = authorUserId };
 
     public Rating WithVisibility(bool hidden) => this with { IsHidden = hidden };
 }
@@ -273,7 +281,7 @@ public sealed class ServiceRequest : AggregateRoot
     {
         ArgumentNullException.ThrowIfNull(rating);
         TransitionTo(RequestStatus.ValidatedByCustomer, userId, null, now);
-        Rating = rating;
+        Rating = rating.By(userId);
     }
 
     /// <summary>Daily job: a completed request without answer after <paramref name="afterDays"/> days is validated.</summary>

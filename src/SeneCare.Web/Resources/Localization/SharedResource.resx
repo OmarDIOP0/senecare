@@ -1061,4 +1061,35 @@
   <data name="Home_Hours" xml:space="preserve"><value>{0} h</value></data>
   <data name="Home_Days" xml:space="preserve"><value>{0} jours</value></data>
   <data name="Admin_NoRevenue" xml:space="preserve"><value>Aucun encaissement sur les six derniers mois. Les paiements vérifiés apparaîtront ici.</value></data>
+  <data name="Rating_PublishConsent" xml:space="preserve"><value>J'accepte que mon avis soit publié sur le site SENECARE</value></data>
+  <data name="Rating_PublishConsent_Hint" xml:space="preserve"><value>Seuls votre prénom, l'initiale de votre nom et votre commune apparaissent. Vous pouvez retirer votre accord à tout moment auprès du service client.</value></data>
+  <data name="Home_Reviews_Eyebrow" xml:space="preserve"><value>Avis clients</value></data>
+  <data name="Home_Reviews_Title" xml:space="preserve"><value>Ce que disent nos clients</value></data>
+  <data name="Home_Reviews_Note" xml:space="preserve"><value>Avis publiés avec l'accord de nos clients, après une intervention réalisée.</value></data>
+  <data name="Home_Review_Stars" xml:space="preserve"><value>{0} sur 5</value></data>
+  <data name="Admin_Reviews_Title" xml:space="preserve"><value>Avis clients</value></data>
+  <data name="Admin_Reviews_Description" xml:space="preserve"><value>Avis que les clients ont accepté de publier. Masquez ceux qui contiennent une insulte ou des données personnelles.</value></data>
+  <data name="Admin_Reviews_Empty_Title" xml:space="preserve"><value>Aucun avis à publier</value></data>
+  <data name="Admin_Reviews_Empty_Text" xml:space="preserve"><value>Les avis apparaissent ici quand un client accepte leur publication en validant une intervention.</value></data>
+  <data name="Admin_Reviews_Hide" xml:space="preserve"><value>Masquer</value></data>
+  <data name="Admin_Reviews_Show" xml:space="preserve"><value>Republier</value></data>
+  <data name="Admin_Reviews_Hidden" xml:space="preserve"><value>Masqué</value></data>
+  <data name="Admin_Reviews_Public" xml:space="preserve"><value>Publié</value></data>
+  <data name="Admin_Reviews_Updated" xml:space="preserve"><value>Avis mis à jour.</value></data>
+  <data name="Management_Reviews" xml:space="preserve"><value>Avis clients</value></data>
+  <data name="Management_Reviews_Text" xml:space="preserve"><value>Modérer les avis publiés sur le site.</value></data>
+  <data name="Home_Photo_Street_Alt" xml:space="preserve"><value>Ruelle aux murs ocre et jaunes, à l'ombre d'un grand arbre</value></data>
+  <data name="Home_Photo_Electrician_Alt" xml:space="preserve"><value>Électricien avec casque et gants vérifiant un boîtier électrique</value></data>
+  <data name="Home_Photo_Technician_Alt" xml:space="preserve"><value>Technicien en tenue de travail bleue</value></data>
+  <data name="Home_Techs_Eyebrow" xml:space="preserve"><value>Nos techniciens</value></data>
+  <data name="Home_Techs_Title" xml:space="preserve"><value>Des techniciens identifiés, qui viennent chez vous à l'heure</value></data>
+  <data name="Home_Techs_Known_Title" xml:space="preserve"><value>Vous savez qui vient</value></data>
+  <data name="Home_Techs_Known_Text" xml:space="preserve"><value>Nom et numéro du technicien avant son arrivée, joignable par appel ou WhatsApp.</value></data>
+  <data name="Home_Techs_Tracking_Title" xml:space="preserve"><value>Vous le suivez en route</value></data>
+  <data name="Home_Techs_Tracking_Text" xml:space="preserve"><value>Sa position s'affiche dans l'application pendant le trajet.</value></data>
+  <data name="Home_Techs_Photos_Title" xml:space="preserve"><value>Photos avant et après</value></data>
+  <data name="Home_Techs_Photos_Text" xml:space="preserve"><value>Chaque intervention se termine par un rapport, une signature et des photos.</value></data>
+  <data name="Home_Techs_Warranty_Title" xml:space="preserve"><value>Un historique et une garantie</value></data>
+  <data name="Home_Techs_Warranty_Text" xml:space="preserve"><value>Tout reste dans le carnet de votre logement ; une reprise sous garantie se demande en un geste.</value></data>
+  <data name="Public_Footer_Photos" xml:space="preserve"><value>Photos :</value></data>
 </root>

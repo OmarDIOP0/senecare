@@ -156,6 +156,71 @@ public partial class ClientSpaceTests(WebAppFixture app)
     }
 
     [PostgresFact]
+    public async Task A_review_is_published_only_with_consent_and_until_hidden_by_SENECARE()
+    {
+        var client = await HouseholdAsync();
+        var propertyId = await AddHomeAsync(client);
+        await ActivateAsync(propertyId);
+        var requestUrl = (await ReportAsync(client, propertyId, Guid.NewGuid().ToString("N"))).Location();
+        var requestId = Guid.Parse(requestUrl.Split('/')[^1]);
+        await SimulateAsync(requestId, SimulationStep.ProposeSlots);
+        var slot = SlotValue().Match(WebUtility.HtmlDecode(await client.GetStringAsync(new Uri(requestUrl, UriKind.Relative)))).Groups[1].Value;
+        await client.SubmitAsync(requestUrl, $"{requestUrl}/creneau", new Dictionary<string, string> { ["slot"] = slot });
+        foreach (var step in new[] { SimulationStep.OnTheWay, SimulationStep.StartWork, SimulationStep.Complete })
+        {
+            await SimulateAsync(requestId, step);
+        }
+
+        var comment = "Travail soigné " + Guid.NewGuid().ToString("N")[..8];
+        await client.SubmitAsync(requestUrl, $"{requestUrl}/valider", new Dictionary<string, string> { ["score"] = "5", ["comment"] = comment, ["publish"] = "true" });
+
+        Assert.Contains(comment, await PublicHomeAsync(), StringComparison.Ordinal);
+        Assert.Contains("Awa N.", await PublicHomeAsync(), StringComparison.Ordinal);
+        Assert.DoesNotContain("Ndiaye", await PublicHomeAsync(), StringComparison.Ordinal);
+
+        var admin = await AdminAsync();
+        await admin.SubmitAsync("/admin/avis", $"/admin/avis/{requestId}/visibilite", new Dictionary<string, string> { ["hidden"] = "true" });
+
+        Assert.DoesNotContain(comment, await PublicHomeAsync(), StringComparison.Ordinal);
+        await using var db = app.Database.CreateContext();
+        Assert.True((await db.ServiceRequests.SingleAsync(r => r.Id == requestId)).Rating!.IsHidden);
+    }
+
+    [PostgresFact]
+    public async Task A_review_without_consent_stays_private()
+    {
+        // The full journey validates « Rapide et propre » without ticking the consent box.
+        await Full_journey_slot_choice_intervention_validation_and_health_book();
+
+        Assert.DoesNotContain("Rapide et propre", await PublicHomeAsync(), StringComparison.Ordinal);
+    }
+
+    private async Task<string> PublicHomeAsync()
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/");
+        request.Headers.Add("Cookie", "sc_bienvenue=1");
+        var response = await app.CreateClient().SendAsync(request);
+        return WebUtility.HtmlDecode(await response.Content.ReadAsStringAsync());
+    }
+
+    private async Task<HttpClient> AdminAsync()
+    {
+        var phone = TestData.NewPhone();
+        await using (var db = app.Database.CreateContext())
+        {
+            var user = Domain.Users.User.Register(phone, DateTimeOffset.UtcNow);
+            user.GrantRole(Domain.Users.PlatformRole.SuperAdmin, DateTimeOffset.UtcNow);
+            db.Users.Add(user);
+            await db.SaveChangesAsync();
+        }
+
+        var client = app.CreateClient();
+        await client.SignInAsync(app.Messages, phone);
+        await client.SubmitAsync("/inscription", "/inscription", new Dictionary<string, string> { ["FullName"] = "Fatou Sarr", ["AcceptsPrivacyPolicy"] = "true" });
+        return client;
+    }
+
+    [PostgresFact]
     public async Task Home_shows_the_request_in_progress_and_the_neighborhood_gauge()
     {
         var client = await HouseholdAsync();

@@ -262,6 +262,23 @@ public sealed class AdviceController(AdviceManagement advice) : Controller
     }
 }
 
+/// <summary>Moderation of the reviews customers agreed to publish on the public site.</summary>
+[Authorize(Policy = Policies.BackOffice)]
+[Route("/admin/avis")]
+public sealed class ReviewsController(ReviewModeration reviews) : Controller
+{
+    [HttpGet("")]
+    public async Task<IActionResult> Index(CancellationToken cancellationToken) => View(await reviews.ListAsync(cancellationToken));
+
+    [HttpPost("{id:guid}/visibilite")]
+    public async Task<IActionResult> Visibility(Guid id, bool hidden, CancellationToken cancellationToken)
+    {
+        var result = await reviews.SetHiddenAsync(User.GetUserId()!.Value, id, hidden, cancellationToken);
+        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Admin_Reviews_Updated"].Value : this.ErrorMessage(result.Error);
+        return RedirectToAction(nameof(Index));
+    }
+}
+
 /// <summary>Audit log and personal-data requests (super-admin).</summary>
 [Authorize(Policy = Policies.SuperAdmin)]
 public sealed class PrivacyController(AuditQuery audit, PersonalDataService personalData) : Controller

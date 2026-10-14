@@ -19,12 +19,15 @@ public sealed class ClientRequestActions(IApplicationDbContext db, AccessControl
             return Task.CompletedTask;
         }, cancellationToken);
 
-    /// <summary>Validates the finished work with a 1–5 rating; the technician's average is updated.</summary>
-    public Task<Result<Guid>> ValidateAsync(Guid userId, Guid requestId, int score, string? comment, CancellationToken cancellationToken = default) =>
+    /// <summary>
+    /// Validates the finished work with a 1–5 rating; the technician's average is updated.
+    /// <paramref name="publish"/>: the customer agrees that the comment appears on the public site.
+    /// </summary>
+    public Task<Result<Guid>> ValidateAsync(Guid userId, Guid requestId, int score, string? comment, bool publish = false, CancellationToken cancellationToken = default) =>
         RunAsync(userId, requestId, async request =>
         {
             var now = clock.GetUtcNow();
-            request.ValidateByCustomer(userId, new Rating(score, comment, now), now);
+            request.ValidateByCustomer(userId, new Rating(score, comment, now, publish), now);
 
             var technician = await (
                     from i in db.Interventions

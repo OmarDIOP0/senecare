@@ -2442,6 +2442,14 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("rating_given_at");
 
+                            b1.Property<bool>("IsHidden")
+                                .HasColumnType("boolean")
+                                .HasColumnName("rating_is_hidden");
+
+                            b1.Property<bool>("PublicationConsent")
+                                .HasColumnType("boolean")
+                                .HasColumnName("rating_publication_consent");
+
                             b1.Property<int>("Score")
                                 .HasColumnType("integer")
                                 .HasColumnName("rating_score");

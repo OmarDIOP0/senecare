@@ -107,6 +107,11 @@
                 <label class="sc-label" for="comment">@L["Rating_Comment"]</label>
                 <textarea id="comment" name="comment" rows="2" class="sc-input py-2"></textarea>
             </div>
+            @* Explicit, unticked by default (loi 2008-12): the comment may appear on the public site. *@
+            <label class="flex items-start gap-2.5 text-[15px]">
+                <input type="checkbox" name="publish" value="true" class="mt-1 size-4 shrink-0" />
+                <span>@L["Rating_PublishConsent"]<span class="mt-0.5 block text-sm text-charbon-doux">@L["Rating_PublishConsent_Hint"]</span></span>
+            </label>
             <div class="flex flex-wrap gap-2">
                 <button type="submit" class="sc-btn-primaire"><sc-icon name="check" />@L["Request_Validate"]</button>
                 <button type="button" class="sc-btn-danger" data-sheet-open="contester"><sc-icon name="flag" />@L["Request_Dispute"]</button>

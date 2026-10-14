@@ -1,0 +1,46 @@
+@model IReadOnlyList<SeneCare.Application.Admin.ReviewRow>
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "gestion";
+    ViewData["Title"] = L["Admin_Reviews_Title"];
+    ViewData["Wide"] = true;
+}
+
+<partial name="Ui/_PageHeader" model='new PageHeaderModel(L["Admin_Reviews_Title"].Value, L["Admin_Reviews_Description"].Value)' />
+
+@if (Model.Count == 0)
+{
+    <div class="mt-6">
+        <partial name="Ui/_EmptyState" model='new EmptyStateModel(L["Admin_Reviews_Empty_Title"], L["Admin_Reviews_Empty_Text"], EmptyIllustration.Tools)' />
+    </div>
+}
+else
+{
+    <ul class="mt-6 grid gap-3">
+        @foreach (var review in Model)
+        {
+            <li class="sc-carte flex flex-wrap items-start justify-between gap-4 @(review.IsHidden ? "opacity-70" : "")">
+                <div class="min-w-0 flex-1">
+                    <p class="flex flex-wrap items-center gap-2 text-sm text-charbon-doux">
+                        <span class="inline-flex items-center gap-0.5 text-ocre-texte" aria-label="@L["Home_Review_Stars", review.Score]">
+                            @for (var i = 1; i <= 5; i++)
+                            {
+                                <sc-icon name="star" class="size-4 @(i <= review.Score ? "fill-ocre text-ocre" : "text-charbon-pale")" />
+                            }
+                        </span>
+                        <span>@(review.Author ?? "—") · @review.Commune · <a href="/admin/dispatch/@review.RequestId">@review.Number</a> · @Formatting.ShortDate(review.GivenAt)</span>
+                    </p>
+                    <p class="mt-2 text-[15px]">« @review.Comment »</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="sc-badge @(review.IsHidden ? "bg-sourdine text-charbon-doux" : "bg-baobab-clair text-baobab")">@(review.IsHidden ? L["Admin_Reviews_Hidden"] : L["Admin_Reviews_Public"])</span>
+                    <form method="post" action="/admin/avis/@review.RequestId/visibilite">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="hidden" value="@(review.IsHidden ? "false" : "true")" />
+                        <button type="submit" class="@(review.IsHidden ? "sc-btn-secondaire" : "sc-btn-danger")">@(review.IsHidden ? L["Admin_Reviews_Show"] : L["Admin_Reviews_Hide"])</button>
+                    </form>
+                </div>
+            </li>
+        }
+    </ul>
+}

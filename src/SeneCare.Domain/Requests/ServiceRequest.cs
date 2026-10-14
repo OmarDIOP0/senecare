@@ -8,12 +8,15 @@ public sealed record RequestStatusChange(
 public sealed record ServiceRequestStatusChanged(
     Guid RequestId, RequestStatus From, RequestStatus To, DateTimeOffset OccurredAt) : IDomainEvent;
 
-/// <summary>Customer's rating given when validating the intervention.</summary>
+/// <summary>
+/// Customer's rating given when validating the intervention. It appears on the public site only when the
+/// customer explicitly agreed (<see cref="PublicationConsent"/>) and SENECARE has not hidden it.
+/// </summary>
 public sealed record Rating
 {
     public const int CommentMaxLength = 1000;
 
-    public Rating(int score, string? comment, DateTimeOffset givenAt)
+    public Rating(int score, string? comment, DateTimeOffset givenAt, bool publicationConsent = false)
     {
         if (score is < 1 or > 5)
         {
@@ -23,6 +26,7 @@ public sealed record Rating
         Score = score;
         Comment = Guard.Optional(comment, "rating.comment", CommentMaxLength);
         GivenAt = givenAt;
+        PublicationConsent = publicationConsent;
     }
 
     public int Score { get; private init; }
@@ -30,6 +34,16 @@ public sealed record Rating
     public string? Comment { get; private init; }
 
     public DateTimeOffset GivenAt { get; private init; }
+
+    /// <summary>« J'accepte que mon avis soit publié » (loi 2008-12: explicit consent).</summary>
+    public bool PublicationConsent { get; private init; }
+
+    /// <summary>Moderation: hidden by SENECARE (insult, personal details…), kept for statistics.</summary>
+    public bool IsHidden { get; private init; }
+
+    public bool IsPublic => PublicationConsent && !IsHidden && Comment is not null;
+
+    public Rating WithVisibility(bool hidden) => this with { IsHidden = hidden };
 }
 
 /// <summary>
@@ -292,6 +306,13 @@ public sealed class ServiceRequest : AggregateRoot
 
     public void MarkUnderWarranty(Guid interventionId) => WarrantyInterventionId = interventionId;
 
+    /// <summary>Moderation of a published review; the score still counts in the averages.</summary>
+    public void SetReviewHidden(bool hidden)
+    {
+        Rating = Rating?.WithVisibility(hidden)
+            ?? throw new DomainException("rating.none", "This request has no rating.");
+    }
+
     /// <summary>Erasure of the reporter: free texts may hold personal details; trade, dates and status stay for statistics.</summary>
     public void Redact(string placeholder)
     {
@@ -300,6 +321,7 @@ public sealed class ServiceRequest : AggregateRoot
         ClientReference = null;
         if (Rating is { } rating)
         {
+            // No comment and no consent any more: nothing left to publish.
             Rating = new Rating(rating.Score, null, rating.GivenAt);
         }
     }

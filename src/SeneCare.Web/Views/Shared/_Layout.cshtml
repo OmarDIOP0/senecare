@@ -84,7 +84,17 @@
                 </ul>
             </div>
         </div>
-        <p class="border-t border-ligne px-4 py-4 text-center text-sm text-charbon-doux">© @DateTime.UtcNow.Year SENE DESIGN · @L["Public_Footer_Country"]</p>
+        <p class="border-t border-ligne px-4 py-4 text-center text-sm text-charbon-doux">
+            © @DateTime.UtcNow.Year SENE DESIGN · @L["Public_Footer_Country"]
+            @if (fullWidth)
+            {
+                @* Unsplash licence: attribution not required, given anyway. *@
+                <span class="mt-1 block text-xs">@L["Public_Footer_Photos"]
+                    <a href="https://unsplash.com/@@sweder_etc" class="text-charbon-doux underline" rel="noopener">Sweder Breet</a>,
+                    <a href="https://unsplash.com/@@emmages" class="text-charbon-doux underline" rel="noopener">Emmanuel Ikwuegbu</a>,
+                    <a href="https://unsplash.com/@@divaris" class="text-charbon-doux underline" rel="noopener">Divaris Shirichena</a> / Unsplash</span>
+            }
+        </p>
     </footer>
     <partial name="Ui/_Toasts" />
     @await RenderSectionAsync("Scripts", required: false)

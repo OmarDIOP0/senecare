@@ -113,11 +113,16 @@ Tokens (Styles/app.css, noms conservés) :
 Site public (`_Layout`, `Home/Index`) :
 - En-tête : logo, Particuliers · Entreprises · Quartiers · Nos métiers · Conseils (ancres de l'accueil),
   « Se connecter » + « Créer mon compte » ; menu repliable sur mobile. Pied de page à colonnes.
-- Accueil : bloc d'accueil ocre clair avec un aperçu de suivi construit avec de vrais composants (pas de photo),
-  3 promesses, cartes métiers, 4 étapes numérotées, offres lues en base (jamais de prix en dur),
-  Programme Quartiers (seuil lu en base), engagements, conseils, dernier appel.
+- Accueil : bloc d'accueil ocre clair (photo + aperçu de suivi construit avec de vrais composants),
+  3 promesses, cartes métiers, 4 étapes avec photo, « Nos techniciens », offres lues en base (jamais de prix
+  en dur), Programme Quartiers (seuil lu en base), engagements, avis clients, conseils, dernier appel.
+- Photos : provisoirement Unsplash (licence libre), dans `wwwroot/img/photos/`, WebP ≤ 150 Ko, recadrées,
+  `loading="lazy"` sauf celle du bloc d'accueil, photographes crédités en pied de page. Une photo de banque
+  d'images n'est jamais présentée comme un technicien SENECARE nommé. À remplacer par de vraies photos.
 - Chiffres publics : uniquement réels (`PublicFigures.HasEnough`), sinon les engagements de service.
-  Jamais de faux avis ni de faux chiffres ; pas d'avis clients publiés sans consentement explicite.
+- Avis clients : publiés seulement avec la case « J'accepte que mon avis soit publié » (décochée par défaut),
+  prénom + initiale + commune, les plus récents quelle que soit la note ; modération `/admin/avis`
+  (masquer / republier, journalisé). Jamais de faux avis ni de faux chiffres.
 
 Espace connecté :
 - Même palette et mêmes polices. Desktop ≥ 1024px : sidebar 240px (logo, organisation, « Signaler »,

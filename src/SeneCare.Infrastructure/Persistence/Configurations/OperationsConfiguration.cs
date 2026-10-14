@@ -113,6 +113,9 @@ internal sealed class ServiceRequestConfiguration : IEntityTypeConfiguration<Ser
             b.Property(x => x.Score).HasColumnName("rating_score");
             b.Property(x => x.Comment).HasColumnName("rating_comment").HasMaxLength(Rating.CommentMaxLength);
             b.Property(x => x.GivenAt).HasColumnName("rating_given_at");
+            b.Property(x => x.PublicationConsent).HasColumnName("rating_publication_consent");
+            b.Property(x => x.IsHidden).HasColumnName("rating_is_hidden");
+            b.Ignore(x => x.IsPublic);
         });
 
         builder.OwnsMany(r => r.History, b =>

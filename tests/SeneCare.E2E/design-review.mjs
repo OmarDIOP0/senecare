@@ -25,7 +25,7 @@ const technicianPhone = "700000001";
 const log = [];
 const server = spawn("dotnet", ["run", "--no-build", "--project", join(root, "src", "SeneCare.Web"), "--urls", base], {
   // Each run signs up three accounts from localhost: lift the per-IP OTP limit for this local server only.
-  env: { ...process.env, ASPNETCORE_ENVIRONMENT: "Development", DOTNET_ENVIRONMENT: "Development", Otp__MaxPerIpPerHour: "1000", Bootstrap__SuperAdminPhones: adminPhone },
+  env: { ...process.env, ASPNETCORE_ENVIRONMENT: "Development", DOTNET_ENVIRONMENT: "Development", Otp__MaxPerIpPerHour: "1000", Otp__MaxPerPhonePerHour: "1000", Bootstrap__SuperAdminPhones: adminPhone },
 });
 server.stdout.on("data", (d) => log.push(d.toString()));
 server.stderr.on("data", (d) => log.push(d.toString()));
@@ -252,6 +252,15 @@ for (const scheme of ["light", "dark"]) {
       await page.evaluate(() => document.querySelectorAll("body > .fixed").forEach((e) => {
         if (/z-\[6[0-2]\]/.test(e.className)) e.remove();
       }));
+      // Full-page shots do not scroll: load the lazy images first.
+      await page.evaluate(async () => {
+        for (let y = 0; y < document.body.scrollHeight; y += window.innerHeight) {
+          window.scrollTo(0, y);
+          await new Promise((r) => setTimeout(r, 120));
+        }
+        await Promise.all([...document.images].map((i) => (i.complete ? null : new Promise((r) => { i.onload = i.onerror = r; }))));
+        window.scrollTo(0, 0);
+      });
       await page.screenshot({ path: join(out, `${screen.name}-${viewport.tag}-${scheme}.png`), fullPage: true });
       await context.close();
     }

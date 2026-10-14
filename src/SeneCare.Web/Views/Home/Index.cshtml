@@ -15,7 +15,7 @@
 
 @* ---- Welcome block: promise + a glimpse of the follow-up the customer gets ---- *@
 <section class="mx-auto w-full max-w-6xl px-4 pt-6 lg:px-6 lg:pt-10">
-    <div class="grid items-center gap-10 rounded-3xl bg-ocre-clair px-6 py-10 sm:px-10 lg:grid-cols-[1.15fr_1fr] lg:px-14 lg:py-16">
+    <div class="grid items-center gap-10 rounded-3xl bg-ocre-clair px-6 py-10 sm:px-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:py-14 lg:pr-10 lg:pl-14">
         <div>
             <p class="sc-eyebrow">@L["Home_Hero_Eyebrow"]</p>
             <h1 class="mt-4 text-[2rem] leading-[1.08] font-bold sm:text-5xl lg:text-[3.5rem]">@L["Home_Hero_Title"]</h1>
@@ -27,29 +27,28 @@
             </div>
         </div>
 
-        @* Product glimpse, made of real interface pieces (no stock photo). *@
-        <div class="relative mx-auto w-full max-w-sm" aria-hidden="true">
-            <div class="rounded-lg border border-ligne bg-surface p-5">
+        @* Photo (Unsplash, credited in the footer) + a glimpse of the follow-up, made of real interface pieces. *@
+        <div class="relative">
+            <img src="~/img/photos/accueil-rue.webp" width="720" height="840" alt="@L["Home_Photo_Street_Alt"]"
+                 fetchpriority="high" decoding="async"
+                 class="aspect-square w-full rounded-2xl object-cover sm:aspect-[5/4] lg:aspect-[6/7]" />
+            <div class="absolute top-4 right-4 flex items-center gap-2 rounded-full bg-surface px-4 py-2 text-sm font-semibold" aria-hidden="true">
+                <sc-icon name="wallet" class="size-4 text-ocre-texte" />@L["Home_Demo_Paid"]
+            </div>
+            <div class="relative mx-3 -mt-20 rounded-lg border border-ligne bg-surface p-5 sm:mx-auto sm:max-w-sm lg:absolute lg:-bottom-8 lg:-left-16 lg:mt-0 lg:w-80" aria-hidden="true">
                 <div class="flex items-start gap-3">
-                    <span class="grid size-10 shrink-0 place-items-center rounded-md bg-sourdine text-charbon"><sc-icon name="droplet" /></span>
+                    <span class="grid size-10 shrink-0 place-items-center rounded-md bg-ocre-clair text-charbon"><sc-icon name="droplet" /></span>
                     <div class="min-w-0">
                         <p class="text-sm text-charbon-doux">@L["Domain_Plumbing"] · @L["Home_Demo_Place"]</p>
                         <p class="font-semibold">@L["Home_Demo_Title"]</p>
                     </div>
                 </div>
-                <ol class="mt-5 grid gap-3 text-[15px]">
+                <ol class="mt-4 grid gap-2.5 text-[15px]">
                     <li class="flex items-center gap-3"><span class="grid size-6 place-items-center rounded-full bg-baobab text-sur-accent"><sc-icon name="check" class="size-3.5" /></span>@L["Home_Demo_Step1"]</li>
                     <li class="flex items-center gap-3"><span class="grid size-6 place-items-center rounded-full bg-baobab text-sur-accent"><sc-icon name="check" class="size-3.5" /></span>@L["Home_Demo_Step2"]</li>
                     <li class="flex items-center gap-3 font-semibold"><span class="grid size-6 place-items-center rounded-full border-2 border-laterite"><span class="size-2 rounded-full bg-laterite"></span></span>@L["Home_Demo_Step3"]</li>
                     <li class="flex items-center gap-3 text-charbon-doux"><span class="size-6 rounded-full border-2 border-ligne"></span>@L["Home_Demo_Step4"]</li>
                 </ol>
-                <div class="mt-5 flex gap-2">
-                    <span class="sc-btn-secondaire flex-1"><sc-icon name="phone" class="size-4" />@L["Card_Call"]</span>
-                    <span class="sc-btn-secondaire flex-1"><sc-icon name="message-circle" class="size-4" />WhatsApp</span>
-                </div>
-            </div>
-            <div class="absolute -bottom-5 -left-4 flex items-center gap-2 rounded-full border border-ligne bg-surface px-4 py-2 text-sm font-semibold sm:-left-8">
-                <sc-icon name="wallet" class="size-4 text-ocre-texte" />@L["Home_Demo_Paid"]
             </div>
         </div>
     </div>
@@ -94,21 +93,58 @@
     </ul>
 </section>
 
-@* ---- How it works ---- *@
+@* ---- How it works: photo + the four steps ---- *@
 <section class="mx-auto w-full max-w-6xl px-4 pt-20 lg:px-6" aria-labelledby="etapes-titre">
-    <p class="sc-eyebrow">@L["Home_Steps_Eyebrow"]</p>
-    <h2 id="etapes-titre" class="mt-3 max-w-2xl font-display text-2xl leading-tight tracking-[-0.02em] sm:text-[2rem]">@L["Home_Steps_Title"]</h2>
-    <span class="sc-trait" aria-hidden="true"></span>
-    <ol class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        @foreach (var (index, (title, text)) in steps.Index())
-        {
-            <li class="rounded-lg border border-ligne bg-surface p-6">
-                <span class="grid size-11 place-items-center rounded-full bg-laterite font-display text-lg text-sur-accent">@(index + 1)</span>
-                <h3 class="mt-5 text-lg">@L[title]</h3>
-                <p class="mt-2 text-[15px] text-charbon-doux">@L[text]</p>
-            </li>
-        }
-    </ol>
+    <div class="grid items-center gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+        <img src="~/img/photos/electricien.webp" width="1200" height="900" alt="@L["Home_Photo_Electrician_Alt"]"
+             loading="lazy" decoding="async" class="aspect-[4/3] w-full rounded-2xl object-cover lg:aspect-[4/5]" />
+        <div>
+            <p class="sc-eyebrow">@L["Home_Steps_Eyebrow"]</p>
+            <h2 id="etapes-titre" class="mt-3 max-w-2xl font-display text-2xl leading-tight tracking-[-0.02em] sm:text-[2rem]">@L["Home_Steps_Title"]</h2>
+            <span class="sc-trait" aria-hidden="true"></span>
+            <ol class="mt-8 grid gap-6">
+                @foreach (var (index, (title, text)) in steps.Index())
+                {
+                    <li class="relative flex gap-5">
+                        @if (index < steps.Length - 1)
+                        {
+                            <span class="absolute top-12 bottom-[-1.5rem] left-[1.375rem] w-0.5 bg-ligne" aria-hidden="true"></span>
+                        }
+                        <span class="relative grid size-11 shrink-0 place-items-center rounded-full bg-laterite font-display text-lg text-sur-accent">@(index + 1)</span>
+                        <div class="pt-1.5">
+                            <h3 class="text-lg">@L[title]</h3>
+                            <p class="mt-1 text-[15px] text-charbon-doux">@L[text]</p>
+                        </div>
+                    </li>
+                }
+            </ol>
+        </div>
+    </div>
+</section>
+
+@* ---- Technicians (stock photo: illustration only, no name given) ---- *@
+<section class="mx-auto w-full max-w-6xl px-4 pt-20 lg:px-6" aria-labelledby="techniciens-titre">
+    <div class="grid gap-8 overflow-hidden rounded-3xl border border-ligne bg-surface lg:grid-cols-[1.2fr_1fr]">
+        <div class="p-6 sm:p-10 lg:p-14">
+            <p class="sc-eyebrow">@L["Home_Techs_Eyebrow"]</p>
+            <h2 id="techniciens-titre" class="mt-3 max-w-xl font-display text-2xl leading-tight tracking-[-0.02em] sm:text-[2rem]">@L["Home_Techs_Title"]</h2>
+            <span class="sc-trait" aria-hidden="true"></span>
+            <ul class="mt-8 grid gap-5">
+                @foreach (var (icon, key) in new[] { ("shield-check", "Home_Techs_Known"), ("navigation", "Home_Techs_Tracking"), ("camera", "Home_Techs_Photos"), ("history", "Home_Techs_Warranty") })
+                {
+                    <li class="flex gap-4">
+                        <span class="grid size-11 shrink-0 place-items-center rounded-md bg-ocre-clair text-charbon"><sc-icon name="@icon" class="size-5" /></span>
+                        <div>
+                            <h3 class="text-base">@L[key + "_Title"]</h3>
+                            <p class="mt-1 text-[15px] text-charbon-doux">@L[key + "_Text"]</p>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+        <img src="~/img/photos/technicien-portrait.webp" width="900" height="1000" alt="@L["Home_Photo_Technician_Alt"]"
+             loading="lazy" decoding="async" class="aspect-[4/3] h-full w-full object-cover object-top lg:aspect-auto" />
+    </div>
 </section>
 
 @* ---- Offers (prices from the database) ---- *@
@@ -218,6 +254,37 @@
         <div class="rounded-lg border border-ocre bg-ocre-clair p-4 sm:p-6"><dt class="text-sm text-charbon-doux sm:text-[15px]">@L["Home_Commit_Hood"]</dt><dd class="mt-2 font-display text-2xl sm:text-3xl tabular-nums">@Model.NeighborhoodThreshold</dd></div>
     </dl>
 </section>
+
+@* ---- Reviews: only those the customers agreed to publish, latest first, whatever the score ---- *@
+@if (Model.Reviews.Count > 0)
+{
+    <section class="mx-auto w-full max-w-6xl px-4 pt-20 lg:px-6" aria-labelledby="avis-titre">
+        <p class="sc-eyebrow">@L["Home_Reviews_Eyebrow"]</p>
+        <h2 id="avis-titre" class="mt-3 max-w-2xl font-display text-2xl leading-tight tracking-[-0.02em] sm:text-[2rem]">@L["Home_Reviews_Title"]</h2>
+        <span class="sc-trait" aria-hidden="true"></span>
+        <ul class="mt-10 grid gap-4 @(Model.Reviews.Count >= 3 ? "md:grid-cols-3" : "md:grid-cols-2")">
+            @foreach (var review in Model.Reviews)
+            {
+                <li>
+                    <figure class="flex h-full flex-col rounded-lg border border-ligne bg-surface p-6">
+                        <span class="inline-flex gap-0.5" role="img" aria-label="@L["Home_Review_Stars", review.Score]">
+                            @for (var i = 1; i <= 5; i++)
+                            {
+                                <sc-icon name="star" class="size-4 @(i <= review.Score ? "fill-ocre text-ocre" : "text-charbon-pale")" />
+                            }
+                        </span>
+                        <blockquote class="mt-4 flex-1 text-[15px]">« @review.Comment »</blockquote>
+                        <figcaption class="mt-5 flex items-center gap-3 border-t border-ligne pt-4">
+                            <span class="grid size-10 shrink-0 place-items-center rounded-full bg-ocre-clair font-bold text-charbon">@review.Author[..1]</span>
+                            <span class="text-sm"><span class="block font-bold">@review.Author</span><span class="text-charbon-doux">@review.Commune · @L["Domain_" + review.Domain] · @Formatting.ShortDate(review.GivenAt)</span></span>
+                        </figcaption>
+                    </figure>
+                </li>
+            }
+        </ul>
+        <p class="mt-4 text-sm text-charbon-doux">@L["Home_Reviews_Note"]</p>
+    </section>
+}
 
 @* ---- Seasonal advice (the built-in rainy-season advice while none is published) ---- *@
 @{

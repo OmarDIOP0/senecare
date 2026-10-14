@@ -21,6 +21,22 @@ public sealed record PublicPlan(
 
 public sealed record PublicAdvice(string Title, string Body, ServiceDomain? Domain);
 
+/// <summary>A review the customer agreed to publish: first name and initial only, commune, score, text.</summary>
+public sealed record PublicReview(string Author, string Commune, int Score, string Comment, DateTimeOffset GivenAt, ServiceDomain Domain)
+{
+    /// <summary>« Awa Ndiaye » → « Awa N. »; nothing more about the person.</summary>
+    public static string ShortName(string fullName)
+    {
+        var parts = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        return parts.Length switch
+        {
+            0 => string.Empty,
+            1 => parts[0],
+            _ => $"{parts[0]} {char.ToUpperInvariant(parts[^1][0])}.",
+        };
+    }
+}
+
 /// <summary>
 /// Real figures only. <see cref="HasEnough"/> is false until there is enough activity to mean something:
 /// the page then shows the service commitments instead of small numbers.
@@ -37,6 +53,7 @@ public sealed record PublicHome(
     IReadOnlyList<PublicPlan> Plans,
     PublicFigures Figures,
     IReadOnlyList<PublicAdvice> Advice,
+    IReadOnlyList<PublicReview> Reviews,
     int NeighborhoodThreshold);
 
 /// <summary>Data of the public home page (anonymous visitors): offers, aggregate figures, seasonal advice.</summary>
@@ -77,7 +94,23 @@ public sealed class GetPublicHomeHandler(IApplicationDbContext db, Settings sett
             .Select(a => new PublicAdvice(a.Title, a.Body, a.Domain))
             .ToList();
 
+        // Latest published reviews, whatever their score: consent given, not hidden by moderation.
+        var reviews = (await (
+                    from r in db.ServiceRequests.AsNoTracking()
+                    where r.Rating != null && r.Rating.PublicationConsent && !r.Rating.IsHidden && r.Rating.Comment != null
+                    join u in db.Users on r.ReportedByUserId equals u.Id
+                    where u.FullName != null && u.AnonymizedAt == null
+                    join p in db.Properties on r.PropertyId equals p.Id
+                    join n in db.Neighborhoods on p.Address.NeighborhoodId equals n.Id
+                    join c in db.Communes on n.CommuneId equals c.Id
+                    orderby r.Rating!.GivenAt descending
+                    select new { u.FullName, Commune = c.Name, r.Rating!.Score, r.Rating!.Comment, r.Rating!.GivenAt, r.Domain })
+                .Take(3)
+                .ToListAsync(cancellationToken))
+            .Select(x => new PublicReview(PublicReview.ShortName(x.FullName!), x.Commune, x.Score, x.Comment!, x.GivenAt, x.Domain))
+            .ToList();
+
         var threshold = await settings.IntAsync(SettingKeys.NeighborhoodThreshold, cancellationToken);
-        return new PublicHome(plans, figures, advice, threshold);
+        return new PublicHome(plans, figures, advice, reviews, threshold);
     }
 }

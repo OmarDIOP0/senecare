@@ -183,8 +183,8 @@ public sealed class InterventionsController(
         Done(id, await actions.ChooseSlotAsync(User.GetUserId()!.Value, id, slot, cancellationToken), "Request_SlotChosen");
 
     [HttpPost("{id:guid}/valider")]
-    public async Task<IActionResult> Validate(Guid id, int score, string? comment, CancellationToken cancellationToken) =>
-        Done(id, await actions.ValidateAsync(User.GetUserId()!.Value, id, score, comment, cancellationToken), "Request_Validated");
+    public async Task<IActionResult> Validate(Guid id, int score, string? comment, bool publish, CancellationToken cancellationToken) =>
+        Done(id, await actions.ValidateAsync(User.GetUserId()!.Value, id, score, comment, publish, cancellationToken), "Request_Validated");
 
     [HttpPost("{id:guid}/contester")]
     public async Task<IActionResult> Dispute(Guid id, string? reason, CancellationToken cancellationToken) =>

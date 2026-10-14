@@ -10,7 +10,8 @@ using SeneCare.Web.Localization;
 namespace SeneCare.Web.TagHelpers;
 
 /// <summary>
-/// Lucide icon from the cached sprite: <c>&lt;sc-icon name="zap" class="size-5" /&gt;</c>.
+/// Phosphor « duotone » icon from the cached sprite: <c>&lt;sc-icon name="zap" class="size-5" /&gt;</c>.
+/// The light background layer takes <c>--icon-fond</c> (defaults to the text colour at 20 %).
 /// Decorative by default; give <c>label</c> when the icon carries meaning on its own.
 /// </summary>
 [HtmlTargetElement("sc-icon", TagStructure = TagStructure.WithoutEndTag)]
@@ -34,12 +35,7 @@ public sealed class IconTagHelper(IFileVersionProvider versions) : TagHelper
         // An SVG without explicit size renders at 300×150: default to 18 px unless a size-* class is given.
         var hasSize = existingClass?.Split(' ').Any(c => c.StartsWith("size-", StringComparison.Ordinal) || c.Contains(":size-", StringComparison.Ordinal)) ?? false;
         output.Attributes.SetAttribute("class", ("inline-block shrink-0 align-[-0.15em] " + (hasSize ? string.Empty : "size-[18px] ") + existingClass).Trim());
-        output.Attributes.SetAttribute("fill", "none");
-        output.Attributes.SetAttribute("stroke", "currentColor");
-        // Lucide at 1.75: the lighter line of current product UIs.
-        output.Attributes.SetAttribute("stroke-width", "1.75");
-        output.Attributes.SetAttribute("stroke-linecap", "round");
-        output.Attributes.SetAttribute("stroke-linejoin", "round");
+        output.Attributes.SetAttribute("fill", "currentColor");
         if (string.IsNullOrEmpty(Label))
         {
             output.Attributes.SetAttribute("aria-hidden", "true");

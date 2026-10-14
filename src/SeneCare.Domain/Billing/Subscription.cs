@@ -36,14 +36,15 @@ public sealed class Subscription : AggregateRoot
     {
     }
 
-    private Subscription(CustomerAccount account, Plan plan, IReadOnlyCollection<Guid> propertyIds, DateTimeOffset now)
+    private Subscription(CustomerAccount account, Plan plan, IReadOnlyCollection<Guid> propertyIds, bool annual, DateTimeOffset now)
     {
         AccountId = account.Id;
         PlanId = plan.Id;
         Segment = account.Kind;
         RegistrationFee = plan.RegistrationFee;
         MonthlyPrice = plan.MonthlyPrice;
-        BillingPeriodMonths = plan.BillingPeriodMonths;
+        BillingPeriodMonths = annual ? 12 : plan.BillingPeriodMonths;
+        FreeMonthsPerPeriod = annual ? plan.AnnualFreeMonths : 0;
         DiagnosticRequired = plan.DiagnosticRequired;
         Status = SubscriptionStatus.PendingRegistration;
         CreatedAt = now;
@@ -64,6 +65,14 @@ public sealed class Subscription : AggregateRoot
 
     public int BillingPeriodMonths { get; private set; }
 
+    /// <summary>Months not charged in each period: « 2 mois offerts » on a yearly payment.</summary>
+    public int FreeMonthsPerPeriod { get; private set; }
+
+    public bool IsAnnual => BillingPeriodMonths == 12 && Segment == AccountKind.Household;
+
+    /// <summary>Months actually charged per period.</summary>
+    public int ChargedMonths => BillingPeriodMonths - FreeMonthsPerPeriod;
+
     public bool DiagnosticRequired { get; private set; }
 
     public DateRange? CurrentPeriod { get; private set; }
@@ -79,12 +88,13 @@ public sealed class Subscription : AggregateRoot
 
     public IReadOnlyCollection<Guid> CoveredPropertyIds => _coveredPropertyIds.AsReadOnly();
 
-    public Money PeriodPrice => MonthlyPrice * BillingPeriodMonths;
+    public Money PeriodPrice => MonthlyPrice * ChargedMonths;
 
     /// <summary>Requests can be submitted while active or within the grace period.</summary>
     public bool AllowsRequests => Status is SubscriptionStatus.Active or SubscriptionStatus.PastDue;
 
-    public static Subscription Create(CustomerAccount account, Plan plan, IEnumerable<Guid> propertyIds, DateTimeOffset now)
+    /// <param name="annual">Pay for 12 months at once (monthly plans only; business plans follow the quarterly diagnostic).</param>
+    public static Subscription Create(CustomerAccount account, Plan plan, IEnumerable<Guid> propertyIds, DateTimeOffset now, bool annual = false)
     {
         ArgumentNullException.ThrowIfNull(account);
         ArgumentNullException.ThrowIfNull(plan);
@@ -108,7 +118,12 @@ public sealed class Subscription : AggregateRoot
                 "A home subscription covers exactly one home; a business subscription at least one site.");
         }
 
-        return new Subscription(account, plan, properties, now);
+        if (annual && !plan.OffersAnnual)
+        {
+            throw new DomainException("subscription.annual_unavailable", "This offer is billed per quarter, after the diagnostic.");
+        }
+
+        return new Subscription(account, plan, properties, annual, now);
     }
 
     /// <summary>Registration fee and first period paid: the subscription starts on <paramref name="startDate"/>.</summary>

@@ -15,6 +15,7 @@ namespace SeneCare.Web.Controllers;
 [Route("/inscription")]
 public sealed class RegistrationController(
     CompleteRegistrationHandler completeRegistration,
+    SeneCare.Application.Public.GetPublicHomeHandler offers,
     GetUserProfileHandler getProfile,
     ReferralService referrals,
     SignInManager<ApplicationUser> signInManager,
@@ -40,6 +41,9 @@ public sealed class RegistrationController(
             JoiningAccountName = (profile.Memberships.Count > 0 ? profile.Memberships[0].AccountName : null),
             AcceptsWhatsApp = true,
             IsStaff = IsStaff(profile),
+            Profile = SeneCare.Domain.Accounts.AccountKind.Household,
+            Plans = (await offers.HandleAsync(cancellationToken)).Plans,
+            Phone = profile.Phone,
         });
     }
 
@@ -49,7 +53,9 @@ public sealed class RegistrationController(
         ArgumentNullException.ThrowIfNull(model);
         var userId = User.GetUserId()!.Value;
         var result = await completeRegistration.HandleAsync(
-            new CompleteRegistrationCommand(userId, model.FullName, model.Profile, model.CompanyName, model.AcceptsPrivacyPolicy, model.AcceptsWhatsApp),
+            new CompleteRegistrationCommand(
+                userId, model.FullName, model.Profile, model.CompanyName, model.AcceptsPrivacyPolicy, model.AcceptsWhatsApp,
+                model.PlanCode, model.Annual),
             cancellationToken);
 
         if (!result.IsSuccess)
@@ -58,6 +64,8 @@ public sealed class RegistrationController(
             var profile = await getProfile.HandleAsync(userId, cancellationToken);
             model.JoiningAccountName = profile?.Memberships.Count > 0 ? profile.Memberships[0].AccountName : null;
             model.IsStaff = profile is not null && IsStaff(profile);
+            model.Plans = (await offers.HandleAsync(cancellationToken)).Plans;
+            model.Phone = profile?.Phone;
             return View(model);
         }
 
@@ -71,7 +79,8 @@ public sealed class RegistrationController(
         // Claims changed (name, roles, membership): re-issue the cookie.
         var identityUser = await userManager.FindByIdAsync(userId.ToString());
         await signInManager.RefreshSignInAsync(identityUser!);
-        return LocalRedirect("/");
+        // Next: the home / first site, so that the chosen offer becomes a subscription to pay.
+        return LocalRedirect(string.IsNullOrEmpty(model.PlanCode) ? "/" : "/logements/nouveau?bienvenue=1");
     }
 
     private static bool IsStaff(UserProfileDto profile) =>

@@ -1,22 +1,26 @@
 // Builds front-end assets that are committed to wwwroot (no CDN: one less DNS/TLS round-trip on 3G).
-// - wwwroot/img/icons.svg: sprite of the Lucide icons listed in Styles/icons.json (<use href="…#name">)
+// - wwwroot/img/icons.svg: sprite of the Phosphor duotone icons listed in Styles/icons.json (<use href="…#name">)
 // - wwwroot/lib: minified HTMX, Leaflet, SignalR client
 // - wwwroot/fonts: Google Fonts files (latin subset, via @fontsource), self-hosted for speed and privacy
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from "node:fs";
 
+// Icons: names used in the views (Styles/icons.json) → Phosphor « duotone » files (Styles/icon-map.json;
+// a name missing from the map is taken as a Phosphor name). The 20 % background layer reads --icon-fond.
 const icons = JSON.parse(readFileSync("Styles/icons.json", "utf8"));
+const iconMap = JSON.parse(readFileSync("Styles/icon-map.json", "utf8"));
 const symbols = icons.map((name) => {
-  const svg = readFileSync(`node_modules/lucide-static/icons/${name}.svg`, "utf8");
+  const file = `node_modules/@phosphor-icons/core/assets/duotone/${iconMap[name] ?? name}-duotone.svg`;
+  const svg = readFileSync(file, "utf8");
   const body = svg.slice(svg.indexOf(">", svg.indexOf("<svg")) + 1, svg.lastIndexOf("</svg>"))
     .replace(/\s*\n\s*/g, "")
-    .replace(/\s+\/>/g, "/>");
-  return `<symbol id="${name}" viewBox="0 0 24 24">${body}</symbol>`;
+    .replace(/ opacity="0\.2"/g, ' style="fill:var(--icon-fond,currentColor);opacity:var(--icon-fond-opacite,.2)"');
+  return `<symbol id="${name}" viewBox="0 0 256 256">${body}</symbol>`;
 });
 
 mkdirSync("wwwroot/img", { recursive: true });
 writeFileSync(
   "wwwroot/img/icons.svg",
-  `<svg xmlns="http://www.w3.org/2000/svg"><!-- Lucide (ISC license) --><defs>${symbols.join("")}</defs></svg>\n`,
+  `<svg xmlns="http://www.w3.org/2000/svg"><!-- Phosphor Icons (MIT license) --><defs>${symbols.join("")}</defs></svg>\n`,
 );
 
 mkdirSync("wwwroot/lib", { recursive: true });
@@ -34,10 +38,12 @@ copyFileSync("node_modules/@microsoft/signalr/dist/browser/signalr.min.js", "www
 
 mkdirSync("wwwroot/fonts", { recursive: true });
 for (const [pkg, file] of [
-  // One family for everything: Inter 400 / 600 / 700.
-  ["inter", "inter-latin-400-normal.woff2"],
-  ["inter", "inter-latin-600-normal.woff2"],
-  ["inter", "inter-latin-700-normal.woff2"],
+  // Text: Bricolage Grotesque. Titles: Unbounded. Small labels: Space Mono.
+  ["bricolage-grotesque", "bricolage-grotesque-latin-400-normal.woff2"],
+  ["bricolage-grotesque", "bricolage-grotesque-latin-600-normal.woff2"],
+  ["bricolage-grotesque", "bricolage-grotesque-latin-700-normal.woff2"],
+  ["unbounded", "unbounded-latin-700-normal.woff2"],
+  ["space-mono", "space-mono-latin-700-normal.woff2"],
 ]) {
   copyFileSync(`node_modules/@fontsource/${pkg}/files/${file}`, `wwwroot/fonts/${file}`);
 }

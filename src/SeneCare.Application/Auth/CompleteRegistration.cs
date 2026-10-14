@@ -26,7 +26,9 @@ public sealed record CompleteRegistrationCommand(
     AccountKind? Profile,
     string? CompanyName,
     bool AcceptsPrivacyPolicy,
-    bool AcceptsWhatsApp);
+    bool AcceptsWhatsApp,
+    string? PlanCode = null,
+    bool Annual = false);
 
 /// <summary>
 /// Last sign-up step: name, « Ma maison » / « Mon entreprise », explicit consent (law 2008-12).
@@ -68,6 +70,18 @@ public sealed class CompleteRegistrationHandler(IApplicationDbContext db, TimePr
                     break;
                 default:
                     return Result<Guid>.Failure("registration.profile_required");
+            }
+
+            // The offer picked during sign-up: used when the first home / site is added.
+            if (!string.IsNullOrWhiteSpace(command.PlanCode))
+            {
+                var plan = await db.Plans.AsNoTracking().FirstOrDefaultAsync(p => p.Code == command.PlanCode && p.IsActive, cancellationToken);
+                if (plan is null || plan.Segment != account.Kind)
+                {
+                    return Result<Guid>.Failure("registration.plan_unknown");
+                }
+
+                account.ChooseOffer(plan.Code, command.Annual && plan.OffersAnnual);
             }
 
             db.CustomerAccounts.Add(account);

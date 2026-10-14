@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="28" viewBox="0 0 160 28"><!-- SENECARE band: wax / bogolan geometry, repeated horizontally. -->
+<rect width="160" height="28" fill="#e7a338"/>
+<rect x="0" width="20" height="28" fill="#2a1a10"/><circle cx="10" cy="14" r="7" fill="#f7f1e2"/><circle cx="10" cy="14" r="3" fill="#c2410c"/>
+<path d="M20 28 L30 0 L40 28 Z" fill="#c2410c"/>
+<rect x="40" width="20" height="28" fill="#f7f1e2"/><path d="M42 14 a8 8 0 0 1 16 0 Z" fill="#2a1a10"/><rect x="42" y="16" width="16" height="3" fill="#2a1a10"/>
+<rect x="60" width="4" height="28" fill="#2a1a10"/><rect x="66" width="4" height="28" fill="#2a1a10"/><rect x="72" width="4" height="28" fill="#2a1a10"/>
+<rect x="78" width="22" height="28" fill="#c2410c"/><circle cx="89" cy="14" r="6" fill="#e7a338"/>
+<path d="M100 0 h20 v28 h-20 Z" fill="#2a1a10"/><path d="M100 28 Q110 6 120 28 Z" fill="#e2bd6b"/>
+<rect x="120" width="20" height="28" fill="#f7f1e2"/><path d="M130 4 L138 14 L130 24 L122 14 Z" fill="#c2410c"/>
+<path d="M140 0 h20 v28 h-20 Z" fill="#e2bd6b"/><circle cx="150" cy="14" r="7" fill="#2a1a10"/><path d="M143 14 a7 7 0 0 0 14 0 Z" fill="#f7f1e2"/>
+</svg>

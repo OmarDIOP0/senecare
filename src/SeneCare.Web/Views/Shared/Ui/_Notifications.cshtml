@@ -1,30 +1,60 @@
 @model IReadOnlyList<SeneCare.Application.Users.InAppNotification>
-<div class="flex items-center justify-between border-b border-ligne px-3 py-2">
-    <p class="text-sm font-medium">@L["Shell_Notifications"]</p>
+@using System.Text.Json
+@using SeneCare.Application.Users
+@{
+    // Per template: icon, tint and where the notification leads.
+    (string Icon, string Tint, string Url) Look(string template) => template switch
+    {
+        NotificationTemplates.PaymentDeclared => ("wallet", "bg-soleil-clair text-soleil", "/admin/paiements"),
+        NotificationTemplates.PaymentVerified => ("circle-check", "bg-baobab-clair text-baobab", "/abonnement"),
+        NotificationTemplates.PaymentRejected => ("triangle-alert", "bg-rouge-clair text-rouge", "/abonnement"),
+        _ => ("bell", "bg-sourdine text-charbon-doux", "#"),
+    };
+    string Value(JsonElement payload, string name) =>
+        payload.ValueKind == JsonValueKind.Object && payload.TryGetProperty(name, out var v)
+            ? v.ValueKind == JsonValueKind.Number ? Formatting.Fcfa(SeneCare.Domain.Common.Money.FromFcfa(v.GetInt64())) : v.ToString()
+            : string.Empty;
+}
+<div class="flex items-center justify-between border-b border-ligne px-4 py-3">
+    <p class="font-semibold">@L["Shell_Notifications"]</p>
 </div>
 @if (Model.Count == 0)
 {
     <div class="px-4 py-8 text-center">
-        <span class="mx-auto grid size-10 place-items-center rounded-md bg-sourdine text-charbon-doux"><sc-icon name="bell" class="size-5" /></span>
-        <p class="mt-3 text-sm font-medium">@L["Notif_Empty_Title"]</p>
-        <p class="mt-1 text-[13px] text-charbon-doux">@L["Notif_Empty_Text"]</p>
+        <span class="mx-auto grid size-12 place-items-center rounded-full bg-sourdine text-charbon-doux"><sc-icon name="bell" class="size-6" /></span>
+        <p class="mt-3 font-semibold">@L["Notif_Empty_Title"]</p>
+        <p class="mt-1 text-sm text-charbon-doux">@L["Notif_Empty_Text"]</p>
     </div>
 }
 else
 {
-    <ul class="max-h-96 overflow-y-auto">
+    <ul class="max-h-[26rem] overflow-y-auto">
         @foreach (var n in Model)
         {
-            var text = L["Notif_" + n.TemplateKey.Replace('.', '_')];
-            <li class="border-b border-ligne px-3 py-2.5 last:border-b-0">
-                <p class="flex items-start gap-2 text-sm">
-                    @if (n.IsUnread)
-                    {
-                        <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-laterite" aria-hidden="true"></span>
-                    }
-                    <span>@(text.ResourceNotFound ? n.TemplateKey : text.Value)</span>
-                </p>
-                <p class="mt-0.5 text-xs text-charbon-doux">@Formatting.ShortDateTime(n.At)</p>
+            var key = "Notif_" + n.TemplateKey.Replace('.', '_');
+            var look = Look(n.TemplateKey);
+            using var doc = JsonDocument.Parse(string.IsNullOrWhiteSpace(n.PayloadJson) ? "{}" : n.PayloadJson);
+            var payload = doc.RootElement;
+            var title = L[key + "_Title"];
+            var text = L[key + "_Text", Value(payload, "invoice"), Value(payload, "amount"), Value(payload, "reason")];
+            <li class="border-b border-ligne last:border-b-0">
+                <a href="@look.Url" class="flex gap-3 px-4 py-3 text-charbon no-underline hover:bg-sourdine hover:no-underline @(n.IsUnread ? "bg-laterite-clair/40" : "")">
+                    <span class="grid size-10 shrink-0 place-items-center rounded-full @look.Tint"><sc-icon name="@look.Icon" class="size-5" /></span>
+                    <span class="min-w-0 flex-1">
+                        <span class="flex items-start justify-between gap-2">
+                            <span class="font-semibold">@(title.ResourceNotFound ? n.TemplateKey : title.Value)</span>
+                            @if (n.IsUnread)
+                            {
+                                <span class="mt-1.5 size-2 shrink-0 rounded-full bg-laterite" aria-label="@L["Notif_Unread"]"></span>
+                            }
+                        </span>
+                        @if (!text.ResourceNotFound)
+                        {
+                            <span class="mt-0.5 block text-sm text-charbon-doux">@text.Value</span>
+                        }
+                        <span class="mt-1 block text-xs text-charbon-pale">@Formatting.ShortDateTime(n.At)</span>
+                    </span>
+                </a>
             </li>
         }
     </ul>

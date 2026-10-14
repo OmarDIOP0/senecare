@@ -16,24 +16,26 @@
         ];
 }
 
-@* ---- Hero: descriptive title, quick request form, a technician at work ---- *@
-<section class="border-b border-ligne bg-sourdine">
-    <div class="mx-auto grid w-full max-w-7xl gap-10 px-4 py-10 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-14 lg:px-6 lg:py-16">
-        <div>
-            <h1 class="text-3xl leading-tight font-bold text-atlantique sm:text-4xl lg:text-[2.75rem]">@L["Home_Hero_Title"]</h1>
-            <p class="mt-4 max-w-xl text-lg text-charbon-doux">@L["Home_Hero_Text"]</p>
-            <ul class="mt-5 grid gap-2 text-[15px] sm:grid-cols-2">
-                <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-5 text-laterite" />@L["Home_Hero_Point1"]</li>
-                <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-5 text-laterite" />@L["Home_Hero_Point2"]</li>
-                <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-5 text-laterite" />@L["Home_Hero_Point3"]</li>
-                <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-5 text-laterite" />@L["Home_Hero_Point4"]</li>
-            </ul>
+@* ---- Hero: what we do, where; quick request; a technician at work ---- *@
+<section class="mx-auto grid w-full max-w-7xl gap-10 px-4 pt-10 pb-6 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-14 lg:px-6 lg:pt-14">
+    <div>
+        <p class="sc-eyebrow">@L["Home_Hero_Eyebrow"]</p>
+        <h1 class="mt-4 text-[2.125rem] leading-[1.06] font-bold sm:text-5xl lg:text-[3.25rem]">@L["Home_Hero_Title"]</h1>
+        <p class="mt-5 max-w-xl text-lg text-charbon-doux">@L["Home_Hero_Text"]</p>
+        <ul class="mt-6 grid gap-2.5 text-[15px] sm:grid-cols-2">
+            @foreach (var key in new[] { "Home_Hero_Point1", "Home_Hero_Point2", "Home_Hero_Point3", "Home_Hero_Point4" })
+            {
+                <li class="flex items-start gap-2.5"><span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-ambre text-nuit"><sc-icon name="check" class="size-3.5" /></span>@L[key]</li>
+            }
+        </ul>
 
-            <form method="get" action="/demander" class="mt-8 rounded-lg border border-ligne bg-surface p-5 shadow-sm sm:p-6" aria-labelledby="demande-rapide">
-                <h2 id="demande-rapide" class="text-lg">@L["Home_QuickForm_Title"]</h2>
-                <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <form method="get" action="/demander" class="mt-8 overflow-hidden rounded-3xl border border-ligne bg-surface shadow-carte" aria-labelledby="demande-rapide">
+            <div class="sc-bande-fine"></div>
+            <div class="p-5 sm:p-7">
+                <h2 id="demande-rapide" class="font-display text-lg tracking-[-0.01em]">@L["Home_QuickForm_Title"]</h2>
+                <div class="mt-5 grid gap-4 sm:grid-cols-2">
                     <div>
-                        <label class="sc-label" for="qf-metier">@L["Home_QuickForm_Trade"]</label>
+                        <label class="sc-label-mono" for="qf-metier">@L["Home_QuickForm_Trade"]</label>
                         <select id="qf-metier" name="metier" class="sc-input">
                             <option value="">@L["Home_QuickForm_TradeAny"]</option>
                             @foreach (var trade in Site.Trades)
@@ -43,7 +45,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="sc-label" for="qf-quartier">@L["Home_QuickForm_Area"]</label>
+                        <label class="sc-label-mono" for="qf-quartier">@L["Home_QuickForm_Area"]</label>
                         <input id="qf-quartier" name="quartier" class="sc-input" list="qf-quartiers" placeholder="@L["Home_QuickForm_AreaPlaceholder"]" autocomplete="address-level3" />
                         <datalist id="qf-quartiers">
                             @foreach (var hood in Site.Neighborhoods)
@@ -53,19 +55,26 @@
                         </datalist>
                     </div>
                     <div class="sm:col-span-2">
-                        <label class="sc-label" for="qf-telephone">@L["SignIn_PhoneLabel"]</label>
-                        <div class="mt-1.5 flex">
-                            <span class="inline-flex items-center rounded-l-md border border-r-0 border-ligne bg-sourdine px-3 text-[15px] text-charbon-doux">+221</span>
-                            <input id="qf-telephone" name="telephone" type="tel" inputmode="tel" autocomplete="tel-national" class="sc-input mt-0 rounded-l-none" placeholder="77 123 45 67" aria-describedby="qf-telephone-aide" />
+                        <label class="sc-label-mono" for="qf-telephone">@L["SignIn_PhoneLabel"]</label>
+                        <div class="mt-1.5 flex gap-2">
+                            <span class="inline-flex items-center gap-2 rounded-md border border-ligne bg-sourdine px-3 text-[15px] font-semibold"><partial name="Site/_FlagSn" />+221</span>
+                            <input id="qf-telephone" name="telephone" type="tel" inputmode="tel" autocomplete="tel-national" class="sc-input mt-0" placeholder="77 123 45 67" aria-describedby="qf-telephone-aide" />
                         </div>
                         <p id="qf-telephone-aide" class="sc-aide">@L["Home_QuickForm_PhoneHelp"]</p>
                     </div>
                 </div>
-                <button type="submit" class="sc-btn-primaire mt-5 w-full sm:w-auto sm:px-6">@L["Site_RequestJob"]<sc-icon name="arrow-right" class="size-4" /></button>
-            </form>
-        </div>
+                <button type="submit" class="sc-btn-primaire mt-5 min-h-12 w-full text-base">@L["Site_RequestJob"]<sc-icon name="arrow-right" class="size-5" /></button>
+            </div>
+        </form>
+    </div>
 
-        <partial name="Site/_Photo" model='new PhotoModel("/images/hero-technicien.webp", L["Home_Photo_Electrician_Alt"].Value, "hidden aspect-[4/5] w-full rounded-lg lg:block", 1200, 900, "wrench", Eager: true)' />
+    <div class="relative hidden lg:block">
+        <partial name="Site/_Photo" model='new PhotoModel("/images/hero-technicien.webp", L["Home_Photo_Electrician_Alt"].Value, "aspect-[4/5] w-full rounded-3xl", 1200, 900, "wrench", Eager: true)' />
+        <div class="sc-panneau absolute -bottom-6 -left-10 w-72 p-5 shadow-sm">
+            <p class="font-mono text-[10px] font-bold tracking-[0.16em] text-or uppercase">@L["Home_Hero_Card_Eyebrow"]</p>
+            <p class="mt-2 flex items-center gap-2 font-semibold text-white"><span class="size-2 rounded-full bg-[#3ccf7a] motion-safe:animate-pulse"></span>@L["Home_Demo_Step3"]</p>
+            <p class="mt-1 text-sm text-sur-nuit/80">@L["Home_Hero_Card_Text"]</p>
+        </div>
     </div>
 </section>
 
@@ -73,8 +82,9 @@
 <section id="metiers" class="mx-auto w-full max-w-7xl scroll-mt-24 px-4 pt-16 lg:px-6" aria-labelledby="metiers-titre">
     <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
-            <h2 id="metiers-titre" class="sc-section-titre">@L["Home_Trades_Title"]</h2>
-            <p class="mt-2 max-w-2xl text-[15px] text-charbon-doux">@L["Home_Trades_Text"]</p>
+            <p class="sc-eyebrow">@L["Home_Trades_Eyebrow"]</p>
+            <h2 id="metiers-titre" class="sc-section-titre mt-3">@L["Home_Trades_Title"]</h2>
+            <p class="mt-3 max-w-2xl text-[15px] text-charbon-doux">@L["Home_Trades_Text"]</p>
         </div>
         <a href="/metiers" class="sc-lien">@L["Site_AllTrades"]</a>
     </div>
@@ -82,25 +92,29 @@
         @foreach (var trade in Site.Trades)
         {
             <li>
-                <a href="/metiers/@trade.Slug" class="group grid h-full grid-cols-[6.5rem_1fr] overflow-hidden rounded-lg border border-ligne bg-surface text-charbon no-underline shadow-xs transition-shadow hover:no-underline hover:shadow-sm sm:flex sm:flex-col">
+                <a href="/metiers/@trade.Slug" class="group grid h-full grid-cols-[6.5rem_1fr] overflow-hidden rounded-2xl border border-ligne bg-surface text-charbon no-underline shadow-carte transition hover:-translate-y-0.5 hover:border-ambre/60 hover:no-underline sm:flex sm:flex-col">
                     <partial name="Site/_Photo" model='new PhotoModel(trade.Image, trade.Name, "h-full w-full sm:aspect-[4/3] sm:h-auto", Icon: Formatting.Icon(trade.Domain))' />
-                    <span class="flex flex-1 flex-col p-4">
-                        <span class="flex items-center gap-2 text-lg font-bold"><sc-icon name="@Formatting.Icon(trade.Domain)" class="size-5 text-laterite" />@trade.Name</span>
-                        <span class="mt-1.5 flex-1 text-[15px] text-charbon-doux">@trade.Summary</span>
+                    <span class="flex flex-1 flex-col p-4 sm:p-5">
+                        <span class="flex items-center gap-2.5">
+                            <span class="grid size-9 place-items-center rounded-xl bg-ocre-clair text-laterite [--icon-fond:var(--ambre)] [--icon-fond-opacite:.55]"><sc-icon name="@Formatting.Icon(trade.Domain)" class="size-5" /></span>
+                            <span class="text-lg font-bold">@trade.Name</span>
+                        </span>
+                        <span class="mt-2 flex-1 text-[15px] text-charbon-doux">@trade.Summary</span>
                         @if (Site.Visible(trade))
                         {
-                            <span class="mt-3 text-sm font-semibold">@trade.StartingPrice</span>
+                            <span class="mt-3 font-mono text-[11px] font-bold tracking-[0.06em] text-ocre-texte">@trade.StartingPrice</span>
                         }
-                        <span class="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-laterite group-hover:underline">@L["Site_SeeTrade"]<sc-icon name="arrow-right" class="size-4" /></span>
+                        <span class="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-laterite-fonce group-hover:underline">@L["Site_SeeTrade"]<sc-icon name="arrow-right" class="size-4 transition-transform group-hover:translate-x-0.5" /></span>
                     </span>
                 </a>
             </li>
         }
         <li>
-            <a href="/demander" class="flex h-full flex-col justify-between rounded-lg border border-dashed border-charbon/25 bg-sourdine p-5 text-charbon no-underline hover:no-underline">
+            <a href="/demander" class="sc-panneau flex h-full flex-col justify-between p-6 no-underline hover:no-underline">
                 <span>
-                    <span class="block text-lg font-bold">@L["Home_Trades_Unsure_Title"]</span>
-                    <span class="mt-2 block text-[15px] text-charbon-doux">@L["Home_Trades_Unsure_Text"]</span>
+                    <span class="grid size-11 place-items-center rounded-xl bg-ambre text-nuit"><sc-icon name="circle-help" class="size-6" /></span>
+                    <span class="mt-4 block font-display text-lg leading-snug text-white">@L["Home_Trades_Unsure_Title"]</span>
+                    <span class="mt-2 block text-[15px] text-sur-nuit/80">@L["Home_Trades_Unsure_Text"]</span>
                 </span>
                 <span class="sc-btn-primaire mt-5 self-start">@L["Site_RequestJob"]</span>
             </a>
@@ -108,20 +122,22 @@
     </ul>
 </section>
 
-@* ---- How it works ---- *@
-<section class="mt-16 bg-sourdine py-16" aria-labelledby="etapes-titre">
-    <div class="mx-auto w-full max-w-7xl px-4 lg:px-6">
-        <h2 id="etapes-titre" class="sc-section-titre">@L["Home_Steps_Title"]</h2>
-        <ol class="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+@* ---- How it works (espresso panel) ---- *@
+<section class="mx-auto w-full max-w-7xl px-4 pt-16 lg:px-6" aria-labelledby="etapes-titre">
+    <div class="sc-panneau relative overflow-hidden px-6 py-10 sm:px-10 lg:px-14 lg:py-14">
+        <p class="font-mono text-xs font-bold tracking-[0.16em] text-or uppercase">@L["Home_Steps_Eyebrow"]</p>
+        <h2 id="etapes-titre" class="mt-3 max-w-2xl font-display text-2xl leading-tight tracking-[-0.02em] sm:text-[2rem]">@L["Home_Steps_Title"]</h2>
+        <ol class="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             @foreach (var (index, (title, text)) in steps.Index())
             {
-                <li class="rounded-lg border border-ligne bg-surface p-5 shadow-xs">
-                    <span class="grid size-9 place-items-center rounded-full bg-laterite text-base font-bold text-sur-accent">@(index + 1)</span>
-                    <h3 class="mt-4 text-base">@L[title]</h3>
-                    <p class="mt-1.5 text-[15px] text-charbon-doux">@L[text]</p>
+                <li>
+                    <span class="font-display text-4xl text-or">0@(index + 1)</span>
+                    <h3 class="mt-3 text-lg text-white">@L[title]</h3>
+                    <p class="mt-2 text-[15px] text-sur-nuit/80">@L[text]</p>
                 </li>
             }
         </ol>
+        <div class="sc-bande-fine absolute inset-x-0 bottom-0"></div>
     </div>
 </section>
 
@@ -129,23 +145,25 @@
 @if (Site.Visible(Site.Technicians))
 {
     <section class="mx-auto w-full max-w-7xl px-4 pt-16 lg:px-6" aria-labelledby="techniciens-titre">
-        <div class="flex flex-wrap items-center gap-3">
+        <p class="sc-eyebrow">@L["Home_Techs_Eyebrow"]</p>
+        <div class="mt-3 flex flex-wrap items-center gap-3">
             <h2 id="techniciens-titre" class="sc-section-titre">@L["Home_Techs_Title"]</h2>
             <partial name="Site/_SampleTag" model="Site.Technicians.Sample" />
         </div>
-        <p class="mt-2 max-w-2xl text-[15px] text-charbon-doux">@L["Home_Techs_Text"]</p>
+        <p class="mt-3 max-w-2xl text-[15px] text-charbon-doux">@L["Home_Techs_Text"]</p>
         <ul class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             @foreach (var tech in Site.Technicians.Items)
             {
-                <li class="flex flex-col rounded-lg border border-ligne bg-surface p-5 shadow-xs">
+                <li class="flex flex-col rounded-2xl border border-ligne bg-surface p-5 shadow-carte">
                     <div class="flex items-center gap-3">
-                        <span class="grid size-12 shrink-0 place-items-center rounded-full bg-atlantique-clair text-lg font-bold text-atlantique" aria-hidden="true">@tech.FirstName[..1]</span>
+                        <span class="grid size-14 shrink-0 place-items-center rounded-full font-display text-xl text-nuit" style="background: linear-gradient(135deg, var(--or), var(--ambre-fonce));" aria-hidden="true">@tech.FirstName[..1]</span>
                         <div>
-                            <p class="font-bold">@tech.FirstName</p>
-                            <p class="text-sm text-charbon-doux">@tech.Trade · @L["Home_Techs_Years", tech.Years]</p>
+                            <p class="text-lg font-bold">@tech.FirstName</p>
+                            <p class="text-sm text-charbon-doux">@tech.Trade</p>
+                            <p class="font-mono text-[11px] font-bold tracking-[0.06em] text-ocre-texte">@L["Home_Techs_Years", tech.Years]</p>
                         </div>
                     </div>
-                    <p class="mt-4 text-[15px]">« @tech.Quote »</p>
+                    <p class="mt-4 border-t border-ligne pt-4 text-[15px]">« @tech.Quote »</p>
                 </li>
             }
         </ul>
@@ -157,20 +175,20 @@
 {
     var job = Site.ExampleJob;
     <section class="mx-auto w-full max-w-7xl px-4 pt-16 lg:px-6" aria-labelledby="exemple-titre">
-        <div class="grid overflow-hidden rounded-lg border border-ligne bg-surface shadow-xs lg:grid-cols-[1fr_1.3fr]">
+        <div class="grid overflow-hidden rounded-3xl border border-ligne bg-surface shadow-carte lg:grid-cols-[1fr_1.25fr]">
             <partial name="Site/_Photo" model='new PhotoModel("/images/metier-electricite.webp", L["Home_Example_PhotoAlt"].Value, "aspect-[4/3] h-full w-full lg:aspect-auto", Icon: "zap")' />
-            <div class="p-6 sm:p-8">
-                <div class="flex flex-wrap items-center gap-3">
+            <div class="p-6 sm:p-10">
+                <p class="sc-eyebrow">@job.Trade · @job.Neighborhood</p>
+                <div class="mt-3 flex flex-wrap items-center gap-3">
                     <h2 id="exemple-titre" class="sc-section-titre">@L["Home_Example_Title"]</h2>
                     <partial name="Site/_SampleTag" model="job.Sample" />
                 </div>
-                <p class="mt-2 text-sm font-semibold text-charbon-doux">@job.Trade · @job.Neighborhood</p>
-                <dl class="mt-5 grid gap-4 text-[15px]">
-                    <div><dt class="font-semibold">@L["Home_Example_Problem"]</dt><dd class="mt-1 text-charbon-doux">@job.Problem</dd></div>
-                    <div><dt class="font-semibold">@L["Home_Example_Work"]</dt><dd class="mt-1 text-charbon-doux">@job.Work</dd></div>
-                    <div class="grid gap-4 sm:grid-cols-2">
-                        <div><dt class="font-semibold">@L["Home_Example_Duration"]</dt><dd class="mt-1 text-charbon-doux">@job.Duration</dd></div>
-                        <div><dt class="font-semibold">@L["Home_Example_Price"]</dt><dd class="mt-1 text-charbon-doux">@job.Price</dd></div>
+                <dl class="mt-6 grid gap-5 text-[15px]">
+                    <div><dt class="sc-label-mono">@L["Home_Example_Problem"]</dt><dd class="mt-1.5">@job.Problem</dd></div>
+                    <div><dt class="sc-label-mono">@L["Home_Example_Work"]</dt><dd class="mt-1.5">@job.Work</dd></div>
+                    <div class="grid gap-4 rounded-2xl bg-sourdine p-4 sm:grid-cols-2">
+                        <div><dt class="sc-label-mono">@L["Home_Example_Duration"]</dt><dd class="mt-1.5 font-semibold">@job.Duration</dd></div>
+                        <div><dt class="sc-label-mono">@L["Home_Example_Price"]</dt><dd class="mt-1.5 font-semibold">@job.Price</dd></div>
                     </div>
                 </dl>
             </div>
@@ -178,76 +196,78 @@
     </section>
 }
 
-@* ---- Reviews: published ones (consent), else samples in development ---- *@
+@* ---- Reviews ---- *@
 @if (realReviews.Count > 0 || showSampleReviews)
 {
-    <section class="mt-16 bg-sourdine py-16" aria-labelledby="avis-titre">
-        <div class="mx-auto w-full max-w-7xl px-4 lg:px-6">
-            <div class="flex flex-wrap items-center gap-3">
-                <h2 id="avis-titre" class="sc-section-titre">@L["Home_Reviews_Title"]</h2>
-                <partial name="Site/_SampleTag" model="showSampleReviews" />
-            </div>
-            <ul class="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-                @if (realReviews.Count > 0)
-                {
-                    @foreach (var review in realReviews)
-                    {
-                        <li><partial name="Site/_Review" model='new ReviewCardModel(review.Author, review.Commune, review.GivenAt, review.Score, L["Domain_" + review.Domain].Value, review.Comment)' /></li>
-                    }
-                }
-                else
-                {
-                    @foreach (var review in Site.Reviews.Items)
-                    {
-                        <li><partial name="Site/_Review" model='new ReviewCardModel(review.Author, review.Neighborhood, new DateTimeOffset(review.Date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero), review.Rating, review.Trade, review.Text)' /></li>
-                    }
-                }
-            </ul>
-            <p class="mt-4 text-sm text-charbon-doux">@L["Home_Reviews_Note"]</p>
+    <section class="mx-auto w-full max-w-7xl px-4 pt-16 lg:px-6" aria-labelledby="avis-titre">
+        <p class="sc-eyebrow">@L["Home_Reviews_Eyebrow"]</p>
+        <div class="mt-3 flex flex-wrap items-center gap-3">
+            <h2 id="avis-titre" class="sc-section-titre">@L["Home_Reviews_Title"]</h2>
+            <partial name="Site/_SampleTag" model="showSampleReviews" />
         </div>
-    </section>
-}
-
-@* ---- Key figures: real ones when there is enough activity, samples in development ---- *@
-@if (Model.Figures.HasEnough || Site.Visible(Site.Figures))
-{
-    <section class="mx-auto w-full max-w-7xl px-4 pt-16 lg:px-6" aria-labelledby="chiffres-titre">
-        <div class="flex flex-wrap items-center gap-3">
-            <h2 id="chiffres-titre" class="sc-section-titre">@L["Home_Figures_Title"]</h2>
-            <partial name="Site/_SampleTag" model="!Model.Figures.HasEnough" />
-        </div>
-        <dl class="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-ligne bg-ligne lg:grid-cols-4">
-            @if (Model.Figures.HasEnough)
+        <ul class="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            @if (realReviews.Count > 0)
             {
-                <div class="flex flex-col-reverse bg-surface p-5"><dt class="mt-1 text-[15px] text-charbon-doux">@L["Home_Figures_Done"]</dt><dd class="text-3xl font-bold text-atlantique tabular-nums">@Model.Figures.CompletedInterventions.ToString("N0", System.Globalization.CultureInfo.CurrentCulture)</dd></div>
-                <div class="flex flex-col-reverse bg-surface p-5"><dt class="mt-1 text-[15px] text-charbon-doux">@L["Home_Figures_Rating", Model.Figures.Ratings]</dt><dd class="text-3xl font-bold text-atlantique tabular-nums">@Model.Figures.AverageRating!.Value.ToString("0.0", System.Globalization.CultureInfo.CurrentCulture) / 5</dd></div>
-                <div class="flex flex-col-reverse bg-surface p-5"><dt class="mt-1 text-[15px] text-charbon-doux">@L["Home_Figures_Neighborhoods"]</dt><dd class="text-3xl font-bold text-atlantique tabular-nums">@Model.Figures.Neighborhoods</dd></div>
-                <div class="flex flex-col-reverse bg-surface p-5"><dt class="mt-1 text-[15px] text-charbon-doux">@L["Home_Commit_Hood"]</dt><dd class="text-3xl font-bold text-atlantique tabular-nums">@Model.NeighborhoodThreshold</dd></div>
+                @foreach (var review in realReviews)
+                {
+                    <li><partial name="Site/_Review" model='new ReviewCardModel(review.Author, review.Commune, review.GivenAt, review.Score, L["Domain_" + review.Domain].Value, review.Comment)' /></li>
+                }
             }
             else
             {
-                @foreach (var figure in Site.Figures.Items)
+                @foreach (var review in Site.Reviews.Items)
                 {
-                    <div class="flex flex-col-reverse bg-surface p-5"><dt class="mt-1 text-[15px] text-charbon-doux">@figure.Label</dt><dd class="text-3xl font-bold text-atlantique">@figure.Value</dd></div>
+                    <li><partial name="Site/_Review" model='new ReviewCardModel(review.Author, review.Neighborhood, new DateTimeOffset(review.Date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero), review.Rating, review.Trade, review.Text)' /></li>
                 }
             }
-        </dl>
+        </ul>
+        <p class="mt-4 text-sm text-charbon-doux">@L["Home_Reviews_Note"]</p>
+    </section>
+}
+
+@* ---- Key figures (espresso panel): real ones when there is enough activity, samples in development ---- *@
+@if (Model.Figures.HasEnough || Site.Visible(Site.Figures))
+{
+    <section class="mx-auto w-full max-w-7xl px-4 pt-16 lg:px-6" aria-labelledby="chiffres-titre">
+        <div class="sc-panneau px-6 py-10 sm:px-10">
+            <div class="flex flex-wrap items-center gap-3">
+                <h2 id="chiffres-titre" class="font-display text-2xl tracking-[-0.02em]">@L["Home_Figures_Title"]</h2>
+                <partial name="Site/_SampleTag" model="!Model.Figures.HasEnough" />
+            </div>
+            <dl class="mt-8 grid grid-cols-2 gap-6 lg:grid-cols-4">
+                @if (Model.Figures.HasEnough)
+                {
+                    <div class="flex flex-col-reverse"><dt class="mt-2 font-mono text-[11px] tracking-[0.12em] text-sur-nuit/70 uppercase">@L["Home_Figures_Done"]</dt><dd class="font-display text-4xl text-or tabular-nums">@Model.Figures.CompletedInterventions.ToString("N0", System.Globalization.CultureInfo.CurrentCulture)</dd></div>
+                    <div class="flex flex-col-reverse"><dt class="mt-2 font-mono text-[11px] tracking-[0.12em] text-sur-nuit/70 uppercase">@L["Home_Figures_Rating", Model.Figures.Ratings]</dt><dd class="font-display text-4xl text-or tabular-nums">@Model.Figures.AverageRating!.Value.ToString("0.0", System.Globalization.CultureInfo.CurrentCulture)</dd></div>
+                    <div class="flex flex-col-reverse"><dt class="mt-2 font-mono text-[11px] tracking-[0.12em] text-sur-nuit/70 uppercase">@L["Home_Figures_Neighborhoods"]</dt><dd class="font-display text-4xl text-or tabular-nums">@Model.Figures.Neighborhoods</dd></div>
+                    <div class="flex flex-col-reverse"><dt class="mt-2 font-mono text-[11px] tracking-[0.12em] text-sur-nuit/70 uppercase">@L["Home_Commit_Hood"]</dt><dd class="font-display text-4xl text-or tabular-nums">@Model.NeighborhoodThreshold</dd></div>
+                }
+                else
+                {
+                    @foreach (var figure in Site.Figures.Items)
+                    {
+                        <div class="flex flex-col-reverse"><dt class="mt-2 font-mono text-[11px] tracking-[0.12em] text-sur-nuit/70 uppercase">@figure.Label</dt><dd class="font-display text-4xl text-or">@figure.Value</dd></div>
+                    }
+                }
+            </dl>
+        </div>
     </section>
 }
 
 @* ---- Advice ---- *@
 <section id="conseils" class="mx-auto w-full max-w-7xl scroll-mt-24 px-4 pt-16 lg:px-6" aria-labelledby="conseils-titre">
-    <h2 id="conseils-titre" class="sc-section-titre">@L["Home_Advice_Title"]</h2>
+    <p class="sc-eyebrow">@L["Home_Advice_Eyebrow"]</p>
+    <h2 id="conseils-titre" class="sc-section-titre mt-3">@L["Home_Advice_Title"]</h2>
     <ul class="mt-8 grid gap-5 @(advice.Count >= 3 ? "md:grid-cols-3" : "md:grid-cols-2")">
         @foreach (var item in advice)
         {
-            <li class="rounded-lg border border-ligne bg-surface p-5 shadow-xs">
+            <li class="rounded-2xl border border-ligne bg-surface p-6 shadow-carte">
                 @if (item.Domain is { } domain)
                 {
-                    <p class="flex items-center gap-1.5 text-sm font-semibold text-laterite"><sc-icon name="@Formatting.Icon(domain)" class="size-4" />@L["Domain_" + domain]</p>
+                    <span class="sc-badge bg-ocre-clair text-ocre-texte"><sc-icon name="@Formatting.Icon(domain)" class="size-3.5" />@L["Domain_" + domain]</span>
                 }
-                <h3 class="mt-2 text-base">@item.Title</h3>
-                <p class="mt-1.5 text-[15px] text-charbon-doux">@item.Body</p>
+                <h3 class="mt-3 text-lg">@item.Title</h3>
+                <p class="mt-2 text-[15px] text-charbon-doux">@item.Body</p>
             </li>
         }
     </ul>
@@ -257,21 +277,24 @@
 @if (Site.Visible(Site.Faq))
 {
     <section class="mx-auto w-full max-w-4xl px-4 pt-16 lg:px-6" aria-labelledby="faq-titre">
-        <div class="flex flex-wrap items-center gap-3">
+        <p class="sc-eyebrow">@L["Site_Faq_Eyebrow"]</p>
+        <div class="mt-3 flex flex-wrap items-center gap-3">
             <h2 id="faq-titre" class="sc-section-titre">@L["Site_Faq"]</h2>
             <partial name="Site/_SampleTag" model="Site.Faq.Sample" />
         </div>
-        <div class="mt-6 divide-y divide-ligne rounded-lg border border-ligne bg-surface shadow-xs">
+        <div class="mt-6 grid gap-3">
             @foreach (var item in Site.Faq.Items.Take(6))
             {
-                <details class="group px-5 py-4">
+                <details class="group rounded-2xl border border-ligne bg-surface px-5 py-4 shadow-carte open:border-ambre/60">
                     <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold [&::-webkit-details-marker]:hidden">
-                        @item.Question<sc-icon name="chevron-down" class="size-5 shrink-0 text-charbon-doux transition-transform group-open:rotate-180" />
+                        @item.Question<span class="grid size-8 shrink-0 place-items-center rounded-full bg-sourdine transition-transform group-open:rotate-180"><sc-icon name="chevron-down" class="size-4" /></span>
                     </summary>
                     <p class="mt-3 text-[15px] text-charbon-doux">@item.Answer</p>
                 </details>
             }
         </div>
-        <a href="/faq" class="sc-lien mt-4 inline-block">@L["Site_FaqAll"]</a>
+        <a href="/faq" class="sc-lien mt-5 inline-block">@L["Site_FaqAll"]</a>
     </section>
 }
+
+<partial name="Site/_CtaBand" />

@@ -120,8 +120,10 @@ public sealed class PrepareInvoiceHandler(
 
         invoice.AddLine(new InvoiceLine(
             InvoiceLineKind.SubscriptionPeriod,
-            $"Abonnement {plan.Name}",
-            subscription.BillingPeriodMonths,
+            subscription.FreeMonthsPerPeriod > 0
+                ? $"Abonnement annuel {plan.Name} ({subscription.BillingPeriodMonths} mois dont {subscription.FreeMonthsPerPeriod} offerts)"
+                : $"Abonnement {plan.Name}",
+            subscription.ChargedMonths,
             subscription.MonthlyPrice));
         invoice.Issue(clock.GetUtcNow());
         db.Invoices.Add(invoice);
@@ -131,7 +133,7 @@ public sealed class PrepareInvoiceHandler(
 }
 
 /// <summary>« J'ai payé »: the customer declares a Wave payment; a Finance admin will check it.</summary>
-public sealed class DeclarePaymentHandler(IApplicationDbContext db, AccessControl access, TimeProvider clock)
+public sealed class DeclarePaymentHandler(IApplicationDbContext db, AccessControl access, Users.Notifier notifier, TimeProvider clock)
 {
     public async Task<Result<Guid>> HandleAsync(Guid userId, Guid invoiceId, string? customerReference, CancellationToken cancellationToken = default)
     {
@@ -164,6 +166,8 @@ public sealed class DeclarePaymentHandler(IApplicationDbContext db, AccessContro
         }
 
         db.Payments.Add(payment);
+        // Finance gets it in the bell: a payment to check against the Wave account.
+        await notifier.ToFinanceAsync(Users.NotificationTemplates.PaymentDeclared, new { invoice = invoice.Number, amount = invoice.Balance.Amount }, cancellationToken);
         await db.SaveChangesAsync(cancellationToken);
         return Result<Guid>.Success(payment.Id);
     }

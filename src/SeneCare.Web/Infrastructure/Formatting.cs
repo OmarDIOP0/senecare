@@ -17,6 +17,9 @@ public static class Formatting
     /// <summary>« lun. 12 oct. »</summary>
     public static string ShortDate(DateTimeOffset value) => ToDakar(value).ToString("ddd d MMM", CultureInfo.CurrentCulture);
 
+    /// <summary>« 12 oct. 2026 »: when the year matters (yearly periods, receipts).</summary>
+    public static string DateWithYear(DateOnly value) => value.ToString("d MMM yyyy", CultureInfo.CurrentCulture);
+
     /// <summary>« lun. 12 oct. · 09:30 »</summary>
     public static string ShortDateTime(DateTimeOffset value) =>
         ShortDate(value) + " · " + ToDakar(value).ToString("HH:mm", CultureInfo.CurrentCulture);

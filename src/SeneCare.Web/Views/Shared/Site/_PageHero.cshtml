@@ -1,23 +1,21 @@
 @model SiteHeroModel
-<section class="border-b border-ligne bg-sourdine">
-    <div class="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 lg:px-6 lg:py-14 @(Model.Photo is null ? "" : "lg:grid-cols-[1.1fr_1fr] lg:items-center")">
-        <div>
-            @if (Model.Crumb is not null)
-            {
-                <nav aria-label="@L["Site_Breadcrumb"]" class="text-sm text-charbon-doux">
-                    <a href="/" class="text-charbon-doux">@L["Home_Title"]</a> <span aria-hidden="true">›</span> <span>@Model.Crumb</span>
-                </nav>
-            }
-            <h1 class="mt-3 text-3xl leading-tight font-bold text-atlantique sm:text-4xl lg:text-[2.625rem]">@Model.Title</h1>
-            <p class="mt-4 max-w-2xl text-lg text-charbon-doux">@Model.Text</p>
-            @if (Model.ActionLabel is not null)
-            {
-                <a href="@Model.ActionUrl" class="sc-btn-primaire mt-6 px-6">@Model.ActionLabel<sc-icon name="arrow-right" class="size-4" /></a>
-            }
-        </div>
-        @if (Model.Photo is { } photo)
+<section class="mx-auto grid w-full max-w-7xl gap-8 px-4 pt-10 lg:px-6 lg:pt-14 @(Model.Photo is null ? "" : "lg:grid-cols-[1.1fr_1fr] lg:items-center")">
+    <div>
+        @if (Model.Crumb is not null)
         {
-            <partial name="Site/_Photo" model="photo" />
+            <nav aria-label="@L["Site_Breadcrumb"]" class="font-mono text-xs font-bold tracking-[0.14em] text-ocre-texte uppercase">
+                <a href="/" class="text-ocre-texte no-underline hover:underline">@L["Home_Title"]</a> <span aria-hidden="true">/</span> <span>@Model.Crumb</span>
+            </nav>
+        }
+        <h1 class="mt-4 text-[2rem] leading-[1.08] font-bold sm:text-[2.75rem]">@Model.Title</h1>
+        <p class="mt-5 max-w-2xl text-lg text-charbon-doux">@Model.Text</p>
+        @if (Model.ActionLabel is not null)
+        {
+            <a href="@Model.ActionUrl" class="sc-btn-primaire mt-7 min-h-12 px-6 text-base">@Model.ActionLabel<sc-icon name="arrow-right" class="size-5" /></a>
         }
     </div>
+    @if (Model.Photo is { } photo)
+    {
+        <partial name="Site/_Photo" model="photo" />
+    }
 </section>

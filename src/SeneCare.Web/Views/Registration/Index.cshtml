@@ -2,57 +2,218 @@
 @using SeneCare.Domain.Accounts
 @{
     ViewData["Title"] = L["Register_Title"];
+    ViewData["FullWidth"] = true;
+    var simple = Model.JoiningAccountName is not null || Model.IsStaff;
+    var homePlans = Model.Plans.Where(p => p.Segment == AccountKind.Household).ToList();
+    var businessPlans = Model.Plans.Where(p => p.Segment == AccountKind.Business).ToList();
+    var selectedPlan = Model.PlanCode ?? homePlans.FirstOrDefault()?.Code;
+    string Delay(TimeSpan? t) => t is not { } d ? "" : d.TotalHours < 48 ? L["Home_Hours", (int)d.TotalHours] : L["Home_Days", (int)d.TotalDays];
 }
 
-<h1 class="text-2xl font-semibold tracking-tight">@L["Register_Heading"]</h1>
-@if (Model.JoiningAccountName is not null)
-{
-    <p class="mt-2">@L["Register_JoiningAs", Model.JoiningAccountName]</p>
-}
+<div class="sc-bande"></div>
+<section class="mx-auto grid w-full max-w-6xl gap-8 px-4 py-8 lg:grid-cols-[1.15fr_1fr] lg:items-start lg:gap-10 lg:px-6 lg:py-12">
 
-<div asp-validation-summary="All" class="sc-error" role="alert"></div>
+    @* ---- Left: the form, one step at a time (all steps visible without JavaScript) ---- *@
+    <div class="overflow-hidden rounded-3xl border border-ligne bg-surface shadow-carte">
+        <div class="sc-bande-fine"></div>
+        <form method="post" class="grid gap-8 p-6 sm:p-10" novalidate data-wizard>
+            <div asp-validation-summary="All" class="sc-error" role="alert"></div>
 
-<form method="post" class="mt-6 space-y-6" novalidate>
-    <div>
-        <label class="sc-label" asp-for="FullName">@L["Register_NameLabel"]</label>
-        <input asp-for="FullName" autocomplete="name" class="sc-input" required />
+            @if (simple)
+            {
+                <div>
+                    <p class="sc-eyebrow">@L["Register_Eyebrow_Simple"]</p>
+                    <h1 class="mt-3 text-2xl leading-tight font-bold sm:text-3xl">@L["Register_Heading"]</h1>
+                    @if (Model.JoiningAccountName is not null)
+                    {
+                        <p class="mt-2 text-charbon-doux">@L["Register_JoiningAs", Model.JoiningAccountName]</p>
+                    }
+                </div>
+                <div>
+                    <label class="sc-label-mono" asp-for="FullName">@L["Register_NameLabel"]</label>
+                    <input asp-for="FullName" autocomplete="name" class="sc-input" required />
+                </div>
+                <partial name="_RegistrationConsent" model="Model" />
+                <button type="submit" class="sc-btn-primaire min-h-12 w-full text-base">@L["Register_Submit"]</button>
+            }
+            else
+            {
+                <div class="grid grid-cols-4 gap-2" aria-hidden="true" data-wizard-bars>
+                    @for (var i = 0; i < 4; i++)
+                    {
+                        <span class="h-1.5 rounded-full bg-ligne transition-colors" data-wizard-bar></span>
+                    }
+                </div>
+
+                @* ---- Step 1: who ---- *@
+                <fieldset class="grid gap-6" data-wizard-step data-label="@L["Register_Step1"]">
+                    <legend class="contents">
+                        <span class="sc-eyebrow block">@L["Register_StepOf", 1, 4] — @L["Register_Step1"]</span>
+                        <span class="mt-3 block font-display text-2xl leading-tight font-bold tracking-[-0.02em] sm:text-[1.875rem]">@L["Register_Step1_Title"]</span>
+                    </legend>
+                    <p class="-mt-3 text-charbon-doux">@L["Register_Step1_Text"]</p>
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <label class="sc-choix flex-col items-start gap-3 p-5">
+                            <span class="flex w-full items-center justify-between">
+                                <span class="grid size-12 place-items-center rounded-2xl bg-ocre-clair text-laterite [--icon-fond:var(--ambre)]"><sc-icon name="house" class="size-7" /></span>
+                                <input type="radio" asp-for="Profile" value="@AccountKind.Household" required />
+                            </span>
+                            <span><span class="block text-lg font-bold">@L["Register_ProfileHousehold"]</span><span class="text-sm text-charbon-doux">@L["Register_ProfileHouseholdHint"]</span></span>
+                        </label>
+                        <label class="sc-choix flex-col items-start gap-3 p-5">
+                            <span class="flex w-full items-center justify-between">
+                                <span class="grid size-12 place-items-center rounded-2xl bg-ocre-clair text-laterite [--icon-fond:var(--ambre)]"><sc-icon name="building-2" class="size-7" /></span>
+                                <input type="radio" asp-for="Profile" value="@AccountKind.Business" required />
+                            </span>
+                            <span><span class="block text-lg font-bold">@L["Register_ProfileBusiness"]</span><span class="text-sm text-charbon-doux">@L["Register_ProfileBusinessHint"]</span></span>
+                        </label>
+                    </div>
+                </fieldset>
+
+                @* ---- Step 2: contact details ---- *@
+                <fieldset class="grid gap-5" data-wizard-step data-label="@L["Register_Step2"]">
+                    <legend class="contents">
+                        <span class="sc-eyebrow block">@L["Register_StepOf", 2, 4] — @L["Register_Step2"]</span>
+                        <span class="mt-3 block font-display text-2xl leading-tight font-bold tracking-[-0.02em] sm:text-[1.875rem]">@L["Register_Step2_Title"]</span>
+                    </legend>
+                    <div>
+                        <label class="sc-label-mono" asp-for="FullName">@L["Register_NameLabel"]</label>
+                        <div class="relative">
+                            <sc-icon name="circle-user" class="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-charbon-pale" />
+                            <input asp-for="FullName" autocomplete="name" class="sc-input pl-12" required placeholder="@L["Register_NamePlaceholder"]" />
+                        </div>
+                    </div>
+                    @* Only for a company: shown when « Mon entreprise » is chosen (CSS), required then (JS). *@
+                    <div class="hidden [form:has(input[value=Business]:checked)_&]:block" data-only-business>
+                        <label class="sc-label-mono" asp-for="CompanyName">@L["Register_CompanyLabel"]</label>
+                        <div class="relative">
+                            <sc-icon name="building" class="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-charbon-pale" />
+                            <input asp-for="CompanyName" autocomplete="organization" class="sc-input pl-12" placeholder="@L["Register_CompanyPlaceholder"]" />
+                        </div>
+                    </div>
+                    @if (Model.Phone is { } phone)
+                    {
+                        <div>
+                            <p class="sc-label-mono">@L["SignIn_PhoneLabel"]</p>
+                            <p class="mt-1.5 flex min-h-12 items-center gap-3 rounded-md border border-ligne bg-sourdine px-4">
+                                <span class="font-semibold">+221 @phone</span>
+                                <span class="sc-badge ml-auto bg-baobab-clair text-baobab"><sc-icon name="circle-check" class="size-3.5" />@L["Register_PhoneVerified"]</span>
+                            </p>
+                        </div>
+                    }
+                </fieldset>
+
+                @* ---- Step 3: the offer ---- *@
+                <fieldset class="grid gap-5" data-wizard-step data-label="@L["Register_Step3"]">
+                    <legend class="contents">
+                        <span class="sc-eyebrow block">@L["Register_StepOf", 3, 4] — @L["Register_Step3"]</span>
+                        <span class="mt-3 block font-display text-2xl leading-tight font-bold tracking-[-0.02em] sm:text-[1.875rem]">@L["Register_Step3_Title"]</span>
+                    </legend>
+
+                    @* Households: one plan, monthly or yearly. *@
+                    <div class="grid gap-4 [form:has(input[value=Business]:checked)_&]:hidden">
+                        <div class="inline-flex self-start rounded-full border border-ligne bg-sourdine p-1" role="radiogroup" aria-label="@L["Register_Rhythm"]">
+                            <label class="rounded-full px-4 py-2 text-sm font-semibold has-checked:bg-surface has-checked:shadow-xs">
+                                <input type="radio" name="Annual" value="false" class="sr-only" checked="@(!Model.Annual)" />@L["Register_Monthly"]
+                            </label>
+                            <label class="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold has-checked:bg-surface has-checked:shadow-xs">
+                                <input type="radio" name="Annual" value="true" class="sr-only" checked="@Model.Annual" />@L["Register_Yearly"]
+                                @if (homePlans.FirstOrDefault() is { AnnualFreeMonths: > 0 } offer)
+                                {
+                                    <span class="sc-badge bg-ambre/25 font-mono text-[10px] tracking-[0.1em] text-ocre-texte uppercase">@L["Register_FreeMonths", offer.AnnualFreeMonths]</span>
+                                }
+                            </label>
+                        </div>
+                        @foreach (var plan in homePlans)
+                        {
+                            <label class="sc-choix flex-col items-stretch gap-3 p-5">
+                                <span class="flex items-start justify-between gap-3">
+                                    <span>
+                                        <span class="block text-lg font-bold">@plan.Name</span>
+                                        <span class="text-sm text-charbon-doux">@L["Register_HomePlanText"]</span>
+                                    </span>
+                                    <input type="radio" name="PlanCode" value="@plan.Code" checked="@(selectedPlan == plan.Code)" data-plan-household />
+                                </span>
+                                <span class="flex flex-wrap items-baseline gap-x-2 [form:has(input[name=Annual][value=true]:checked)_&]:hidden">
+                                    <span class="font-display text-2xl"><sc-amount value="@plan.MonthlyPrice.Amount" /></span><span class="text-sm text-charbon-doux">@L["Home_Offer_PerMonth"]</span>
+                                </span>
+                                @if (plan.OffersAnnual)
+                                {
+                                    <span class="hidden flex-wrap items-baseline gap-x-2 [form:has(input[name=Annual][value=true]:checked)_&]:flex">
+                                        <span class="font-display text-2xl"><sc-amount value="@plan.AnnualPrice.Amount" /></span><span class="text-sm text-charbon-doux">@L["Register_PerYear"]</span>
+                                        <span class="text-sm text-charbon-pale line-through"><sc-amount value="@(plan.MonthlyPrice.Amount * 12)" /></span>
+                                    </span>
+                                }
+                                <span class="text-sm text-charbon-doux">@L["Home_Offer_Registration", Formatting.Fcfa(plan.RegistrationFee)] · @L["Register_Critical", Delay(plan.CriticalDelay)]</span>
+                            </label>
+                        }
+                    </div>
+
+                    @* Businesses: three plans, quarterly billing (the diagnostic comes first). *@
+                    <div class="hidden gap-3 [form:has(input[value=Business]:checked)_&]:grid">
+                        <p class="text-sm text-charbon-doux">@L["Register_BusinessBilling"]</p>
+                        @foreach (var (index, plan) in businessPlans.Index())
+                        {
+                            <label class="sc-choix items-start gap-4 p-5">
+                                <input type="radio" name="PlanCode" value="@plan.Code" class="mt-1.5" checked="@(Model.PlanCode == plan.Code)" data-plan-business />
+                                <span class="flex-1">
+                                    <span class="flex flex-wrap items-center gap-2">
+                                        <span class="text-lg font-bold">@plan.Name</span>
+                                        @if (index == 1)
+                                        {
+                                            <span class="sc-badge bg-ambre/25 font-mono text-[10px] tracking-[0.1em] text-ocre-texte uppercase">@L["Register_Popular"]</span>
+                                        }
+                                    </span>
+                                    <span class="mt-1 block"><span class="font-display text-xl"><sc-amount value="@plan.MonthlyPrice.Amount" /></span> <span class="text-sm text-charbon-doux">@L["Home_Offer_PerMonth"]</span></span>
+                                    <span class="mt-1 block text-sm text-charbon-doux">@L["Register_Critical", Delay(plan.CriticalDelay)] · @(plan.IncludedVisitsPerPeriod is { } visits ? L["Offer_VisitsCount", visits] : L["Offer_VisitsUnlimited"])</span>
+                                </span>
+                            </label>
+                        }
+                    </div>
+                </fieldset>
+
+                @* ---- Step 4: summary, consent, what happens next ---- *@
+                <fieldset class="grid gap-5" data-wizard-step data-label="@L["Register_Step4"]">
+                    <legend class="contents">
+                        <span class="sc-eyebrow block">@L["Register_StepOf", 4, 4] — @L["Register_Step4"]</span>
+                        <span class="mt-3 block font-display text-2xl leading-tight font-bold tracking-[-0.02em] sm:text-[1.875rem]">@L["Register_Step4_Title"]</span>
+                    </legend>
+                    <ol class="grid gap-3">
+                        @foreach (var (index, (icon, key)) in new[] { ("house", "Register_Next1"), ("wallet", "Register_Next2"), ("circle-check", "Register_Next3") }.Index())
+                        {
+                            <li class="flex items-start gap-3 rounded-md bg-sourdine p-4">
+                                <span class="grid size-10 shrink-0 place-items-center rounded-full bg-surface text-laterite [--icon-fond:var(--ambre)]"><sc-icon name="@icon" class="size-5" /></span>
+                                <span><span class="font-mono text-xs font-bold text-ocre-texte">0@(index + 1)</span><span class="block text-[15px]">@L[key]</span></span>
+                            </li>
+                        }
+                    </ol>
+                    <partial name="_RegistrationConsent" model="Model" />
+                </fieldset>
+
+                <div class="flex flex-wrap gap-3" data-wizard-nav>
+                    <button type="button" class="sc-btn-secondaire min-h-12 flex-1 text-base sm:flex-none sm:px-8" data-wizard-prev hidden>@L["Register_Back"]</button>
+                    <button type="button" class="sc-btn-primaire min-h-12 flex-[2] text-base" data-wizard-next hidden>@L["Register_Next"]<sc-icon name="arrow-right" class="size-5" /></button>
+                    <button type="submit" class="sc-btn-primaire min-h-12 flex-[2] text-base" data-wizard-submit>@L["Register_Submit"]<sc-icon name="arrow-right" class="size-5" /></button>
+                </div>
+            }
+        </form>
     </div>
 
-    @if (Model.JoiningAccountName is null && !Model.IsStaff)
-    {
-        <fieldset>
-            <legend class="sc-label">@L["Register_ProfileLabel"]</legend>
-            <div class="mt-2 grid gap-3 sm:grid-cols-2">
-                <label class="sc-choix items-start py-2.5">
-                    <input type="radio" asp-for="Profile" value="@AccountKind.Household" class="mt-1" />
-                    <span><span class="font-medium">@L["Register_ProfileHousehold"]</span><br /><span class="text-sm text-charbon-doux">@L["Register_ProfileHouseholdHint"]</span></span>
-                </label>
-                <label class="sc-choix items-start py-2.5">
-                    <input type="radio" asp-for="Profile" value="@AccountKind.Business" class="mt-1" />
-                    <span><span class="font-medium">@L["Register_ProfileBusiness"]</span><br /><span class="text-sm text-charbon-doux">@L["Register_ProfileBusinessHint"]</span></span>
-                </label>
-            </div>
-        </fieldset>
-
-        <div>
-            <label class="sc-label" asp-for="CompanyName">@L["Register_CompanyLabel"]</label>
-            <input asp-for="CompanyName" autocomplete="organization" class="sc-input" />
-        </div>
-    }
-
-    <section class="rounded-lg border border-ligne bg-surface p-4" aria-labelledby="consent-title">
-        <h2 id="consent-title" class="font-semibold">@L["Register_ConsentTitle"]</h2>
-        <p class="mt-2 text-sm">@L["Register_ConsentText"]</p>
-        <p class="mt-2 text-sm"><a href="/confidentialite" class="underline text-atlantique" target="_blank">@L["Register_ConsentLink"]</a></p>
-        <label class="mt-4 flex min-h-12 items-start gap-3">
-            <input type="checkbox" asp-for="AcceptsPrivacyPolicy" class="mt-1 size-5" />
-            <span>@L["Register_ConsentCheckbox"]</span>
-        </label>
-        <label class="mt-2 flex min-h-12 items-start gap-3">
-            <input type="checkbox" asp-for="AcceptsWhatsApp" class="mt-1 size-5" />
-            <span>@L["Register_WhatsAppCheckbox"]</span>
-        </label>
-    </section>
-
-    <button type="submit" class="sc-btn-primaire">@L["Register_Submit"]</button>
-</form>
+    @* ---- Right: what SeneCare does for you (espresso panel) ---- *@
+    <aside class="sc-panneau relative overflow-hidden p-8 sm:p-10 lg:sticky lg:top-28">
+        <p class="font-mono text-xs font-bold tracking-[0.16em] text-or uppercase">@L["Register_Panel_Eyebrow"]</p>
+        <h2 class="mt-4 font-display text-[1.75rem] leading-[1.1] font-bold tracking-[-0.02em] sm:text-[2.125rem]">@L["Register_Panel_Title"]</h2>
+        <ul class="mt-8 grid gap-4 text-[15px] sm:text-base">
+            @foreach (var key in new[] { "Register_Panel_1", "Register_Panel_2", "Register_Panel_3", "Register_Panel_4" })
+            {
+                <li class="flex items-start gap-3"><span class="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-ambre text-nuit"><sc-icon name="check" class="size-4" /></span>@L[key]</li>
+            }
+        </ul>
+        <dl class="mt-10 grid grid-cols-3 gap-4 border-t border-white/10 pt-6">
+            <div><dd class="font-display text-2xl text-or">7</dd><dt class="mt-1 font-mono text-[10px] tracking-[0.12em] text-sur-nuit/70 uppercase">@L["Register_Panel_Trades"]</dt></div>
+            <div><dd class="font-display text-2xl text-or">4 h</dd><dt class="mt-1 font-mono text-[10px] tracking-[0.12em] text-sur-nuit/70 uppercase">@L["Register_Panel_Urgent"]</dt></div>
+            <div><dd class="font-display text-2xl text-or">Wave</dd><dt class="mt-1 font-mono text-[10px] tracking-[0.12em] text-sur-nuit/70 uppercase">@L["Register_Panel_Pay"]</dt></div>
+        </dl>
+        <div class="sc-bande-fine absolute inset-x-0 bottom-0"></div>
+    </aside>
+</section>

@@ -25,8 +25,16 @@
     }
 }
 
-<p class="sc-surtitre">@L["Domain_" + s.Domain] · @s.Number</p>
-<h1 class="sc-titre mt-1">@s.Title</h1>
+<div class="flex flex-wrap items-start justify-between gap-3">
+    <div class="min-w-0">
+        <p class="sc-surtitre">@L["Domain_" + s.Domain] · @s.Number</p>
+        <h1 class="sc-titre mt-1">@s.Title</h1>
+    </div>
+    @if (d.CanCancel)
+    {
+        <button type="button" class="sc-btn-danger shrink-0" data-sheet-open="annuler"><sc-icon name="ban" class="size-4" />@L["Request_Cancel"]</button>
+    }
+</div>
 <p class="mt-1 text-sm text-charbon-doux">@s.PropertyName · @L["Request_SentOn", Formatting.ShortDateTime(s.CreatedAt)]</p>
 <div class="mt-3 flex flex-wrap gap-2">
     <sc-status value="@s.Status" />
@@ -200,9 +208,6 @@
 
 @if (d.CanCancel)
 {
-    <div class="mt-8">
-        <button type="button" class="sc-btn-discret" data-sheet-open="annuler">@L["Request_Cancel"]</button>
-    </div>
     <sc-sheet id="annuler" title="@L["Request_Cancel"]">
         <form method="post" asp-action="Cancel" asp-route-id="@s.Id" class="grid gap-3">
             <label class="sc-label" for="cancel-reason">@L["Request_CancelReason"]</label>

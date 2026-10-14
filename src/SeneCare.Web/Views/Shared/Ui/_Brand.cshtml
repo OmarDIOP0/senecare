@@ -1,8 +1,11 @@
-@* Wordmark: a roof over the name — « Du plan à la réalité ». Unbounded, like the page titles. *@
-<a href="/" class="inline-flex items-center gap-2 text-charbon no-underline" aria-label="@L["App_Name"]">
-    <svg viewBox="0 0 32 32" class="size-6" aria-hidden="true">
-        <path d="M3 15 16 5l13 10" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" class="stroke-laterite" />
-        <path d="M8 14v13h16V14" fill="none" stroke-width="3" stroke-linejoin="round" class="stroke-charbon" />
+@* Wordmark: a roof over the name — « Du plan à la réalité ». ViewData["BrandOnDark"]: light version for espresso bars. *@
+@{
+    var onDark = ViewData["BrandOnDark"] is true;
+}
+<a href="/" class="inline-flex items-center gap-2.5 no-underline hover:no-underline @(onDark ? "text-white" : "text-charbon")" aria-label="@L["App_Name"]">
+    <svg viewBox="0 0 32 32" class="size-7" aria-hidden="true">
+        <path d="M3 15 16 5l13 10" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" class="@(onDark ? "stroke-ambre" : "stroke-laterite")" />
+        <path d="M8 14v13h16V14" fill="none" stroke-width="3" stroke-linejoin="round" class="@(onDark ? "stroke-white" : "stroke-charbon")" />
     </svg>
-    <span class="font-logo text-[1.0625rem] font-bold tracking-[-0.02em]">SeneCare</span>
+    <span class="font-logo text-[1.125rem] font-bold tracking-[0.04em] uppercase">Sene<span class="@(onDark ? "text-ambre" : "text-laterite")">Care</span></span>
 </a>

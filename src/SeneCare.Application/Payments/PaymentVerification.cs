@@ -28,7 +28,7 @@ public sealed record PendingPayment(
 /// invoice and activate / extend the subscription) or reject with a reason. Every decision is audited.
 /// </summary>
 public sealed class PaymentVerificationHandler(
-    IApplicationDbContext db, Settings settings, DiagnosticPlanner diagnostics, NeighborhoodMembership neighborhoods, TimeProvider clock)
+    IApplicationDbContext db, Settings settings, DiagnosticPlanner diagnostics, NeighborhoodMembership neighborhoods, Users.Notifier notifier, TimeProvider clock)
 {
     public async Task<IReadOnlyList<PendingPayment>> PendingAsync(CancellationToken cancellationToken = default)
     {
@@ -69,6 +69,7 @@ public sealed class PaymentVerificationHandler(
         }
 
         Audit(adminUserId, "payment.verify", payment, ipAddress, $"{invoice.Number} · {payment.Amount.Amount.ToString(CultureInfo.InvariantCulture)} XOF · {payment.CustomerReference}", now);
+        await NotifyPaidAsync(invoice, payment, cancellationToken);
         await db.SaveChangesAsync(cancellationToken);
         return Result<Guid>.Success(payment.Id);
     }
@@ -92,6 +93,13 @@ public sealed class PaymentVerificationHandler(
         }
 
         Audit(adminUserId, "payment.reject", payment, ipAddress, reason, now);
+        var rejected = await db.Invoices.AsNoTracking().FirstAsync(i => i.Id == payment.InvoiceId, cancellationToken);
+        await notifier.ToAccountAsync(
+            rejected.AccountId,
+            Users.NotificationTemplates.PaymentRejected,
+            new { invoice = rejected.Number, reason },
+            Resources.Messages.PaymentRejected(rejected.Number, reason ?? string.Empty, Language.French),
+            cancellationToken);
         await db.SaveChangesAsync(cancellationToken);
         return Result<Guid>.Success(payment.Id);
     }
@@ -148,6 +156,7 @@ public sealed class PaymentVerificationHandler(
         }
 
         Audit(adminUserId, "payment.record_manual", payment, ipAddress, $"{invoice.Number} · {channel} · {note}", now);
+        await NotifyPaidAsync(invoice, payment, cancellationToken);
         await db.SaveChangesAsync(cancellationToken);
         return Result<Guid>.Success(payment.Id);
     }
@@ -172,6 +181,15 @@ public sealed class PaymentVerificationHandler(
             await neighborhoods.RefreshForPropertiesAsync([.. subscription.CoveredPropertyIds], cancellationToken);
         }
     }
+
+    /// <summary>The customer learns that the money arrived and the subscription is running.</summary>
+    private Task NotifyPaidAsync(Invoice invoice, Payment payment, CancellationToken cancellationToken) =>
+        notifier.ToAccountAsync(
+            invoice.AccountId,
+            Users.NotificationTemplates.PaymentVerified,
+            new { invoice = invoice.Number, amount = payment.Amount.Amount },
+            invoice.Status == InvoiceStatus.Paid ? Resources.Messages.PaymentVerified(invoice.Number, Language.French) : null,
+            cancellationToken);
 
     public Task<string> WaveLinkAsync(CancellationToken cancellationToken = default) =>
         settings.StringAsync(SettingKeys.WaveLink, cancellationToken);

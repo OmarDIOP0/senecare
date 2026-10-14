@@ -113,12 +113,12 @@ public sealed class PlansController(PlanManagement plans) : Controller
     [HttpPost("{id:guid}")]
     public async Task<IActionResult> Update(
         Guid id, string? name, long registrationFee, long monthlyPrice, int priority, string? visits,
-        int criticalHours, int highHours, int normalHours, List<ServiceDomain> domains, bool isActive, CancellationToken cancellationToken)
+        int criticalHours, int highHours, int normalHours, List<ServiceDomain> domains, bool isActive, int annualFreeMonths, CancellationToken cancellationToken)
     {
         int? included = int.TryParse(visits, NumberStyles.None, CultureInfo.InvariantCulture, out var v) ? v : null;
         var result = await plans.UpdateAsync(
             User.GetUserId()!.Value, id,
-            new PlanForm(name, registrationFee, monthlyPrice, priority, included, criticalHours, highHours, normalHours, domains ?? [], isActive),
+            new PlanForm(name, registrationFee, monthlyPrice, priority, included, criticalHours, highHours, normalHours, domains ?? [], isActive, annualFreeMonths),
             cancellationToken);
         TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Admin_Saved"].Value : this.ErrorMessage(result.Error);
         return Redirect("/admin/offres#plan-" + id);

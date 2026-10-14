@@ -41,6 +41,17 @@ public sealed class RegistrationViewModel
 
     /// <summary>SENECARE staff (admins, technicians) have no customer profile to choose.</summary>
     public bool IsStaff { get; set; }
+
+    /// <summary>Offer chosen during sign-up (code of a plan) and, for monthly plans, yearly payment.</summary>
+    public string? PlanCode { get; set; }
+
+    public bool Annual { get; set; }
+
+    /// <summary>Offers shown at the « Votre formule » step (prices from the database).</summary>
+    public IReadOnlyList<SeneCare.Application.Public.PublicPlan> Plans { get; set; } = [];
+
+    /// <summary>The verified phone number, shown read-only.</summary>
+    public string? Phone { get; set; }
 }
 
 public sealed class InvitationViewModel

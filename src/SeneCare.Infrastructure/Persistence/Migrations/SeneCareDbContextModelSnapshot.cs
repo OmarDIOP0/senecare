@@ -235,6 +235,11 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<string>("ChosenPlanCode")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("chosen_plan_code");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -255,6 +260,10 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
                         .HasColumnName("ninea");
+
+                    b.Property<bool>("PrefersAnnual")
+                        .HasColumnType("boolean")
+                        .HasColumnName("prefers_annual");
 
                     b.Property<bool>("RequiresRequestApproval")
                         .HasColumnType("boolean")
@@ -479,6 +488,10 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.Property<bool>("DiagnosticRequired")
                         .HasColumnType("boolean")
                         .HasColumnName("diagnostic_required");
+
+                    b.Property<int>("FreeMonthsPerPeriod")
+                        .HasColumnType("integer")
+                        .HasColumnName("free_months_per_period");
 
                     b.Property<long>("MonthlyPrice")
                         .HasColumnType("bigint")
@@ -1052,6 +1065,12 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<int>("AnnualFreeMonths")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(2)
+                        .HasColumnName("annual_free_months");
 
                     b.Property<int>("BillingPeriodMonths")
                         .HasColumnType("integer")

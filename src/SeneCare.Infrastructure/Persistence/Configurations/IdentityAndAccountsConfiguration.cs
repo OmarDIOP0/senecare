@@ -44,6 +44,7 @@ internal sealed class CustomerAccountConfiguration : IEntityTypeConfiguration<Cu
         builder.ToTable("customer_accounts");
         builder.Property(a => a.DisplayName).HasMaxLength(CustomerAccount.NameMaxLength);
         builder.Property(a => a.Ninea).HasMaxLength(20);
+        builder.Property(a => a.ChosenPlanCode).HasMaxLength(32);
 
         builder.HasMany(a => a.Members).WithOne().HasForeignKey("account_id").OnDelete(DeleteBehavior.Cascade);
         builder.Navigation(a => a.Members).AutoInclude();

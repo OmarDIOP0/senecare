@@ -74,6 +74,8 @@ public interface IPdfRenderer
     byte[] FieldReport(FieldReport report);
 
     byte[] RequestsReport(RequestsReport report);
+
+    byte[] Invoice(Payments.InvoicePdf invoice);
 }
 
 /// <summary>Sends a text message by SMS. Dev: console; prod: Orange SMS API or an aggregator.</summary>

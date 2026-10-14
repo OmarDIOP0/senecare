@@ -286,7 +286,8 @@ public sealed record PlanForm(
     int HighHours,
     int NormalHours,
     IReadOnlyCollection<ServiceDomain> Domains,
-    bool IsActive);
+    bool IsActive,
+    int AnnualFreeMonths = 2);
 
 /// <summary>
 /// Prices and service levels are data edited here, never code. Existing subscriptions keep their price
@@ -320,6 +321,10 @@ public sealed class PlanManagement(IApplicationDbContext db, TimeProvider clock)
             plan.SetSla(Urgency.High, TimeSpan.FromHours(form.HighHours));
             plan.SetSla(Urgency.Normal, TimeSpan.FromHours(form.NormalHours));
             plan.SetIncludedDomains(form.Domains);
+            if (plan.OffersAnnual)
+            {
+                plan.SetAnnualOffer(form.AnnualFreeMonths);
+            }
             if (form.IsActive)
             {
                 plan.Activate();
@@ -341,7 +346,7 @@ public sealed class PlanManagement(IApplicationDbContext db, TimeProvider clock)
 
     private static string Describe(Plan p) => string.Create(
         CultureInfo.InvariantCulture,
-        $"{p.Name} {p.RegistrationFee.Amount}+{p.MonthlyPrice.Amount}/m prio {p.Priority} visits {p.IncludedVisitsPerPeriod?.ToString(CultureInfo.InvariantCulture) ?? "∞"} sla {string.Join('/', p.SlaPolicies.OrderBy(s => s.Urgency).Select(s => s.MaxDelay.TotalHours))} {(p.IsActive ? "on" : "off")}");
+        $"{p.Name} {p.RegistrationFee.Amount}+{p.MonthlyPrice.Amount}/m prio {p.Priority} visits {p.IncludedVisitsPerPeriod?.ToString(CultureInfo.InvariantCulture) ?? "∞"} sla {string.Join('/', p.SlaPolicies.OrderBy(s => s.Urgency).Select(s => s.MaxDelay.TotalHours))} annual -{p.AnnualFreeMonths}m {(p.IsActive ? "on" : "off")}");
 }
 
 // ===================================================================== Geography

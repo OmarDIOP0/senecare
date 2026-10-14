@@ -41,6 +41,17 @@
                         }
                         <td class="bg-laterite-clair/40"><span class="text-lg font-bold"><sc-amount value="@home.MonthlyPrice.Amount" /></span> @L["Home_Offer_PerMonth"]<br /><span class="text-sm text-charbon-doux">@L["Home_Offer_Registration", Formatting.Fcfa(home.RegistrationFee)]</span></td>
                     </tr>
+                    @if (home.OffersAnnual)
+                    {
+                        <tr>
+                            <th scope="row" class="bg-transparent text-sm font-semibold text-charbon">@L["Site_Pricing_Yearly"]</th>
+                            @if (showExtras)
+                            {
+                                <td>—</td>
+                            }
+                            <td class="bg-laterite-clair/40"><span class="font-bold"><sc-amount value="@home.AnnualPrice.Amount" /></span> @L["Register_PerYear"] <span class="sc-badge bg-ambre text-nuit">@L["Register_FreeMonths", home.AnnualFreeMonths]</span></td>
+                        </tr>
+                    }
                     <tr>
                         <th scope="row" class="bg-transparent text-sm font-semibold text-charbon">@L["Site_Pricing_Critical"]</th>
                         @if (showExtras)

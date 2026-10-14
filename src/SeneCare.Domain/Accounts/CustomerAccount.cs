@@ -94,7 +94,19 @@ public sealed class CustomerAccount : AggregateRoot
 
     public DateTimeOffset CreatedAt { get; private set; }
 
+    /// <summary>Offer chosen at sign-up; the subscription is created with it once a home / site exists.</summary>
+    public string? ChosenPlanCode { get; private set; }
+
+    /// <summary>Monthly plans: pay the year at once (with the free months).</summary>
+    public bool PrefersAnnual { get; private set; }
+
     public IReadOnlyCollection<AccountMember> Members => _members.AsReadOnly();
+
+    public void ChooseOffer(string? planCode, bool annual)
+    {
+        ChosenPlanCode = Guard.Optional(planCode, "account.plan", 32);
+        PrefersAnnual = annual;
+    }
 
     public static CustomerAccount CreateHousehold(string displayName, Guid ownerUserId, DateTimeOffset now)
     {

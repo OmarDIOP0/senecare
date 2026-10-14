@@ -99,6 +99,7 @@ public static class AppNavigation
                 new("espace", "/espace", "house", "Tab_Home"),
                 new("interventions", "/interventions", "clipboard-list", "Tab_Requests", "suivi"),
                 new("logements", "/logements", "building-2", "Tab_Property", "logement"),
+                new("abonnement", "/abonnement", "receipt", "Tab_Subscription", "factures"),
             ],
             Report,
             TourKeys.Client,

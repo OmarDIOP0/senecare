@@ -74,8 +74,11 @@ public sealed class AddPropertyHandler(IApplicationDbContext db, AccessControl a
 
         if (account.Kind == AccountKind.Household)
         {
-            var plan = await db.Plans.FirstAsync(p => p.Code == HouseholdPlanCode, cancellationToken);
-            db.Subscriptions.Add(Subscription.Create(account, plan, [property.Id], clock.GetUtcNow()));
+            // The offer and rhythm (monthly / yearly) chosen at sign-up, « Maisons & Villas » monthly otherwise.
+            var code = account.ChosenPlanCode ?? HouseholdPlanCode;
+            var plan = await db.Plans.FirstOrDefaultAsync(p => p.Code == code && p.IsActive && p.Segment == AccountKind.Household, cancellationToken)
+                ?? await db.Plans.FirstAsync(p => p.Code == HouseholdPlanCode, cancellationToken);
+            db.Subscriptions.Add(Subscription.Create(account, plan, [property.Id], clock.GetUtcNow(), account.PrefersAnnual && plan.OffersAnnual));
         }
         else
         {
@@ -84,7 +87,16 @@ public sealed class AddPropertyHandler(IApplicationDbContext db, AccessControl a
                 .Where(s => s.AccountId == account.Id && s.Status != SubscriptionStatus.Cancelled)
                 .OrderByDescending(s => s.CreatedAt)
                 .FirstOrDefaultAsync(cancellationToken);
-            subscription?.AddProperty(property.Id);
+            if (subscription is not null)
+            {
+                subscription.AddProperty(property.Id);
+            }
+            else if (account.ChosenPlanCode is { } chosen
+                && await db.Plans.FirstOrDefaultAsync(p => p.Code == chosen && p.IsActive && p.Segment == AccountKind.Business, cancellationToken) is { } businessPlan)
+            {
+                // First site of a company that chose its offer at sign-up: the subscription starts waiting for payment.
+                db.Subscriptions.Add(Subscription.Create(account, businessPlan, [property.Id], clock.GetUtcNow()));
+            }
         }
 
         await db.SaveChangesAsync(cancellationToken);

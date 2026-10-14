@@ -85,47 +85,51 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
   hors du code.
 - Docker + docker-compose (web, api, postgres, redis éventuel).
 
-## 5. Direction visuelle — un vrai service d'entretien et de dépannage, sobre et concret
-Références validées : homeserve.fr et vbs.services (structure et ton d'un site de services qui existe
-depuis des années). Objectif : jamais l'air « généré par une IA ».
+## 5. Direction visuelle — chaleureuse, locale, vivante (finition WURUS, structure HomeServe / VBS)
+Références validées : wurus.app (palette, typographies, panneaux sombres, bandes de motifs, inscription en
+étapes), homeserve.fr et vbs.services (structure d'un vrai site de services). On s'inspire, on ne copie ni
+logo, ni textes, ni marque. Objectif : séduire visuellement, jamais l'air « généré par une IA ».
 
-Thème et tokens (Styles/app.css, noms conservés, aucune couleur en dur dans les vues) :
-- Clair par défaut : fond blanc #FFFFFF, sections alternées gris très clair `--sourdine` #F5F6F8,
-  bordures #E5E7EB, texte #1F2937 (jamais de noir pur), texte secondaire #4B5563.
-- Une seule couleur de marque, l'orange SeneCare `--laterite` #C2410C (boutons principaux, liens actifs,
-  icônes), utilisée avec parcimonie. Couleur secondaire bleu nuit `--atlantique` #1E3A5F (titres de section)
-  et `--nuit` #15294A (bandeau de contact, pied de page). Statuts : `baobab`, `soleil`, `rouge`.
-- Sélecteur de thème Clair / Sombre / Système dans l'en-tête (`Site/_ThemeSwitch`), mémorisé dans
-  localStorage (`sc-theme`), appliqué par un script dans `Ui/_Head` avant le premier rendu (pas de flash).
-  Sombre = anthracite neutre (#18191C / #222429).
-- Typo : Inter auto-hébergée (400/600/700), seule famille, logo compris. h1 ≤ 44px desktop, gras 700.
-- Formes : coins 6px (contrôles) / 8px (cartes), ombres légères (`shadow-xs`), bordures fines grises.
-- INTERDIT : dégradés, glassmorphism, lueurs, grandes cartes très arrondies, traits colorés sous les titres,
-  sur-titres « eyebrow », slogans en phrases courtes ponctuées, emojis, animations d'apparition.
+Tokens (Styles/app.css, noms conservés, aucune couleur en dur dans les vues) :
+- Pages crème `--sable` #F7F1E2, surfaces `--surface` #FFFDF7, blocs `--sourdine` #F3EBD6, bordures #E6D9C2.
+- Texte expresso `charbon` #1E120A, secondaire `charbon-doux` #6B5C4A (AA).
+- Or / ambre (`--or` #E2BD6B, `--ambre` #E7A338, `--ambre-fonce`) : bouton principal (dégradé or→ambre,
+  texte expresso), étoiles, chiffres sur fond sombre. Orange SeneCare `--laterite` #C2410C : liens, icônes,
+  points forts. Statuts : `baobab` (vert), `soleil`, `rouge`, `atlantique` (info).
+- Panneaux expresso `.sc-panneau` (`--nuit` #1E120A, grille fine dorée) pour les temps forts : bandeau de
+  contact, en-tête et pied de page publics, étapes, chiffres, appel final, carte de formule, panneau
+  d'inscription. Bandes de motifs wax / bogolan `.sc-bande` / `.sc-bande-fine` (`img/motifs/bande.svg`)
+  sous l'en-tête, au-dessus du pied de page, en bas des panneaux.
+- Mode Clair par défaut ; sélecteur Clair / Sombre / Système (`Site/_ThemeSwitch`, localStorage `sc-theme`,
+  appliqué dans `Ui/_Head` avant le premier rendu). Sombre = expresso.
+- Typo auto-hébergée : Unbounded 700 (h1, titres de section `.sc-section-titre`, logo, grands chiffres),
+  Bricolage Grotesque 400/600/700 (texte), Space Mono 700 (petites capitales `.sc-eyebrow`, `.sc-label-mono`,
+  en-têtes de tableau). Drapeau du Sénégal en SVG (`Site/_FlagSn`), jamais d'emoji.
+- Icônes Phosphor « duotone » (sprite `img/icons.svg`, noms via `Styles/icon-map.json`) ; la couche claire
+  prend `--icon-fond` (ex. `[--icon-fond:var(--ambre)]`).
+- Formes : boutons et badges en pilule, champs 12px, cartes 20px, panneaux 24–28px, ombres chaudes légères.
+  Curseur « main » sur tout ce qui est cliquable.
 
-Structure du site public (`_Layout`, `PublicSiteController`, `Views/PublicSite`) :
-- Bandeau de contact (téléphone, WhatsApp, horaires, zones) ; en-tête blanc : logo, menu « Nos métiers »
-  (sous-menu des 7 métiers), Particuliers, Entreprises, Quartiers, Tarifs, Espace client, thème,
-  bouton « Demander une intervention » (`/demander` → connexion par code → `/signaler?domaine=`).
-- Accueil : hero clair (titre descriptif + formulaire rapide métier/quartier/téléphone + photo de technicien),
-  métiers avec photo, comment ça marche, techniciens, exemple d'intervention, avis, chiffres, conseils, FAQ.
-- Pages propres : `/metiers`, `/metiers/{slug}`, `/particuliers`, `/entreprises`, `/quartiers`, `/tarifs`
-  (tableaux comparatifs), `/faq`, `/mentions-legales`, `/cgu`, `/confidentialite`.
-- Pied de page dense sur fond bleu nuit (métiers, quartiers, entreprise, aide, contact, mentions).
-- Mobile d'abord : menu burger, barre fixe « Appeler » + « WhatsApp » en bas des pages publiques.
+Site public (`_Layout`, `PublicSiteController`, `Views/PublicSite`, contenus `Content/site-content.json`) :
+- Bandeau de contact, en-tête expresso (menu des métiers, Espace client, « Demander une intervention »),
+  pied de page dense, barre Appeler / WhatsApp sur mobile.
+- Accueil : hero + formulaire rapide (`/demander`), métiers avec photo, étapes, techniciens, exemple
+  d'intervention, avis, chiffres, conseils, FAQ, appel final. Pages métiers, particuliers, entreprises,
+  quartiers, tarifs (mensuel / annuel), FAQ, mentions, CGU.
+- Blocs `"sample": true` = contenus d'exemple, visibles en développement (étiquette « Exemple »), masqués en
+  production. Montants et délais : toujours depuis la base. Jamais de faux avis publiés.
 
-Contenus (`Content/site-content.json`, chargé par `SiteContent`) :
-- Contact, métiers (texte, exemples, délai, prix de départ, photo), techniciens, exemple d'intervention,
-  avis, chiffres, FAQ, avantages des formules par code d'offre, quartiers desservis.
-- Les blocs `"sample": true` sont des CONTENUS D'EXEMPLE : affichés en développement avec l'étiquette
-  « Exemple », masqués en production tant qu'ils ne sont pas remplacés. Jamais de faux avis, faux chiffres,
-  certifications ou partenariats publiés.
-- Montants des abonnements et délais d'intervention : toujours depuis la base (Admin › Offres).
-- Photos : `wwwroot/images/` (WebP ≤ 150 Ko) ; un fichier absent affiche une tuile neutre (`Site/_Photo`).
+Parcours client :
+- Inscription en 4 étapes (`Registration/Index`, `form[data-wizard]`) : profil, coordonnées (nom de
+  l'entreprise seulement pour une entreprise), formule (mensuel / annuel « 2 mois offerts » pour les
+  particuliers ; Essentiel / Professionnel / Premium, facturés au trimestre, pour les entreprises),
+  confirmation + consentements. Puis ajout du logement / premier site → abonnement à payer.
+- Paiement réel : lien marchand Wave configuré par l'admin (`/admin/paiements`), « J'ai payé » + référence,
+  vérification par la Finance (notification), activation et message WhatsApp / SMS au client. Factures et
+  reçus PDF. Pas de bouton de simulation dans l'interface.
 
-Espace connecté : même thème et mêmes tokens ; sidebar + topbar desktop, barre d'onglets mobile,
-`Ui/_PageHeader`, `.sc-table`, `Ui/_EmptyState`, KPI jamais à 0 ni « — ».
-Formulaires : fond blanc, bordure grise 1px, label au-dessus, aide dessous, focus visible, erreurs en rouge.
+Espace connecté : même palette ; sidebar + topbar desktop, barre d'onglets mobile ; « Abonnement » dans la
+navigation des particuliers ; actions destructrices en rouge, en haut à droite (ex. « Annuler la demande »).
 Accessibilité : contrastes AA dans les deux thèmes, focus visible, `alt` sur les images, libellés ARIA.
 Revue visuelle : `tests/SeneCare.E2E/design-review.mjs` (1440 / 390, clair / sombre) dans `docs/design-review/`.
 

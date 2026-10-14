@@ -1,0 +1,15 @@
+@model RegistrationViewModel
+@* Explicit consent (law 2008-12): unticked by default, required to finish. *@
+<section class="rounded-md border border-ligne bg-sable p-5" aria-labelledby="consent-title">
+    <h2 id="consent-title" class="flex items-center gap-2 font-semibold"><sc-icon name="shield-check" class="size-5 text-baobab" />@L["Register_ConsentTitle"]</h2>
+    <p class="mt-2 text-sm text-charbon-doux">@L["Register_ConsentText"]</p>
+    <p class="mt-2 text-sm"><a href="/confidentialite" class="sc-lien" target="_blank">@L["Register_ConsentLink"]</a></p>
+    <label class="mt-4 flex min-h-12 items-start gap-3">
+        <input type="checkbox" asp-for="AcceptsPrivacyPolicy" class="mt-1 size-5" required />
+        <span class="font-semibold">@L["Register_ConsentCheckbox"]</span>
+    </label>
+    <label class="mt-1 flex min-h-12 items-start gap-3">
+        <input type="checkbox" asp-for="AcceptsWhatsApp" class="mt-1 size-5" />
+        <span>@L["Register_WhatsAppCheckbox"]</span>
+    </label>
+</section>

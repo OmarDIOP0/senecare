@@ -81,6 +81,23 @@ public sealed class Plan : AggregateRoot
 
     public Money PeriodPrice => MonthlyPrice * BillingPeriodMonths;
 
+    /// <summary>Monthly plans can be paid for a year at once: « 2 mois offerts » by default (edited by admins).</summary>
+    public int AnnualFreeMonths { get; private set; } = 2;
+
+    public bool OffersAnnual => BillingPeriodMonths == 1;
+
+    public Money AnnualPrice => MonthlyPrice * (12 - AnnualFreeMonths);
+
+    public void SetAnnualOffer(int freeMonths)
+    {
+        if (freeMonths is < 0 or > 6)
+        {
+            throw new DomainException("plan.annual_free_months", "Between 0 and 6 free months for a yearly payment.");
+        }
+
+        AnnualFreeMonths = freeMonths;
+    }
+
     public void Update(string name, Money registrationFee, Money monthlyPrice, int billingPeriodMonths, bool diagnosticRequired)
     {
         if (billingPeriodMonths is < 1 or > 12)

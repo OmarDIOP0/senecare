@@ -21,7 +21,12 @@ public sealed record SubscriptionSummary(
     int BillingPeriodMonths,
     DateRange? CurrentPeriod,
     DateOnly? NextDueDate,
-    IReadOnlyList<InvoiceSummary> Invoices);
+    IReadOnlyList<InvoiceSummary> Invoices,
+    int FreeMonthsPerPeriod = 0,
+    Money PeriodPrice = default)
+{
+    public bool IsAnnual => BillingPeriodMonths == 12;
+}
 
 public sealed record NeighborhoodProgress(string Neighborhood, int Members, int Threshold, NeighborhoodProgramStatus Status, int TreesPlanted);
 
@@ -55,7 +60,9 @@ public sealed class SubscriptionQueries(IApplicationDbContext db, AccessControl 
             s.BillingPeriodMonths,
             s.CurrentPeriod,
             s.NextDueDate,
-            [.. invoices.Where(i => i.SubscriptionId == s.Id).Select(i => new InvoiceSummary(i.Id, i.Number, i.Total, i.Status, i.DueDate, i.PaidAt))]))];
+            [.. invoices.Where(i => i.SubscriptionId == s.Id).Select(i => new InvoiceSummary(i.Id, i.Number, i.Total, i.Status, i.DueDate, i.PaidAt))],
+            s.FreeMonthsPerPeriod,
+            s.PeriodPrice))];
     }
 
     /// <summary>« 347 / 500 voisins » for the neighborhood of the user's first home.</summary>

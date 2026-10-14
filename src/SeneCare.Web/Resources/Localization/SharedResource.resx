@@ -48,7 +48,7 @@
   <data name="Register_ConsentCheckbox" xml:space="preserve"><value>J'accepte la politique de confidentialité</value></data>
   <data name="Register_ConsentLink" xml:space="preserve"><value>Lire la politique de confidentialité</value></data>
   <data name="Register_WhatsAppCheckbox" xml:space="preserve"><value>Je souhaite recevoir le suivi de mes interventions sur WhatsApp</value></data>
-  <data name="Register_Submit" xml:space="preserve"><value>Terminer l'inscription</value></data>
+  <data name="Register_Submit" xml:space="preserve"><value>Créer mon compte</value></data>
   <data name="Account_Title" xml:space="preserve"><value>Mon compte</value></data>
   <data name="Account_Name" xml:space="preserve"><value>Nom</value></data>
   <data name="Account_Phone" xml:space="preserve"><value>Téléphone</value></data>
@@ -991,9 +991,9 @@
   <data name="Public_Footer_Ranking" xml:space="preserve"><value>Classement des quartiers</value></data>
   <data name="Public_Footer_Privacy" xml:space="preserve"><value>Données personnelles</value></data>
   <data name="Public_Footer_Country" xml:space="preserve"><value>Dakar, Sénégal</value></data>
-  <data name="Home_Hero_Eyebrow" xml:space="preserve"><value>Maisons, villas et bureaux entretenus toute l'année</value></data>
-  <data name="Home_Hero_Title" xml:space="preserve"><value>Dépannage et entretien de votre maison à Dakar et Thiès</value></data>
-  <data name="Home_Hero_Text" xml:space="preserve"><value>Plomberie, électricité, étanchéité, menuiserie : un technicien chez vous, à l'heure annoncée, avec un prix expliqué avant les travaux.</value></data>
+  <data name="Home_Hero_Eyebrow" xml:space="preserve"><value>Entretien &amp; dépannage · Dakar · Thiès</value></data>
+  <data name="Home_Hero_Title" xml:space="preserve"><value>Votre maison entretenue par des techniciens de confiance</value></data>
+  <data name="Home_Hero_Text" xml:space="preserve"><value>Plomberie, électricité, étanchéité, menuiserie : un technicien chez vous à l'heure annoncée, un prix expliqué avant les travaux, et tout le suivi sur votre téléphone.</value></data>
   <data name="Home_Hero_SeeOffers" xml:space="preserve"><value>Voir les offres</value></data>
   <data name="Home_Demo_Place" xml:space="preserve"><value>Villa, Ngor</value></data>
   <data name="Home_Demo_Title" xml:space="preserve"><value>Fuite sous l'évier de la cuisine</value></data>
@@ -1006,7 +1006,7 @@
   <data name="Home_Promise_WhatsApp" xml:space="preserve"><value>Suivi par WhatsApp et SMS</value></data>
   <data name="Home_Promise_Wave" xml:space="preserve"><value>Paiement par Wave</value></data>
   <data name="Home_Trades_Eyebrow" xml:space="preserve"><value>Nos métiers</value></data>
-  <data name="Home_Trades_Title" xml:space="preserve"><value>Nos métiers</value></data>
+  <data name="Home_Trades_Title" xml:space="preserve"><value>Sept métiers, un seul interlocuteur</value></data>
   <data name="Home_Trade_Electricity" xml:space="preserve"><value>Coupures, courts-circuits, prises et tableaux électriques.</value></data>
   <data name="Home_Trade_Plumbing" xml:space="preserve"><value>Fuites, robinets, chasses d'eau, surpresseurs et canalisations.</value></data>
   <data name="Home_Trade_Waterproofing" xml:space="preserve"><value>Dalles, toits-terrasses et infiltrations, surtout avant l'hivernage.</value></data>
@@ -1018,7 +1018,7 @@
   <data name="Home_Trades_Unsure_Title" xml:space="preserve"><value>Vous ne savez pas quel métier choisir ?</value></data>
   <data name="Home_Trades_Unsure_Text" xml:space="preserve"><value>Décrivez le problème avec une photo, on envoie le bon technicien.</value></data>
   <data name="Home_Steps_Eyebrow" xml:space="preserve"><value>Comment ça marche</value></data>
-  <data name="Home_Steps_Title" xml:space="preserve"><value>Comment ça marche</value></data>
+  <data name="Home_Steps_Title" xml:space="preserve"><value>De la photo au rapport, en quatre étapes</value></data>
   <data name="Home_Step1_Title" xml:space="preserve"><value>Vous décrivez le problème</value></data>
   <data name="Home_Step1_Text" xml:space="preserve"><value>En ligne ou sur WhatsApp, avec une photo. Ça marche même sans réseau : la demande part au retour de la connexion.</value></data>
   <data name="Home_Step2_Title" xml:space="preserve"><value>On vous propose un créneau</value></data>
@@ -1054,7 +1054,7 @@
   <data name="Home_Commit_Diagnostic" xml:space="preserve"><value>Diagnostic des entreprises</value></data>
   <data name="Home_Commit_Diagnostic_Value" xml:space="preserve"><value>3 mois</value></data>
   <data name="Home_Commit_Hood" xml:space="preserve"><value>Voisins pour reboiser un quartier</value></data>
-  <data name="Home_Advice_Eyebrow" xml:space="preserve"><value>Conseils</value></data>
+  <data name="Home_Advice_Eyebrow" xml:space="preserve"><value>Conseils de saison</value></data>
   <data name="Home_Advice_Title" xml:space="preserve"><value>Conseils d'entretien</value></data>
   <data name="Home_Cta_Title" xml:space="preserve"><value>Prenez soin de votre bâtiment avant qu'il ne coûte cher</value></data>
   <data name="Home_Cta_Text" xml:space="preserve"><value>Inscription en deux minutes avec votre numéro de téléphone.</value></data>
@@ -1063,7 +1063,7 @@
   <data name="Admin_NoRevenue" xml:space="preserve"><value>Aucun encaissement sur les six derniers mois. Les paiements vérifiés apparaîtront ici.</value></data>
   <data name="Rating_PublishConsent" xml:space="preserve"><value>J'accepte que mon avis soit publié sur le site SENECARE</value></data>
   <data name="Rating_PublishConsent_Hint" xml:space="preserve"><value>Seuls votre prénom, l'initiale de votre nom et votre commune apparaissent. Vous pouvez retirer votre accord à tout moment auprès du service client.</value></data>
-  <data name="Home_Reviews_Eyebrow" xml:space="preserve"><value>Avis clients</value></data>
+  <data name="Home_Reviews_Eyebrow" xml:space="preserve"><value>Ils nous font confiance</value></data>
   <data name="Home_Reviews_Title" xml:space="preserve"><value>Avis de nos clients</value></data>
   <data name="Home_Reviews_Note" xml:space="preserve"><value>Avis publiés avec l'accord des clients, après une intervention réalisée.</value></data>
   <data name="Home_Review_Stars" xml:space="preserve"><value>{0} sur 5</value></data>
@@ -1081,7 +1081,7 @@
   <data name="Home_Photo_Street_Alt" xml:space="preserve"><value>Ruelle aux murs ocre et jaunes, à l'ombre d'un grand arbre</value></data>
   <data name="Home_Photo_Electrician_Alt" xml:space="preserve"><value>Électricien avec casque et gants vérifiant un boîtier électrique</value></data>
   <data name="Home_Photo_Technician_Alt" xml:space="preserve"><value>Technicien en tenue de travail bleue</value></data>
-  <data name="Home_Techs_Eyebrow" xml:space="preserve"><value>Nos techniciens</value></data>
+  <data name="Home_Techs_Eyebrow" xml:space="preserve"><value>L'équipe</value></data>
   <data name="Home_Techs_Title" xml:space="preserve"><value>Nos techniciens</value></data>
   <data name="Home_Techs_Known_Title" xml:space="preserve"><value>Vous savez qui vient</value></data>
   <data name="Home_Techs_Known_Text" xml:space="preserve"><value>Nom et numéro du technicien avant son arrivée, joignable par appel ou WhatsApp.</value></data>
@@ -1236,4 +1236,93 @@
   <data name="Site_Legal_Contact" xml:space="preserve"><value>Contact</value></data>
   <data name="Site_Legal_ToComplete" xml:space="preserve"><value>À compléter avant la mise en ligne.</value></data>
   <data name="Site_Legal_SeePrivacy" xml:space="preserve"><value>Pour vos données personnelles, voir la</value></data>
+  <data name="Tab_Subscription" xml:space="preserve"><value>Abonnement</value></data>
+  <data name="Notif_Unread" xml:space="preserve"><value>Non lue</value></data>
+  <data name="Notif_payment_declared_Title" xml:space="preserve"><value>Paiement Wave à vérifier</value></data>
+  <data name="Notif_payment_declared_Text" xml:space="preserve"><value>Facture {0} · {1}. Vérifiez la réception sur le compte Wave.</value></data>
+  <data name="Notif_payment_verified_Title" xml:space="preserve"><value>Paiement reçu, abonnement actif</value></data>
+  <data name="Notif_payment_verified_Text" xml:space="preserve"><value>Facture {0} réglée ({1}). Vous pouvez signaler un problème dès maintenant.</value></data>
+  <data name="Notif_payment_rejected_Title" xml:space="preserve"><value>Paiement non retrouvé</value></data>
+  <data name="Notif_payment_rejected_Text" xml:space="preserve"><value>Facture {0} : {2}. Vérifiez la référence ou contactez-nous.</value></data>
+  <data name="Admin_PlanAnnualFree" xml:space="preserve"><value>Mois offerts sur un paiement annuel</value></data>
+  <data name="Admin_PlanAnnualFree_Hint" xml:space="preserve"><value>Prix annuel actuel : {0}.</value></data>
+  <data name="Register_Eyebrow_Simple" xml:space="preserve"><value>Votre compte</value></data>
+  <data name="Register_StepOf" xml:space="preserve"><value>Étape {0}/{1}</value></data>
+  <data name="Register_Step1" xml:space="preserve"><value>Votre profil</value></data>
+  <data name="Register_Step1_Title" xml:space="preserve"><value>Qu'est-ce qu'on entretient pour vous ?</value></data>
+  <data name="Register_Step1_Text" xml:space="preserve"><value>Une maison ou une villa, ou les locaux d'une entreprise. Vous pourrez en ajouter d'autres ensuite.</value></data>
+  <data name="Register_Step2" xml:space="preserve"><value>Vos coordonnées</value></data>
+  <data name="Register_Step2_Title" xml:space="preserve"><value>Comment vous appeler ?</value></data>
+  <data name="Register_NamePlaceholder" xml:space="preserve"><value>Ex. : Awa Ndiaye</value></data>
+  <data name="Register_CompanyPlaceholder" xml:space="preserve"><value>Ex. : Quincaillerie Ndiaye et Frères</value></data>
+  <data name="Register_PhoneVerified" xml:space="preserve"><value>Vérifié</value></data>
+  <data name="Register_Step3" xml:space="preserve"><value>Votre formule</value></data>
+  <data name="Register_Step3_Title" xml:space="preserve"><value>Choisissez votre abonnement</value></data>
+  <data name="Register_Rhythm" xml:space="preserve"><value>Rythme de paiement</value></data>
+  <data name="Register_Monthly" xml:space="preserve"><value>Mensuel</value></data>
+  <data name="Register_Yearly" xml:space="preserve"><value>Annuel</value></data>
+  <data name="Register_FreeMonths" xml:space="preserve"><value>{0} mois offerts</value></data>
+  <data name="Register_HomePlanText" xml:space="preserve"><value>Les 7 métiers, la main-d'œuvre des dépannages et une visite avant l'hivernage.</value></data>
+  <data name="Register_PerYear" xml:space="preserve"><value>par an</value></data>
+  <data name="Register_Critical" xml:space="preserve"><value>Urgence critique sous {0}</value></data>
+  <data name="Register_BusinessBilling" xml:space="preserve"><value>Facturation par trimestre, après le diagnostic technique de vos sites.</value></data>
+  <data name="Register_Popular" xml:space="preserve"><value>Le plus choisi</value></data>
+  <data name="Register_Step4" xml:space="preserve"><value>Confirmation</value></data>
+  <data name="Register_Step4_Title" xml:space="preserve"><value>Et ensuite ?</value></data>
+  <data name="Register_Next1" xml:space="preserve"><value>Vous ajoutez votre logement ou votre premier site : adresse, point de repère et photo.</value></data>
+  <data name="Register_Next2" xml:space="preserve"><value>Vous payez l'inscription et la première période par Wave, puis vous cliquez sur « J'ai payé ».</value></data>
+  <data name="Register_Next3" xml:space="preserve"><value>Nous vérifions le paiement et activons votre compte. Vous êtes prévenu sur WhatsApp ou par SMS.</value></data>
+  <data name="Register_Back" xml:space="preserve"><value>Retour</value></data>
+  <data name="Register_Next" xml:space="preserve"><value>Suivant</value></data>
+  <data name="Register_Panel_Eyebrow" xml:space="preserve"><value>Votre espace SeneCare</value></data>
+  <data name="Register_Panel_Title" xml:space="preserve"><value>L'entretien de votre bâtiment, organisé en quelques minutes.</value></data>
+  <data name="Register_Panel_1" xml:space="preserve"><value>Signalez une panne avec une photo, même sans réseau.</value></data>
+  <data name="Register_Panel_2" xml:space="preserve"><value>Suivez le technicien en route et appelez-le en un geste.</value></data>
+  <data name="Register_Panel_3" xml:space="preserve"><value>Payez par Wave, facture et reçu dans l'application.</value></data>
+  <data name="Register_Panel_4" xml:space="preserve"><value>Chaque intervention reste dans le carnet de votre logement.</value></data>
+  <data name="Register_Panel_Trades" xml:space="preserve"><value>Métiers</value></data>
+  <data name="Register_Panel_Urgent" xml:space="preserve"><value>Urgence</value></data>
+  <data name="Register_Panel_Pay" xml:space="preserve"><value>Paiement</value></data>
+  <data name="Error_registration_plan_unknown" xml:space="preserve"><value>Choisissez une formule qui correspond à votre profil.</value></data>
+  <data name="Property_Welcome_Title" xml:space="preserve"><value>Compte créé, plus qu'une étape</value></data>
+  <data name="Property_Welcome_Home" xml:space="preserve"><value>Ajoutez votre logement : votre abonnement sera prêt à payer par Wave juste après.</value></data>
+  <data name="Property_Welcome_Business" xml:space="preserve"><value>Ajoutez votre premier site : votre formule sera prête à payer par Wave juste après.</value></data>
+  <data name="Pdf_Invoice_Number" xml:space="preserve"><value>Facture n°</value></data>
+  <data name="Pdf_Invoice_Issued" xml:space="preserve"><value>Émise le</value></data>
+  <data name="Pdf_Invoice_Due" xml:space="preserve"><value>Échéance</value></data>
+  <data name="Pdf_Invoice_Status" xml:space="preserve"><value>Statut</value></data>
+  <data name="Pdf_Invoice_PaidOn" xml:space="preserve"><value>Payée le</value></data>
+  <data name="Pdf_Receipt_Title" xml:space="preserve"><value>Reçu de paiement · {0}</value></data>
+  <data name="Pdf_Invoice_Title" xml:space="preserve"><value>Facture · {0}</value></data>
+  <data name="Pdf_Col_Description" xml:space="preserve"><value>Désignation</value></data>
+  <data name="Pdf_Col_Quantity" xml:space="preserve"><value>Qté</value></data>
+  <data name="Pdf_Col_Unit" xml:space="preserve"><value>Prix unitaire</value></data>
+  <data name="Pdf_Col_Total" xml:space="preserve"><value>Total</value></data>
+  <data name="Pdf_Col_TotalDue" xml:space="preserve"><value>Total</value></data>
+  <data name="Pdf_PaidStamp" xml:space="preserve"><value>PAYÉ — merci</value></data>
+  <data name="Subscription_Eyebrow" xml:space="preserve"><value>Formule et paiements</value></data>
+  <data name="Subscription_YourPlan" xml:space="preserve"><value>Votre formule</value></data>
+  <data name="Subscription_BilledEvery" xml:space="preserve"><value>payé tous les {0} mois</value></data>
+  <data name="Subscription_NotStarted" xml:space="preserve"><value>Démarre au paiement</value></data>
+  <data name="Subscription_Progress" xml:space="preserve"><value>Où en est votre compte</value></data>
+  <data name="Subscription_Stage1" xml:space="preserve"><value>Compte et logement enregistrés</value></data>
+  <data name="Subscription_Stage2" xml:space="preserve"><value>Paiement Wave de l'inscription</value></data>
+  <data name="Subscription_Stage3" xml:space="preserve"><value>Vérification par SeneCare</value></data>
+  <data name="Subscription_Stage4" xml:space="preserve"><value>Abonnement actif : vous pouvez signaler</value></data>
+  <data name="Subscription_Receipt" xml:space="preserve"><value>Reçu PDF</value></data>
+  <data name="Subscription_InvoicePdf" xml:space="preserve"><value>Facture PDF</value></data>
+  <data name="Pay_PendingTitle" xml:space="preserve"><value>Paiement reçu, vérification en cours</value></data>
+  <data name="Pay_PendingNotice" xml:space="preserve"><value>Vous recevrez un message WhatsApp dès l'activation.</value></data>
+  <data name="AdminPay_Eyebrow" xml:space="preserve"><value>Encaissements</value></data>
+  <data name="AdminPay_Methods" xml:space="preserve"><value>Moyens de paiement</value></data>
+  <data name="AdminPay_WaveText" xml:space="preserve"><value>Lien marchand : le client paie, puis déclare son paiement ici.</value></data>
+  <data name="AdminPay_NotSet" xml:space="preserve"><value>Lien à configurer</value></data>
+  <data name="AdminPay_Active" xml:space="preserve"><value>Actif</value></data>
+  <data name="AdminPay_Soon" xml:space="preserve"><value>Bientôt</value></data>
+  <data name="AdminPay_CashHint" xml:space="preserve"><value>Espèces et virements : enregistrez-les depuis la liste des factures à encaisser ci-dessous.</value></data>
+  <data name="Home_Hero_Card_Eyebrow" xml:space="preserve"><value>En ce moment</value></data>
+  <data name="Home_Hero_Card_Text" xml:space="preserve"><value>Ibrahima arrive à Mermoz vers 10 h. Suivi en direct dans l'application.</value></data>
+  <data name="Site_Faq_Eyebrow" xml:space="preserve"><value>Questions fréquentes</value></data>
+  <data name="Site_Cta_Eyebrow" xml:space="preserve"><value>Besoin d'un technicien ?</value></data>
+  <data name="Site_Pricing_Yearly" xml:space="preserve"><value>Paiement annuel</value></data>
 </root>

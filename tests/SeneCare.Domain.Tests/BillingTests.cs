@@ -36,6 +36,34 @@ public class SubscriptionTests
     }
 
     [Fact]
+    public void A_yearly_home_subscription_bills_twelve_months_minus_the_free_ones()
+    {
+        var subscription = Subscription.Create(Household(), HomePlan(), [Guid.CreateVersion7()], Now, annual: true);
+
+        Assert.True(subscription.IsAnnual);
+        Assert.Equal(12, subscription.BillingPeriodMonths);
+        Assert.Equal(2, subscription.FreeMonthsPerPeriod);
+        Assert.Equal(85_000, subscription.PeriodPrice.Amount);
+
+        subscription.Activate(Jan1, Now);
+        Assert.Equal(new DateOnly(2026, 12, 31), subscription.CurrentPeriod!.End);
+    }
+
+    [Fact]
+    public void Business_plans_cannot_be_paid_yearly_because_of_the_quarterly_diagnostic() =>
+        Assert.Throws<DomainException>(() => Subscription.Create(Business(), BusinessPlan(), [Guid.CreateVersion7()], Now, annual: true));
+
+    [Fact]
+    public void The_yearly_offer_is_edited_by_admins()
+    {
+        var plan = HomePlan();
+        plan.SetAnnualOffer(1);
+
+        Assert.Equal(93_500, plan.AnnualPrice.Amount);
+        Assert.Throws<DomainException>(() => plan.SetAnnualOffer(7));
+    }
+
+    [Fact]
     public void Business_subscription_is_billed_per_quarter()
     {
         var subscription = ActiveBusinessSubscription();

@@ -61,6 +61,9 @@ internal sealed class PlanConfiguration : IEntityTypeConfiguration<Plan>
         builder.Property(p => p.Code).HasMaxLength(Plan.CodeMaxLength);
         builder.Property(p => p.Name).HasMaxLength(Plan.NameMaxLength);
         builder.HasIndex(p => p.Code).IsUnique();
+        builder.Property(p => p.AnnualFreeMonths).HasDefaultValue(2);
+        builder.Ignore(p => p.OffersAnnual);
+        builder.Ignore(p => p.AnnualPrice);
         builder.PrimitiveCollection(p => p.IncludedDomains);
 
         builder.OwnsMany(p => p.SlaPolicies, b =>

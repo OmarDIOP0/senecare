@@ -39,6 +39,8 @@ internal sealed class SubscriptionConfiguration : IEntityTypeConfiguration<Subsc
         builder.HasOne<Plan>().WithMany().HasForeignKey(s => s.PlanId).OnDelete(DeleteBehavior.Restrict);
         builder.OwnsOne(s => s.CurrentPeriod, b => OwnedValues.DateRange(b, "current_period"));
         builder.PrimitiveCollection(s => s.CoveredPropertyIds);
+        builder.Ignore(s => s.IsAnnual);
+        builder.Ignore(s => s.ChargedMonths);
         builder.HasIndex(s => s.AccountId);
         builder.HasIndex(s => s.Status);
     }

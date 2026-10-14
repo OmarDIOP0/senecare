@@ -17,7 +17,10 @@ public sealed record PublicPlan(
     Money MonthlyPrice,
     TimeSpan? CriticalDelay,
     int? IncludedVisitsPerPeriod,
-    bool DiagnosticRequired);
+    bool DiagnosticRequired,
+    bool OffersAnnual = false,
+    int AnnualFreeMonths = 0,
+    Money AnnualPrice = default);
 
 public sealed record PublicAdvice(string Title, string Body, ServiceDomain? Domain);
 
@@ -72,7 +75,10 @@ public sealed class GetPublicHomeHandler(IApplicationDbContext db, Settings sett
                 p.MonthlyPrice,
                 p.GetMaxDelay(Urgency.Critical),
                 p.IncludedVisitsPerPeriod,
-                p.DiagnosticRequired))
+                p.DiagnosticRequired,
+                p.OffersAnnual,
+                p.AnnualFreeMonths,
+                p.AnnualPrice))
             .ToList();
 
         var done = db.ServiceRequests.AsNoTracking()

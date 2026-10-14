@@ -3,18 +3,17 @@
 @{
     Layout = "_AppLayout";
     var isBusiness = AppNavigation.IsBusiness(User);
-    ViewData["NavActive"] = isBusiness ? "factures" : "espace";
+    ViewData["NavActive"] = isBusiness ? "factures" : "abonnement";
     var title = isBusiness ? L["Tab_Invoices"] : L["Space_Subscription"];
     ViewData["Title"] = title;
     ViewData["Wide"] = true;
-    var canSimulate = ViewData["CanSimulate"] is true;
     string Day(DateOnly d) => Formatting.ShortDate(new DateTimeOffset(d.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero));
-    string StatusBadge(SubscriptionStatus s) => s switch
+    (string Badge, string Dot) Status(SubscriptionStatus s) => s switch
     {
-        SubscriptionStatus.Active => "bg-baobab-clair text-baobab",
-        SubscriptionStatus.PastDue => "bg-soleil-clair text-soleil",
-        SubscriptionStatus.Suspended => "bg-rouge-clair text-rouge",
-        _ => "bg-sourdine text-charbon-doux",
+        SubscriptionStatus.Active => ("bg-baobab-clair text-baobab", "bg-baobab"),
+        SubscriptionStatus.PastDue => ("bg-soleil-clair text-soleil", "bg-soleil"),
+        SubscriptionStatus.Suspended => ("bg-rouge-clair text-rouge", "bg-rouge"),
+        _ => ("bg-ambre text-nuit", "bg-nuit"),
     };
     string InvoiceBadge(InvoiceStatus s) => s switch
     {
@@ -27,12 +26,13 @@
 
 <header class="sc-entete">
     <div>
-        <h1 class="sc-titre">@title</h1>
+        <p class="sc-eyebrow">@L["Subscription_Eyebrow"]</p>
+        <h1 class="sc-titre mt-2">@title</h1>
         <p>@L["Subscription_Description"]</p>
     </div>
     @if (isBusiness)
     {
-        <a href="/entreprise/exports/factures.csv" class="sc-btn-secondaire" download><sc-icon name="receipt" class="size-4" />@L["Export_InvoicesCsv"]</a>
+        <a href="/entreprise/exports/factures.csv" class="sc-btn-secondaire" download><sc-icon name="download" class="size-4" />@L["Export_InvoicesCsv"]</a>
     }
 </header>
 
@@ -43,105 +43,149 @@
     </div>
 }
 
-<div class="mt-6 grid gap-8">
+<div class="mt-8 grid gap-10">
     @foreach (var item in Model)
     {
         var sub = item.Subscription;
         var due = item.Due;
-        <section aria-label="@sub.PlanName" class="grid gap-4">
-            <div class="rounded-lg border border-ligne bg-surface">
-                <div class="flex flex-wrap items-start justify-between gap-2 border-b border-ligne px-4 py-3">
-                    <div class="min-w-0">
-                        <h2 class="text-[15px] font-semibold">@sub.PlanName</h2>
-                        <p class="truncate text-[13px] text-charbon-doux">@string.Join(", ", sub.PropertyNames)</p>
+        var look = Status(sub.Status);
+        var pending = due?.Declaration is { Status: PaymentStatus.Pending };
+        // Where the customer is in « inscription → paiement → vérification → actif ».
+        var stage = sub.Status != SubscriptionStatus.PendingRegistration ? 3 : pending ? 2 : 1;
+        <section aria-label="@sub.PlanName" class="grid gap-6">
+
+            @* ---- The plan (espresso panel) + where it stands ---- *@
+            <div class="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
+                <div class="sc-panneau relative overflow-hidden p-6 sm:p-8">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <p class="font-mono text-xs font-bold tracking-[0.16em] text-or uppercase">@L["Subscription_YourPlan"]</p>
+                        <span class="sc-badge @look.Badge"><span class="size-1.5 rounded-full @look.Dot"></span>@L["SubscriptionStatus_" + sub.Status]</span>
                     </div>
-                    <span class="sc-badge @StatusBadge(sub.Status)">@L["SubscriptionStatus_" + sub.Status]</span>
+                    <h2 class="mt-3 font-display text-2xl leading-tight tracking-[-0.02em] sm:text-3xl">@sub.PlanName</h2>
+                    <p class="mt-1 text-sur-nuit/75">@string.Join(" · ", sub.PropertyNames)</p>
+                    <div class="mt-6 flex flex-wrap items-end gap-x-3 gap-y-1">
+                        @if (sub.IsAnnual)
+                        {
+                            <span class="font-display text-3xl text-white sm:text-4xl"><sc-amount value="@sub.PeriodPrice.Amount" /></span>
+                            <span class="pb-1 text-sur-nuit/75">@L["Register_PerYear"]</span>
+                            @if (sub.FreeMonthsPerPeriod > 0)
+                            {
+                                <span class="sc-badge mb-1.5 bg-ambre text-nuit">@L["Register_FreeMonths", sub.FreeMonthsPerPeriod]</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="font-display text-3xl text-white sm:text-4xl"><sc-amount value="@sub.MonthlyPrice.Amount" /></span>
+                            <span class="pb-1 text-sur-nuit/75">@L["Home_Offer_PerMonth"]@(sub.BillingPeriodMonths > 1 ? " · " + L["Subscription_BilledEvery", sub.BillingPeriodMonths] : "")</span>
+                        }
+                    </div>
+                    <dl class="mt-6 grid grid-cols-2 gap-4 border-t border-white/10 pt-5 text-sm">
+                        <div>
+                            <dt class="font-mono text-[10px] tracking-[0.12em] text-sur-nuit/60 uppercase">@L["Subscription_Period"]</dt>
+                            <dd class="mt-1 font-semibold text-white">@(sub.CurrentPeriod is { } period ? (sub.IsAnnual ? $"{Formatting.DateWithYear(period.Start)} – {Formatting.DateWithYear(period.End)}" : $"{Day(period.Start)} – {Day(period.End)}") : L["Subscription_NotStarted"])</dd>
+                        </div>
+                        <div>
+                            <dt class="font-mono text-[10px] tracking-[0.12em] text-sur-nuit/60 uppercase">@L["Subscription_NextDueLabel"]</dt>
+                            <dd class="mt-1 font-semibold text-white">@(sub.NextDueDate is { } next ? (sub.IsAnnual ? Formatting.DateWithYear(next) : Day(next)) : "—")</dd>
+                        </div>
+                    </dl>
+                    <div class="sc-bande-fine absolute inset-x-0 bottom-0"></div>
                 </div>
-                <dl class="flex flex-wrap gap-px bg-ligne text-sm">
-                    <div class="min-w-40 flex-1 bg-surface px-4 py-3"><dt class="text-[13px] text-charbon-doux">@L["Subscription_Monthly"]</dt><dd class="mt-0.5 font-medium"><sc-amount value="@sub.MonthlyPrice.Amount" /></dd></div>
-                    @if (sub.Status == SubscriptionStatus.PendingRegistration)
-                    {
-                        <div class="min-w-40 flex-1 bg-surface px-4 py-3"><dt class="text-[13px] text-charbon-doux">@L["Subscription_Registration"]</dt><dd class="mt-0.5 font-medium"><sc-amount value="@sub.RegistrationFee.Amount" /></dd></div>
-                    }
-                    @if (sub.CurrentPeriod is { } period)
-                    {
-                        <div class="min-w-40 flex-1 bg-surface px-4 py-3"><dt class="text-[13px] text-charbon-doux">@L["Subscription_Period"]</dt><dd class="mt-0.5 font-medium">@Day(period.Start) – @Day(period.End)</dd></div>
-                    }
-                    @if (sub.NextDueDate is { } nextDue)
-                    {
-                        <div class="min-w-40 flex-1 bg-surface px-4 py-3"><dt class="text-[13px] text-charbon-doux">@L["Subscription_NextDueLabel"]</dt><dd class="mt-0.5 font-medium">@Day(nextDue)</dd></div>
-                    }
-                </dl>
+
+                <div class="rounded-3xl border border-ligne bg-surface p-6 shadow-carte sm:p-8">
+                    <p class="sc-eyebrow">@L["Subscription_Progress"]</p>
+                    <ol class="mt-5 grid gap-4">
+                        @foreach (var (index, (icon, key)) in new[] { ("user-check", "Subscription_Stage1"), ("wallet", "Subscription_Stage2"), ("hourglass", "Subscription_Stage3"), ("seal-check", "Subscription_Stage4") }.Index())
+                        {
+                            var done = index < stage || stage == 3;
+                            var current = index == stage && stage < 3;
+                            <li class="flex items-start gap-3">
+                                <span class="grid size-10 shrink-0 place-items-center rounded-full @(done ? "bg-baobab text-white" : current ? "bg-ambre text-nuit ring-4 ring-ambre/25" : "bg-sourdine text-charbon-pale")">
+                                    <sc-icon name="@(done ? "check" : icon)" class="size-5" />
+                                </span>
+                                <span class="pt-2 @(current ? "font-bold" : done ? "" : "text-charbon-doux")">@L[key]</span>
+                            </li>
+                        }
+                    </ol>
+                </div>
             </div>
 
+            @* ---- What is due now: Wave ---- *@
             @if (due is not null)
             {
-                <div class="rounded-lg border border-ligne bg-surface" aria-labelledby="payer-@due.InvoiceId">
-                    <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-ligne px-4 py-3">
-                        <h3 id="payer-@due.InvoiceId" class="text-sm font-semibold">@(due.IsRegistration ? L["Pay_TitleFirst"] : L["Pay_TitleRenewal"])</h3>
-                        <p class="text-[13px] text-charbon-doux">@L["Pay_Invoice", due.Number]</p>
+                <div class="overflow-hidden rounded-3xl border border-ligne bg-surface shadow-carte" aria-labelledby="payer-@due.InvoiceId">
+                    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-ligne bg-sourdine/60 px-6 py-4 sm:px-8">
+                        <div class="flex items-center gap-3">
+                            <img src="~/images/wave-logo.png" alt="Wave" width="44" height="44" class="size-11 rounded-xl" />
+                            <div>
+                                <h3 id="payer-@due.InvoiceId" class="text-lg">@(due.IsRegistration ? L["Pay_TitleFirst"] : L["Pay_TitleRenewal"])</h3>
+                                <p class="text-sm text-charbon-doux">@L["Pay_Invoice", due.Number]</p>
+                            </div>
+                        </div>
+                        <p class="font-display text-2xl sm:text-3xl"><sc-amount value="@due.Amount.Amount" /></p>
                     </div>
-                    <div class="grid gap-4 p-4 md:grid-cols-[1fr_auto]">
-                        <div>
-                            <p class="text-2xl font-semibold tracking-tight"><sc-amount value="@due.Amount.Amount" /></p>
 
-                            @if (due.Declaration is { Status: PaymentStatus.Pending } pending)
+                    <div class="grid gap-6 p-6 sm:p-8 md:grid-cols-[1fr_auto]">
+                        <div>
+                            @if (pending)
                             {
-                                <p class="mt-3 flex items-start gap-2 text-sm text-charbon-doux" role="status">
-                                    <sc-icon name="clock" class="mt-0.5 size-4" />
-                                    <span>@L["Pay_Verifying", Formatting.ShortDateTime(pending.DeclaredAt)]</span>
-                                </p>
+                                <div class="flex items-start gap-4 rounded-2xl bg-ocre-clair p-5" role="status">
+                                    <span class="grid size-12 shrink-0 place-items-center rounded-full bg-surface text-ocre-texte"><sc-icon name="hourglass" class="size-6 motion-safe:animate-pulse" /></span>
+                                    <div>
+                                        <p class="text-lg font-bold">@L["Pay_PendingTitle"]</p>
+                                        <p class="mt-1 text-[15px] text-charbon-doux">@L["Pay_Verifying", Formatting.ShortDateTime(due.Declaration!.DeclaredAt)]</p>
+                                        <p class="mt-2 flex items-center gap-1.5 text-sm font-semibold text-baobab"><sc-icon name="message-circle" class="size-4" />@L["Pay_PendingNotice"]</p>
+                                    </div>
+                                </div>
                             }
                             else
                             {
                                 @if (due.Declaration is { Status: PaymentStatus.Failed } rejected)
                                 {
-                                    <p class="mt-3 rounded-md bg-rouge-clair px-3 py-2 text-sm text-rouge" role="alert">@L["Pay_Rejected", rejected.RejectionReason ?? string.Empty]</p>
+                                    <p class="mb-4 flex items-start gap-2 rounded-2xl bg-rouge-clair px-4 py-3 text-sm text-rouge" role="alert"><sc-icon name="triangle-alert" class="mt-0.5 size-4" />@L["Pay_Rejected", rejected.RejectionReason ?? string.Empty]</p>
                                 }
 
                                 @if (due.WaveUrl is { } waveUrl)
                                 {
-                                    <ol class="mt-3 grid gap-1.5 text-sm text-charbon-doux">
-                                        <li class="flex gap-2"><span class="w-4 shrink-0 text-charbon-doux tabular-nums">1.</span><span>@L["Pay_Step1"]</span></li>
-                                        <li class="flex gap-2"><span class="w-4 shrink-0 text-charbon-doux tabular-nums">2.</span><span>@L["Pay_Step2", due.Number]</span></li>
-                                        <li class="flex gap-2"><span class="w-4 shrink-0 text-charbon-doux tabular-nums">3.</span><span>@L["Pay_Step3"]</span></li>
+                                    <ol class="grid gap-3">
+                                        @foreach (var (index, text) in new[] { L["Pay_Step1"].Value, L["Pay_Step2", due.Number].Value, L["Pay_Step3"].Value }.Index())
+                                        {
+                                            <li class="flex items-start gap-3">
+                                                <span class="grid size-8 shrink-0 place-items-center rounded-full bg-[#1dc8ff]/15 font-mono text-sm font-bold text-[#0a6b8a] dark:text-[#7fdcff]">@(index + 1)</span>
+                                                <span class="pt-1 text-[15px]">@text</span>
+                                            </li>
+                                        }
                                     </ol>
-                                    <div class="mt-4 flex flex-wrap gap-2">
-                                        <a href="@waveUrl" class="sc-btn-primaire" rel="noopener" target="_blank"><sc-icon name="wallet" class="size-4" />@L["Pay_WithWave"]</a>
-                                    </div>
-                                    <form method="post" asp-action="DeclarePayment" asp-route-invoiceId="@due.InvoiceId" class="mt-4 flex flex-wrap items-end gap-2 border-t border-ligne pt-4">
-                                        <div class="min-w-56 flex-1">
-                                            <label class="sc-label" for="ref-@due.InvoiceId">@L["Pay_Reference"]</label>
-                                            <input id="ref-@due.InvoiceId" name="reference" class="sc-input" autocomplete="off" placeholder="@L["Pay_Reference_Placeholder"]" />
+                                    <a href="@waveUrl" class="sc-btn mt-6 min-h-12 w-full bg-[#1dc8ff] px-6 text-base text-[#04212b] hover:brightness-95 sm:w-auto" rel="noopener" target="_blank">
+                                        <img src="~/images/wave-logo.png" alt="" width="24" height="24" class="size-6 rounded-md" />@L["Pay_WithWave"]
+                                    </a>
+                                    <form method="post" asp-action="DeclarePayment" asp-route-invoiceId="@due.InvoiceId" class="mt-6 grid gap-3 rounded-2xl border border-dashed border-ligne p-4 sm:grid-cols-[1fr_auto] sm:items-end">
+                                        <div>
+                                            <label class="sc-label-mono" for="ref-@due.InvoiceId">@L["Pay_Reference"]</label>
+                                            <input id="ref-@due.InvoiceId" name="reference" class="sc-input" autocomplete="off" placeholder="@L["Pay_Reference_Placeholder"]" aria-describedby="ref-aide-@due.InvoiceId" />
                                         </div>
-                                        <button type="submit" class="sc-btn-secondaire"><sc-icon name="check" class="size-4" />@L["Pay_Declare"]</button>
+                                        <button type="submit" class="sc-btn-primaire min-h-12"><sc-icon name="check" class="size-4" />@L["Pay_Declare"]</button>
+                                        <p id="ref-aide-@due.InvoiceId" class="sc-aide sm:col-span-2">@L["Pay_Reference_Hint"]</p>
                                     </form>
-                                    <p class="sc-aide">@L["Pay_Reference_Hint"]</p>
                                 }
                                 else
                                 {
-                                    <p class="mt-3 text-sm text-charbon-doux">@L["Pay_NotConfigured"]</p>
+                                    <p class="flex items-start gap-2 rounded-2xl bg-sourdine px-4 py-3 text-[15px] text-charbon-doux"><sc-icon name="info" class="mt-0.5 size-5" />@L["Pay_NotConfigured"]</p>
                                 }
                             }
                         </div>
-                        @if (item.QrSvg is not null && due.Declaration is not { Status: PaymentStatus.Pending })
+                        @if (item.QrSvg is not null && !pending)
                         {
-                            <figure class="hidden w-40 rounded-md border border-ligne bg-white p-2 md:block">
+                            <figure class="hidden w-44 self-start rounded-2xl border border-ligne bg-white p-3 md:block">
                                 @Html.Raw(item.QrSvg)
-                                <figcaption class="mt-1 text-center text-xs text-charbon-doux">@L["Pay_ScanQr"]</figcaption>
+                                <figcaption class="mt-2 text-center text-xs font-semibold text-charbon-doux">@L["Pay_ScanQr"]</figcaption>
                             </figure>
                         }
                     </div>
                 </div>
             }
 
-            @if (sub.Status == SubscriptionStatus.PendingRegistration && canSimulate)
-            {
-                <form method="post" asp-action="SimulateActivation" asp-route-id="@sub.Id">
-                    <button type="submit" class="sc-btn-discret">Activer (simulation, développement)</button>
-                </form>
-            }
-
+            @* ---- Invoices and receipts ---- *@
             <div>
                 <h3 class="sc-sous-titre">@L["Subscription_Invoices"]</h3>
                 @if (sub.Invoices.Count == 0)
@@ -150,7 +194,7 @@
                 }
                 else
                 {
-                    <div class="mt-3 hidden overflow-x-auto rounded-lg border border-ligne bg-surface sm:block">
+                    <div class="mt-3 hidden overflow-x-auto rounded-2xl border border-ligne bg-surface sm:block">
                         <table class="sc-table">
                             <thead>
                                 <tr>
@@ -158,28 +202,35 @@
                                     <th scope="col">@L["Export_Col_DueDate"]</th>
                                     <th scope="col" class="text-right">@L["Invoice_Col_Amount"]</th>
                                     <th scope="col">@L["Export_Col_Status"]</th>
+                                    <th scope="col"><span class="sr-only">PDF</span></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var invoice in sub.Invoices)
                                 {
                                     <tr>
-                                        <td class="font-medium">@invoice.Number</td>
+                                        <td class="font-semibold">@invoice.Number</td>
                                         <td class="text-charbon-doux">@Day(invoice.DueDate)</td>
                                         <td class="text-right"><sc-amount value="@invoice.Total.Amount" /></td>
                                         <td><span class="sc-badge @InvoiceBadge(invoice.Status)">@L["InvoiceStatus_" + invoice.Status]</span></td>
+                                        <td class="text-right">
+                                            <a href="/abonnement/factures/@(invoice.Id).pdf" class="inline-flex items-center gap-1.5 text-sm font-semibold">
+                                                <sc-icon name="download" class="size-4" />@(invoice.Status == InvoiceStatus.Paid ? L["Subscription_Receipt"] : L["Subscription_InvoicePdf"])
+                                            </a>
+                                        </td>
                                     </tr>
                                 }
                             </tbody>
                         </table>
                     </div>
-                    <ul class="mt-3 divide-y divide-ligne rounded-lg border border-ligne bg-surface sm:hidden">
+                    <ul class="mt-3 divide-y divide-ligne rounded-2xl border border-ligne bg-surface sm:hidden">
                         @foreach (var invoice in sub.Invoices)
                         {
-                            <li class="flex items-center justify-between gap-3 px-3 py-2.5">
+                            <li class="flex items-center justify-between gap-3 px-4 py-3">
                                 <div class="min-w-0">
-                                    <p class="font-medium"><sc-amount value="@invoice.Total.Amount" /></p>
-                                    <p class="text-[13px] text-charbon-doux">@invoice.Number · @Day(invoice.DueDate)</p>
+                                    <p class="font-semibold"><sc-amount value="@invoice.Total.Amount" /></p>
+                                    <p class="text-sm text-charbon-doux">@invoice.Number · @Day(invoice.DueDate)</p>
+                                    <a href="/abonnement/factures/@(invoice.Id).pdf" class="mt-1 inline-flex items-center gap-1 text-sm font-semibold"><sc-icon name="download" class="size-4" />@(invoice.Status == InvoiceStatus.Paid ? L["Subscription_Receipt"] : L["Subscription_InvoicePdf"])</a>
                                 </div>
                                 <span class="sc-badge shrink-0 @InvoiceBadge(invoice.Status)">@L["InvoiceStatus_" + invoice.Status]</span>
                             </li>

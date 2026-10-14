@@ -23,9 +23,18 @@ const adminPhone = randomPhone();
 // The technician played by the development simulator (RequestSimulator).
 const technicianPhone = "700000001";
 const log = [];
-const server = spawn("dotnet", ["run", "--no-build", "--project", join(root, "src", "SeneCare.Web"), "--urls", base], {
-  // Each run signs up three accounts from localhost: lift the per-IP OTP limit for this local server only.
-  env: { ...process.env, ASPNETCORE_ENVIRONMENT: "Development", DOTNET_ENVIRONMENT: "Development", Otp__MaxPerIpPerHour: "1000", Otp__MaxPerPhonePerHour: "1000", Bootstrap__SuperAdminPhones: adminPhone },
+// SENECARE_WEB_DLL: run a build made elsewhere (--artifacts-path), e.g. while Visual Studio holds src/SeneCare.Web/bin.
+const webDir = join(root, "src", "SeneCare.Web");
+const command = process.env.SENECARE_WEB_DLL
+  ? [process.env.SENECARE_WEB_DLL, "--urls", base]
+  : ["run", "--no-build", "--project", webDir, "--urls", base];
+const server = spawn("dotnet", command, {
+  cwd: webDir,
+  // Each run signs up several accounts from localhost: lift the OTP limits for this local server only.
+  env: {
+    ...process.env, ASPNETCORE_ENVIRONMENT: "Development", DOTNET_ENVIRONMENT: "Development", ASPNETCORE_CONTENTROOT: webDir,
+    Otp__MaxPerIpPerHour: "1000", Otp__MaxPerPhonePerHour: "1000", RateLimits__Otp__PermitLimit: "1000", Bootstrap__SuperAdminPhones: adminPhone,
+  },
 });
 server.stdout.on("data", (d) => log.push(d.toString()));
 server.stderr.on("data", (d) => log.push(d.toString()));
@@ -86,7 +95,7 @@ async function signIn(context, phone) {
   return page;
 }
 
-async function signUp(context, profile, name, company) {
+async function signInNew(context) {
   const page = await context.newPage();
   const phone = randomPhone();
   await page.goto(`${base}/connexion`);
@@ -97,12 +106,23 @@ async function signUp(context, profile, name, company) {
   await page.locator("input[name=Code]").press("Enter");
   await page.waitForURL((url) => !url.pathname.endsWith("/connexion/code"), { timeout: 120000 });
   if (!page.url().includes("/inscription")) await page.goto(`${base}/inscription`);
+  return page;
+}
+
+// The 4-step sign-up: values set directly in the form, then a normal submit.
+async function signUp(context, profile, name, company, plan, annual = false) {
+  const page = await signInNew(context);
   if (!page.url().includes("/inscription")) throw new Error("Not on registration: " + page.url());
-  await page.fill("input[name=FullName]", name);
-  await page.check(`input[name=Profile][value=${profile}]`);
-  if (company) await page.fill("input[name=CompanyName]", company);
-  await page.check("input[name=AcceptsPrivacyPolicy]");
-  await page.locator("input[name=FullName]").press("Enter");
+  await page.evaluate(({ profile, name, company, plan, annual }) => {
+    const form = document.querySelector("form[data-wizard]");
+    form.querySelector(`input[name=Profile][value=${profile}]`).checked = true;
+    form.querySelector("input[name=FullName]").value = name;
+    if (company) form.querySelector("input[name=CompanyName]").value = company;
+    form.querySelectorAll("input[name=PlanCode]").forEach((i) => (i.checked = i.value === plan));
+    form.querySelector(`input[name=Annual][value=${annual}]`).checked = true;
+    form.querySelector("input[name=AcceptsPrivacyPolicy]").checked = true;
+    HTMLFormElement.prototype.submit.call(form);
+  }, { profile, name, company, plan, annual });
   await page.waitForURL((url) => !url.pathname.startsWith("/inscription"), { timeout: 120000 });
   return page;
 }
@@ -121,12 +141,21 @@ async function addPlace(page, kind, name, landmark) {
   await page.waitForLoadState("networkidle");
 }
 
+// The real payment flow: « J'ai payé » with a Wave reference, then the admin verifies it.
 async function activate(page) {
   await page.goto(`${base}/abonnement`);
-  const simulate = page.locator("form[action*='activer-simulation'] button");
-  if (await simulate.count()) {
-    await simulate.first().click();
+  const declare = page.locator("form[action*='/paiement']");
+  if (await declare.count()) {
+    await declare.first().locator("input[name=reference]").fill("WAVE-" + Date.now());
+    await declare.first().locator("button[type=submit]").click();
     await page.waitForLoadState("networkidle");
+  }
+  for (let i = 0; i < 5; i++) {
+    await admin.goto(`${base}/admin/paiements`);
+    const verify = admin.locator("form[action*='/valider'] button");
+    if (!(await verify.count())) break;
+    await verify.first().click();
+    await admin.waitForLoadState("networkidle");
   }
 }
 
@@ -143,29 +172,50 @@ async function report(page, text) {
   await page.waitForLoadState("networkidle");
 }
 
-// Accounts: an empty company (start-up checklist), a company with data, a household.
 // Service workers off: the old version reloaded on the first SW activation and cancelled form posts.
 const sw = { serviceWorkers: "block" };
+
+// The admin first: Wave link configured, then payments verified as customers declare them.
+const adminContext = await browser.newContext(sw);
+const admin = await signIn(adminContext, adminPhone);
+await admin.goto(`${base}/admin/paiements`);
+await admin.fill("input#link", "https://pay.wave.com/m/M_sn_demo/c/sn/?amount={montant}");
+await admin.click("form[action*='lien-wave'] button[type=submit]");
+await admin.waitForLoadState("networkidle");
+
+// Someone in the middle of the sign-up (the 4-step form).
+const signupContext = await browser.newContext(sw);
+await signInNew(signupContext);
+const signupState = await signupContext.storageState();
+
+// Accounts: an empty company (start-up checklist), a company with data, a household.
 const setup = await browser.newContext(sw);
-const emptyCompany = await signUp(setup, "Business", "Omar Diop", "Diop Services");
+const emptyCompany = await signUp(setup, "Business", "Omar Diop", "Diop Services", null);
 const emptyState = await emptyCompany.context().storageState();
 
 const companyContext = await browser.newContext(sw);
-const company = await signUp(companyContext, "Business", "Aïssatou Ndiaye", "Teranga Logistique");
+const company = await signUp(companyContext, "Business", "Aïssatou Ndiaye", "Teranga Logistique", "PROFESSIONNEL");
 await addPlace(company, "Office", "Siège Plateau", "Face à la BICIS, 2e étage");
 await addPlace(company, "Warehouse", "Dépôt Rufisque", "Derrière la station Total");
-await company.goto(`${base}/entreprise/offre`);
-await company.click("form:has(input[value=PROFESSIONNEL]) button[type=submit]");
-await company.waitForLoadState("networkidle");
 await activate(company);
 await report(company, "Fuite d'eau sous le lavabo des toilettes du rez-de-chaussée");
 await report(company, "Climatiseur de la salle de réunion en panne");
 const companyState = await companyContext.storageState();
 
 const homeContext = await browser.newContext(sw);
-const home = await signUp(homeContext, "Household", "Mariama Ba", null);
+const home = await signUp(homeContext, "Household", "Mariama Ba", null, "HOME", true);
 await addPlace(home, "Villa", "Villa de Ngor", "Derrière la mosquée, portail vert");
 await activate(home);
+
+// A household that chose its plan and declared its Wave payment: waiting for the admin.
+const waitingContext = await browser.newContext(sw);
+const waiting = await signUp(waitingContext, "Household", "Khady Fall", null, "HOME");
+await addPlace(waiting, "Villa", "Maison Mermoz", "Portail bleu, face à la pharmacie");
+await waiting.goto(`${base}/abonnement`);
+await waiting.locator("form[action*='/paiement'] input[name=reference]").fill("WAVE-123456");
+await waiting.locator("form[action*='/paiement'] button[type=submit]").click();
+await waiting.waitForLoadState("networkidle");
+const waitingState = await waitingContext.storageState();
 await report(home, "Le robinet de la cuisine goutte depuis hier");
 const homeState = await homeContext.storageState();
 
@@ -189,8 +239,6 @@ await technician.goto(`${base}/technicien`);
 const missions = await technician.evaluate(() => [...document.querySelectorAll("a[href]")].map((a) => a.getAttribute("href")));
 const technicianState = await technicianContext.storageState();
 
-const adminContext = await browser.newContext(sw);
-const admin = await signIn(adminContext, adminPhone);
 await admin.goto(`${base}/admin/dispatch`);
 const dispatchLinks = await admin.evaluate(() => [...document.querySelectorAll("a[href]")].map((a) => a.getAttribute("href")));
 const adminState = await adminContext.storageState();
@@ -204,6 +252,9 @@ const screens = [
   { name: "factures", path: "/abonnement", state: companyState },
   { name: "signaler", path: "/signaler", state: companyState },
   { name: "accueil-maison", path: "/espace", state: homeState },
+  { name: "inscription", path: "/inscription", state: signupState },
+  { name: "abonnement-maison", path: "/abonnement", state: homeState },
+  { name: "abonnement-attente", path: "/abonnement", state: waitingState },
   // Public home: the welcome screens were already seen on this device.
   { name: "accueil-public", path: "/", state: { cookies: [{ name: "sc_bienvenue", value: "1", url: base }], origins: [] } },
   { name: "metiers", path: "/metiers", state: undefined },

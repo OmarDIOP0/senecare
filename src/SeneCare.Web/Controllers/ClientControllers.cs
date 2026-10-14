@@ -219,9 +219,7 @@ public sealed class InterventionsController(
 public sealed class SubscriptionController(
     SubscriptionQueries queries,
     PrepareInvoiceHandler prepareInvoice,
-    DeclarePaymentHandler declarePayment,
-    SimulatedActivation activation,
-    IWebHostEnvironment environment) : Controller
+    DeclarePaymentHandler declarePayment) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
@@ -248,7 +246,6 @@ public sealed class SubscriptionController(
             return Redirect("/entreprise/offre");
         }
 
-        ViewData["CanSimulate"] = environment.IsDevelopment();
         return View(items);
     }
 
@@ -261,18 +258,17 @@ public sealed class SubscriptionController(
         return RedirectToAction(nameof(Index));
     }
 
-    /// <summary>Development only, until payments (Phase 6).</summary>
-    [HttpPost("{id:guid}/activer-simulation")]
-    public async Task<IActionResult> SimulateActivation(Guid id, CancellationToken cancellationToken)
+    /// <summary>Invoice, or receipt once paid, as a PDF (members of the account only).</summary>
+    [HttpGet("factures/{invoiceId:guid}.pdf")]
+    public async Task<IActionResult> InvoicePdf(Guid invoiceId, [FromServices] InvoiceDocumentQuery documents, [FromServices] IPdfRenderer pdf, CancellationToken cancellationToken)
     {
-        if (!environment.IsDevelopment())
+        if (await documents.HandleAsync(User.GetUserId()!.Value, invoiceId, cancellationToken) is not { } found)
         {
             return NotFound();
         }
 
-        var result = await activation.ActivateAsync(User.GetUserId()!.Value, id, cancellationToken);
-        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Subscription_Activated"].Value : this.ErrorMessage(result.Error);
-        return RedirectToAction(nameof(Index));
+        var paid = found.Invoice.Status == SeneCare.Domain.Billing.InvoiceStatus.Paid;
+        return File(pdf.Invoice(InvoiceDocuments.Build(found, this.Localizer())), "application/pdf", $"{(paid ? "recu" : "facture")}-{found.Invoice.Number}.pdf");
     }
 }
 

@@ -28,6 +28,7 @@ public static class DependencyInjection
         services.AddScoped<MediaAccess>();
 
         services.AddScoped<Public.GetPublicHomeHandler>();
+        services.AddScoped<Users.Notifier>();
         services.AddScoped<Admin.ReviewModeration>();
         services.AddScoped<RequestOtpHandler>();
         services.AddScoped<VerifyOtpHandler>();
@@ -48,6 +49,7 @@ public static class DependencyInjection
         services.AddScoped<ClientRequestActions>();
         services.AddScoped<SubscriptionQueries>();
         services.AddScoped<PrepareInvoiceHandler>();
+        services.AddScoped<InvoiceDocumentQuery>();
         services.AddScoped<DeclarePaymentHandler>();
         services.AddScoped<PaymentVerificationHandler>();
 

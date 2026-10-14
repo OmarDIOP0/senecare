@@ -43,6 +43,18 @@
                     <label class="sc-label" for="visites-@plan.Id">@L["Offer_Visits"]</label>
                     <input id="visites-@plan.Id" name="visits" type="number" min="0" class="sc-input" value="@plan.IncludedVisitsPerPeriod" placeholder="@L["Offer_VisitsUnlimited"]" />
                 </div>
+                @if (plan.OffersAnnual)
+                {
+                    <div>
+                        <label class="sc-label" for="annuel-@plan.Id">@L["Admin_PlanAnnualFree"]</label>
+                        <input id="annuel-@plan.Id" name="annualFreeMonths" type="number" min="0" max="6" class="sc-input" value="@plan.AnnualFreeMonths" aria-describedby="annuel-aide-@plan.Id" />
+                        <p id="annuel-aide-@plan.Id" class="sc-aide">@L["Admin_PlanAnnualFree_Hint", Formatting.Fcfa(plan.AnnualPrice)]</p>
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" name="annualFreeMonths" value="@plan.AnnualFreeMonths" />
+                }
             </div>
             <fieldset class="grid grid-cols-3 gap-3">
                 <legend class="sc-label">@L["Admin_SlaHours"]</legend>

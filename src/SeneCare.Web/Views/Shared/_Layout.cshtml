@@ -26,7 +26,7 @@
     @* ---- Thin contact bar ---- *@
     @if (showContact)
     {
-        <div class="bg-nuit text-sm text-sur-nuit">
+        <div class="bg-nuit-2 text-sm text-sur-nuit">
             <div class="mx-auto flex min-h-9 w-full max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-1.5 lg:px-6">
                 <div class="flex flex-wrap items-center gap-x-5 gap-y-1">
                     <a href="tel:@contact.PhoneLink" class="inline-flex items-center gap-1.5 font-semibold text-white no-underline hover:underline"><sc-icon name="phone" class="size-4" />@contact.PhoneDisplay</a>
@@ -42,13 +42,13 @@
     }
 
     @* ---- Header ---- *@
-    <header class="sticky top-0 z-40 border-b border-ligne bg-surface">
+    <header class="sticky top-0 z-40 bg-nuit text-sur-nuit [&_.sc-btn-icone]:text-sur-nuit [&_.sc-btn-icone:hover]:bg-white/10 [&_.sc-btn-icone:hover]:text-white">
         <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 lg:h-[4.5rem] lg:px-6">
-            <partial name="Ui/_Brand" />
+            <partial name="Ui/_Brand" view-data='new ViewDataDictionary(ViewData) { ["BrandOnDark"] = true }' />
             <nav class="hidden items-center gap-1 lg:flex" aria-label="@L["Public_Nav_Label"]">
                 <details class="relative" data-menu>
-                    <summary class="flex cursor-pointer list-none items-center gap-1 rounded-md px-3 py-2 text-[15px] font-semibold text-charbon hover:bg-sourdine [&::-webkit-details-marker]:hidden">
-                        @L["Public_Nav_Trades"]<sc-icon name="chevron-down" class="size-4 text-charbon-doux" />
+                    <summary class="flex cursor-pointer list-none items-center gap-1 rounded-full px-3.5 py-2 text-[15px] font-semibold text-sur-nuit hover:bg-white/10 hover:text-white [&::-webkit-details-marker]:hidden">
+                        @L["Public_Nav_Trades"]<sc-icon name="chevron-down" class="size-4" />
                     </summary>
                     <div class="sc-menu left-0 w-72">
                         @foreach (var trade in Site.Trades)
@@ -63,7 +63,7 @@
                 </details>
                 @foreach (var (href, label) in menu)
                 {
-                    <a href="@href" class="rounded-md px-3 py-2 text-[15px] font-semibold text-charbon no-underline hover:bg-sourdine hover:no-underline">@label</a>
+                    <a href="@href" class="rounded-full px-3.5 py-2 text-[15px] font-semibold text-sur-nuit no-underline hover:bg-white/10 hover:text-white hover:no-underline">@label</a>
                 }
             </nav>
             <div class="flex items-center gap-1 sm:gap-2">
@@ -71,11 +71,11 @@
                 <partial name="Site/_ThemeSwitch" />
                 @if (signedIn)
                 {
-                    <a href="/espace" class="sc-btn-secondaire hidden sm:inline-flex">@L["Nav_Space"]</a>
+                    <a href="/espace" class="sc-btn hidden bg-white text-nuit hover:bg-sable sm:inline-flex">@L["Nav_Space"]</a>
                 }
                 else if (!onSignIn)
                 {
-                    <a href="/connexion" class="hidden items-center gap-1.5 rounded-md px-3 py-2 text-[15px] font-semibold text-charbon no-underline hover:bg-sourdine hover:no-underline md:inline-flex"><sc-icon name="circle-user" class="size-5" />@L["Public_ClientSpace"]</a>
+                    <a href="/connexion" class="sc-btn hidden bg-white text-nuit hover:bg-sable md:inline-flex"><sc-icon name="circle-user" class="size-5" />@L["Public_ClientSpace"]</a>
                 }
                 <a href="/demander" class="sc-btn-primaire hidden sm:inline-flex">@L["Site_RequestJob"]</a>
                 <details class="relative lg:hidden" data-menu>
@@ -98,6 +98,7 @@
                 </details>
             </div>
         </div>
+        <div class="sc-bande-fine"></div>
     </header>
 
     <main id="contenu" class="@(fullWidth ? "w-full flex-1" : $"mx-auto w-full flex-1 {(ViewData["Wide"] is true ? "max-w-screen-lg" : "max-w-screen-md")} px-4 py-10")">
@@ -106,9 +107,10 @@
 
     @* ---- Footer: trades, neighbourhoods, company, help, contact ---- *@
     <footer class="mt-20 bg-nuit text-sur-nuit [&_a]:text-sur-nuit [&_a:hover]:text-white">
+        <div class="sc-bande"></div>
         <div class="mx-auto grid w-full max-w-7xl gap-10 px-4 py-14 sm:grid-cols-2 lg:grid-cols-5 lg:px-6">
             <div>
-                <h2 class="text-sm font-bold text-white">@L["Public_Nav_Trades"]</h2>
+                <h2 class="font-mono text-xs font-bold tracking-[0.16em] text-or uppercase">@L["Public_Nav_Trades"]</h2>
                 <ul class="mt-4 grid gap-2.5 text-[15px]">
                     @foreach (var trade in Site.Trades)
                     {
@@ -117,7 +119,7 @@
                 </ul>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-white">@L["Site_Footer_Areas"]</h2>
+                <h2 class="font-mono text-xs font-bold tracking-[0.16em] text-or uppercase">@L["Site_Footer_Areas"]</h2>
                 <ul class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5 text-[15px] lg:grid-cols-1">
                     @foreach (var hood in Site.Neighborhoods.Take(12))
                     {
@@ -127,7 +129,7 @@
                 </ul>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-white">@L["App_Name"]</h2>
+                <h2 class="font-mono text-xs font-bold tracking-[0.16em] text-or uppercase">@L["App_Name"]</h2>
                 <ul class="mt-4 grid gap-2.5 text-[15px]">
                     <li><a href="/particuliers" class="no-underline hover:underline">@L["Public_Nav_Households"]</a></li>
                     <li><a href="/entreprises" class="no-underline hover:underline">@L["Public_Nav_Business"]</a></li>
@@ -137,7 +139,7 @@
                 </ul>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-white">@L["Site_Footer_Help"]</h2>
+                <h2 class="font-mono text-xs font-bold tracking-[0.16em] text-or uppercase">@L["Site_Footer_Help"]</h2>
                 <ul class="mt-4 grid gap-2.5 text-[15px]">
                     <li><a href="/faq" class="no-underline hover:underline">@L["Site_Faq"]</a></li>
                     <li><a href="/connexion" class="no-underline hover:underline">@L["Public_ClientSpace"]</a></li>
@@ -146,7 +148,7 @@
                 </ul>
             </div>
             <div>
-                <h2 class="text-sm font-bold text-white">@L["Site_Footer_Contact"]</h2>
+                <h2 class="font-mono text-xs font-bold tracking-[0.16em] text-or uppercase">@L["Site_Footer_Contact"]</h2>
                 @if (showContact)
                 {
                     <ul class="mt-4 grid gap-2.5 text-[15px]">

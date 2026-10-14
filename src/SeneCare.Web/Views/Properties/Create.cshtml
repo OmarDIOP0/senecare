@@ -18,6 +18,17 @@
     <script src="~/js/map.js" asp-append-version="true" defer></script>
 }
 
+@if (Context.Request.Query.ContainsKey("bienvenue"))
+{
+    @* Straight from the sign-up: the last step before paying. *@
+    <div class="mb-6 flex items-start gap-3 rounded-2xl border border-ambre/40 bg-ocre-clair p-4">
+        <span class="grid size-10 shrink-0 place-items-center rounded-full bg-surface text-laterite [--icon-fond:var(--ambre)]"><sc-icon name="circle-check" class="size-5" /></span>
+        <div>
+            <p class="font-semibold">@L["Property_Welcome_Title"]</p>
+            <p class="text-sm text-charbon-doux">@(isBusiness ? L["Property_Welcome_Business"] : L["Property_Welcome_Home"])</p>
+        </div>
+    </div>
+}
 <h1 class="sc-titre">@title</h1>
 <p class="mt-2 text-charbon-doux">@(isBusiness ? L["Site_Add_Intro"] : L["Property_Add_Intro"])</p>
 

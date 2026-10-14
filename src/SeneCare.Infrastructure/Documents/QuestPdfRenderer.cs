@@ -117,6 +117,56 @@ public sealed class QuestPdfRenderer : IPdfRenderer
         })).GeneratePdf();
     }
 
+    public byte[] Invoice(SeneCare.Application.Payments.InvoicePdf invoice)
+    {
+        ArgumentNullException.ThrowIfNull(invoice);
+        return Document.Create(document => document.Page(page =>
+        {
+            Setup(page, invoice.Footer);
+            page.Header().Element(h => Header(h, invoice.Title, invoice.AccountName));
+            page.Content().PaddingVertical(14).Column(column =>
+            {
+                column.Spacing(14);
+                column.Item().Element(c => Facts(c, invoice.Facts));
+                column.Item().Table(table =>
+                {
+                    table.ColumnsDefinition(c =>
+                    {
+                        c.RelativeColumn(5);
+                        c.RelativeColumn(1);
+                        c.RelativeColumn(2);
+                        c.RelativeColumn(2);
+                    });
+                    table.Header(header =>
+                    {
+                        foreach (var (index, name) in invoice.Columns.Index())
+                        {
+                            var cell = header.Cell().Background(Atlantique).Padding(5);
+                            (index == 0 ? cell : cell.AlignRight()).Text(name).FontColor(Sable).Bold().FontSize(9);
+                        }
+                    });
+                    foreach (var line in invoice.Lines)
+                    {
+                        table.Cell().Element(Cell).Text(line.Description);
+                        table.Cell().Element(Cell).AlignRight().Text(line.Quantity);
+                        table.Cell().Element(Cell).AlignRight().Text(line.UnitPrice);
+                        table.Cell().Element(Cell).AlignRight().Text(line.Total);
+                    }
+                });
+                column.Item().AlignRight().Background(Sable).Padding(10).Row(row =>
+                {
+                    row.AutoItem().Text(invoice.TotalLabel + "  ").Bold();
+                    row.AutoItem().Text(invoice.Total).Bold().FontSize(13).FontColor(Laterite);
+                });
+                if (invoice.PaidStamp is { } stamp)
+                {
+                    column.Item().AlignRight().Border(2).BorderColor(Baobab).PaddingVertical(4).PaddingHorizontal(10)
+                        .Text(stamp).Bold().FontColor(Baobab);
+                }
+            });
+        })).GeneratePdf();
+    }
+
     private static void Setup(PageDescriptor page, string footer)
     {
         page.Size(PageSizes.A4);

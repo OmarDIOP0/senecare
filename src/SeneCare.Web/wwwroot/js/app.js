@@ -552,4 +552,56 @@
     const scope = event.target.closest("[data-table-controls]");
     if (scope) filterTable(scope);
   });
+
+  // ---- Step-by-step forms (sign-up): one fieldset at a time, checked before moving on. ----
+  // Without this script every step is visible and the form posts normally.
+  document.querySelectorAll("form[data-wizard]").forEach((form) => {
+    const steps = [...form.querySelectorAll("[data-wizard-step]")];
+    if (steps.length < 2) return;
+    const bars = [...form.querySelectorAll("[data-wizard-bar]")];
+    const prev = form.querySelector("[data-wizard-prev]");
+    const next = form.querySelector("[data-wizard-next]");
+    const submit = form.querySelector("[data-wizard-submit]");
+    let index = 0;
+
+    const isBusiness = () => form.querySelector("input[name=Profile][value=Business]")?.checked ?? false;
+
+    // The company name only exists for « Mon entreprise »; the offer list follows the profile.
+    const syncProfile = () => {
+      const business = isBusiness();
+      form.querySelectorAll("[data-only-business] input").forEach((input) => { input.required = business; });
+      const group = business ? "[data-plan-business]" : "[data-plan-household]";
+      const other = business ? "[data-plan-household]" : "[data-plan-business]";
+      if (!form.querySelector(`${group}:checked`)) {
+        form.querySelectorAll(other).forEach((input) => { input.checked = false; });
+        const first = form.querySelector(group);
+        if (first) first.checked = true;
+      }
+    };
+
+    const show = (target) => {
+      index = Math.max(0, Math.min(steps.length - 1, target));
+      steps.forEach((step, i) => { step.hidden = i !== index; });
+      bars.forEach((bar, i) => bar.classList.toggle("bg-ambre", i <= index));
+      if (prev) prev.hidden = index === 0;
+      if (next) next.hidden = index === steps.length - 1;
+      if (submit) submit.hidden = index !== steps.length - 1;
+      steps[index].querySelector("legend")?.scrollIntoView({ block: "nearest" });
+    };
+
+    const valid = () => {
+      const fields = [...steps[index].querySelectorAll("input, select, textarea")]
+        .filter((field) => field.required && field.offsetParent !== null);
+      const invalid = fields.find((field) => !field.checkValidity());
+      if (invalid) { invalid.reportValidity(); invalid.focus(); return false; }
+      return true;
+    };
+
+    form.addEventListener("change", (event) => { if (event.target.name === "Profile") syncProfile(); });
+    next?.addEventListener("click", () => { if (valid()) show(index + 1); });
+    prev?.addEventListener("click", () => show(index - 1));
+    syncProfile();
+    // Back from the server with an error: start on the first step that does not validate.
+    show(0);
+  });
 })();

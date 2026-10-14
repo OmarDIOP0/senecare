@@ -17,6 +17,10 @@ public static class Messages
     public static IReadOnlyList<string> Checklist(ServiceDomain domain, Language language) =>
         Format("Checklist_" + domain, language).Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
+    public static string PaymentVerified(string invoice, Language language) => Format("Payment_Verified", language, invoice);
+
+    public static string PaymentRejected(string invoice, string reason, Language language) => Format("Payment_Rejected", language, invoice, reason);
+
     public static string ReportDone(string steps, Language language) => Format("Report_Done", language, steps);
 
     public static string ReportParts(string parts, Language language) => Format("Report_Parts", language, parts);

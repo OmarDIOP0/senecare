@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SeneCare.Application.Abstractions;
@@ -20,8 +21,11 @@ using SeneCare.Infrastructure.Persistence.Converters;
 namespace SeneCare.Infrastructure.Persistence;
 
 public sealed class SeneCareDbContext(DbContextOptions<SeneCareDbContext> options)
-    : IdentityUserContext<ApplicationUser, Guid>(options), IApplicationDbContext
+    : IdentityUserContext<ApplicationUser, Guid>(options), IApplicationDbContext, IDataProtectionKeyContext
 {
+    /// <summary>ASP.NET Core Data Protection keys (sign-in cookie, forms), shared by Web and Api.</summary>
+    public DbSet<DataProtectionKey> DataProtectionKeys => Set<DataProtectionKey>();
+
     public const string ServiceRequestNumberSequence = "service_request_number_seq";
     public const string InvoiceNumberSequence = "invoice_number_seq";
 
@@ -86,6 +90,14 @@ public sealed class SeneCareDbContext(DbContextOptions<SeneCareDbContext> option
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        // Data Protection keys are XML documents of a few KB: no 500-character limit (convention above).
+        builder.Entity<DataProtectionKey>(key =>
+        {
+            key.ToTable("data_protection_keys");
+            key.Property(k => k.FriendlyName).HasMaxLength(200);
+            key.Property(k => k.Xml).HasColumnType("text").Metadata.SetMaxLength(null);
+        });
 
         builder.HasSequence<long>(ServiceRequestNumberSequence);
         builder.HasSequence<long>(InvoiceNumberSequence);

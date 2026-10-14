@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -74,15 +75,32 @@ try
         .AddDataAnnotationsLocalization(options =>
             options.DataAnnotationLocalizerProvider = (_, factory) => factory.Create(typeof(SharedResource)));
 
+    // Behind a proxy (Render, Docker): it terminates HTTPS and says so in X-Forwarded-Proto.
+    builder.Services.Configure<Microsoft.AspNetCore.Builder.ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor
+            | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+        options.KnownIPNetworks.Clear();
+        options.KnownProxies.Clear();
+    });
+    // Sign-in and form keys in PostgreSQL: they survive redeploys and are shared with the Api.
+    builder.Services.AddDataProtection()
+        .SetApplicationName("SeneCare")
+        .PersistKeysToDbContext<SeneCare.Infrastructure.Persistence.SeneCareDbContext>();
+
     var app = builder.Build();
 
-    if (!app.Environment.IsDevelopment()
+    // Code shown on the page / skipped: development and the test site (Staging) only, never in Production.
+    if (app.Environment.IsProduction()
         && app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<SeneCare.Application.Auth.OtpOptions>>().Value.IsDevelopmentOnly)
     {
-        throw new InvalidOperationException("Otp:SkipVerification and Otp:ShowCodeOnPage are for development only.");
+        throw new InvalidOperationException("Otp:SkipVerification and Otp:ShowCodeOnPage are refused in Production.");
     }
 
     await app.Services.InitializeDatabaseAsync(app.Configuration);
+
+    // First: the real scheme (https) and client IP from the proxy, before HTTPS redirection and rate limits.
+    app.UseForwardedHeaders();
 
     if (!app.Environment.IsDevelopment())
     {

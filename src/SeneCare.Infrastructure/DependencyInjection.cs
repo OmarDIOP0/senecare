@@ -28,7 +28,7 @@ public static class DependencyInjection
     {
         services.AddDbContext<SeneCareDbContext>(options => options
             .UseNpgsql(
-                configuration.GetConnectionString(ConnectionStringName),
+                PostgresConnectionString.Normalize(configuration.GetConnectionString(ConnectionStringName)),
                 npgsql => npgsql.MigrationsHistoryTable("__ef_migrations_history"))
             .UseSnakeCaseNamingConvention());
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<SeneCareDbContext>());

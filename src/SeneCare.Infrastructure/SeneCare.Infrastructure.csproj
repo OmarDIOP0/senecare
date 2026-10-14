@@ -12,6 +12,9 @@
     <PackageReference Include="EFCore.NamingConventions" />
     <!-- Identity stores (users, security stamp, lockout) on EF Core. -->
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <!-- Cookie / antiforgery keys stored in PostgreSQL: a container (Render, Docker) loses its disk at each
+         deploy, which would sign everybody out. -->
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" />
     <!-- JWT for the REST API (future mobile app). -->
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <!-- Readiness probe that checks the database connection. -->

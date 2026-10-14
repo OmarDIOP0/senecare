@@ -41,8 +41,8 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
   contrôlés aussi pendant la saisie) + code OTP
   par SMS, WhatsApp en option. Email facultatif. Mot de passe optionnel.
   En développement seulement : `Otp:ShowCodeOnPage` (actif dans appsettings.Development.json) affiche le
-  code sous les 6 cases, `Otp:SkipVerification` saute l'étape ; l'application refuse de démarrer avec l'un
-  de ces réglages hors Development.
+  code sous les 6 cases, `Otp:SkipVerification` saute l'étape ; autorisés en Development et sur le site de
+  test (Staging), l'application refuse de démarrer avec l'un de ces réglages en Production.
 - Paiement : Wave, Orange Money, Free Money (via un agrégateur type PayDunya, PayTech
   ou CinetPay derrière une interface IPaymentProvider), + paiement en espèces/virement
   saisi par l'admin. Reçus PDF. Relances avant échéance.
@@ -88,6 +88,11 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
 - Logs : Serilog. Santé : HealthChecks. Configuration par environnement + secrets
   hors du code.
 - Docker + docker-compose (web, api, postgres, redis éventuel).
+- Déploiement de test sur Render : `Dockerfile` (racine) + Blueprint `render.yaml` (web Docker + Postgres, offre
+  gratuite, région Frankfurt, `ASPNETCORE_ENVIRONMENT=Staging` → bandeau « Version de test » et code affiché).
+  Derrière le proxy : en-têtes X-Forwarded-* pris en compte, port lu dans `$PORT`, adresse `postgresql://…`
+  acceptée (`PostgresConnectionString`), clés Data Protection en base (table `data_protection_keys`).
+  Limites de l'offre gratuite : mise en veille, photos perdues au redémarrage, base expirant après 30 jours.
 
 ## 5. Direction visuelle — chaleureuse, locale, vivante (palette Atlantique & terre cuite)
 Références de mise en page : wurus.app (typographies, panneaux sombres, bandes de motifs, inscription en

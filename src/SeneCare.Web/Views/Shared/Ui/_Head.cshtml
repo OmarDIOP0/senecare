@@ -13,7 +13,9 @@
         document.documentElement.dataset.theme = t;
     })();
 </script>
-<meta name="theme-color" content="#f7f1e2" />
+<meta name="theme-color" content="#f6f3ec" />
+@* Phone fields (data-phone): 9 digits starting with one of these, checked while typing. *@
+<meta name="sc-phone" content="@string.Join(",", SeneCare.Domain.Users.PhoneNumber.MobilePrefixes)" data-error="@L["Error_phone_invalid"]" />
 <meta name="description" content="@L["App_Promise"]" />
 <title>@ViewData["Title"] · @L["App_Name"]</title>
 <link rel="manifest" href="/manifest.webmanifest" />

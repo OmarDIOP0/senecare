@@ -29,6 +29,13 @@
 
     map.on("click", (event) => place(event.latlng));
 
+    // Inside the sign-up steps the map starts hidden: resize and recentre it once it is shown.
+    document.addEventListener("sc:wizard-step", () => {
+      if (element.offsetParent === null) return;
+      map.invalidateSize();
+      if (!marker) map.setView(DAKAR, 12);
+    });
+
     const locate = document.querySelector("[data-map-locate]");
     locate?.addEventListener("click", () => {
       if (!navigator.geolocation) return;

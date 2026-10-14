@@ -48,6 +48,9 @@ internal sealed class NeighborhoodConfiguration : IEntityTypeConfiguration<Neigh
         builder.Property(p => p.Name).HasMaxLength(Place.NameMaxLength);
         builder.HasOne<Commune>().WithMany().HasForeignKey(p => p.CommuneId).OnDelete(DeleteBehavior.Restrict);
         builder.HasIndex(p => new { p.CommuneId, p.Slug }).IsUnique();
+        builder.Ignore(p => p.IsSuggested);
+        // Customer additions to review.
+        builder.HasIndex(p => p.SuggestedAt).HasFilter("suggested_at IS NOT NULL");
         // Fast « search a neighborhood » picker.
         builder.HasIndex(p => p.Name);
     }

@@ -22,7 +22,7 @@
                     </ul>
                     @if (Site.Visible(trade))
                     {
-                        <p class="mt-3 text-sm text-charbon-doux"><span class="font-semibold text-charbon">@trade.Delay</span> · @trade.StartingPrice <partial name="Site/_SampleTag" model="trade.Sample" /></p>
+                        <p class="mt-3 text-sm text-charbon-doux"><span class="font-semibold text-charbon">@trade.Delay</span> · @trade.StartingPrice</p>
                     }
                     <a href="/metiers/@trade.Slug" class="sc-lien mt-4 inline-flex items-center gap-1 self-start">@L["Site_SeeTrade"]<sc-icon name="arrow-right" class="size-4" /></a>
                 </div>

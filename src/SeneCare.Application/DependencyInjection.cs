@@ -40,6 +40,8 @@ public static class DependencyInjection
         services.AddScoped<GetTeamHandler>();
         services.AddScoped<NotificationInbox>();
         services.AddScoped<SearchNeighborhoodsHandler>();
+        services.AddScoped<ListCommunesHandler>();
+        services.AddScoped<SuggestNeighborhoodHandler>();
         services.AddScoped<TourProgressHandler>();
 
         services.AddScoped<AddPropertyHandler>();

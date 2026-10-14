@@ -11,7 +11,8 @@ namespace SeneCare.Application.Auth;
 
 public sealed record RequestOtpCommand(string? Phone, OtpChannel Channel, string? IpAddress);
 
-public sealed record OtpRequested(Guid ChallengeId, PhoneNumber Phone, OtpChannel Channel, DateTimeOffset ExpiresAt, DateTimeOffset ResendAvailableAt);
+/// <param name="DevelopmentCode">Only with a development switch of <see cref="OtpOptions"/>: the code itself.</param>
+public sealed record OtpRequested(Guid ChallengeId, PhoneNumber Phone, OtpChannel Channel, DateTimeOffset ExpiresAt, DateTimeOffset ResendAvailableAt, string? DevelopmentCode = null);
 
 /// <summary>
 /// Sends a sign-in code. Never reveals whether the number already has an account.
@@ -69,11 +70,17 @@ public sealed partial class RequestOtpHandler(
         db.OtpChallenges.Add(challenge);
         await db.SaveChangesAsync(cancellationToken);
 
+        if (limits.SkipVerification)
+        {
+            return Result<OtpRequested>.Success(new OtpRequested(challenge.Id, phone, command.Channel, challenge.ExpiresAt, now + limits.ResendCooldown, code));
+        }
+
         var language = await db.Users.Where(u => u.PhoneNumber == phone).Select(u => (Language?)u.Language).FirstOrDefaultAsync(cancellationToken)
             ?? Language.French;
         await SendAsync(phone, command.Channel, Messages.Otp(code, language), cancellationToken);
 
-        return Result<OtpRequested>.Success(new OtpRequested(challenge.Id, phone, command.Channel, challenge.ExpiresAt, now + limits.ResendCooldown));
+        return Result<OtpRequested>.Success(new OtpRequested(
+            challenge.Id, phone, command.Channel, challenge.ExpiresAt, now + limits.ResendCooldown, limits.ShowCodeOnPage ? code : null));
     }
 
     private async Task SendAsync(PhoneNumber phone, OtpChannel channel, string message, CancellationToken cancellationToken)

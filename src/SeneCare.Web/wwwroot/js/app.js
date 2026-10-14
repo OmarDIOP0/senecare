@@ -32,11 +32,89 @@
     digits = digits.slice(0, 9);
     return [digits.slice(0, 2), digits.slice(2, 5), digits.slice(5, 7), digits.slice(7, 9)].filter(Boolean).join(" ");
   };
+  // Senegalese mobile only: 9 digits, prefix from the server list (meta sc-phone).
+  const phoneMeta = document.querySelector("meta[name=sc-phone]");
+  const prefixes = (phoneMeta?.content ?? "70,71,75,76,77,78").split(",");
+  /** "prefix" (wrong start), "short" (fewer than 9 digits) or "" (empty or valid). */
+  const phoneProblem = (input) => {
+    const digits = input.value.replace(/\D/g, "");
+    if (digits.length >= 2 && !prefixes.includes(digits.slice(0, 2))) return "prefix";
+    return digits.length > 0 && digits.length < 9 ? "short" : "";
+  };
+  const checkPhone = (input) => {
+    const problem = phoneProblem(input);
+    input.setCustomValidity(problem ? phoneMeta?.dataset.error ?? "" : "");
+    input.setAttribute("aria-invalid", problem ? "true" : "false");
+    return problem === "";
+  };
   document.addEventListener("input", (event) => {
     const input = event.target.closest("input[data-phone]");
     if (!input) return;
     const formatted = formatPhone(input.value);
     if (formatted !== input.value) input.value = formatted;
+    // A wrong start is said at once; a number too short only when leaving the field.
+    checkPhone(input);
+    if (phoneProblem(input) === "prefix") input.reportValidity();
+  });
+  document.addEventListener("focusout", (event) => {
+    const input = event.target.closest?.("input[data-phone]");
+    if (input && !checkPhone(input)) input.reportValidity();
+  });
+  // Forms are « novalidate » (server messages): still stop a wrong number before it leaves.
+  document.addEventListener("submit", (event) => {
+    const invalid = [...event.target.querySelectorAll("input[data-phone]")].find((input) => !checkPhone(input));
+    if (!invalid) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    invalid.focus();
+    invalid.reportValidity();
+  }, true);
+
+  // ---- One-time code in six boxes: they fill the real field, and the form leaves at the 6th digit. ----
+  document.querySelectorAll("[data-otp]").forEach((otp) => {
+    const field = otp.querySelector("[data-otp-value]");
+    const boxes = [...otp.querySelectorAll("[data-otp-box]")];
+    if (!field || boxes.length === 0) return;
+    otp.querySelector("[data-otp-boxes]").hidden = false;
+    field.hidden = true;
+    field.removeAttribute("autofocus");
+    otp.querySelector("label")?.setAttribute("for", "");
+    boxes[0].focus();
+
+    const sync = () => {
+      field.value = boxes.map((b) => b.value).join("");
+      if (field.value.length === boxes.length) field.form?.requestSubmit();
+    };
+    // Spread several digits (paste, autofill) from a box onwards.
+    const spread = (from, digits) => {
+      [...digits].slice(0, boxes.length - from).forEach((d, i) => { boxes[from + i].value = d; });
+      boxes[Math.min(from + digits.length, boxes.length - 1)].focus();
+      sync();
+    };
+    boxes.forEach((box, i) => {
+      box.addEventListener("input", () => {
+        const digits = box.value.replace(/\D/g, "");
+        box.value = "";
+        if (digits) spread(i, digits);
+        else sync();
+      });
+      box.addEventListener("keydown", (event) => {
+        if (event.key === "Backspace" && !box.value && i > 0) {
+          boxes[i - 1].value = "";
+          boxes[i - 1].focus();
+          sync();
+          event.preventDefault();
+        } else if (event.key === "ArrowLeft" && i > 0) boxes[i - 1].focus();
+        else if (event.key === "ArrowRight" && i < boxes.length - 1) boxes[i + 1].focus();
+      });
+      box.addEventListener("paste", (event) => {
+        const digits = (event.clipboardData?.getData("text") ?? "").replace(/\D/g, "");
+        if (!digits) return;
+        event.preventDefault();
+        spread(i, digits);
+      });
+      box.addEventListener("focus", () => box.select());
+    });
   });
 
   // ---- Bottom sheets (native <dialog>). ----
@@ -71,6 +149,38 @@
       search.focus();
     }
     results?.replaceChildren();
+  });
+  // « Add my neighborhood » when the search finds nothing: created, then picked like a result.
+  document.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-hood-submit]");
+    if (!button) return;
+    const block = button.closest("[data-hood-add]");
+    const commune = block.querySelector("[data-hood-commune]");
+    if (!commune.value) {
+      commune.setCustomValidity(button.dataset.textChoose);
+      commune.reportValidity();
+      commune.addEventListener("change", () => commune.setCustomValidity(""), { once: true });
+      return;
+    }
+    const body = new FormData();
+    body.append("communeId", commune.value);
+    body.append("name", block.dataset.hoodName);
+    body.append("__RequestVerificationToken", document.querySelector("input[name=__RequestVerificationToken]")?.value ?? "");
+    button.disabled = true;
+    try {
+      const response = await fetch("/quartiers", { method: "POST", body, headers: { Accept: "application/json" } });
+      const answer = await response.json();
+      if (!response.ok) { window.scToast?.(answer.error, "erreur"); return; }
+      const field = block.dataset.hoodAdd;
+      document.getElementById(field).value = answer.id;
+      const search = document.getElementById(field + "-recherche");
+      if (search) { search.value = answer.label; search.setCustomValidity(""); search.setAttribute("aria-expanded", "false"); }
+      document.getElementById(field + "-resultats")?.replaceChildren();
+    } catch {
+      window.scToast?.(button.dataset.textChoose, "erreur");
+    } finally {
+      button.disabled = false;
+    }
   });
   document.addEventListener("htmx:afterSwap", (event) => {
     const results = event.detail.target;
@@ -566,27 +676,35 @@
 
     const isBusiness = () => form.querySelector("input[name=Profile][value=Business]")?.checked ?? false;
 
-    // The company name only exists for « Mon entreprise »; the offer list follows the profile.
+    // Keeps one choice ticked in the visible group (offers, kinds of place) when the profile changes.
+    const pick = (group, other) => {
+      if (form.querySelector(`${group}:checked`)) return;
+      form.querySelectorAll(other).forEach((input) => { input.checked = false; });
+      const first = form.querySelector(group);
+      if (first) first.checked = true;
+    };
+
+    // The company name only exists for « Mon entreprise »; offers and kinds of place follow the profile.
     const syncProfile = () => {
       const business = isBusiness();
       form.querySelectorAll("[data-only-business] input").forEach((input) => { input.required = business; });
-      const group = business ? "[data-plan-business]" : "[data-plan-household]";
-      const other = business ? "[data-plan-household]" : "[data-plan-business]";
-      if (!form.querySelector(`${group}:checked`)) {
-        form.querySelectorAll(other).forEach((input) => { input.checked = false; });
-        const first = form.querySelector(group);
-        if (first) first.checked = true;
-      }
+      pick(business ? "[data-plan-business]" : "[data-plan-household]", business ? "[data-plan-household]" : "[data-plan-business]");
+      pick(business ? "[data-kind=business]" : "[data-kind=household]", business ? "[data-kind=household]" : "[data-kind=business]");
     };
 
     const show = (target) => {
       index = Math.max(0, Math.min(steps.length - 1, target));
       steps.forEach((step, i) => { step.hidden = i !== index; });
-      bars.forEach((bar, i) => bar.classList.toggle("bg-ambre", i <= index));
+      bars.forEach((bar, i) => {
+        bar.classList.toggle("bg-ambre", i <= index);
+        bar.classList.toggle("bg-ligne", i > index);
+      });
       if (prev) prev.hidden = index === 0;
       if (next) next.hidden = index === steps.length - 1;
       if (submit) submit.hidden = index !== steps.length - 1;
       steps[index].querySelector("legend")?.scrollIntoView({ block: "nearest" });
+      // A map drawn while hidden has no size: it is told when its step shows up.
+      form.dispatchEvent(new CustomEvent("sc:wizard-step", { bubbles: true }));
     };
 
     const valid = () => {
@@ -594,6 +712,26 @@
         .filter((field) => field.required && field.offsetParent !== null);
       const invalid = fields.find((field) => !field.checkValidity());
       if (invalid) { invalid.reportValidity(); invalid.focus(); return false; }
+      // Hidden fields filled by a widget (the map point): say what is missing and show the widget.
+      for (const hidden of steps[index].querySelectorAll("input[type=hidden][data-required-message]")) {
+        if (!hidden.value) {
+          window.scToast?.(hidden.dataset.requiredMessage, "erreur");
+          document.querySelector(hidden.dataset.requiredFocus)?.scrollIntoView({ block: "center", behavior: "smooth" });
+          return false;
+        }
+      }
+      // The neighborhood is a hidden field filled from the list: ask for it on the search box.
+      for (const picker of steps[index].querySelectorAll("[data-picker]")) {
+        const hidden = document.getElementById(picker.dataset.picker);
+        const search = document.getElementById(picker.dataset.picker + "-recherche");
+        if (hidden && search && !hidden.value) {
+          search.setCustomValidity(form.dataset.textNeighborhood ?? "");
+          search.reportValidity();
+          search.focus();
+          search.addEventListener("input", () => search.setCustomValidity(""), { once: true });
+          return false;
+        }
+      }
       return true;
     };
 
@@ -601,7 +739,7 @@
     next?.addEventListener("click", () => { if (valid()) show(index + 1); });
     prev?.addEventListener("click", () => show(index - 1));
     syncProfile();
-    // Back from the server with an error: start on the first step that does not validate.
-    show(0);
+    // After the code, the sign-up goes on at step 3 (steps 1–2 stay reachable with « Retour »).
+    show(Number(form.dataset.wizardStart ?? 0));
   });
 })();

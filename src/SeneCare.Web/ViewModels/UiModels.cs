@@ -91,3 +91,6 @@ public sealed record ReviewCardModel(string Author, string Place, DateTimeOffset
 
 /// <summary>Header of a public page: breadcrumb, title, introduction, optional photo.</summary>
 public sealed record SiteHeroModel(string Title, string Text, string? Crumb = null, PhotoModel? Photo = null, string? ActionLabel = null, string? ActionUrl = null);
+
+/// <summary>Progress bars and « ÉTAPE 2/5 — VOTRE NUMÉRO » title of the sign-up steps.</summary>
+public sealed record WizardHeadingModel(int Step, int Total, string Label, string Title, string? Text = null);

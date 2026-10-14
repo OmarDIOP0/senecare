@@ -52,6 +52,72 @@ public sealed partial class OfferAndPaymentTests(WebAppFixture app)
     }
 
     [PostgresFact]
+    public async Task Sign_up_in_five_steps_creates_the_account_its_first_site_and_the_subscription_to_pay()
+    {
+        var client = app.CreateClient();
+        var phone = TestData.NewPhone();
+
+        // Steps 1–2 without an account: profile, then the number.
+        var start = WebUtility.HtmlDecode(await client.GetStringAsync(new Uri("/inscription?profil=Business", UriKind.Relative)));
+        Assert.Contains("Étape 1/5", start, StringComparison.Ordinal);
+        var sent = await client.SubmitAsync("/inscription", "/connexion", new Dictionary<string, string>
+        {
+            ["Signup"] = "true",
+            ["Profile"] = "Business",
+            ["Phone"] = phone.Formatted,
+            ["Channel"] = "Sms",
+        });
+        Assert.Equal("/connexion/code", sent.Location());
+        Assert.Contains("Étape 2/5", WebUtility.HtmlDecode(await client.GetStringAsync(new Uri("/connexion/code", UriKind.Relative))), StringComparison.Ordinal);
+        var verified = await client.SubmitAsync("/connexion/code", "/connexion/code", new Dictionary<string, string> { ["Code"] = app.Messages.LastCodeFor(phone) });
+        Assert.Equal("/inscription", verified.Location());
+
+        // Steps 3–5 in one form: the profile chosen before the code is kept.
+        Guid neighborhoodId;
+        await using (var db = app.Database.CreateContext())
+        {
+            neighborhoodId = await db.Neighborhoods.Where(n => n.Name == "Almadies").Select(n => n.Id).SingleAsync();
+        }
+
+        Assert.Contains("value=\"Business\" checked", await client.GetStringAsync(new Uri("/inscription", UriKind.Relative)), StringComparison.Ordinal);
+        var done = await client.SubmitMultipartAsync("/inscription", "/inscription", new Dictionary<string, string>
+        {
+            ["Profile"] = "Business",
+            ["FullName"] = "Moussa Fall",
+            ["CompanyName"] = "Boulangerie Fall",
+            ["Property.Kind"] = "Shop",
+            ["Property.Name"] = "Boutique Ouakam",
+            ["Property.NeighborhoodId"] = neighborhoodId.ToString(),
+            ["Property.Landmark"] = "En face de la pharmacie",
+            ["PlanCode"] = "ESSENTIEL",
+            ["Annual"] = "false",
+            ["AcceptsPrivacyPolicy"] = "true",
+        }, [("photos", "facade.png", Png)]);
+        Assert.Equal("/abonnement", done.Location());
+
+        await using (var db = app.Database.CreateContext())
+        {
+            var property = await db.Properties.SingleAsync(p => p.Name == "Boutique Ouakam" && p.Address.NeighborhoodId == neighborhoodId && p.CreatedAt > DateTimeOffset.UtcNow.AddMinutes(-5));
+            var subscription = await db.Subscriptions.SingleAsync(s => s.CoveredPropertyIds.Contains(property.Id));
+            Assert.Equal(1_500_000, subscription.MonthlyPrice.Amount);
+        }
+
+        // No neighborhood: nothing is created, the form comes back.
+        var other = app.CreateClient();
+        await other.SignInAsync(app.Messages, TestData.NewPhone());
+        var refused = await other.SubmitMultipartAsync("/inscription", "/inscription", new Dictionary<string, string>
+        {
+            ["Profile"] = "Household",
+            ["FullName"] = "Awa Ndiaye",
+            ["Property.Kind"] = "House",
+            ["Property.Name"] = "Maison de Yoff",
+            ["AcceptsPrivacyPolicy"] = "true",
+        }, []);
+        Assert.Equal(HttpStatusCode.OK, refused.StatusCode);
+        Assert.Contains("Choisissez votre quartier", WebUtility.HtmlDecode(await refused.Content.ReadAsStringAsync()), StringComparison.Ordinal);
+    }
+
+    [PostgresFact]
     public async Task Declaring_and_verifying_a_payment_notifies_finance_then_the_customer_with_a_receipt()
     {
         var finance = await StaffAsync(PlatformRole.Finance);

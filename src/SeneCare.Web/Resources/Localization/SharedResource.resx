@@ -19,10 +19,9 @@
   <data name="Nav_SignOut" xml:space="preserve"><value>Se déconnecter</value></data>
   <data name="SignIn_Title" xml:space="preserve"><value>Connexion</value></data>
   <data name="SignIn_Heading" xml:space="preserve"><value>Connexion</value></data>
-  <data name="SignIn_Intro" xml:space="preserve"><value>Entrez votre numéro, nous vous envoyons un code. Pas de mot de passe.</value></data>
+  <data name="SignIn_Intro" xml:space="preserve"><value>Entrez votre numéro, nous vous envoyons un code sur WhatsApp. Pas de mot de passe.</value></data>
   <data name="SignIn_PhoneLabel" xml:space="preserve"><value>Numéro de téléphone</value></data>
-  <data name="SignIn_PhoneHint" xml:space="preserve"><value>Numéro mobile sénégalais : 77, 78, 76, 70 ou 75</value></data>
-  <data name="SignIn_Channel" xml:space="preserve"><value>Recevoir le code par</value></data>
+  <data name="SignIn_PhoneHint" xml:space="preserve"><value>Numéro mobile sénégalais : 9 chiffres commençant par 77, 78, 76, 75, 71 ou 70</value></data>
   <data name="SignIn_ChannelSms" xml:space="preserve"><value>SMS</value></data>
   <data name="SignIn_ChannelWhatsApp" xml:space="preserve"><value>WhatsApp</value></data>
   <data name="SignIn_Submit" xml:space="preserve"><value>Recevoir mon code</value></data>
@@ -30,6 +29,8 @@
   <data name="Code_Heading" xml:space="preserve"><value>Entrez le code reçu</value></data>
   <data name="Code_SentTo" xml:space="preserve"><value>Code envoyé au +221 {0} par {1}. Il est valable 5 minutes.</value></data>
   <data name="Code_Label" xml:space="preserve"><value>Code à 6 chiffres</value></data>
+  <data name="Code_Digit" xml:space="preserve"><value>Chiffre {0} sur 6</value></data>
+  <data name="Code_DevelopmentHint" xml:space="preserve"><value>Test en développement, code :</value></data>
   <data name="Code_Submit" xml:space="preserve"><value>Valider</value></data>
   <data name="Code_Resend" xml:space="preserve"><value>Renvoyer le code</value></data>
   <data name="Code_ChangeNumber" xml:space="preserve"><value>Changer de numéro</value></data>
@@ -78,7 +79,7 @@
   <data name="AccessDenied_Title" xml:space="preserve"><value>Accès refusé</value></data>
   <data name="AccessDenied_Text" xml:space="preserve"><value>Cette page n'est pas accessible avec votre compte.</value></data>
   <data name="Privacy_Title" xml:space="preserve"><value>Politique de confidentialité</value></data>
-  <data name="Error_phone_invalid" xml:space="preserve"><value>Ce numéro n'est pas un mobile sénégalais valide (9 chiffres commençant par 77, 78, 76, 70 ou 75).</value></data>
+  <data name="Error_phone_invalid" xml:space="preserve"><value>Ce numéro n'est pas un mobile sénégalais valide (9 chiffres commençant par 77, 78, 76, 75, 71 ou 70).</value></data>
   <data name="Error_otp_cooldown" xml:space="preserve"><value>Patientez une minute avant de demander un nouveau code.</value></data>
   <data name="Error_otp_too_many_requests" xml:space="preserve"><value>Trop de codes demandés pour ce numéro. Réessayez dans une heure.</value></data>
   <data name="Error_otp_invalid" xml:space="preserve"><value>Code incorrect. Vérifiez le message et réessayez.</value></data>
@@ -127,7 +128,10 @@
   <data name="Picker_NeighborhoodLabel" xml:space="preserve"><value>Quartier</value></data>
   <data name="Picker_NeighborhoodPlaceholder" xml:space="preserve"><value>Ex. : Sacré-Cœur, Almadies, Keur Massar</value></data>
   <data name="Picker_NeighborhoodHint" xml:space="preserve"><value>Tapez au moins 2 lettres, les accents ne comptent pas.</value></data>
-  <data name="Picker_NoResult" xml:space="preserve"><value>Aucun quartier trouvé. Essayez avec le nom de la commune.</value></data>
+  <data name="Picker_NoResult" xml:space="preserve"><value>« {0} » n'est pas encore dans notre liste. Ajoutez-le en choisissant sa commune.</value></data>
+  <data name="Picker_AddCommune" xml:space="preserve"><value>Commune</value></data>
+  <data name="Picker_AddChoose" xml:space="preserve"><value>Choisissez la commune</value></data>
+  <data name="Picker_AddButton" xml:space="preserve"><value>Ajouter « {0} »</value></data>
   <data name="Uploader_Add" xml:space="preserve"><value>Prendre ou ajouter une photo</value></data>
   <data name="Uploader_Hint" xml:space="preserve"><value>Jusqu'à {0} photos. Elles sont allégées sur votre téléphone pour économiser vos données.</value></data>
   <data name="Uploader_Working" xml:space="preserve"><value>Préparation des photos…</value></data>
@@ -391,7 +395,7 @@
   <data name="Check_Plumbing" xml:space="preserve"><value>Plomberie</value></data>
   <data name="Error_property_no_account" xml:space="preserve"><value>Votre compte n'est pas encore prêt. Terminez votre inscription.</value></data>
   <data name="Error_address_neighborhood" xml:space="preserve"><value>Choisissez votre quartier dans la liste.</value></data>
-  <data name="Error_address_locate" xml:space="preserve"><value>Placez la maison sur la carte ou décrivez un point de repère.</value></data>
+  <data name="Error_address_locate" xml:space="preserve"><value>Placez le lieu sur la carte : touchez la carte ou utilisez votre position.</value></data>
   <data name="Error_property_name" xml:space="preserve"><value>Donnez un nom à ce logement.</value></data>
   <data name="Error_property_too_many_photos" xml:space="preserve"><value>10 photos maximum.</value></data>
   <data name="Error_media_type" xml:space="preserve"><value>Ce fichier n'est pas une photo ou une note vocale valide.</value></data>
@@ -849,6 +853,8 @@
   <data name="Error_place_not_found" xml:space="preserve"><value>Lieu introuvable.</value></data>
   <data name="Error_place_name" xml:space="preserve"><value>Indiquez le nom.</value></data>
   <data name="Error_place_exists" xml:space="preserve"><value>Ce quartier existe déjà dans la commune.</value></data>
+  <data name="Error_place_commune" xml:space="preserve"><value>Choisissez la commune du quartier.</value></data>
+  <data name="Error_place_too_many" xml:space="preserve"><value>Vous avez déjà ajouté plusieurs quartiers aujourd'hui. Réessayez demain ou appelez-nous.</value></data>
   <data name="Error_setting_unknown" xml:space="preserve"><value>Paramètre inconnu.</value></data>
   <data name="Error_setting_number" xml:space="preserve"><value>Entrez un nombre entier.</value></data>
   <data name="Error_payment_note_required" xml:space="preserve"><value>Indiquez la référence du reçu ou du virement.</value></data>
@@ -1107,8 +1113,6 @@
   <data name="Community_Operations_Eyebrow" xml:space="preserve"><value>Sur le terrain</value></data>
   <data name="Community_Ranking_Cta_Title" xml:space="preserve"><value>Votre quartier n'est pas encore dans la liste ?</value></data>
   <data name="Community_Ranking_Cta_Text" xml:space="preserve"><value>Il apparaît dès le premier foyer abonné.</value></data>
-  <data name="Site_SampleTag" xml:space="preserve"><value>Exemple</value></data>
-  <data name="Site_SampleTag_Hint" xml:space="preserve"><value>Contenu d'exemple à remplacer avant la mise en ligne (masqué en production).</value></data>
   <data name="Site_Theme" xml:space="preserve"><value>Thème d'affichage</value></data>
   <data name="Site_Nav_Pricing" xml:space="preserve"><value>Tarifs</value></data>
   <data name="Site_AllTrades" xml:space="preserve"><value>Tous nos métiers</value></data>
@@ -1132,7 +1136,7 @@
   <data name="Home_QuickForm_TradeAny" xml:space="preserve"><value>Je ne sais pas</value></data>
   <data name="Home_QuickForm_Area" xml:space="preserve"><value>Quartier</value></data>
   <data name="Home_QuickForm_AreaPlaceholder" xml:space="preserve"><value>Ex. : Mermoz, Ouakam, Thiès</value></data>
-  <data name="Home_QuickForm_PhoneHelp" xml:space="preserve"><value>Vous recevrez un code par SMS pour suivre votre demande. Pas de mot de passe.</value></data>
+  <data name="Home_QuickForm_PhoneHelp" xml:space="preserve"><value>Vous recevrez un code sur WhatsApp pour suivre votre demande. Pas de mot de passe.</value></data>
   <data name="Home_Trades_Text" xml:space="preserve"><value>Les dépannages et l'entretien courant d'une maison ou de locaux, par des techniciens du métier.</value></data>
   <data name="Home_Techs_Text" xml:space="preserve"><value>Des techniciens salariés, formés à leur métier, qui interviennent dans leur zone.</value></data>
   <data name="Home_Techs_Years" xml:space="preserve"><value>{0} ans de métier</value></data>
@@ -1251,8 +1255,6 @@
   <data name="Register_Step1" xml:space="preserve"><value>Votre profil</value></data>
   <data name="Register_Step1_Title" xml:space="preserve"><value>Qu'est-ce qu'on entretient pour vous ?</value></data>
   <data name="Register_Step1_Text" xml:space="preserve"><value>Une maison ou une villa, ou les locaux d'une entreprise. Vous pourrez en ajouter d'autres ensuite.</value></data>
-  <data name="Register_Step2" xml:space="preserve"><value>Vos coordonnées</value></data>
-  <data name="Register_Step2_Title" xml:space="preserve"><value>Comment vous appeler ?</value></data>
   <data name="Register_NamePlaceholder" xml:space="preserve"><value>Ex. : Awa Ndiaye</value></data>
   <data name="Register_CompanyPlaceholder" xml:space="preserve"><value>Ex. : Quincaillerie Ndiaye et Frères</value></data>
   <data name="Register_PhoneVerified" xml:space="preserve"><value>Vérifié</value></data>
@@ -1266,10 +1268,21 @@
   <data name="Register_PerYear" xml:space="preserve"><value>par an</value></data>
   <data name="Register_Critical" xml:space="preserve"><value>Urgence critique sous {0}</value></data>
   <data name="Register_BusinessBilling" xml:space="preserve"><value>Facturation par trimestre, après le diagnostic technique de vos sites.</value></data>
-  <data name="Register_Popular" xml:space="preserve"><value>Le plus choisi</value></data>
+  <data name="Register_Popular" xml:space="preserve"><value>Recommandé</value></data>
+  <data name="Register_Feature_Critical" xml:space="preserve"><value>Urgence critique : technicien sous {0}</value></data>
+  <data name="Register_Feature_High" xml:space="preserve"><value>Urgence haute : sous {0}</value></data>
+  <data name="Register_Feature_Visits" xml:space="preserve"><value>{0} visite(s) préventive(s) par trimestre</value></data>
+  <data name="Register_Feature_VisitsOnDemand" xml:space="preserve"><value>Visites préventives selon besoin</value></data>
+  <data name="Register_Feature_Priority0" xml:space="preserve"><value>Planning standard</value></data>
+  <data name="Register_Feature_Priority1" xml:space="preserve"><value>Passage prioritaire au planning</value></data>
+  <data name="Register_Feature_Priority2" xml:space="preserve"><value>Toujours servi en premier</value></data>
+  <data name="Register_Feature_Diagnostic" xml:space="preserve"><value>Diagnostic technique chaque trimestre</value></data>
+  <data name="Register_PlanBase" xml:space="preserve"><value>Tout {0}, et en plus :</value></data>
+  <data name="Register_PlanTagline_ESSENTIEL" xml:space="preserve"><value>Un site, l'entretien régulier et les dépannages.</value></data>
+  <data name="Register_PlanTagline_PROFESSIONNEL" xml:space="preserve"><value>Plusieurs sites, plus de visites et des délais plus courts.</value></data>
+  <data name="Register_PlanTagline_PREMIUM" xml:space="preserve"><value>Les sites qui ne peuvent pas s'arrêter : délais les plus courts.</value></data>
   <data name="Register_Step4" xml:space="preserve"><value>Confirmation</value></data>
   <data name="Register_Step4_Title" xml:space="preserve"><value>Et ensuite ?</value></data>
-  <data name="Register_Next1" xml:space="preserve"><value>Vous ajoutez votre logement ou votre premier site : adresse, point de repère et photo.</value></data>
   <data name="Register_Next2" xml:space="preserve"><value>Vous payez l'inscription et la première période par Wave, puis vous cliquez sur « J'ai payé ».</value></data>
   <data name="Register_Next3" xml:space="preserve"><value>Nous vérifions le paiement et activons votre compte. Vous êtes prévenu sur WhatsApp ou par SMS.</value></data>
   <data name="Register_Back" xml:space="preserve"><value>Retour</value></data>
@@ -1283,6 +1296,24 @@
   <data name="Register_Panel_Trades" xml:space="preserve"><value>Métiers</value></data>
   <data name="Register_Panel_Urgent" xml:space="preserve"><value>Urgence</value></data>
   <data name="Register_Panel_Pay" xml:space="preserve"><value>Paiement</value></data>
+  <data name="Register_StepPhone" xml:space="preserve"><value>Votre numéro</value></data>
+  <data name="Register_StepPhone_Title" xml:space="preserve"><value>Votre numéro de téléphone</value></data>
+  <data name="Register_StepPhone_Text" xml:space="preserve"><value>Il vous sert à vous connecter : nous vous envoyons un code sur WhatsApp, sans mot de passe.</value></data>
+  <data name="Register_HaveAccount" xml:space="preserve"><value>Déjà inscrit ?</value></data>
+  <data name="Register_SignInLink" xml:space="preserve"><value>Se connecter</value></data>
+  <data name="SignIn_Eyebrow" xml:space="preserve"><value>Espace client</value></data>
+  <data name="SignIn_NoAccount" xml:space="preserve"><value>Pas encore de compte ?</value></data>
+  <data name="SignIn_NoAccount_Text" xml:space="preserve"><value>Inscription en 5 étapes, votre logement compris.</value></data>
+  <data name="Register_StepHome" xml:space="preserve"><value>Votre logement</value></data>
+  <data name="Register_StepSite" xml:space="preserve"><value>Votre premier site</value></data>
+  <data name="Register_StepHome_Title" xml:space="preserve"><value>Vous et votre maison</value></data>
+  <data name="Register_StepSite_Title" xml:space="preserve"><value>Vous et votre premier site</value></data>
+  <data name="Register_StepHome_Text" xml:space="preserve"><value>Le lieu que nous entretenons. Vous pourrez en ajouter d'autres depuis votre espace.</value></data>
+  <data name="Register_PlaceKind" xml:space="preserve"><value>Type de lieu</value></data>
+  <data name="Register_PlaceName" xml:space="preserve"><value>Nom du lieu</value></data>
+  <data name="Register_PlacePhotos" xml:space="preserve"><value>Photos de la façade (facultatif)</value></data>
+  <data name="Register_Next4" xml:space="preserve"><value>Vous ajoutez d'autres logements ou sites depuis votre espace, quand vous voulez.</value></data>
+  <data name="Register_Done" xml:space="preserve"><value>Compte créé. Votre abonnement est prêt à payer.</value></data>
   <data name="Error_registration_plan_unknown" xml:space="preserve"><value>Choisissez une formule qui correspond à votre profil.</value></data>
   <data name="Property_Welcome_Title" xml:space="preserve"><value>Compte créé, plus qu'une étape</value></data>
   <data name="Property_Welcome_Home" xml:space="preserve"><value>Ajoutez votre logement : votre abonnement sera prêt à payer par Wave juste après.</value></data>

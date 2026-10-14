@@ -101,7 +101,7 @@
         context.scale(ratio, ratio);
         context.lineWidth = 2.5;
         context.lineCap = "round";
-        context.strokeStyle = "#1f1b16";
+        context.strokeStyle = "#13222b";
       };
       fit();
 

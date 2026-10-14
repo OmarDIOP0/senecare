@@ -50,29 +50,32 @@
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 /* ===========================================================================
-   SENECARE design tokens — warm, local, alive (WURUS finish, HomeServe structure).
-   Cream pages, espresso ink and dark panels, gold and SeneCare orange for what matters,
+   SENECARE design tokens — Atlantique & terre cuite.
+   Light sand pages, deep blue ink and Atlantic panels, terre cuite and sun for what matters,
    wax / bogolan bands as separators. Token names are kept (bg-sable, text-charbon…).
    =========================================================================== */
 :root {
-  /* SeneCare orange: links, icons, highlights. */
-  --laterite: #c2410c;
-  --laterite-fonce: #9a3412;
-  --laterite-clair: #fdebdc;
-  /* Gold / amber: primary buttons (with espresso text), stars, details on dark panels. */
-  --ambre: #e7a338;
-  --ambre-fonce: #c97a1e;
-  --or: #e2bd6b;
-  --ocre: #c7932d;
-  --ocre-clair: #f3e6cf;
-  --ocre-texte: #7d5a12;
-  /* Espresso: dark panels, footer, contact bar. */
-  --nuit: #1e120a;
-  --nuit-2: #2a1a10;
-  --sur-nuit: #e9ddc9;
+  /* Terre cuite: primary buttons, links, icons, highlights. */
+  --laterite: #b8481a;
+  --laterite-fonce: #963a14;
+  --laterite-clair: #fbe6da;
+  /* Primary button: terre cuite gradient, white text. */
+  --bouton-haut: #d9622b;
+  --bouton-bas: #b5461a;
+  /* Sun: stars, figures on dark panels, highlighted offer, selected choices. */
+  --ambre: #f2b544;
+  --ambre-fonce: #d9951f;
+  --or: #f6cb6e;
+  --ocre: #e0a12e;
+  --ocre-clair: #fcf0d4;
+  --ocre-texte: #1d5b75;
+  /* Atlantic blue: dark panels, header, footer, contact bar. */
+  --nuit: #0f3446;
+  --nuit-2: #0b2836;
+  --sur-nuit: #dce8ec;
   /* Information and status. */
-  --atlantique: #1f4e8c;
-  --atlantique-clair: #e8eef6;
+  --atlantique: #1e5f7a;
+  --atlantique-clair: #e3eff3;
   --baobab: #1f7a45;
   --baobab-clair: #e3f1e2;
   --indigo: #4b4fa8;
@@ -81,53 +84,55 @@
   --soleil-clair: #fbefd3;
   --rouge: #b42318;
   --rouge-clair: #fbe9e4;
-  /* Neutrals (cream and brown). */
-  --sable: #f7f1e2;        /* page */
-  --surface: #fffdf7;      /* cards, fields, sidebar */
-  --sourdine: #f3ebd6;     /* alternate blocks, hover */
-  --ligne: #e6d9c2;        /* 1px borders */
-  --charbon: #1e120a;      /* text: espresso, never pure black */
-  --charbon-doux: #6b5c4a; /* secondary text, 5.4:1 on cream */
-  --charbon-pale: #a8977e; /* icons and dividers only */
-  --placeholder: #7a6c5b;
-  --sur-accent: #ffffff;   /* text on orange */
-  --sur-ocre: #1e120a;     /* text on gold */
+  /* Neutrals (light sand and blue ink). */
+  --sable: #f6f3ec;        /* page */
+  --surface: #ffffff;      /* cards, fields, sidebar */
+  --sourdine: #eeeae0;     /* alternate blocks, hover */
+  --ligne: #e2ddd0;        /* 1px borders */
+  --charbon: #13222b;      /* text: deep blue ink, never pure black */
+  --charbon-doux: #5a6870; /* secondary text, 5.4:1 on sand */
+  --charbon-pale: #9aa5ab; /* icons and dividers only */
+  --placeholder: #6f7c83;
+  --sur-accent: #ffffff;   /* text on terre cuite */
+  --sur-ocre: #13222b;     /* text on sun */
   color-scheme: light;
 }
 
 :root[data-theme=dark] {
-  --laterite: #f08a4b;
-  --laterite-fonce: #f6a877;
-  --laterite-clair: #3a2012;
-  --ambre: #e7a338;
-  --ambre-fonce: #d48b26;
-  --or: #e2bd6b;
-  --ocre: #e2bd6b;
-  --ocre-clair: #2a1a10;
-  --ocre-texte: #e2bd6b;
-  --nuit: #0b0603;
-  --nuit-2: #160c06;
-  --sur-nuit: #e9ddc9;
-  --atlantique: #8db4e8;
-  --atlantique-clair: #142033;
+  --laterite: #f08a57;
+  --laterite-fonce: #f5a47a;
+  --laterite-clair: #3a2318;
+  --bouton-haut: #f39566;
+  --bouton-bas: #e0703a;
+  --ambre: #f2b544;
+  --ambre-fonce: #e09a2c;
+  --or: #f6cb6e;
+  --ocre: #f2b544;
+  --ocre-clair: #1b3a4e;
+  --ocre-texte: #8cc6de;
+  --nuit: #061620;
+  --nuit-2: #04111a;
+  --sur-nuit: #dce8ec;
+  --atlantique: #8cc6de;
+  --atlantique-clair: #12303f;
   --baobab: #6cc28d;
-  --baobab-clair: #10241a;
+  --baobab-clair: #0f2a22;
   --indigo: #a9acef;
-  --indigo-clair: #1b1c33;
+  --indigo-clair: #1a1f3a;
   --soleil: #f0b44c;
-  --soleil-clair: #2a1f0b;
+  --soleil-clair: #2e2610;
   --rouge: #f28b82;
-  --rouge-clair: #2c1514;
-  --sable: #120a05;
-  --surface: #1e140d;
-  --sourdine: #2a1a10;
-  --ligne: #3a2719;
-  --charbon: #f7f1e2;
-  --charbon-doux: #cbbba3;
-  --charbon-pale: #7a6c5b;
-  --placeholder: #9a8a74;
-  --sur-accent: #160a04;
-  --sur-ocre: #160a04;
+  --rouge-clair: #331a1a;
+  --sable: #0a1f2a;
+  --surface: #10293a;
+  --sourdine: #163246;
+  --ligne: #22425a;
+  --charbon: #eef3f5;
+  --charbon-doux: #a9bac3;
+  --charbon-pale: #6e8794;
+  --placeholder: #8ca0ab;
+  --sur-accent: #0a1f2a;
+  --sur-ocre: #0a1f2a;
   color-scheme: dark;
 }
 
@@ -189,10 +194,10 @@
   --spacing-cible: 2.75rem;
 
   /* Warm, soft shadows. */
-  --shadow-carte: 0 1px 0 rgb(30 18 10 / 0.04), 0 8px 24px -16px rgb(30 18 10 / 0.18);
-  --shadow-xs: 0 1px 0 rgb(30 18 10 / 0.05);
-  --shadow-sm: 0 12px 32px -16px rgb(30 18 10 / 0.35), 0 2px 4px rgb(30 18 10 / 0.06);
-  --shadow-bouton: 0 10px 24px -12px rgb(201 122 30 / 0.7);
+  --shadow-carte: 0 1px 0 rgb(19 34 43 / 0.04), 0 8px 24px -16px rgb(19 34 43 / 0.18);
+  --shadow-xs: 0 1px 0 rgb(19 34 43 / 0.05);
+  --shadow-sm: 0 12px 32px -16px rgb(19 34 43 / 0.35), 0 2px 4px rgb(19 34 43 / 0.06);
+  --shadow-bouton: 0 10px 24px -12px rgb(181 70 26 / 0.6);
 
   --ease-doux: cubic-bezier(0.2, 0, 0, 1);
   --animate-shimmer: shimmer 1.4s linear infinite;
@@ -287,10 +292,10 @@
   .sc-trait { @apply hidden; }
 
   /* ---- Buttons ----------------------------------------------------------- */
-  /* Primary: gold to amber, espresso text (WURUS). */
+  /* Primary: terre cuite gradient, white text (dark text in dark mode). */
   .sc-btn-primaire {
-    @apply sc-btn text-sur-ocre shadow-bouton hover:brightness-105;
-    background: linear-gradient(180deg, var(--or) 0%, var(--ambre) 55%, var(--ambre-fonce) 100%);
+    @apply sc-btn text-sur-accent shadow-bouton hover:brightness-105;
+    background: linear-gradient(180deg, var(--bouton-haut) 0%, var(--bouton-bas) 100%);
   }
   /* Orange: the strong action inside dark panels and for « Signaler ». */
   .sc-btn-ocre { @apply sc-btn bg-laterite text-sur-accent hover:bg-laterite-fonce; }
@@ -320,12 +325,12 @@
   /* ---- Surfaces ------------------------------------------------------------ */
   .sc-carte { @apply rounded-lg border border-ligne bg-surface p-5 shadow-carte; }
   .sc-alert { @apply mb-4 rounded-md border border-ligne bg-surface px-4 py-3 text-[15px] text-charbon; }
-  /* Espresso panel with a faint grid (strong moments: hero side, CTA, plan summary). */
+  /* Atlantic blue panel with a faint grid (strong moments: hero side, CTA, plan summary). */
   .sc-panneau {
     @apply rounded-3xl bg-nuit text-sur-nuit;
     background-image:
-      linear-gradient(rgb(226 189 107 / 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(226 189 107 / 0.06) 1px, transparent 1px);
+      linear-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.05) 1px, transparent 1px);
     background-size: 36px 36px;
   }
   .sc-panneau :where(h1, h2, h3) { @apply text-white; }
@@ -370,7 +375,7 @@
     @apply m-0 mt-auto max-h-[85dvh] w-full max-w-none rounded-t-2xl border border-ligne bg-surface p-0 text-charbon shadow-sm
       open:animate-monte sm:m-auto sm:max-w-md sm:rounded-2xl;
   }
-  .sc-sheet::backdrop { background: rgb(30 18 10 / 0.5); }
+  .sc-sheet::backdrop { background: rgb(19 34 43 / 0.5); }
 
   /* ---- Field mode (technician): full sun, one hand, gloves ---------------- */
   .sc-terrain { font-size: 1.0625rem; --color-charbon-doux: var(--charbon); }

@@ -1,0 +1,35 @@
+@* Frame shared by « Créer mon compte » (5 steps) and « Connexion »: the form card on the left, the dark Atlantic panel on the right. *@
+@{
+    Layout = "_Layout";
+    ViewData["FullWidth"] = true;
+}
+@section Head {
+    @RenderSection("Head", required: false)
+}
+
+<div class="sc-bande"></div>
+<section class="mx-auto grid w-full max-w-6xl gap-8 px-4 py-8 lg:grid-cols-[1.15fr_1fr] lg:items-start lg:gap-10 lg:px-6 lg:py-12">
+    <div class="overflow-hidden rounded-3xl border border-ligne bg-surface shadow-carte">
+        <div class="sc-bande-fine"></div>
+        <div class="p-6 sm:p-10">
+            @RenderBody()
+        </div>
+    </div>
+
+    <aside class="sc-panneau relative overflow-hidden p-8 sm:p-10 lg:sticky lg:top-28">
+        <p class="font-mono text-xs font-bold tracking-[0.16em] text-or uppercase">@L["Register_Panel_Eyebrow"]</p>
+        <h2 class="mt-4 font-display text-[1.75rem] leading-[1.1] font-bold tracking-[-0.02em] sm:text-[2.125rem]">@L["Register_Panel_Title"]</h2>
+        <ul class="mt-8 grid gap-4 text-[15px] sm:text-base">
+            @foreach (var key in new[] { "Register_Panel_1", "Register_Panel_2", "Register_Panel_3", "Register_Panel_4" })
+            {
+                <li class="flex items-start gap-3"><span class="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-ambre text-nuit"><sc-icon name="check" class="size-4" /></span>@L[key]</li>
+            }
+        </ul>
+        <dl class="mt-10 grid grid-cols-3 gap-4 border-t border-white/10 pt-6">
+            <div><dd class="font-display text-2xl text-or">7</dd><dt class="mt-1 font-mono text-[10px] tracking-[0.12em] text-sur-nuit/70 uppercase">@L["Register_Panel_Trades"]</dt></div>
+            <div><dd class="font-display text-2xl text-or">4 h</dd><dt class="mt-1 font-mono text-[10px] tracking-[0.12em] text-sur-nuit/70 uppercase">@L["Register_Panel_Urgent"]</dt></div>
+            <div><dd class="font-display text-2xl text-or">Wave</dd><dt class="mt-1 font-mono text-[10px] tracking-[0.12em] text-sur-nuit/70 uppercase">@L["Register_Panel_Pay"]</dt></div>
+        </dl>
+        <div class="sc-bande-fine absolute inset-x-0 bottom-0"></div>
+    </aside>
+</section>

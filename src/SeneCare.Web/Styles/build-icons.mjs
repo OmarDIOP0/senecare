@@ -2,7 +2,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { Resvg } from "@resvg/resvg-js";
 
-const colors = { laterite: "#a84b24", atlantique: "#12355b", baobab: "#2e5e3e", sable: "#f7f1e6", soleil: "#e8a317" };
+const colors = { terreCuite: "#d9622b", atlantique: "#0f3446", sable: "#f6f3ec", soleil: "#f2b544" };
 
 // Mark drawn in a 32×32 box (same as Views/Shared/Ui/_BrandMark.cshtml).
 const mark = (roof, body, dot) => `
@@ -19,17 +19,18 @@ const icon = (size, background, ratio, palette) => {
     <g transform="translate(${offset} ${offset}) scale(${scale})">${mark(...palette)}</g></svg>`;
 };
 
-const standard = [colors.laterite, colors.atlantique, colors.baobab];
-const onLaterite = [colors.sable, colors.sable, colors.soleil];
+// Palette « Atlantique & terre cuite »: terre cuite roof, blue walls, sun dot; reversed on the blue background.
+const standard = [colors.terreCuite, colors.atlantique, colors.soleil];
+const onBlue = [colors.terreCuite, colors.sable, colors.soleil];
 
 const outputs = {
   "icon-192.png": icon(192, colors.sable, 0.72, standard),
   "icon-512.png": icon(512, colors.sable, 0.72, standard),
   // Maskable: the platform crops up to 20 % on each side, so the mark stays inside the central 60 %.
-  "maskable-192.png": icon(192, colors.laterite, 0.56, onLaterite),
-  "maskable-512.png": icon(512, colors.laterite, 0.56, onLaterite),
+  "maskable-192.png": icon(192, colors.atlantique, 0.56, onBlue),
+  "maskable-512.png": icon(512, colors.atlantique, 0.56, onBlue),
   "apple-touch-icon.png": icon(180, colors.sable, 0.7, standard),
-  "shortcut-report-96.png": icon(96, colors.laterite, 0.6, onLaterite),
+  "shortcut-report-96.png": icon(96, colors.atlantique, 0.6, onBlue),
 };
 
 mkdirSync("wwwroot/img/icons", { recursive: true });

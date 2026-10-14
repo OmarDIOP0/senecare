@@ -1,0 +1,19 @@
+@model SeneCare.Domain.Accounts.AccountKind?
+@using SeneCare.Domain.Accounts
+@* Step 1: « Ma maison » or « Mon entreprise ». The rest of the sign-up follows this choice (company name, kinds of place, offers). *@
+<div class="grid gap-3 sm:grid-cols-2">
+    @foreach (var (kind, icon, title, hint) in new[]
+    {
+        (AccountKind.Household, "house", "Register_ProfileHousehold", "Register_ProfileHouseholdHint"),
+        (AccountKind.Business, "building-2", "Register_ProfileBusiness", "Register_ProfileBusinessHint"),
+    })
+    {
+        <label class="sc-choix flex-col items-start gap-3 p-5">
+            <span class="flex w-full items-center justify-between">
+                <span class="grid size-12 place-items-center rounded-2xl bg-ocre-clair text-laterite [--icon-fond:var(--ambre)]"><sc-icon name="@icon" class="size-7" /></span>
+                <input type="radio" name="Profile" value="@kind" checked="@((Model ?? AccountKind.Household) == kind)" required />
+            </span>
+            <span><span class="block text-lg font-bold">@L[title]</span><span class="text-sm text-charbon-doux">@L[hint]</span></span>
+        </label>
+    }
+</div>

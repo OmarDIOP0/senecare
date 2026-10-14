@@ -944,11 +944,23 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("slug");
 
+                    b.Property<DateTimeOffset?>("SuggestedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("suggested_at");
+
+                    b.Property<Guid?>("SuggestedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("suggested_by_user_id");
+
                     b.HasKey("Id")
                         .HasName("pk_neighborhoods");
 
                     b.HasIndex("Name")
                         .HasDatabaseName("ix_neighborhoods_name");
+
+                    b.HasIndex("SuggestedAt")
+                        .HasDatabaseName("ix_neighborhoods_suggested_at")
+                        .HasFilter("suggested_at IS NOT NULL");
 
                     b.HasIndex("CommuneId", "Slug")
                         .IsUnique()

@@ -2,7 +2,7 @@
    ViewData["FullWidth"] lets a page draw its own full-width sections. Contact details come from Content/site-content.json. *@
 @{
     var signedIn = User.Identity?.IsAuthenticated == true;
-    var onSignIn = Context.Request.Path.StartsWithSegments("/connexion");
+    var onSignIn = Context.Request.Path.StartsWithSegments("/connexion") || Context.Request.Path.StartsWithSegments("/inscription");
     var fullWidth = ViewData["FullWidth"] is true;
     var contact = Site.Contact;
     var showContact = Site.Visible(contact);
@@ -31,7 +31,6 @@
                 <div class="flex flex-wrap items-center gap-x-5 gap-y-1">
                     <a href="tel:@contact.PhoneLink" class="inline-flex items-center gap-1.5 font-semibold text-white no-underline hover:underline"><sc-icon name="phone" class="size-4" />@contact.PhoneDisplay</a>
                     <a href="@contact.WhatsAppUrl" class="inline-flex items-center gap-1.5 text-white no-underline hover:underline" target="_blank" rel="noopener"><sc-icon name="message-circle" class="size-4" />WhatsApp</a>
-                    <partial name="Site/_SampleTag" model="contact.Sample" />
                 </div>
                 <div class="hidden flex-wrap items-center gap-x-5 md:flex">
                     <span class="inline-flex items-center gap-1.5"><sc-icon name="clock" class="size-4" />@contact.Hours · @contact.Emergencies</span>
@@ -75,6 +74,7 @@
                 }
                 else if (!onSignIn)
                 {
+                    <a href="/inscription" class="hidden rounded-full px-3.5 py-2 text-[15px] font-semibold whitespace-nowrap text-sur-nuit no-underline hover:bg-white/10 hover:text-white hover:no-underline 2xl:inline-flex">@L["Register_Submit"]</a>
                     <a href="/connexion" class="sc-btn hidden bg-white text-nuit hover:bg-sable md:inline-flex"><sc-icon name="circle-user" class="size-5" />@L["Public_ClientSpace"]</a>
                 }
                 <a href="/demander" class="sc-btn-primaire hidden sm:inline-flex">@L["Site_RequestJob"]</a>
@@ -93,6 +93,10 @@
                         }
                         <div class="my-1 border-t border-ligne"></div>
                         <a href="@(signedIn ? "/espace" : "/connexion")" class="sc-menu-item"><sc-icon name="circle-user" class="size-4" />@(signedIn ? L["Nav_Space"] : L["Public_ClientSpace"])</a>
+                        @if (!signedIn)
+                        {
+                            <a href="/inscription" class="sc-menu-item"><sc-icon name="circle-user" class="size-4" />@L["Register_Submit"]</a>
+                        }
                         <a href="/demander" class="sc-btn-primaire mt-1.5 w-full">@L["Site_RequestJob"]</a>
                     </div>
                 </details>

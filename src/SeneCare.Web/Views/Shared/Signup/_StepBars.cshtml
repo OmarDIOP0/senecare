@@ -1,0 +1,8 @@
+@model int
+@* 5 bars; the first ones filled server side (Code page), then kept in step by the wizard script. *@
+<div class="grid grid-cols-5 gap-2" aria-hidden="true" data-wizard-bars>
+    @for (var i = 1; i <= 5; i++)
+    {
+        <span class="@(i <= Model ? "bg-ambre" : "bg-ligne") h-1.5 rounded-full transition-colors" data-wizard-bar></span>
+    }
+</div>

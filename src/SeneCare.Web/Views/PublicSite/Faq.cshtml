@@ -7,7 +7,6 @@
 <section class="mx-auto w-full max-w-4xl px-4 pt-12 lg:px-6">
     @if (Site.Visible(Site.Faq))
     {
-        <partial name="Site/_SampleTag" model="Site.Faq.Sample" />
         <div class="mt-3 divide-y divide-ligne rounded-lg border border-ligne bg-surface shadow-xs">
             @foreach (var item in Site.Faq.Items)
             {

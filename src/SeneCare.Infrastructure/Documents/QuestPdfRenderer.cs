@@ -7,18 +7,18 @@ using SeneCare.Application.Business;
 namespace SeneCare.Infrastructure.Documents;
 
 /// <summary>
-/// PDF layout with the SENECARE palette (latérite, atlantique, sable). Light documents: vector text only,
+/// PDF layout with the SENECARE palette (terre cuite, Atlantique, sable). Light documents: vector text only,
 /// no images, so a quarterly report stays a few dozen KB on a phone.
 /// </summary>
 public sealed class QuestPdfRenderer : IPdfRenderer
 {
-    private const string Laterite = "#B4472B";
-    private const string Atlantique = "#1C3D5A";
+    private const string Laterite = "#B8481A";
+    private const string Atlantique = "#0F3446";
     private const string Baobab = "#2F5D3A";
-    private const string Sable = "#F6EFE4";
-    private const string Ligne = "#DDD2C2";
-    private const string Charbon = "#1F1B16";
-    private const string CharbonDoux = "#5C5348";
+    private const string Sable = "#F6F3EC";
+    private const string Ligne = "#E2DDD0";
+    private const string Charbon = "#13222B";
+    private const string CharbonDoux = "#5A6870";
 
     static QuestPdfRenderer()
     {

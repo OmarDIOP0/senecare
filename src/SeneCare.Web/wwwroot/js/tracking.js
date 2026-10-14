@@ -19,7 +19,7 @@
           element.hidden = false;
           map = L.map(element, { zoomControl: true, attributionControl: true });
           L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
-          if (home) L.circleMarker(home, { radius: 8, color: "#1c3d5a", fillOpacity: 0.9 }).addTo(map);
+          if (home) L.circleMarker(home, { radius: 8, color: "#0f3446", fillOpacity: 0.9 }).addTo(map);
         }
         if (!marker) marker = L.marker([lat, lng]).addTo(map);
         else marker.setLatLng([lat, lng]);

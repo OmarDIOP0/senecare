@@ -1,10 +1,35 @@
 @model IReadOnlyList<SeneCare.Application.Locations.NeighborhoodOption>
 @{
     var field = ViewData["Field"] as string ?? string.Empty;
+    var typed = Context.Request.Query["q"].ToString().Trim();
+    var communes = ViewData["Communes"] as IReadOnlyList<SeneCare.Application.Locations.CommuneOption> ?? [];
 }
-@if (Model.Count == 0 && Context.Request.Query["q"].ToString().Trim().Length >= 2)
+@if (Model.Count == 0 && typed.Length >= 2)
 {
-    <li class="px-3 py-3 text-sm text-charbon-doux">@L["Picker_NoResult"]</li>
+    @* Missing from the list: the person adds it, attached to its commune (an admin reviews additions). *@
+    <li class="grid gap-3 px-3 py-3" data-hood-add="@field" data-hood-name="@typed">
+        <p class="text-sm text-charbon-doux">@L["Picker_NoResult", typed]</p>
+        <div class="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end">
+            <div>
+                <label class="sc-label" for="@field-commune">@L["Picker_AddCommune"]</label>
+                <select id="@field-commune" class="sc-input" data-hood-commune>
+                    <option value="">@L["Picker_AddChoose"]</option>
+                    @foreach (var group in communes.GroupBy(c => c.Department))
+                    {
+                        <optgroup label="@group.Key">
+                            @foreach (var commune in group)
+                            {
+                                <option value="@commune.Id">@commune.Name</option>
+                            }
+                        </optgroup>
+                    }
+                </select>
+            </div>
+            <button type="button" class="sc-btn-secondaire" data-hood-submit data-text-choose="@L["Picker_AddChoose"]">
+                <sc-icon name="plus" class="size-4" />@L["Picker_AddButton", typed]
+            </button>
+        </div>
+    </li>
 }
 @foreach (var option in Model)
 {

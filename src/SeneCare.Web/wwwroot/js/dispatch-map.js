@@ -2,7 +2,7 @@
 (() => {
   "use strict";
 
-  const colours = { Critical: "#b4472b", High: "#d9a21b", Normal: "#1c3d5a", Planned: "#2f5d3a" };
+  const colours = { Critical: "#b42318", High: "#d9622b", Normal: "#0f3446", Planned: "#1f7a45" };
 
   document.addEventListener("DOMContentLoaded", () => {
     const element = document.querySelector("[data-dispatch-map]");
@@ -17,7 +17,7 @@
     for (const p of points) {
       const marker = L.circleMarker([p.lat, p.lng], {
         radius: p.urgency === "Critical" ? 10 : 8,
-        color: colours[p.urgency] ?? "#1c3d5a",
+        color: colours[p.urgency] ?? "#0f3446",
         fillOpacity: 0.85,
       }).addTo(map);
       const link = document.createElement("a");

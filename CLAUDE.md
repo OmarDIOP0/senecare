@@ -37,15 +37,19 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
   photos compressées côté client avant upload (max ~300 Ko), upload repris si coupure.
 - Hors-ligne : un signalement doit pouvoir être rédigé sans réseau et partir
   automatiquement au retour de la connexion (Background Sync + file IndexedDB).
-- Identité : connexion par NUMÉRO DE TÉLÉPHONE (+221, formats 77/78/76/70/75) + code OTP
+- Identité : connexion par NUMÉRO DE TÉLÉPHONE (+221, 9 chiffres, préfixes 77/78/76/75/71/70 définis dans `PhoneNumber.MobilePrefixes`,
+  contrôlés aussi pendant la saisie) + code OTP
   par SMS, WhatsApp en option. Email facultatif. Mot de passe optionnel.
+  En développement seulement : `Otp:ShowCodeOnPage` (actif dans appsettings.Development.json) affiche le
+  code sous les 6 cases, `Otp:SkipVerification` saute l'étape ; l'application refuse de démarrer avec l'un
+  de ces réglages hors Development.
 - Paiement : Wave, Orange Money, Free Money (via un agrégateur type PayDunya, PayTech
   ou CinetPay derrière une interface IPaymentProvider), + paiement en espèces/virement
   saisi par l'admin. Reçus PDF. Relances avant échéance.
 - Adresses : souvent imprécises. → Région / Département / Commune / Quartier
   (référentiel en base, seed avec Dakar, Thiès, Rufisque, Pikine, Guédiawaye,
-  Mbour, Saint-Louis, Touba, Kaolack, Ziguinchor…) + point GPS sur carte
-  + champ « point de repère » (ex : « derrière la mosquée, portail vert »).
+  Mbour, Saint-Louis, Touba, Kaolack, Ziguinchor…) + point GPS sur carte.
+  Le champ « point de repère » n'est plus demandé dans les formulaires (décision utilisateur), la colonne reste en base.
 - Communication : WhatsApp est le canal n°1, puis SMS, puis push PWA, puis email.
   Boutons « Appeler » et « WhatsApp » visibles sur chaque intervention.
 - Langues : Français par défaut, Wolof prévu dès le départ (fichiers de ressources,
@@ -85,23 +89,26 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
   hors du code.
 - Docker + docker-compose (web, api, postgres, redis éventuel).
 
-## 5. Direction visuelle — chaleureuse, locale, vivante (finition WURUS, structure HomeServe / VBS)
-Références validées : wurus.app (palette, typographies, panneaux sombres, bandes de motifs, inscription en
+## 5. Direction visuelle — chaleureuse, locale, vivante (palette Atlantique & terre cuite)
+Références de mise en page : wurus.app (typographies, panneaux sombres, bandes de motifs, inscription en
 étapes), homeserve.fr et vbs.services (structure d'un vrai site de services). On s'inspire, on ne copie ni
-logo, ni textes, ni marque. Objectif : séduire visuellement, jamais l'air « généré par une IA ».
+logo, ni textes, ni marque, ni couleurs : la palette est propre à SeneCare (choisie par l'utilisateur).
+Objectif : séduire visuellement, jamais l'air « généré par une IA ».
 
 Tokens (Styles/app.css, noms conservés, aucune couleur en dur dans les vues) :
-- Pages crème `--sable` #F7F1E2, surfaces `--surface` #FFFDF7, blocs `--sourdine` #F3EBD6, bordures #E6D9C2.
-- Texte expresso `charbon` #1E120A, secondaire `charbon-doux` #6B5C4A (AA).
-- Or / ambre (`--or` #E2BD6B, `--ambre` #E7A338, `--ambre-fonce`) : bouton principal (dégradé or→ambre,
-  texte expresso), étoiles, chiffres sur fond sombre. Orange SeneCare `--laterite` #C2410C : liens, icônes,
-  points forts. Statuts : `baobab` (vert), `soleil`, `rouge`, `atlantique` (info).
-- Panneaux expresso `.sc-panneau` (`--nuit` #1E120A, grille fine dorée) pour les temps forts : bandeau de
+- Pages sable clair `--sable` #F6F3EC, surfaces `--surface` #FFFFFF, blocs `--sourdine` #EEEAE0, bordures #E2DDD0.
+- Texte bleu encre `charbon` #13222B, secondaire `charbon-doux` #5A6870 (AA).
+- Terre cuite : bouton principal (dégradé `--bouton-haut` #D9622B → `--bouton-bas` #B5461A, texte blanc),
+  liens, icônes, points forts (`--laterite` #B8481A).
+- Soleil (`--ambre` #F2B544, `--or` #F6CB6E) : étoiles, coches, chiffres sur fond sombre, choix sélectionné
+  (`--ocre-clair` #FCF0D4). Sur-titres `.sc-eyebrow` en bleu (`--ocre-texte` #1D5B75).
+  Statuts : `baobab` (vert), `soleil`, `rouge`, `atlantique` (info).
+- Panneaux bleu Atlantique `.sc-panneau` (`--nuit` #0F3446, grille fine claire) pour les temps forts : bandeau de
   contact, en-tête et pied de page publics, étapes, chiffres, appel final, carte de formule, panneau
-  d'inscription. Bandes de motifs wax / bogolan `.sc-bande` / `.sc-bande-fine` (`img/motifs/bande.svg`)
-  sous l'en-tête, au-dessus du pied de page, en bas des panneaux.
+  d'inscription. Bandes de motifs `.sc-bande` / `.sc-bande-fine` (`img/motifs/bande.svg`, terre cuite, soleil,
+  bleu, sable) sous l'en-tête, au-dessus du pied de page, en bas des panneaux.
 - Mode Clair par défaut ; sélecteur Clair / Sombre / Système (`Site/_ThemeSwitch`, localStorage `sc-theme`,
-  appliqué dans `Ui/_Head` avant le premier rendu). Sombre = expresso.
+  appliqué dans `Ui/_Head` avant le premier rendu). Sombre = bleu nuit #0A1F2A.
 - Typo auto-hébergée : Unbounded 700 (h1, titres de section `.sc-section-titre`, logo, grands chiffres),
   Bricolage Grotesque 400/600/700 (texte), Space Mono 700 (petites capitales `.sc-eyebrow`, `.sc-label-mono`,
   en-têtes de tableau). Drapeau du Sénégal en SVG (`Site/_FlagSn`), jamais d'emoji.
@@ -111,7 +118,7 @@ Tokens (Styles/app.css, noms conservés, aucune couleur en dur dans les vues) :
   Curseur « main » sur tout ce qui est cliquable.
 
 Site public (`_Layout`, `PublicSiteController`, `Views/PublicSite`, contenus `Content/site-content.json`) :
-- Bandeau de contact, en-tête expresso (menu des métiers, Espace client, « Demander une intervention »),
+- Bandeau de contact, en-tête bleu Atlantique (menu des métiers, Espace client, « Demander une intervention »),
   pied de page dense, barre Appeler / WhatsApp sur mobile.
 - Accueil : hero + formulaire rapide (`/demander`), métiers avec photo, étapes, techniciens, exemple
   d'intervention, avis, chiffres, conseils, FAQ, appel final. Pages métiers, particuliers, entreprises,
@@ -120,10 +127,13 @@ Site public (`_Layout`, `PublicSiteController`, `Views/PublicSite`, contenus `Co
   production. Montants et délais : toujours depuis la base. Jamais de faux avis publiés.
 
 Parcours client :
-- Inscription en 4 étapes (`Registration/Index`, `form[data-wizard]`) : profil, coordonnées (nom de
-  l'entreprise seulement pour une entreprise), formule (mensuel / annuel « 2 mois offerts » pour les
-  particuliers ; Essentiel / Professionnel / Premium, facturés au trimestre, pour les entreprises),
-  confirmation + consentements. Puis ajout du logement / premier site → abonnement à payer.
+- « Créer mon compte » en 5 étapes, cadre commun `Shared/Signup/_Shell` : 1 profil (Maison / Entreprise)
+  puis 2 numéro (`Registration/Start` → `/connexion` → code), toujours dans cet ordre ; puis
+  (`Registration/Index`) 3 nom (+ entreprise) et logement / premier site (carte, quartier, photos),
+  4 formule (mensuel / annuel « 2 mois offerts » pour les particuliers ; Essentiel / Professionnel /
+  Premium, facturés au trimestre, pour les entreprises), 5 confirmation + consentements.
+  Compte, logement et abonnement sont créés ensemble, puis `/abonnement` pour payer.
+  D'autres logements s'ajoutent ensuite depuis l'espace.
 - Paiement réel : lien marchand Wave configuré par l'admin (`/admin/paiements`), « J'ai payé » + référence,
   vérification par la Finance (notification), activation et message WhatsApp / SMS au client. Factures et
   reçus PDF. Pas de bouton de simulation dans l'interface.

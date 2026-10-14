@@ -1,0 +1,35 @@
+@model SignInViewModel
+@using SeneCare.Domain.Accounts
+@using SeneCare.Domain.Users
+@{
+    Layout = "Signup/_Shell";
+    ViewData["Title"] = L["Register_Title"];
+    var phoneError = ViewData.ModelState[nameof(Model.Phone)]?.Errors.FirstOrDefault()?.ErrorMessage;
+    var phoneInput = new PhoneInputModel(nameof(Model.Phone), Model.Phone, L["SignIn_PhoneLabel"], phoneError);
+    // Back with a wrong number, or « Changer de numéro » from the code page: open on the number.
+    var start = phoneError is not null || Context.Request.Query.ContainsKey("numero") ? 1 : 0;
+}
+
+@* Steps 1–2 of « Créer mon compte ». The code is then checked on /connexion/code (step 2 too), the rest
+   comes once the number is verified. Without JavaScript both steps show one under the other. *@
+<form method="post" asp-controller="Auth" asp-action="SignIn" class="grid gap-8" novalidate data-wizard data-wizard-start="@start">
+    <input type="hidden" name="Signup" value="true" />
+    <partial name="Signup/_StepBars" model="1" />
+
+    <fieldset class="grid gap-6" data-wizard-step>
+        <partial name="Signup/_StepHeading" model='new WizardHeadingModel(1, 5, L["Register_Step1"].Value, L["Register_Step1_Title"].Value, L["Register_Step1_Text"].Value)' />
+        <partial name="Signup/_ProfileChoice" model="Model.Profile" />
+    </fieldset>
+
+    <fieldset class="grid gap-5" data-wizard-step>
+        <partial name="Signup/_StepHeading" model='new WizardHeadingModel(2, 5, L["Register_StepPhone"].Value, L["Register_StepPhone_Title"].Value, L["Register_StepPhone_Text"].Value)' />
+        <partial name="Ui/_PhoneInput" model="phoneInput" />
+    </fieldset>
+
+    <div class="flex flex-wrap gap-3">
+        <button type="button" class="sc-btn-secondaire min-h-12 flex-1 text-base sm:flex-none sm:px-8" data-wizard-prev hidden>@L["Register_Back"]</button>
+        <button type="button" class="sc-btn-primaire min-h-12 flex-[2] text-base" data-wizard-next hidden>@L["Register_Next"]<sc-icon name="arrow-right" class="size-5" /></button>
+        <button type="submit" class="sc-btn-primaire min-h-12 flex-[2] text-base" data-wizard-submit>@L["SignIn_Submit"]<sc-icon name="arrow-right" class="size-5" /></button>
+    </div>
+    <p class="text-center text-sm text-charbon-doux">@L["Register_HaveAccount"] <a href="/connexion" class="sc-lien font-semibold">@L["Register_SignInLink"]</a></p>
+</form>

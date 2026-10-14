@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using SeneCare.Application.Accounts;
 using SeneCare.Application.Auth;
+using SeneCare.Domain.Accounts;
 using SeneCare.Domain.Users;
 using SeneCare.Infrastructure.Identity;
 using SeneCare.Web.Infrastructure;
@@ -17,12 +18,20 @@ public sealed class AuthController(
     VerifyOtpHandler verifyOtp,
     AcceptInvitationHandler acceptInvitation,
     SignInManager<ApplicationUser> signInManager,
-    UserManager<ApplicationUser> userManager) : Controller
+    UserManager<ApplicationUser> userManager,
+    Microsoft.Extensions.Options.IOptions<OtpOptions> otpOptions) : Controller
 {
     private const string ChallengeKey = "otp.challenge";
     private const string PhoneKey = "otp.phone";
     private const string ChannelKey = "otp.channel";
     private const string ReturnUrlKey = "auth.returnUrl";
+
+    /// <summary>Set while the number is verified as step 2 of « Créer mon compte » (profile kept for step 3).</summary>
+    public const string SignupKey = "signup";
+    public const string SignupProfileKey = "signup.profile";
+
+    /// <summary>Development only (Otp:ShowCodeOnPage): the code, shown under the boxes.</summary>
+    private const string DevelopmentCodeKey = "otp.dev";
 
     [HttpGet("/connexion")]
     public IActionResult SignIn(string? returnUrl, string? phone)
@@ -33,6 +42,20 @@ public sealed class AuthController(
         }
 
         TempData[ReturnUrlKey] = SafeReturnUrl(returnUrl);
+
+        // Number typed in a quick form (home, trade page): say at once when it is not a Senegalese mobile.
+        if (!string.IsNullOrWhiteSpace(phone))
+        {
+            if (PhoneNumber.TryParse(phone, out var parsed))
+            {
+                phone = parsed.Formatted;
+            }
+            else
+            {
+                ModelState.AddModelError(nameof(SignInViewModel.Phone), this.ErrorMessage(new SeneCare.Application.Common.AppError("phone.invalid")));
+            }
+        }
+
         return View(new SignInViewModel { Phone = phone });
     }
 
@@ -45,12 +68,36 @@ public sealed class AuthController(
         if (!result.IsSuccess)
         {
             ModelState.AddModelError(nameof(model.Phone), this.ErrorMessage(result.Error));
-            return View(model);
+            return model.Signup ? View("~/Views/Registration/Start.cshtml", model) : View(model);
+        }
+
+        if (model.Signup)
+        {
+            TempData[SignupKey] = "1";
+            TempData[SignupProfileKey] = (model.Profile ?? AccountKind.Household).ToString();
+        }
+        else
+        {
+            TempData.Remove(SignupKey);
+        }
+
+        // Development without SMS: the code is checked at once, no code page.
+        if (result.Value.DevelopmentCode is { } skipped && otpOptions.Value.SkipVerification)
+        {
+            var signedIn = await verifyOtp.HandleAsync(new VerifyOtpCommand(result.Value.ChallengeId, skipped), cancellationToken);
+            if (!signedIn.IsSuccess)
+            {
+                ModelState.AddModelError(nameof(model.Phone), this.ErrorMessage(signedIn.Error));
+                return model.Signup ? View("~/Views/Registration/Start.cshtml", model) : View(model);
+            }
+
+            return await SignInVerifiedAsync(signedIn.Value.UserId, cancellationToken);
         }
 
         TempData[ChallengeKey] = result.Value.ChallengeId.ToString();
         TempData[PhoneKey] = result.Value.Phone.NationalNumber;
         TempData[ChannelKey] = result.Value.Channel.ToString();
+        TempData[DevelopmentCodeKey] = result.Value.DevelopmentCode;
         return RedirectToAction(nameof(Code));
     }
 
@@ -62,7 +109,13 @@ public sealed class AuthController(
             return RedirectToAction(nameof(SignIn));
         }
 
-        return View(new CodeViewModel { Phone = phone, Channel = channel });
+        return View(new CodeViewModel
+        {
+            Phone = phone,
+            Channel = channel,
+            Signup = TempData.Peek(SignupKey) is not null,
+            DevelopmentCode = TempData.Peek(DevelopmentCodeKey) as string,
+        });
     }
 
     [HttpPost("/connexion/code")]
@@ -77,6 +130,8 @@ public sealed class AuthController(
 
         model.Phone = phone;
         model.Channel = channel;
+        model.Signup = TempData.Peek(SignupKey) is not null;
+        model.DevelopmentCode = TempData.Peek(DevelopmentCodeKey) as string;
         var result = await verifyOtp.HandleAsync(new VerifyOtpCommand(challengeId, model.Code), cancellationToken);
         if (!result.IsSuccess)
         {
@@ -87,8 +142,14 @@ public sealed class AuthController(
         TempData.Remove(ChallengeKey);
         TempData.Remove(PhoneKey);
         TempData.Remove(ChannelKey);
+        TempData.Remove(DevelopmentCodeKey);
+        return await SignInVerifiedAsync(result.Value.UserId, cancellationToken);
+    }
 
-        var identityUser = await userManager.FindByIdAsync(result.Value.UserId.ToString())
+    private async Task<IActionResult> SignInVerifiedAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        TempData.Remove(SignupKey);
+        var identityUser = await userManager.FindByIdAsync(userId.ToString())
             ?? throw new InvalidOperationException("Identity user missing after OTP verification.");
 
         if (AsGuid(TempData[InvitationController.InvitationKey]) is { } id)
@@ -104,9 +165,14 @@ public sealed class AuthController(
         await signInManager.SignInAsync(identityUser, isPersistent: true);
 
         var returnUrl = TempData[ReturnUrlKey] as string;
-        return await IsRegisteredAsync(identityUser)
-            ? LocalRedirect(SafeReturnUrl(returnUrl))
-            : RedirectToAction(nameof(RegistrationController.Index), "Registration");
+        if (await IsRegisteredAsync(identityUser))
+        {
+            // Already a customer who went through « Créer mon compte »: straight to the space.
+            TempData.Remove(SignupProfileKey);
+            return LocalRedirect(SafeReturnUrl(returnUrl));
+        }
+
+        return RedirectToAction(nameof(RegistrationController.Index), "Registration");
     }
 
     [HttpPost("/connexion/renvoyer")]
@@ -123,6 +189,7 @@ public sealed class AuthController(
         {
             TempData[ChallengeKey] = result.Value.ChallengeId.ToString();
             TempData[ChannelKey] = result.Value.Channel.ToString();
+            TempData[DevelopmentCodeKey] = result.Value.DevelopmentCode;
         }
         else
         {

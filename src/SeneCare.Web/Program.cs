@@ -71,6 +71,12 @@ try
 
     var app = builder.Build();
 
+    if (!app.Environment.IsDevelopment()
+        && app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<SeneCare.Application.Auth.OtpOptions>>().Value.IsDevelopmentOnly)
+    {
+        throw new InvalidOperationException("Otp:SkipVerification and Otp:ShowCodeOnPage are for development only.");
+    }
+
     await app.Services.InitializeDatabaseAsync(app.Configuration);
 
     if (!app.Environment.IsDevelopment())

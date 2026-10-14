@@ -10,7 +10,8 @@ public sealed record PhoneNumber
 {
     public const string CountryCode = "+221";
 
-    private static readonly string[] MobilePrefixes = ["70", "75", "76", "77", "78"];
+    /// <summary>Mobile ranges accepted at sign-in (also checked while typing: <c>Ui/_Head</c>).</summary>
+    public static IReadOnlyList<string> MobilePrefixes { get; } = ["70", "71", "75", "76", "77", "78"];
 
     /// <summary>
     /// Placeholder of an erased person: a fixed-line prefix, so it can never receive an OTP, never be typed

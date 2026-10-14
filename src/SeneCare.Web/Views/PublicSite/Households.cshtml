@@ -39,14 +39,13 @@
                             <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-4 text-baobab" /><span><span class="font-semibold">@row.Label</span> : @row.Plan</span></li>
                         }
                     </ul>
-                    <p class="mt-2"><partial name="Site/_SampleTag" model="Site.Plans.Sample" /></p>
                 }
             </div>
             <div class="rounded-lg bg-sourdine p-6">
                 <p class="text-sm text-charbon-doux">@L["Home_Offer_From"]</p>
                 <p class="mt-1 text-3xl font-bold text-atlantique"><sc-amount value="@plan.MonthlyPrice.Amount" /> <span class="text-base font-normal text-charbon-doux">@L["Home_Offer_PerMonth"]</span></p>
                 <p class="mt-1 text-sm text-charbon-doux">@L["Home_Offer_Registration", Formatting.Fcfa(plan.RegistrationFee)]</p>
-                <a href="/connexion" class="sc-btn-primaire mt-5 w-full">@L["Site_Households_Subscribe"]</a>
+                <a href="/inscription" class="sc-btn-primaire mt-5 w-full">@L["Site_Households_Subscribe"]</a>
                 <a href="/tarifs" class="sc-lien mt-3 block text-center text-sm">@L["Site_ComparePrices"]</a>
             </div>
         </div>

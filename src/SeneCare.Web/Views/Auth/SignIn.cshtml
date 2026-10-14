@@ -1,26 +1,24 @@
 @model SignInViewModel
 @using SeneCare.Domain.Users
 @{
+    Layout = "Signup/_Shell";
     ViewData["Title"] = L["SignIn_Title"];
     var phoneError = ViewData.ModelState[nameof(Model.Phone)]?.Errors.FirstOrDefault()?.ErrorMessage;
     var phoneInput = new PhoneInputModel(nameof(Model.Phone), Model.Phone, L["SignIn_PhoneLabel"], phoneError);
 }
 
-<div class="mx-auto max-w-sm pt-6 lg:pt-16">
-<h1 class="text-2xl font-semibold tracking-tight">@L["SignIn_Heading"]</h1>
-<p class="mt-1.5 text-[15px] text-charbon-doux">@L["SignIn_Intro"]</p>
+<p class="sc-eyebrow">@L["SignIn_Eyebrow"]</p>
+<h1 class="mt-3 font-display text-2xl leading-tight font-bold tracking-[-0.02em] sm:text-[1.875rem]">@L["SignIn_Heading"]</h1>
+<p class="mt-2 text-charbon-doux">@L["SignIn_Intro"]</p>
 
 <form method="post" asp-action="SignIn" class="mt-8 grid gap-5" novalidate>
     <partial name="Ui/_PhoneInput" model="phoneInput" />
 
-    <fieldset>
-        <legend class="sc-label">@L["SignIn_Channel"]</legend>
-        <div class="mt-1.5 grid grid-cols-2 gap-2">
-            <label class="sc-choix"><input type="radio" asp-for="Channel" value="@OtpChannel.Sms" /> @L["SignIn_ChannelSms"]</label>
-            <label class="sc-choix"><input type="radio" asp-for="Channel" value="@OtpChannel.WhatsApp" /> @L["SignIn_ChannelWhatsApp"]</label>
-        </div>
-    </fieldset>
 
-    <button type="submit" class="sc-btn-primaire w-full">@L["SignIn_Submit"]</button>
+    <button type="submit" class="sc-btn-primaire min-h-12 w-full text-base">@L["SignIn_Submit"]<sc-icon name="arrow-right" class="size-5" /></button>
 </form>
+
+<div class="mt-8 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-sourdine p-4">
+    <p class="text-[15px]"><span class="font-semibold">@L["SignIn_NoAccount"]</span><br /><span class="text-sm text-charbon-doux">@L["SignIn_NoAccount_Text"]</span></p>
+    <a href="/inscription" class="sc-btn-secondaire">@L["Register_Submit"]</a>
 </div>

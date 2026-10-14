@@ -34,6 +34,8 @@ const server = spawn("dotnet", command, {
   env: {
     ...process.env, ASPNETCORE_ENVIRONMENT: "Development", DOTNET_ENVIRONMENT: "Development", ASPNETCORE_CONTENTROOT: webDir,
     Otp__MaxPerIpPerHour: "1000", Otp__MaxPerPhonePerHour: "1000", RateLimits__Otp__PermitLimit: "1000", Bootstrap__SuperAdminPhones: adminPhone,
+    // The flows below read the code from the server log: keep the code step even in Development.
+    Otp__SkipVerification: "false",
   },
 });
 server.stdout.on("data", (d) => log.push(d.toString()));
@@ -81,8 +83,8 @@ async function signIn(context, phone) {
   await page.fill("input[type=tel]", phone);
   await page.locator("input[type=tel]").press("Enter");
   await page.waitForURL(/connexion\/code/, { timeout: 120000 });
-  await page.fill("input[name=Code]", await codeFor(phone));
-  await page.locator("input[name=Code]").press("Enter");
+  // Six boxes: the whole code typed in the first one spreads and sends the form.
+  await page.fill("[data-otp-box] >> nth=0", await codeFor(phone));
   await page.waitForURL((url) => !url.pathname.endsWith("/connexion/code"), { timeout: 120000 });
   // Staff accounts only confirm their name and the privacy policy.
   if (page.url().includes("/inscription")) {
@@ -102,8 +104,8 @@ async function signInNew(context) {
   await page.fill("input[type=tel]", phone);
   await page.locator("input[type=tel]").press("Enter");
   await page.waitForURL(/connexion\/code/, { timeout: 120000 });
-  await page.fill("input[name=Code]", await codeFor(phone));
-  await page.locator("input[name=Code]").press("Enter");
+  // Six boxes: the whole code typed in the first one spreads and sends the form.
+  await page.fill("[data-otp-box] >> nth=0", await codeFor(phone));
   await page.waitForURL((url) => !url.pathname.endsWith("/connexion/code"), { timeout: 120000 });
   if (!page.url().includes("/inscription")) await page.goto(`${base}/inscription`);
   return page;
@@ -127,7 +129,8 @@ async function signUp(context, profile, name, company, plan, annual = false) {
   return page;
 }
 
-async function addPlace(page, kind, name, landmark) {
+// The map point replaces the landmark (no longer asked): a point in Dakar.
+async function addPlace(page, kind, name) {
   await page.goto(`${base}/logements/nouveau`);
   const id = await page.evaluate(async () => {
     const html = await (await fetch("/quartiers/recherche?q=almadies&field=NeighborhoodId")).text();
@@ -136,7 +139,10 @@ async function addPlace(page, kind, name, landmark) {
   await page.check(`input[name=Kind][value=${kind}]`, { force: true });
   await page.fill("input[name=Name]", name);
   await page.evaluate((v) => (document.getElementById("NeighborhoodId").value = v), id);
-  await page.fill("textarea[name=Landmark]", landmark);
+  await page.evaluate(() => {
+    document.getElementById("Latitude").value = "14.7471";
+    document.getElementById("Longitude").value = "-17.4983";
+  });
   await page.click("form[enctype] button[type=submit]");
   await page.waitForLoadState("networkidle");
 }
@@ -195,8 +201,8 @@ const emptyState = await emptyCompany.context().storageState();
 
 const companyContext = await browser.newContext(sw);
 const company = await signUp(companyContext, "Business", "Aïssatou Ndiaye", "Teranga Logistique", "PROFESSIONNEL");
-await addPlace(company, "Office", "Siège Plateau", "Face à la BICIS, 2e étage");
-await addPlace(company, "Warehouse", "Dépôt Rufisque", "Derrière la station Total");
+await addPlace(company, "Office", "Siège Plateau");
+await addPlace(company, "Warehouse", "Dépôt Rufisque");
 await activate(company);
 await report(company, "Fuite d'eau sous le lavabo des toilettes du rez-de-chaussée");
 await report(company, "Climatiseur de la salle de réunion en panne");
@@ -204,13 +210,13 @@ const companyState = await companyContext.storageState();
 
 const homeContext = await browser.newContext(sw);
 const home = await signUp(homeContext, "Household", "Mariama Ba", null, "HOME", true);
-await addPlace(home, "Villa", "Villa de Ngor", "Derrière la mosquée, portail vert");
+await addPlace(home, "Villa", "Villa de Ngor");
 await activate(home);
 
 // A household that chose its plan and declared its Wave payment: waiting for the admin.
 const waitingContext = await browser.newContext(sw);
 const waiting = await signUp(waitingContext, "Household", "Khady Fall", null, "HOME");
-await addPlace(waiting, "Villa", "Maison Mermoz", "Portail bleu, face à la pharmacie");
+await addPlace(waiting, "Villa", "Maison Mermoz");
 await waiting.goto(`${base}/abonnement`);
 await waiting.locator("form[action*='/paiement'] input[name=reference]").fill("WAVE-123456");
 await waiting.locator("form[action*='/paiement'] button[type=submit]").click();

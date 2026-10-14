@@ -4,4 +4,8 @@
     {
         <template data-toast="succes">@toast</template>
     }
+    @if (TempData["flash.error"] is string error && Context.Request.Path.StartsWithSegments("/logements"))
+    {
+        <template data-toast="erreur">@error</template>
+    }
 </div>

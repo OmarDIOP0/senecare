@@ -1,0 +1,10 @@
+@model WizardHeadingModel
+@* Title of one sign-up step; the progress bars are drawn by the page (they move with the step shown). *@
+<legend class="contents">
+    <span class="sc-eyebrow block">@L["Register_StepOf", Model.Step, Model.Total] — @Model.Label</span>
+    <span class="mt-3 block font-display text-2xl leading-tight font-bold tracking-[-0.02em] sm:text-[1.875rem]">@Model.Title</span>
+</legend>
+@if (Model.Text is not null)
+{
+    <p class="-mt-3 text-charbon-doux">@Model.Text</p>
+}

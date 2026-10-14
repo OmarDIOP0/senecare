@@ -13,4 +13,18 @@ public sealed class OtpOptions
 
     /// <summary>Max codes requested from one IP address per hour.</summary>
     public int MaxPerIpPerHour { get; set; } = 20;
+
+    /// <summary>
+    /// Development only: no code is sent, the number is signed in right away. The web app refuses to
+    /// start with this switch outside the Development environment.
+    /// </summary>
+    public bool SkipVerification { get; set; }
+
+    /// <summary>
+    /// Development only: the code is still sent and asked for, and also shown under the six boxes so it can be
+    /// typed without a phone. Refused at startup outside Development, like <see cref="SkipVerification"/>.
+    /// </summary>
+    public bool ShowCodeOnPage { get; set; }
+
+    public bool IsDevelopmentOnly => SkipVerification || ShowCodeOnPage;
 }

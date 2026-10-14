@@ -18,7 +18,6 @@
     <section id="particuliers" class="mx-auto w-full max-w-5xl scroll-mt-24 px-4 pt-14 lg:px-6" aria-labelledby="tarifs-particuliers">
         <div class="flex flex-wrap items-center gap-3">
             <h2 id="tarifs-particuliers" class="sc-section-titre">@L["Public_Nav_Households"]</h2>
-            <partial name="Site/_SampleTag" model="extras.Sample" />
         </div>
         <div class="mt-6 overflow-x-auto rounded-lg border border-ligne bg-surface shadow-xs">
             <table class="sc-table min-w-[36rem]">
@@ -74,7 +73,7 @@
                 </tbody>
             </table>
         </div>
-        <a href="/connexion" class="sc-btn-primaire mt-5 px-6">@L["Site_Households_Subscribe"]</a>
+        <a href="/inscription" class="sc-btn-primaire mt-5 px-6">@L["Site_Households_Subscribe"]</a>
     </section>
 }
 
@@ -84,7 +83,6 @@
     <section id="entreprises" class="mx-auto w-full max-w-5xl scroll-mt-24 px-4 pt-14 lg:px-6" aria-labelledby="tarifs-entreprises">
         <div class="flex flex-wrap items-center gap-3">
             <h2 id="tarifs-entreprises" class="sc-section-titre">@L["Public_Nav_Business"]</h2>
-            <partial name="Site/_SampleTag" model="extras.Sample" />
         </div>
         <p class="mt-2 text-[15px] text-charbon-doux">@L["Site_Pricing_BusinessNote", Formatting.Fcfa(business[0].RegistrationFee)]</p>
         <div class="mt-6 overflow-x-auto rounded-lg border border-ligne bg-surface shadow-xs">
@@ -149,7 +147,7 @@
                 </tbody>
             </table>
         </div>
-        <a href="/connexion" class="sc-btn-primaire mt-5 px-6">@L["Site_Business_Cta"]</a>
+        <a href="/inscription?profil=Business" class="sc-btn-primaire mt-5 px-6">@L["Site_Business_Cta"]</a>
     </section>
 }
 

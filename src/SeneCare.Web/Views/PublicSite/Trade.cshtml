@@ -28,7 +28,6 @@
                     <div class="rounded-lg border border-ligne bg-surface p-4"><dt class="flex items-center gap-1.5 text-sm text-charbon-doux"><sc-icon name="timer" class="size-4 text-laterite" />@L["Site_Trade_Delay"]</dt><dd class="mt-1 font-semibold">@Model.Delay</dd></div>
                     <div class="rounded-lg border border-ligne bg-surface p-4"><dt class="flex items-center gap-1.5 text-sm text-charbon-doux"><sc-icon name="wallet" class="size-4 text-laterite" />@L["Site_Trade_Price"]</dt><dd class="mt-1 font-semibold">@Model.StartingPrice</dd></div>
                 </dl>
-                <p class="mt-2"><partial name="Site/_SampleTag" model="Model.Sample" /></p>
             }
             <form method="get" action="/demander" class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-end">
                 <input type="hidden" name="metier" value="@Model.Domain" />
@@ -36,7 +35,7 @@
                     <label class="sc-label" for="t-telephone">@L["SignIn_PhoneLabel"]</label>
                     <div class="mt-1.5 flex">
                         <span class="inline-flex items-center rounded-l-md border border-r-0 border-ligne bg-surface px-3 text-[15px] text-charbon-doux">+221</span>
-                        <input id="t-telephone" name="telephone" type="tel" inputmode="tel" autocomplete="tel-national" class="sc-input mt-0 rounded-l-none" placeholder="77 123 45 67" />
+                        <input id="t-telephone" name="telephone" type="tel" inputmode="numeric" maxlength="17" data-phone autocomplete="tel-national" class="sc-input mt-0 rounded-l-none" placeholder="77 123 45 67" />
                     </div>
                 </div>
                 <button type="submit" class="sc-btn-primaire min-h-12 px-6">@L["Site_RequestJob"]</button>
@@ -80,7 +79,6 @@
     <section class="mx-auto w-full max-w-7xl px-4 pt-14 lg:px-6" aria-labelledby="avis-metier-titre">
         <div class="flex flex-wrap items-center gap-3">
             <h2 id="avis-metier-titre" class="sc-section-titre">@L["Site_Trade_Reviews", Model.Name]</h2>
-            <partial name="Site/_SampleTag" model="published.Count == 0" />
         </div>
         <ul class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             @foreach (var review in published)

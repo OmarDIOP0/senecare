@@ -10,7 +10,13 @@ public sealed class SignInViewModel
     /// <summary>National number as typed (« 77 123 45 67 »); +221 is shown as a fixed prefix.</summary>
     public string? Phone { get; set; }
 
-    public OtpChannel Channel { get; set; } = OtpChannel.Sms;
+    /// <summary>WhatsApp, the channel everybody uses; the server falls back to SMS when it fails.</summary>
+    public OtpChannel Channel { get; set; } = OtpChannel.WhatsApp;
+
+    /// <summary>Step 2 of the sign-up (« Créer mon compte »): the number comes after the profile choice.</summary>
+    public bool Signup { get; set; }
+
+    public AccountKind? Profile { get; set; }
 }
 
 public sealed class CodeViewModel
@@ -20,6 +26,12 @@ public sealed class CodeViewModel
     public string Phone { get; set; } = string.Empty;
 
     public OtpChannel Channel { get; set; }
+
+    /// <summary>Shown as step 2 of the sign-up instead of a plain sign-in.</summary>
+    public bool Signup { get; set; }
+
+    /// <summary>Development only (Otp:ShowCodeOnPage): the code, to type it without a phone.</summary>
+    public string? DevelopmentCode { get; set; }
 
     public string FormattedPhone => PhoneNumber.TryParse(Phone, out var p) ? p.Formatted : Phone;
 }
@@ -52,6 +64,15 @@ public sealed class RegistrationViewModel
 
     /// <summary>The verified phone number, shown read-only.</summary>
     public string? Phone { get; set; }
+
+    /// <summary>Step shown first (0-based): 2 once the profile and number are done, 0 otherwise.</summary>
+    public int StartStep { get; set; } = 2;
+
+    /// <summary>The home / first site, entered during the sign-up (step 3); more can be added later.</summary>
+    public PropertyFormModel Property { get; set; } = new();
+
+    /// <summary>True when the person typed something at the « Votre logement » step.</summary>
+    public bool HasProperty => !string.IsNullOrWhiteSpace(Property.Name) || Property.NeighborhoodId is not null;
 }
 
 public sealed class InvitationViewModel

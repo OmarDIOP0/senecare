@@ -71,7 +71,8 @@
   --ligne: #e7e5e4;        /* 1px borders */
   --charbon: #1c1917;      /* primary text */
   --charbon-doux: #57534e; /* secondary text */
-  --charbon-pale: #a8a29e; /* tertiary text, placeholders */
+  --charbon-pale: #a8a29e; /* icons and dividers only: too light for text */
+  --placeholder: #78716c;  /* 4.8:1 on white */
   --sur-accent: #ffffff;
   color-scheme: light;
 }
@@ -98,6 +99,7 @@
     --charbon: #fafaf9;
     --charbon-doux: #a8a29e;
     --charbon-pale: #78716c;
+    --placeholder: #8f8984;
     --sur-accent: #0c0a09;
     color-scheme: dark;
   }
@@ -124,6 +126,7 @@
   --charbon: #fafaf9;
   --charbon-doux: #a8a29e;
   --charbon-pale: #78716c;
+  --placeholder: #8f8984;
   --sur-accent: #0c0a09;
   color-scheme: dark;
 }
@@ -219,7 +222,7 @@
   }
 
   ::placeholder {
-    color: var(--charbon-pale);
+    color: var(--placeholder);
   }
 
   @media (prefers-reduced-motion: reduce) {

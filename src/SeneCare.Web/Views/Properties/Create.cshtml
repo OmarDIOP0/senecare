@@ -25,7 +25,7 @@
 
 <form method="post" enctype="multipart/form-data" class="mt-6 grid gap-6" novalidate>
     <fieldset>
-        <legend class="sc-label">@L["Property_Kind"]</legend>
+        <legend class="sc-label">@L[isBusiness ? "Site_Kind" : "Property_Kind"]</legend>
         <div class="mt-2 grid grid-cols-3 gap-2">
             @foreach (var kind in kinds)
             {
@@ -35,15 +35,15 @@
     </fieldset>
 
     <div>
-        <label class="sc-label" asp-for="Name">@L["Property_Name"]</label>
-        <input asp-for="Name" class="sc-input" placeholder="@L["Property_Name_Placeholder"]" required />
+        <label class="sc-label" asp-for="Name">@L[isBusiness ? "Site_Name" : "Property_Name"]</label>
+        <input asp-for="Name" class="sc-input" placeholder="@L[isBusiness ? "Site_Name_Placeholder" : "Property_Name_Placeholder"]" required />
     </div>
 
     <partial name="Ui/_NeighborhoodPicker" model="picker" />
 
     <section aria-labelledby="carte-titre">
         <h2 id="carte-titre" class="sc-label">@L["Property_Map"]</h2>
-        <p class="sc-aide">@L["Property_Map_Hint"]</p>
+        <p class="sc-aide">@L[isBusiness ? "Site_Map_Hint" : "Property_Map_Hint"]</p>
         @* isolate: Leaflet layers (z-index 400+) stay below the tab bar. *@
         <div class="isolate mt-1.5 overflow-hidden rounded-md border border-ligne">
             <div id="carte" class="h-64 bg-sable" data-map data-lat-input="Latitude" data-lng-input="Longitude"
@@ -67,7 +67,7 @@
         <input asp-for="Details" class="sc-input" placeholder="@L["Property_Details_Placeholder"]" />
     </div>
 
-    <partial name="Ui/_PhotoUploader" model='new PhotoUploaderModel("photos", L["Property_Photos"], 6)' />
+    <partial name="Ui/_PhotoUploader" model='new PhotoUploaderModel("photos", L[isBusiness ? "Site_Photos" : "Property_Photos"], 6)' />
 
-    <button type="submit" class="sc-btn-primaire">@L["Property_Save"]</button>
+    <button type="submit" class="sc-btn-primaire">@L[isBusiness ? "Site_Save" : "Property_Save"]</button>
 </form>

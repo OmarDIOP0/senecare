@@ -6,7 +6,7 @@
     IReadOnlyList<NavItem> before = primary is null ? items : items.Take(2).ToList();
     IReadOnlyList<NavItem> after = primary is null ? Array.Empty<NavItem>() : items.Skip(2).ToList();
     var moreActive = Model.ActiveKey == AppNavigation.Settings.Key || Model.Nav.More.Any(i => i.Key == Model.ActiveKey);
-    string Tab(bool active) => active ? "text-charbon" : "text-charbon-pale";
+    string Tab(bool active) => active ? "text-charbon" : "text-charbon-doux";
 }
 <nav aria-label="@L["Tab_NavLabel"]" class="fixed inset-x-0 bottom-0 z-40 border-t border-ligne bg-surface pb-[env(safe-area-inset-bottom)] lg:hidden">
     <ul class="mx-auto flex max-w-md">

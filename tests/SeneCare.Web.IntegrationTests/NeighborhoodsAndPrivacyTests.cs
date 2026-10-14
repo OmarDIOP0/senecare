@@ -198,7 +198,8 @@ public sealed class NeighborhoodsAndPrivacyTests(WebAppFixture app)
 
             var property = await db.Properties.SingleAsync(p => p.Id == propertyId);
             Assert.Equal("[supprimé]", property.Name);
-            Assert.Null(property.Address.Landmark);
+            Assert.Equal("[supprimé]", property.Address.Landmark);
+            Assert.Null(property.Address.Location);
             Assert.Empty(property.Photos);
             Assert.Equal(Domain.Billing.SubscriptionStatus.Cancelled, (await db.Subscriptions.SingleAsync(s => s.AccountId == accountId)).Status);
             Assert.True(await db.Invoices.AnyAsync(i => i.AccountId == accountId)); // kept: legal obligation

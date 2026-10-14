@@ -128,6 +128,9 @@ ipch/
 
 # Visual Studio Trace Files
 *.e2e
+# …but not the Playwright project (case-insensitive match on Windows).
+!tests/SeneCare.E2E/
+tests/SeneCare.E2E/node_modules/
 
 # TFS 2012 Local Workspace
 $tf/

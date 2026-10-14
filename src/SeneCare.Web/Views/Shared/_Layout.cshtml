@@ -15,7 +15,7 @@
                 {
                     <a href="/espace" class="sc-btn-secondaire">@L["Nav_Space"]</a>
                 }
-                else
+                else if (!Context.Request.Path.StartsWithSegments("/connexion"))
                 {
                     <a href="/connexion" class="sc-btn-secondaire">@L["Nav_SignIn"]</a>
                 }

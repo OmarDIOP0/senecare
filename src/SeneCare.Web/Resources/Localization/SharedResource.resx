@@ -974,4 +974,10 @@
   <data name="Requests_Description" xml:space="preserve"><value>Vos signalements et leur suivi.</value></data>
   <data name="Admin_NotEnoughData" xml:space="preserve"><value>Pas encore assez de données</value></data>
   <data name="Invoice_Col_Amount" xml:space="preserve"><value>Montant</value></data>
+  <data name="Site_Kind" xml:space="preserve"><value>Type de site</value></data>
+  <data name="Site_Name" xml:space="preserve"><value>Nom du site</value></data>
+  <data name="Site_Map_Hint" xml:space="preserve"><value>Touchez la carte à l'emplacement du site, ou utilisez votre position si vous y êtes.</value></data>
+  <data name="Site_Photos" xml:space="preserve"><value>Photos du site (facultatif)</value></data>
+  <data name="Site_Save" xml:space="preserve"><value>Enregistrer le site</value></data>
+  <data name="Site_Name_Placeholder" xml:space="preserve"><value>Ex. : Siège Plateau, Agence de Thiès</value></data>
 </root>

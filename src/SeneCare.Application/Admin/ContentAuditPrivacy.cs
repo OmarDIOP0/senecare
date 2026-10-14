@@ -216,7 +216,8 @@ public sealed class PersonalDataService(IApplicationDbContext db, IIdentityServi
         var properties = await db.Properties.Where(p => households.Contains(p.AccountId)).ToListAsync(cancellationToken);
         foreach (var property in properties)
         {
-            property.Update(property.Kind, RedactedText, new Address(property.Address.NeighborhoodId, null, null, null));
+            // An address needs a GPS point or a landmark: the landmark becomes the redaction marker.
+            property.Update(property.Kind, RedactedText, new Address(property.Address.NeighborhoodId, null, RedactedText, null));
             foreach (var photo in property.Photos.ToList())
             {
                 property.RemovePhoto(photo.MediaFileId);

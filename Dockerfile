@@ -4,9 +4,12 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 # global.json is left out on purpose: it pins the exact SDK of the developers' machines.
-COPY Directory.Build.props Directory.Packages.props SeneCare.slnx ./
+# .editorconfig carries the analyzer settings (e.g. CA1716 off): without it the build rules differ.
+COPY .editorconfig Directory.Build.props Directory.Packages.props SeneCare.slnx ./
 COPY src/ src/
-RUN dotnet publish src/SeneCare.Web/SeneCare.Web.csproj -c Release -o /app -p:SkipTailwind=true
+# Warnings stay errors on the developers' machines (same SDK as global.json, tests). Here the SDK of the image
+# may be newer: a new analyzer rule or NuGet advisory must not block a deploy of code already checked.
+RUN dotnet publish src/SeneCare.Web/SeneCare.Web.csproj -c Release -o /app     -p:SkipTailwind=true -p:TreatWarningsAsErrors=false -p:EnforceCodeStyleInBuild=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app

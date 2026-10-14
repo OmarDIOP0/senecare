@@ -1,11 +1,16 @@
 @* Draft written for Phase 2; to be reviewed by a lawyer before launch (Phase 12). Wolof version: Privacy.wo.cshtml. *@
 @{
     ViewData["Title"] = L["Privacy_Title"];
+    ViewData["FullWidth"] = true;
 }
 
-<article class="space-y-4">
-    <h1 class="text-2xl font-semibold tracking-tight">@L["Privacy_Title"]</h1>
-    <p class="text-sm text-charbon-doux">Version 2026-10 · projet, à valider avant le lancement</p>
+<div class="mx-auto w-full max-w-3xl px-4 pt-10 lg:pt-14">
+<p class="sc-eyebrow">@L["Public_Footer_Privacy"]</p>
+<h1 class="mt-3 text-[2rem] leading-[1.08] font-bold sm:text-[2.75rem]">@L["Privacy_Title"]</h1>
+<span class="sc-trait mt-4 h-1.5 w-14" aria-hidden="true"></span>
+<p class="mt-5 text-sm text-charbon-doux">Version 2026-10 · projet, à valider avant le lancement</p>
+
+<article class="mt-8 space-y-4 rounded-3xl border border-ligne bg-surface p-6 text-[15px] leading-relaxed sm:p-10 [&_h2]:pt-4 [&_h2]:text-lg [&_h2:first-child]:pt-0">
 
     <h2 class="text-[15px] font-semibold">Qui est responsable de vos données ?</h2>
     <p>SENE DESIGN, éditeur du service SeneCare, est responsable du traitement de vos données personnelles, conformément à la loi n° 2008-12 du 25 janvier 2008 sur la protection des données à caractère personnel et sous le contrôle de la Commission de protection des données personnelles (CDP).</p>
@@ -29,3 +34,4 @@
     <h2 class="text-[15px] font-semibold">Vos droits</h2>
     <p>Vous pouvez consulter, corriger ou faire supprimer vos données, et retirer votre accord pour WhatsApp à tout moment, depuis votre compte ou en contactant le service client. Vous pouvez aussi saisir la CDP.</p>
 </article>
+</div>

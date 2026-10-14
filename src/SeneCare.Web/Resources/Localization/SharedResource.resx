@@ -1095,4 +1095,16 @@
   <data name="Home_Photo_Family_Alt" xml:space="preserve"><value>Une famille souriante joue à un jeu de société dans son salon</value></data>
   <data name="Home_Demo_Arrival" xml:space="preserve"><value>arrivée vers 10 h</value></data>
   <data name="Public_ClientSpace" xml:space="preserve"><value>Espace client</value></data>
+  <data name="Community_Help_Title" xml:space="preserve"><value>Aidez votre quartier à atteindre son objectif</value></data>
+  <data name="Community_Help_Text" xml:space="preserve"><value>Chaque foyer abonné compte. Inscrivez-vous ou invitez vos voisins sur WhatsApp.</value></data>
+  <data name="Community_Steps_Title" xml:space="preserve"><value>{0} voisins, et votre quartier change de visage</value></data>
+  <data name="Community_Step1_Title" xml:space="preserve"><value>Vous vous abonnez</value></data>
+  <data name="Community_Step1_Text" xml:space="preserve"><value>Votre foyer compte comme adhérent du quartier dès que l'abonnement est actif.</value></data>
+  <data name="Community_Step2_Title" xml:space="preserve"><value>Vous invitez vos voisins</value></data>
+  <data name="Community_Step2_Text" xml:space="preserve"><value>Partagez la page du quartier : la jauge monte à chaque inscription, jusqu'à {0} voisins.</value></data>
+  <data name="Community_Step3_Title" xml:space="preserve"><value>Nous plantons ensemble</value></data>
+  <data name="Community_Step3_Text" xml:space="preserve"><value>Tous les trois mois, une opération de reboisement ou d'embellissement avec les habitants.</value></data>
+  <data name="Community_Operations_Eyebrow" xml:space="preserve"><value>Sur le terrain</value></data>
+  <data name="Community_Ranking_Cta_Title" xml:space="preserve"><value>Votre quartier n'est pas encore dans la liste ?</value></data>
+  <data name="Community_Ranking_Cta_Text" xml:space="preserve"><value>Il apparaît dès le premier foyer abonné.</value></data>
 </root>

@@ -2,6 +2,7 @@
 @using SeneCare.Domain.Neighborhoods
 @{
     Layout = "_Layout";
+    ViewData["FullWidth"] = true;
     ViewData["Title"] = L["Community_Ranking"];
 }
 @section Head {
@@ -9,30 +10,49 @@
     <meta property="og:description" content="@L["Community_Ranking_Intro"]" />
 }
 
-<h1 class="sc-titre">@L["Community_Ranking"]</h1>
-<p class="mt-2 max-w-prose">@L["Community_Ranking_Intro"]</p>
+<section class="mx-auto w-full max-w-4xl px-4 pt-10 lg:px-6 lg:pt-14">
+    <p class="text-xs font-bold tracking-[0.16em] text-baobab uppercase">@L["Public_Nav_Neighborhoods"]</p>
+    <h1 class="mt-3 text-[2rem] leading-[1.08] font-bold sm:text-[2.75rem]">@L["Community_Ranking"]</h1>
+    <span class="mt-4 block h-1.5 w-14 rounded-full bg-baobab" aria-hidden="true"></span>
+    <p class="mt-5 max-w-2xl text-lg text-charbon-doux">@L["Community_Ranking_Intro"]</p>
 
-@if (Model.Count == 0)
-{
-    <p class="sc-texte-doux mt-6">@L["Community_Ranking_Empty"]</p>
-}
-
-<ol class="mt-6 grid gap-2">
-    @foreach (var r in Model)
+    @if (Model.Count == 0)
     {
-        <li class="sc-carte relative flex items-center gap-4">
-            <span class="w-8 shrink-0 text-center text-base font-semibold text-charbon-doux">@r.Rank</span>
-            <div class="min-w-0 flex-1">
-                <a href="/quartier/@r.CommuneSlug/@r.Slug" class="font-medium after:absolute after:inset-0">@r.Name <span class="font-normal text-charbon-doux">· @r.Commune</span></a>
-                <span class="mt-1 block h-2 rounded-full bg-ligne"><span class="block h-2 rounded-full bg-baobab" style="width: @r.Percent%"></span></span>
-            </div>
-            <span class="shrink-0 text-right text-sm tabular-nums">
-                @if (r.Status == NeighborhoodProgramStatus.Active)
-                {
-                    <span class="block font-medium text-baobab">@L["Admin_Trees", r.Trees]</span>
-                }
-                @r.Members / @r.Threshold
-            </span>
-        </li>
+        <div class="mt-10 flex items-center gap-4 rounded-lg border border-dashed border-charbon/20 p-6">
+            <span class="grid size-12 shrink-0 place-items-center rounded-md bg-baobab-clair text-baobab"><sc-icon name="sprout" class="size-6" /></span>
+            <p class="text-[15px] text-charbon-doux">@L["Community_Ranking_Empty"]</p>
+        </div>
     }
-</ol>
+    else
+    {
+        <ol class="mt-10 grid gap-3">
+            @foreach (var r in Model)
+            {
+                var activeRow = r.Status == NeighborhoodProgramStatus.Active;
+                <li class="relative flex items-center gap-4 rounded-lg border border-ligne bg-surface p-4 transition-colors hover:border-charbon/25 sm:gap-5 sm:p-5">
+                    <span class="grid size-10 shrink-0 place-items-center rounded-full font-display text-base @(r.Rank <= 3 ? "bg-baobab text-sur-accent" : "bg-sourdine text-charbon")">@r.Rank</span>
+                    <div class="min-w-0 flex-1">
+                        <a href="/quartier/@r.CommuneSlug/@r.Slug" class="text-lg font-bold text-charbon no-underline after:absolute after:inset-0 hover:no-underline">@r.Name</a>
+                        <span class="text-[15px] text-charbon-doux"> · @r.Commune</span>
+                        <span class="mt-2 block h-2 overflow-hidden rounded-full bg-sourdine"><span class="block h-full rounded-full bg-baobab" style="width: @(Math.Max(r.Percent, 2))%"></span></span>
+                    </div>
+                    <span class="shrink-0 text-right tabular-nums">
+                        @if (activeRow)
+                        {
+                            <span class="sc-badge bg-baobab-clair text-baobab"><sc-icon name="sprout" class="size-3.5" />@L["Admin_Trees", r.Trees]</span>
+                        }
+                        <span class="block text-[15px] font-semibold">@r.Members <span class="font-normal text-charbon-doux">/ @r.Threshold</span></span>
+                    </span>
+                </li>
+            }
+        </ol>
+    }
+
+    <div class="mt-12 flex flex-col items-start gap-5 rounded-3xl bg-baobab-clair p-6 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+            <h2 class="max-w-md font-display text-xl leading-tight tracking-[-0.02em] sm:text-2xl">@L["Community_Ranking_Cta_Title"]</h2>
+            <p class="mt-2 text-[15px] text-charbon-doux">@L["Community_Ranking_Cta_Text"]</p>
+        </div>
+        <a href="/connexion" class="sc-btn-primaire min-h-12 px-6 text-base">@L["Public_Join"]<sc-icon name="arrow-right" class="size-4" /></a>
+    </div>
+</section>

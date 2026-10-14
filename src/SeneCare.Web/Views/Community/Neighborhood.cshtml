@@ -2,6 +2,7 @@
 @using SeneCare.Domain.Neighborhoods
 @{
     Layout = "_Layout";
+    ViewData["FullWidth"] = true;
     var active = Model.Status == NeighborhoodProgramStatus.Active;
     ViewData["Title"] = L["Community_PageTitle", Model.Name];
     var origin = $"{Context.Request.Scheme}://{Context.Request.Host}";
@@ -11,6 +12,9 @@
         : L["Community_OgGathering", Model.Members, Model.Threshold, Model.Name].Value;
     var cover = Model.Operations.SelectMany(o => o.PhotoIds).Select(id => (Guid?)id).FirstOrDefault();
     var image = cover is { } coverId ? $"{origin}/quartier-photo/{coverId}" : $"{origin}/img/icons/icon-512.png";
+    var whatsApp = "https://wa.me/?text=" + Uri.EscapeDataString(L["Community_ShareText", Model.Name, url].Value);
+    var percent = Math.Min(100, 100 * Model.Members / Math.Max(1, Model.Threshold));
+    var steps = new[] { "Community_Step1", "Community_Step2", "Community_Step3" };
 }
 @section Head {
     @* WhatsApp / Facebook preview of the shared link. *@
@@ -25,53 +29,90 @@
     <link rel="canonical" href="@url" />
 }
 
-<section class="relative overflow-hidden rounded-xl bg-baobab px-5 py-8 text-sable">
-    <div class="sc-motif sc-motif-bogolan absolute -top-8 -right-8 size-48 text-sable/10" aria-hidden="true"></div>
-    <p class="relative sc-surtitre text-sable/80">@L["Hood_Program"] · @Model.Commune</p>
-    <h1 class="relative mt-1 text-2xl font-semibold">@Model.Name</h1>
-    @if (active)
-    {
-        <p class="relative mt-3 text-lg">@L["Hood_Active", Model.Trees]</p>
-    }
-    else
-    {
-        <p class="relative mt-3"><span class="font-medium text-2xl">@Model.Members</span> <span class="text-sable/85">/ @L["Hood_Neighbors", Model.Threshold]</span></p>
-        <progress class="relative mt-3 h-3 w-full overflow-hidden rounded-full accent-soleil" max="@Model.Threshold" value="@Model.Members" aria-label="@L["Hood_Program"]">@Model.Members / @Model.Threshold</progress>
-        <p class="relative mt-2 text-sable/85">@L["Hood_Remaining", Model.Remaining]</p>
-    }
-</section>
-
-<section class="mt-6" aria-labelledby="pourquoi-titre">
-    <h2 id="pourquoi-titre" class="sc-sous-titre">@L["Community_Why_Title"]</h2>
-    <p class="mt-2 max-w-prose">@L["Community_Why_Text"]</p>
-    <div class="mt-4 flex flex-wrap gap-2">
-        <a href="/bienvenue" class="sc-btn-primaire">@L["Community_Join"]</a>
-        <a href="/classement-quartiers" class="sc-btn-secondaire">@L["Community_Ranking"]</a>
+@* ---- Banner: the neighbourhood, its gauge, how to help ---- *@
+<section class="mx-auto w-full max-w-6xl px-4 pt-6 lg:px-6 lg:pt-10">
+    <div class="grid gap-8 rounded-3xl bg-baobab-clair p-6 sm:p-10 lg:grid-cols-[1.3fr_1fr] lg:items-center lg:p-14">
+        <div>
+            <p class="text-xs font-bold tracking-[0.16em] text-baobab uppercase">@L["Hood_Program"] · @Model.Commune</p>
+            <h1 class="mt-4 text-[2.25rem] leading-[1.05] font-bold sm:text-5xl lg:text-[3.5rem]">@Model.Name</h1>
+            <span class="mt-5 block h-1.5 w-14 rounded-full bg-baobab" aria-hidden="true"></span>
+            @if (active)
+            {
+                <p class="mt-6 text-xl font-semibold">@L["Hood_Active", Model.Trees]</p>
+            }
+            else
+            {
+                <p class="mt-6 tabular-nums"><span class="font-display text-4xl">@Model.Members</span> <span class="text-lg text-charbon-doux">/ @L["Hood_Neighbors", Model.Threshold]</span></p>
+                <div class="mt-4 h-3 overflow-hidden rounded-full bg-surface" role="progressbar" aria-valuemin="0" aria-valuemax="@Model.Threshold" aria-valuenow="@Model.Members" aria-label="@L["Hood_Program"]">
+                    <div class="h-full rounded-full bg-baobab" style="width: @(Math.Max(percent, 2))%"></div>
+                </div>
+                <p class="mt-3 text-[15px] text-charbon-doux">@L["Hood_Remaining", Model.Remaining]</p>
+            }
+        </div>
+        <div class="rounded-lg bg-surface p-6">
+            <h2 class="text-lg">@L["Community_Help_Title"]</h2>
+            <p class="mt-2 text-[15px] text-charbon-doux">@L["Community_Help_Text"]</p>
+            <div class="mt-5 grid gap-2">
+                <a href="/bienvenue" class="sc-btn-primaire">@L["Community_Join"]</a>
+                <a href="@whatsApp" class="sc-btn-secondaire" target="_blank" rel="noopener"><sc-icon name="message-circle" class="size-4" />@L["Community_Share"]</a>
+            </div>
+        </div>
     </div>
 </section>
 
-<section class="mt-10" aria-labelledby="operations-titre">
-    <h2 id="operations-titre" class="sc-sous-titre">@L["Community_Operations"]</h2>
-    @if (Model.Operations.Count == 0)
-    {
-        <p class="sc-texte-doux mt-2">@L["Community_NoOperation"]</p>
-    }
-    <ol class="mt-4 grid gap-4">
-        @foreach (var o in Model.Operations)
+@* ---- How it works ---- *@
+<section class="mx-auto w-full max-w-6xl px-4 pt-16 lg:px-6" aria-labelledby="principe-titre">
+    <p class="sc-eyebrow">@L["Community_Why_Title"]</p>
+    <h2 id="principe-titre" class="mt-3 max-w-2xl font-display text-2xl leading-tight tracking-[-0.02em] sm:text-[2rem]">@L["Community_Steps_Title", Model.Threshold]</h2>
+    <span class="sc-trait" aria-hidden="true"></span>
+    <ol class="mt-10 grid gap-4 md:grid-cols-3">
+        @foreach (var (index, key) in steps.Index())
         {
-            <li class="sc-carte">
-                <p class="text-sm font-medium text-baobab">@Formatting.ShortDate(new DateTimeOffset(o.Date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero)) · @L["Admin_Trees", o.Trees]</p>
-                <p class="mt-1">@o.Description</p>
-                @if (o.PhotoIds.Count > 0)
-                {
-                    <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                        @foreach (var photo in o.PhotoIds)
-                        {
-                            <img src="/quartier-photo/@photo" alt="" loading="lazy" decoding="async" class="aspect-square w-full rounded-md object-cover" />
-                        }
-                    </div>
-                }
+            <li class="rounded-lg border border-ligne bg-surface p-6">
+                <span class="grid size-11 place-items-center rounded-full bg-baobab font-display text-lg text-sur-accent">@(index + 1)</span>
+                <h3 class="mt-5 text-lg">@L[key + "_Title"]</h3>
+                <p class="mt-2 text-[15px] text-charbon-doux">@L[key + "_Text", Model.Threshold]</p>
             </li>
         }
     </ol>
+</section>
+
+@* ---- Operations already done ---- *@
+<section class="mx-auto w-full max-w-6xl px-4 pt-16 lg:px-6" aria-labelledby="operations-titre">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <p class="sc-eyebrow">@L["Community_Operations_Eyebrow"]</p>
+            <h2 id="operations-titre" class="mt-3 font-display text-2xl leading-tight tracking-[-0.02em] sm:text-[2rem]">@L["Community_Operations"]</h2>
+            <span class="sc-trait" aria-hidden="true"></span>
+        </div>
+        <a href="/classement-quartiers" class="sc-lien">@L["Community_Ranking"]</a>
+    </div>
+    @if (Model.Operations.Count == 0)
+    {
+        <div class="mt-8 flex items-center gap-4 rounded-lg border border-dashed border-charbon/20 p-6">
+            <span class="grid size-12 shrink-0 place-items-center rounded-md bg-baobab-clair text-baobab"><sc-icon name="sprout" class="size-6" /></span>
+            <p class="text-[15px] text-charbon-doux">@L["Community_NoOperation"]</p>
+        </div>
+    }
+    else
+    {
+        <ol class="mt-8 grid gap-4 md:grid-cols-2">
+            @foreach (var o in Model.Operations)
+            {
+                <li class="rounded-lg border border-ligne bg-surface p-6">
+                    <p class="sc-badge bg-baobab-clair text-baobab">@Formatting.ShortDate(new DateTimeOffset(o.Date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero)) · @L["Admin_Trees", o.Trees]</p>
+                    <p class="mt-3 text-[15px]">@o.Description</p>
+                    @if (o.PhotoIds.Count > 0)
+                    {
+                        <div class="mt-4 grid grid-cols-3 gap-2">
+                            @foreach (var photo in o.PhotoIds)
+                            {
+                                <img src="/quartier-photo/@photo" alt="" loading="lazy" decoding="async" class="aspect-square w-full rounded-md object-cover" />
+                            }
+                        </div>
+                    }
+                </li>
+            }
+        </ol>
+    }
 </section>

@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = L["Home_Title"];
     ViewData["FullWidth"] = true;
+    ViewData["PhotoCredits"] = true;
     var households = Model.Plans.Where(p => p.Segment == AccountKind.Household).ToList();
     var companies = Model.Plans.Where(p => p.Segment == AccountKind.Business).ToList();
     // The fastest critical-urgency commitment among the offers, if any is configured.

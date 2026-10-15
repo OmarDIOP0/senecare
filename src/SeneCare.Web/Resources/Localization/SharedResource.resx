@@ -1255,6 +1255,10 @@
   <data name="Admin_PlanAnnualFree" xml:space="preserve"><value>Mois offerts sur un paiement annuel</value></data>
   <data name="Admin_PlanAnnualFree_Hint" xml:space="preserve"><value>Prix annuel actuel : {0}.</value></data>
   <data name="Register_Eyebrow_Simple" xml:space="preserve"><value>Votre compte</value></data>
+  <data name="Register_Eyebrow_Staff" xml:space="preserve"><value>Équipe SeneCare</value></data>
+  <data name="Register_Heading_Staff" xml:space="preserve"><value>Première connexion</value></data>
+  <data name="Register_Staff_Text" xml:space="preserve"><value>Ce numéro a un accès à l'administration. Indiquez votre nom (il apparaît dans le journal des actions) et acceptez la politique de confidentialité : c'est demandé une seule fois.</value></data>
+  <data name="Register_Submit_Staff" xml:space="preserve"><value>Accéder au back-office</value></data>
   <data name="Register_StepOf" xml:space="preserve"><value>Étape {0}/{1}</value></data>
   <data name="Register_Step1" xml:space="preserve"><value>Votre profil</value></data>
   <data name="Register_Step1_Title" xml:space="preserve"><value>Qu'est-ce qu'on entretient pour vous ?</value></data>

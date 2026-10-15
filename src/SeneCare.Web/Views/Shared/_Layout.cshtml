@@ -81,13 +81,22 @@
                 <a href="/demander" class="sc-btn-primaire hidden sm:inline-flex">@L["Site_RequestJob"]</a>
                 <details class="relative lg:hidden" data-menu>
                     <summary class="sc-btn-icone list-none [&::-webkit-details-marker]:hidden" aria-label="@L["Public_Nav_Label"]"><sc-icon name="menu" /></summary>
-                    <div class="sc-menu right-0 max-h-[75dvh] w-72 overflow-y-auto">
-                        <p class="px-2.5 pt-1 pb-1 text-xs font-semibold text-charbon-doux">@L["Public_Nav_Trades"]</p>
-                        @foreach (var trade in Site.Trades)
-                        {
-                            <a href="/metiers/@trade.Slug" class="sc-menu-item"><sc-icon name="@Formatting.Icon(trade.Domain)" class="size-4 text-laterite" />@trade.Name</a>
-                        }
-                        <div class="my-1 border-t border-ligne"></div>
+                    <div class="sc-menu right-0 max-h-[80dvh] w-72 overflow-y-auto">
+                        @* The main action first, always visible without scrolling. *@
+                        <a href="/demander" class="sc-btn-primaire mb-1.5 w-full">@L["Site_RequestJob"]</a>
+                        @* Trades folded: seven lines would push everything else down. *@
+                        <details class="group/trades">
+                            <summary class="sc-menu-item cursor-pointer list-none justify-between font-semibold [&::-webkit-details-marker]:hidden">
+                                @L["Public_Nav_Trades"]<sc-icon name="chevron-down" class="size-4 transition-transform group-open/trades:rotate-180" />
+                            </summary>
+                            <div class="mb-1 ml-2 border-l border-ligne pl-1">
+                                @foreach (var trade in Site.Trades)
+                                {
+                                    <a href="/metiers/@trade.Slug" class="sc-menu-item"><sc-icon name="@Formatting.Icon(trade.Domain)" class="size-4 text-laterite" />@trade.Name</a>
+                                }
+                                <a href="/metiers" class="sc-menu-item font-semibold text-laterite">@L["Site_AllTrades"]</a>
+                            </div>
+                        </details>
                         @foreach (var (href, label) in menu)
                         {
                             <a href="@href" class="sc-menu-item font-semibold">@label</a>
@@ -98,7 +107,6 @@
                         {
                             <a href="/inscription" class="sc-menu-item"><sc-icon name="circle-user" class="size-4" />@L["Register_Submit"]</a>
                         }
-                        <a href="/demander" class="sc-btn-primaire mt-1.5 w-full">@L["Site_RequestJob"]</a>
                     </div>
                 </details>
             </div>

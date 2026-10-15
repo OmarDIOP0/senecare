@@ -29,14 +29,27 @@
 
     map.on("click", (event) => place(event.latlng));
 
+    const locate = document.querySelector("[data-map-locate]");
+
+    // On a phone the person is usually at home: ask for the position as soon as the map shows (the browser
+    // asks for the permission), once. On a computer the button stays the way to do it.
+    let asked = false;
+    const askPositionOnPhone = () => {
+      if (asked || marker || !locate || !navigator.geolocation || !matchMedia("(pointer: coarse)").matches) return;
+      if (element.offsetParent === null) return;
+      asked = true;
+      locate.click();
+    };
+
     // Inside the sign-up steps the map starts hidden: resize and recentre it once it is shown.
     document.addEventListener("sc:wizard-step", () => {
       if (element.offsetParent === null) return;
       map.invalidateSize();
       if (!marker) map.setView(DAKAR, 12);
+      askPositionOnPhone();
     });
+    setTimeout(askPositionOnPhone, 0);
 
-    const locate = document.querySelector("[data-map-locate]");
     locate?.addEventListener("click", () => {
       if (!navigator.geolocation) return;
       const label = locate.lastChild.textContent;

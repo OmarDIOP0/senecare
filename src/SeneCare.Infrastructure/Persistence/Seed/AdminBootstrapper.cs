@@ -22,6 +22,11 @@ public sealed partial class AdminBootstrapper(SeneCareDbContext db, IConfigurati
             .OfType<PhoneNumber>()
             .ToList();
 
+        if (phones.Count == 0)
+        {
+            LogNoValidPhone(logger, configuration[ConfigurationKey] ?? string.Empty);
+        }
+
         foreach (var phone in phones)
         {
             var user = await db.Users.FirstOrDefaultAsync(u => u.PhoneNumber == phone, cancellationToken);
@@ -36,6 +41,10 @@ public sealed partial class AdminBootstrapper(SeneCareDbContext db, IConfigurati
                 user.GrantRole(PlatformRole.SuperAdmin, clock.GetUtcNow());
                 LogGranted(logger, phone.Formatted);
             }
+            else
+            {
+                LogAlreadyAdmin(logger, phone.Formatted);
+            }
         }
 
         await db.SaveChangesAsync(cancellationToken);
@@ -43,4 +52,10 @@ public sealed partial class AdminBootstrapper(SeneCareDbContext db, IConfigurati
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "SuperAdmin role granted to {Phone} (Bootstrap:SuperAdminPhones)")]
     private static partial void LogGranted(ILogger logger, string phone);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Administrator number (Bootstrap:SuperAdminPhones): {Phone}")]
+    private static partial void LogAlreadyAdmin(ILogger logger, string phone);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Bootstrap:SuperAdminPhones has no valid Senegalese mobile number: « {Value} »")]
+    private static partial void LogNoValidPhone(ILogger logger, string value);
 }

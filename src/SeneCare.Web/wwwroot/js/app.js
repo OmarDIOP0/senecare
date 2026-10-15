@@ -87,6 +87,14 @@
     });
   });
 
+  // ---- Privacy consent (law 2008-12): the button that sends the form waits for the box to be ticked. ----
+  document.querySelectorAll("form input[name=AcceptsPrivacyPolicy][type=checkbox]").forEach((box) => {
+    const buttons = [...box.form.querySelectorAll("button[type=submit]")];
+    const sync = () => buttons.forEach((b) => { b.disabled = !box.checked; });
+    box.addEventListener("change", sync);
+    sync();
+  });
+
   // ---- One-time code in six boxes: they fill the real field, and the form leaves at the 6th digit. ----
   document.querySelectorAll("[data-otp]").forEach((otp) => {
     const field = otp.querySelector("[data-otp-value]");
@@ -690,6 +698,7 @@
     const next = form.querySelector("[data-wizard-next]");
     const submit = form.querySelector("[data-wizard-submit]");
     let index = 0;
+    let shown = false;
 
     const isBusiness = () => form.querySelector("input[name=Profile][value=Business]")?.checked ?? false;
 
@@ -719,7 +728,14 @@
       if (prev) prev.hidden = index === 0;
       if (next) next.hidden = index === steps.length - 1;
       if (submit) submit.hidden = index !== steps.length - 1;
-      steps[index].querySelector("legend")?.scrollIntoView({ block: "nearest" });
+      // A new step starts at its top (the previous one, step 3, is long and leaves the page scrolled down).
+      if (shown) {
+        // Below the sticky header (its real height), instantly: the new step is read from its first line.
+        const header = document.querySelector("header.sticky, header[class*='sticky']");
+        const top = form.getBoundingClientRect().top + window.scrollY - (header?.offsetHeight ?? 0) - 16;
+        if (window.scrollY > top) window.scrollTo({ top, behavior: "auto" });
+      }
+      shown = true;
       // A map drawn while hidden has no size: it is told when its step shows up.
       form.dispatchEvent(new CustomEvent("sc:wizard-step", { bubbles: true }));
     };

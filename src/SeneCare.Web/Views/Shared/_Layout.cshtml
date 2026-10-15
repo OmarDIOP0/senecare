@@ -109,11 +109,14 @@
                         {
                             <a href="/inscription" class="sc-menu-item"><sc-icon name="circle-user" class="size-4" />@L["Register_Submit"]</a>
                         }
+                        <button type="button" class="sc-menu-item w-full" data-install data-install-accept hidden><sc-icon name="download" class="size-4" />@L["Install_Button"]</button>
                     </div>
                 </details>
             </div>
         </div>
         <div class="sc-bande-fine"></div>
+        @* « Installer l'application » (phones, when the browser allows it): on the public site too, not only in the space. *@
+        <partial name="Ui/_InstallPrompt" />
     </header>
 
     <main id="contenu" class="@(fullWidth ? "w-full flex-1" : $"mx-auto w-full flex-1 {(ViewData["Wide"] is true ? "max-w-screen-lg" : "max-w-screen-md")} px-4 py-10")">

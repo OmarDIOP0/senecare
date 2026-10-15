@@ -86,6 +86,7 @@ public sealed class RegistrationController(
         if (missing is not null)
         {
             ModelState.AddModelError(string.Empty, this.ErrorMessage(new SeneCare.Application.Common.AppError(missing)));
+            model.StartStep = 2;
             return View(await RebuildAsync(model, userId, cancellationToken));
         }
 
@@ -98,6 +99,8 @@ public sealed class RegistrationController(
         if (!result.IsSuccess)
         {
             ModelState.AddModelError(string.Empty, this.ErrorMessage(result.Error));
+            // Name, consent, offer: the error is shown on the last step, where they are checked.
+            model.StartStep = 4;
             return View(await RebuildAsync(model, userId, cancellationToken));
         }
 

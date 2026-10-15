@@ -434,7 +434,8 @@
   <data name="Pay_Declare" xml:space="preserve"><value>J'ai payé</value></data>
   <data name="Pay_Verifying" xml:space="preserve"><value>Paiement signalé le {0}. L'équipe SENECARE le vérifie : vous serez prévenu dès l'activation.</value></data>
   <data name="Pay_Rejected" xml:space="preserve"><value>Votre dernier paiement n'a pas pu être confirmé : {0}. Vous pouvez réessayer ou nous appeler.</value></data>
-  <data name="Pay_NotConfigured" xml:space="preserve"><value>Le paiement en ligne sera bientôt disponible. En attendant, contactez le service client Teranga pour régler.</value></data>
+  <data name="Pay_NotConfigured" xml:space="preserve"><value>Le paiement Wave n'est pas encore ouvert. Écrivez-nous sur WhatsApp : nous vous envoyons le lien de paiement et activons votre compte.</value></data>
+  <data name="Pay_AskOnWhatsApp" xml:space="preserve"><value>Payer avec l'aide de SeneCare sur WhatsApp</value></data>
   <data name="Payment_Declared" xml:space="preserve"><value>Paiement signalé. Nous le vérifions.</value></data>
   <data name="AdminPay_Title" xml:space="preserve"><value>Paiements à vérifier</value></data>
   <data name="AdminPay_Intro" xml:space="preserve"><value>Comparez chaque déclaration avec l'historique du compte marchand Wave avant de valider. Valider marque la facture payée et active l'abonnement.</value></data>

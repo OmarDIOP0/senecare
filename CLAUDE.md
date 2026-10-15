@@ -42,7 +42,9 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
   par SMS, WhatsApp en option. Email facultatif. Mot de passe optionnel.
   En développement seulement : `Otp:ShowCodeOnPage` (actif dans appsettings.Development.json) affiche le
   code sous les 6 cases, `Otp:SkipVerification` saute l'étape ; autorisés en Development et sur le site de
-  test (Staging), l'application refuse de démarrer avec l'un de ces réglages en Production.
+  test (Staging), l'application refuse de démarrer avec l'un de ces réglages en Production. Jamais pour un compte
+  de l'équipe (admin, finance, technicien) sauf `Otp:IncludeStaff` (Development seulement) : sur Render, l'admin
+  lit son code dans les journaux (« [WhatsApp → 77 …] »).
 - Paiement : Wave, Orange Money, Free Money (via un agrégateur type PayDunya, PayTech
   ou CinetPay derrière une interface IPaymentProvider), + paiement en espèces/virement
   saisi par l'admin. Reçus PDF. Relances avant échéance.

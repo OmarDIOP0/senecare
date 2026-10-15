@@ -65,12 +65,16 @@ public sealed partial class RequestOtpHandler(
             }
         }
 
+        // Test switches never reveal the code of a staff account (unless explicitly allowed, on a developer machine).
+        var revealCode = (limits.SkipVerification || limits.ShowCodeOnPage)
+            && (limits.IncludeStaff || !await db.Users.AnyAsync(u => u.PhoneNumber == phone && u.Roles.Any(r => r.Role != PlatformRole.Customer), cancellationToken));
+
         var code = Secrets.NumericCode(OtpChallenge.CodeLength);
         var challenge = OtpChallenge.Issue(phone, hasher.Hash(code), command.Channel, command.IpAddress, now);
         db.OtpChallenges.Add(challenge);
         await db.SaveChangesAsync(cancellationToken);
 
-        if (limits.SkipVerification)
+        if (limits.SkipVerification && revealCode)
         {
             return Result<OtpRequested>.Success(new OtpRequested(challenge.Id, phone, command.Channel, challenge.ExpiresAt, now + limits.ResendCooldown, code));
         }
@@ -80,7 +84,7 @@ public sealed partial class RequestOtpHandler(
         await SendAsync(phone, command.Channel, Messages.Otp(code, language), cancellationToken);
 
         return Result<OtpRequested>.Success(new OtpRequested(
-            challenge.Id, phone, command.Channel, challenge.ExpiresAt, now + limits.ResendCooldown, limits.ShowCodeOnPage ? code : null));
+            challenge.Id, phone, command.Channel, challenge.ExpiresAt, now + limits.ResendCooldown, limits.ShowCodeOnPage && revealCode ? code : null));
     }
 
     private async Task SendAsync(PhoneNumber phone, OtpChannel channel, string message, CancellationToken cancellationToken)

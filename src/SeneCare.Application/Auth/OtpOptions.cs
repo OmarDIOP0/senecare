@@ -26,5 +26,12 @@ public sealed class OtpOptions
     /// </summary>
     public bool ShowCodeOnPage { get; set; }
 
+    /// <summary>
+    /// With the switches above, also for SENECARE staff (admins, finance, technicians). Off on a public test site:
+    /// anyone could otherwise sign in as the admin by typing its number. Staff then read their code in the server
+    /// log (Console sender), which only the host's owner can see.
+    /// </summary>
+    public bool IncludeStaff { get; set; }
+
     public bool IsDevelopmentOnly => SkipVerification || ShowCodeOnPage;
 }

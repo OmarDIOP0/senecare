@@ -172,9 +172,9 @@
                                 {
                                     @* No Wave link yet (an admin sets it in Admin › Paiements): never a dead end, the customer can write to us. *@
                                     <p class="flex items-start gap-2 rounded-2xl bg-sourdine px-4 py-3 text-[15px] text-charbon-doux"><sc-icon name="info" class="mt-0.5 size-5" />@L["Pay_NotConfigured"]</p>
-                                    @if (Site.Visible(Site.Contact))
+                                    @if ((await SiteContact.GetAsync()).WhatsAppUrl is { } help)
                                     {
-                                        <a href="@Site.Contact.WhatsAppUrl" class="sc-btn-whatsapp mt-4 min-h-12 w-full sm:w-auto" target="_blank" rel="noopener"><sc-icon name="message-circle" />@L["Pay_AskOnWhatsApp"]</a>
+                                        <a href="@help" class="sc-btn-whatsapp mt-4 min-h-12 w-full sm:w-auto" target="_blank" rel="noopener"><sc-icon name="message-circle" />@L["Pay_AskOnWhatsApp"]</a>
                                     }
                                 }
                             }

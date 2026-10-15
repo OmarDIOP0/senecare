@@ -492,6 +492,37 @@ public sealed class SettingsManagement(IApplicationDbContext db, TimeProvider cl
             return Result<string>.Failure("setting.number");
         }
 
+        // Contact details: checked so that the public « Appeler / WhatsApp / e-mail » buttons always work.
+        if (text.Length > 0)
+        {
+            switch (key)
+            {
+                case SettingKeys.ContactPhone:
+                    text = Public.PublicContact.NationalDigits(text) ?? string.Empty;
+                    if (text.Length == 0)
+                    {
+                        return Result<string>.Failure("setting.phone");
+                    }
+
+                    break;
+                case SettingKeys.ContactWhatsApp:
+                    if (!SeneCare.Domain.Users.PhoneNumber.TryParse(text, out var mobile))
+                    {
+                        return Result<string>.Failure("phone.invalid");
+                    }
+
+                    text = mobile.NationalNumber;
+                    break;
+                case SettingKeys.ContactEmail when !text.Contains('@', StringComparison.Ordinal) || text.Length > 200:
+                    return Result<string>.Failure("setting.email");
+                case SettingKeys.ContactFacebook or SettingKeys.ContactInstagram or SettingKeys.ContactLinkedIn
+                    when !Uri.TryCreate(text, UriKind.Absolute, out var url) || url.Scheme != Uri.UriSchemeHttps:
+                    return Result<string>.Failure("setting.url");
+                case SettingKeys.ContactAddress or SettingKeys.ContactHours or SettingKeys.ContactAreas when text.Length > 200:
+                    return Result<string>.Failure("setting.too_long");
+            }
+        }
+
         var now = clock.GetUtcNow();
         var setting = await db.AppSettings.FirstOrDefaultAsync(s => s.Key == key, cancellationToken);
         if (setting is null)

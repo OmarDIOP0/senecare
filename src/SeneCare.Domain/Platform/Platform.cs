@@ -163,6 +163,23 @@ public static class SettingKeys
     /// <summary>Wave merchant payment link (« {montant} » is replaced by the amount when present). Empty = not configured.</summary>
     public const string WaveLink = "payments.wave_link";
 
+    /// <summary>Public contact details (site header, footer, call / WhatsApp buttons). Empty = not shown.</summary>
+    public const string ContactPhone = "contact.phone";
+    public const string ContactWhatsApp = "contact.whatsapp";
+    public const string ContactEmail = "contact.email";
+    public const string ContactAddress = "contact.address";
+    public const string ContactHours = "contact.hours";
+    public const string ContactAreas = "contact.areas";
+    public const string ContactFacebook = "contact.facebook";
+    public const string ContactInstagram = "contact.instagram";
+    public const string ContactLinkedIn = "contact.linkedin";
+
+    public static readonly IReadOnlyList<string> Contact =
+    [
+        ContactPhone, ContactWhatsApp, ContactEmail, ContactAddress, ContactHours, ContactAreas,
+        ContactFacebook, ContactInstagram, ContactLinkedIn,
+    ];
+
     public static readonly IReadOnlyDictionary<string, string> Defaults = new Dictionary<string, string>(StringComparer.Ordinal)
     {
         [PaymentGraceDays] = "7",
@@ -170,5 +187,15 @@ public static class SettingKeys
         [WarrantyDays] = "90",
         [NeighborhoodThreshold] = "500",
         [WaveLink] = "",
+        // SENECARE's number given by the owner; the rest is filled in Admin › Paramètres.
+        [ContactPhone] = "762919145",
+        [ContactWhatsApp] = "762919145",
+        [ContactEmail] = "",
+        [ContactAddress] = "",
+        [ContactHours] = "",
+        [ContactAreas] = "",
+        [ContactFacebook] = "",
+        [ContactInstagram] = "",
+        [ContactLinkedIn] = "",
     };
 }

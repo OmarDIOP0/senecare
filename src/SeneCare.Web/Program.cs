@@ -62,6 +62,7 @@ try
     builder.Services.AddSeneCareLocalization();
     builder.Services.AddSignalR();
     // Public site texts (Content/site-content.json): sample blocks only shown in development.
+    builder.Services.AddScoped<SeneCare.Web.Infrastructure.SiteContact>();
     builder.Services.AddSingleton(SeneCare.Web.Infrastructure.SiteContent.Load(
         builder.Environment.ContentRootPath, builder.Environment.WebRootPath ?? string.Empty, builder.Environment.IsDevelopment()));
     builder.Services

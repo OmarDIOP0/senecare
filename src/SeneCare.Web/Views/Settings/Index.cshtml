@@ -9,16 +9,30 @@
 <h1 class="sc-titre">@L["Admin_Settings"]</h1>
 
 <ul class="mt-6 grid gap-3">
-    @foreach (var s in Model)
+    @foreach (var (index, s) in Model.Index())
     {
         var id = "s-" + s.Key.Replace('.', '-');
+        var input = s.Key switch
+        {
+            "contact.phone" or "contact.whatsapp" => ("tel", "tel"),
+            "contact.email" => ("email", "email"),
+            "contact.facebook" or "contact.instagram" or "contact.linkedin" => ("url", "url"),
+            _ => ("text", s.IsNumber ? "numeric" : "text"),
+        };
+        @if (s.Key.StartsWith("contact.", StringComparison.Ordinal) && (index == 0 || !Model[index - 1].Key.StartsWith("contact.", StringComparison.Ordinal)))
+        {
+            <li class="mt-4">
+                <h2 class="sc-sous-titre">@L["Setting_ContactTitle"]</h2>
+                <p class="sc-texte-doux">@L["Setting_ContactText"]</p>
+            </li>
+        }
         <li class="sc-carte">
             <form method="post" action="/admin/parametres" class="flex flex-wrap items-end gap-2">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="key" value="@s.Key" />
                 <div class="min-w-48 flex-1">
                     <label class="sc-label" for="@id">@L["Setting_" + s.Key.Replace('.', '_')]</label>
-                    <input id="@id" name="value" class="sc-input" value="@s.Value" inputmode="@(s.IsNumber ? "numeric" : "text")" />
+                    <input id="@id" name="value" type="@input.Item1" class="sc-input" value="@s.Value" inputmode="@input.Item2" />
                     <p class="sc-aide">@L["Setting_" + s.Key.Replace('.', '_') + "_Hint"]</p>
                 </div>
                 <button type="submit" class="sc-btn-secondaire">@L["Common_Save"]</button>

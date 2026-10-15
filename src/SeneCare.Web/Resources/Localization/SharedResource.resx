@@ -836,6 +836,30 @@
   <data name="AdminPay_Note_Placeholder" xml:space="preserve"><value>Ex : reçu n° 0042, virement CBAO du 12/10</value></data>
   <data name="Channel_Cash" xml:space="preserve"><value>Espèces</value></data>
   <data name="Channel_BankTransfer" xml:space="preserve"><value>Virement</value></data>
+  <data name="Setting_ContactTitle" xml:space="preserve"><value>Coordonnées de SeneCare</value></data>
+  <data name="Setting_ContactText" xml:space="preserve"><value>Affichées sur le site public (bandeau, pied de page, boutons Appeler et WhatsApp). Un champ vide n'est pas affiché.</value></data>
+  <data name="Setting_contact_phone" xml:space="preserve"><value>Téléphone</value></data>
+  <data name="Setting_contact_phone_Hint" xml:space="preserve"><value>9 chiffres, mobile ou fixe (ex. 76 291 91 45 ou 33 800 00 00).</value></data>
+  <data name="Setting_contact_whatsapp" xml:space="preserve"><value>WhatsApp</value></data>
+  <data name="Setting_contact_whatsapp_Hint" xml:space="preserve"><value>Numéro mobile qui reçoit les messages WhatsApp des clients.</value></data>
+  <data name="Setting_contact_email" xml:space="preserve"><value>E-mail</value></data>
+  <data name="Setting_contact_email_Hint" xml:space="preserve"><value>Adresse de contact affichée dans le pied de page.</value></data>
+  <data name="Setting_contact_address" xml:space="preserve"><value>Adresse</value></data>
+  <data name="Setting_contact_address_Hint" xml:space="preserve"><value>Ex. : Sacré-Cœur 3, Dakar.</value></data>
+  <data name="Setting_contact_hours" xml:space="preserve"><value>Horaires</value></data>
+  <data name="Setting_contact_hours_Hint" xml:space="preserve"><value>Ex. : Lun–Sam 8h–20h, urgences 7j/7.</value></data>
+  <data name="Setting_contact_areas" xml:space="preserve"><value>Zones desservies</value></data>
+  <data name="Setting_contact_areas_Hint" xml:space="preserve"><value>Ex. : Dakar, Rufisque, Thiès, Mbour.</value></data>
+  <data name="Setting_contact_facebook" xml:space="preserve"><value>Page Facebook</value></data>
+  <data name="Setting_contact_facebook_Hint" xml:space="preserve"><value>Lien complet commençant par https://</value></data>
+  <data name="Setting_contact_instagram" xml:space="preserve"><value>Compte Instagram</value></data>
+  <data name="Setting_contact_instagram_Hint" xml:space="preserve"><value>Lien complet commençant par https://</value></data>
+  <data name="Setting_contact_linkedin" xml:space="preserve"><value>Page LinkedIn</value></data>
+  <data name="Setting_contact_linkedin_Hint" xml:space="preserve"><value>Lien complet commençant par https://</value></data>
+  <data name="Error_setting_phone" xml:space="preserve"><value>Numéro de téléphone sénégalais invalide (9 chiffres).</value></data>
+  <data name="Error_setting_email" xml:space="preserve"><value>Adresse e-mail invalide.</value></data>
+  <data name="Error_setting_url" xml:space="preserve"><value>Le lien doit commencer par https://</value></data>
+  <data name="Error_setting_too_long" xml:space="preserve"><value>200 caractères au plus.</value></data>
   <data name="Setting_billing_grace_days" xml:space="preserve"><value>Délai de grâce après échéance (jours)</value></data>
   <data name="Setting_billing_grace_days_Hint" xml:space="preserve"><value>Pendant ce délai, le client peut encore signaler ; ensuite l'abonnement est suspendu.</value></data>
   <data name="Setting_requests_auto_validate_after_days" xml:space="preserve"><value>Validation automatique d'une intervention (jours)</value></data>

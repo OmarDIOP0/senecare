@@ -1,23 +1,6 @@
 {
   "_notice": "CONTENUS D'EXEMPLE A REMPLACER PAR LES VRAIS AVANT LA MISE EN LIGNE. Chaque bloc marque \"sample\": true n'est affiche qu'en developpement (avec l'etiquette « Exemple ») et reste masque en production tant qu'il n'est pas remplace et passe a false. Les montants des abonnements (inscription, mensualite) et les delais d'intervention viennent de la base (Admin > Offres) ; ce fichier ne porte que les textes et les avantages complementaires.",
 
-  "contact": {
-    "sample": true,
-    "phoneDisplay": "+221 33 800 00 00",
-    "phoneLink": "+221338000000",
-    "whatsApp": "221770000000",
-    "email": "contact@senecare.sn",
-    "address": "Sacré-Cœur 3, Villa n° 0000, Dakar",
-    "hours": "Lun–Sam 8h–20h",
-    "emergencies": "Urgences 7j/7",
-    "areas": "Dakar, Rufisque, Thiès, Mbour",
-    "social": [
-      { "name": "Facebook", "url": "https://www.facebook.com/" },
-      { "name": "Instagram", "url": "https://www.instagram.com/" },
-      { "name": "LinkedIn", "url": "https://www.linkedin.com/" }
-    ]
-  },
-
   "trades": [
     {
       "slug": "plomberie",

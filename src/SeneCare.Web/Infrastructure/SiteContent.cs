@@ -11,7 +11,6 @@ namespace SeneCare.Web.Infrastructure;
 /// </summary>
 public sealed class SiteContent
 {
-    public required ContactInfo Contact { get; init; }
     public required IReadOnlyList<Trade> Trades { get; init; }
     public required SampleList<Technician> Technicians { get; init; }
     public required ExampleJob ExampleJob { get; init; }
@@ -60,15 +59,6 @@ public interface ISample
 }
 
 public sealed record SampleList<T>(bool Sample, IReadOnlyList<T> Items) : ISample;
-
-public sealed record SocialLink(string Name, string Url);
-
-public sealed record ContactInfo(
-    bool Sample, string PhoneDisplay, string PhoneLink, string WhatsApp, string Email, string Address,
-    string Hours, string Emergencies, string Areas, IReadOnlyList<SocialLink> Social) : ISample
-{
-    public string WhatsAppUrl => $"https://wa.me/{WhatsApp}";
-}
 
 public sealed record Trade(
     string Slug, ServiceDomain Domain, string Name, string Summary, string Intro, IReadOnlyList<string> Examples,

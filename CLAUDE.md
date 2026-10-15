@@ -130,6 +130,8 @@ Site public (`_Layout`, `PublicSiteController`, `Views/PublicSite`, contenus `Co
 - Accueil : hero + formulaire rapide (`/demander`), métiers avec photo, étapes, techniciens, exemple
   d'intervention, avis, chiffres, conseils, FAQ, appel final. Pages métiers, particuliers, entreprises,
   quartiers, tarifs (mensuel / annuel), FAQ, mentions, CGU.
+- Coordonnées de SeneCare (téléphone, WhatsApp, e-mail, adresse, horaires, zones, réseaux) : réglées dans
+  Admin › Paramètres (`SettingKeys.Contact`), jamais dans le code ; un champ vide n'est pas affiché.
 - Blocs `"sample": true` = contenus d'exemple, visibles en développement (étiquette « Exemple »), masqués en
   production. Montants et délais : toujours depuis la base. Jamais de faux avis publiés.
 

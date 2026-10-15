@@ -1,4 +1,7 @@
 @* Last call at the bottom of a public page (dark Atlantic panel): request a job, or call. *@
+@{
+    var contact = await SiteContact.GetAsync();
+}
 <section class="mx-auto w-full max-w-7xl px-4 pt-16 lg:px-6">
     <div class="sc-panneau relative flex flex-col items-start gap-6 overflow-hidden px-6 py-10 sm:px-10 lg:flex-row lg:items-center lg:justify-between lg:px-14">
         <div>
@@ -8,9 +11,9 @@
         </div>
         <div class="flex flex-wrap gap-3">
             <a href="/demander" class="sc-btn-primaire min-h-12 px-6 text-base">@L["Site_RequestJob"]<sc-icon name="arrow-right" class="size-5" /></a>
-            @if (Site.Visible(Site.Contact))
+            @if (contact.HasPhone)
             {
-                <a href="tel:@Site.Contact.PhoneLink" class="sc-btn min-h-12 border-white/20 bg-white/5 text-white hover:bg-white/10"><sc-icon name="phone" class="size-5 text-or" />@Site.Contact.PhoneDisplay</a>
+                <a href="tel:@contact.PhoneLink" class="sc-btn min-h-12 border-white/20 bg-white/5 text-white hover:bg-white/10"><sc-icon name="phone" class="size-5 text-or" />@contact.PhoneDisplay</a>
             }
         </div>
         <div class="sc-bande-fine absolute inset-x-0 bottom-0"></div>

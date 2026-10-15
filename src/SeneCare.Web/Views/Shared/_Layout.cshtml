@@ -1,7 +1,9 @@
 @* Public site: thin contact bar, white header with the trades menu, dense footer, call / WhatsApp bar on phones.
    ViewData["FullWidth"] lets a page draw its own full-width sections. Contact details come from Content/site-content.json. *@
 @{
-    var signedIn = User.Identity?.IsAuthenticated == true;
+    // Account finished: « Mon espace ». Signed in but sign-up unfinished (often left on a phone): the sign-in page,
+    // which offers to finish it or to use another number.
+    var signedIn = User.Identity?.IsAuthenticated == true && SeneCare.Infrastructure.Identity.ClaimsPrincipalExtensions.IsRegistered(User);
     var onSignIn = Context.Request.Path.StartsWithSegments("/connexion") || Context.Request.Path.StartsWithSegments("/inscription");
     var fullWidth = ViewData["FullWidth"] is true;
     var contact = Site.Contact;

@@ -1312,6 +1312,9 @@
   <data name="Register_OtherNumber" xml:space="preserve"><value>Utiliser un autre numéro</value></data>
   <data name="Register_SignInLink" xml:space="preserve"><value>Se connecter</value></data>
   <data name="SignIn_Eyebrow" xml:space="preserve"><value>Espace client</value></data>
+  <data name="SignIn_Pending" xml:space="preserve"><value>Une inscription est en cours sur ce téléphone</value></data>
+  <data name="SignIn_Pending_Text" xml:space="preserve"><value>Terminez-la, ou connectez-vous ci-dessous avec un autre numéro.</value></data>
+  <data name="SignIn_Pending_Continue" xml:space="preserve"><value>Continuer l'inscription</value></data>
   <data name="SignIn_NoAccount" xml:space="preserve"><value>Pas encore de compte ?</value></data>
   <data name="SignIn_NoAccount_Text" xml:space="preserve"><value>Inscription en 5 étapes, votre logement compris.</value></data>
   <data name="Register_StepHome" xml:space="preserve"><value>Votre logement</value></data>

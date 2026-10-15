@@ -23,7 +23,18 @@ public class OtpChallengeTests
         var otp = OtpChallenge.Issue(Phone, "hash", OtpChannel.Sms, null, Now);
 
         Assert.Equal(OtpVerificationResult.Success, otp.Verify(true, Now.AddMinutes(1)));
-        Assert.Equal(OtpVerificationResult.AlreadyUsed, otp.Verify(true, Now.AddMinutes(2)));
+        Assert.Equal(OtpVerificationResult.AlreadyUsed, otp.Verify(true, Now.AddMinutes(1) + OtpChallenge.ResubmitGrace + TimeSpan.FromSeconds(1)));
+    }
+
+    [Fact]
+    public void The_same_right_code_sent_twice_in_a_row_is_still_accepted_but_not_a_wrong_one()
+    {
+        var otp = OtpChallenge.Issue(Phone, "hash", OtpChannel.Sms, null, Now);
+
+        Assert.Equal(OtpVerificationResult.Success, otp.Verify(true, Now.AddMinutes(1)));
+        // Slow network: the form left twice.
+        Assert.Equal(OtpVerificationResult.Success, otp.Verify(true, Now.AddMinutes(1).AddSeconds(3)));
+        Assert.Equal(OtpVerificationResult.AlreadyUsed, otp.Verify(false, Now.AddMinutes(1).AddSeconds(5)));
     }
 
     [Fact]

@@ -72,11 +72,17 @@ public sealed class OtpChallenge : Entity
     /// Records a verification attempt. <paramref name="codeMatches"/> is computed by the caller
     /// with a constant-time comparison of hashes.
     /// </summary>
+    /// <summary>
+    /// A right code sent again within this delay after it was accepted (form sent twice on a slow network)
+    /// counts as accepted: same person, same code, no new access.
+    /// </summary>
+    public static readonly TimeSpan ResubmitGrace = TimeSpan.FromMinutes(2);
+
     public OtpVerificationResult Verify(bool codeMatches, DateTimeOffset now)
     {
-        if (ConsumedAt is not null)
+        if (ConsumedAt is { } consumed)
         {
-            return OtpVerificationResult.AlreadyUsed;
+            return codeMatches && now - consumed <= ResubmitGrace ? OtpVerificationResult.Success : OtpVerificationResult.AlreadyUsed;
         }
 
         if (IsExpired(now))

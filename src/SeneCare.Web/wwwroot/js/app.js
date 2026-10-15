@@ -70,6 +70,23 @@
     invalid.reportValidity();
   }, true);
 
+  // ---- Forms sent only once (data-send-once): on a slow network a second tap or the auto-send of the
+  // code would send it twice, and the second answer (« already used ») would replace the good one. ----
+  document.addEventListener("submit", (event) => {
+    const form = event.target.closest("form[data-send-once]");
+    if (!form || event.defaultPrevented) return;
+    if (form.dataset.sending) { event.preventDefault(); return; }
+    form.dataset.sending = "1";
+    form.querySelectorAll("button[type=submit]").forEach((b) => b.setAttribute("aria-busy", "true"));
+  });
+  // Back to the page from the browser history: the form can be sent again.
+  window.addEventListener("pageshow", () => {
+    document.querySelectorAll("form[data-send-once][data-sending]").forEach((form) => {
+      delete form.dataset.sending;
+      form.querySelectorAll("button[aria-busy]").forEach((b) => b.removeAttribute("aria-busy"));
+    });
+  });
+
   // ---- One-time code in six boxes: they fill the real field, and the form leaves at the 6th digit. ----
   document.querySelectorAll("[data-otp]").forEach((otp) => {
     const field = otp.querySelector("[data-otp-value]");
@@ -83,7 +100,7 @@
 
     const sync = () => {
       field.value = boxes.map((b) => b.value).join("");
-      if (field.value.length === boxes.length) field.form?.requestSubmit();
+      if (field.value.length === boxes.length && !field.form?.dataset.sending) field.form?.requestSubmit();
     };
     // Spread several digits (paste, autofill) from a box onwards.
     const spread = (from, digits) => {

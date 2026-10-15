@@ -12,7 +12,7 @@
 
 @* Steps 1–2 of « Créer mon compte ». The code is then checked on /connexion/code (step 2 too), the rest
    comes once the number is verified. Without JavaScript both steps show one under the other. *@
-<form method="post" asp-controller="Auth" asp-action="SignIn" class="grid gap-8" novalidate data-wizard data-wizard-start="@start">
+<form method="post" asp-controller="Auth" asp-action="SignIn" class="grid gap-8" novalidate data-wizard data-wizard-start="@start" data-send-once>
     <input type="hidden" name="Signup" value="true" />
     <partial name="Signup/_StepBars" model="1" />
 

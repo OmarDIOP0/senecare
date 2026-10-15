@@ -106,7 +106,7 @@ public sealed class AuthController(
     {
         if (!TryGetPendingChallenge(out _, out var phone, out var channel))
         {
-            return RedirectToAction(nameof(SignIn));
+            return AfterCodeOrSignIn();
         }
 
         return View(new CodeViewModel
@@ -125,7 +125,7 @@ public sealed class AuthController(
         ArgumentNullException.ThrowIfNull(model);
         if (!TryGetPendingChallenge(out var challengeId, out var phone, out var channel))
         {
-            return RedirectToAction(nameof(SignIn));
+            return AfterCodeOrSignIn();
         }
 
         model.Phone = phone;
@@ -211,6 +211,20 @@ public sealed class AuthController(
         // even if the service worker message never arrives.
         Response.Headers["Clear-Site-Data"] = "\"cache\", \"storage\"";
         return LocalRedirect("/");
+    }
+
+    /// <summary>
+    /// No code pending: usually the code page sent twice, the first time already signed the person in. Go on to
+    /// the sign-up or the space instead of asking for the number again.
+    /// </summary>
+    private IActionResult AfterCodeOrSignIn()
+    {
+        if (User.Identity?.IsAuthenticated != true)
+        {
+            return RedirectToAction(nameof(SignIn));
+        }
+
+        return User.IsRegistered() ? LocalRedirect("/") : RedirectToAction(nameof(RegistrationController.Index), "Registration");
     }
 
     private string? ClientIp => HttpContext.Connection.RemoteIpAddress?.ToString();

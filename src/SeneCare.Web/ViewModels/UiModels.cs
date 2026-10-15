@@ -94,3 +94,6 @@ public sealed record SiteHeroModel(string Title, string Text, string? Crumb = nu
 
 /// <summary>Progress bars and « ÉTAPE 2/5 — VOTRE NUMÉRO » title of the sign-up steps.</summary>
 public sealed record WizardHeadingModel(int Step, int Total, string Label, string Title, string? Text = null);
+
+/// <summary>Trade illustration (icon on a blue tile) used where a trade photo would go.</summary>
+public sealed record TradeArtModel(SeneCare.Domain.Common.ServiceDomain Domain, string Label, string Class, bool Large = false);

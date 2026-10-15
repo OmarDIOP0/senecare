@@ -1,0 +1,9 @@
+@model TradeArtModel
+@* Trade illustration instead of a photo: the trade's icon, large, on an Atlantic blue tile with the band. *@
+<div class="@Model.Class sc-panneau relative grid place-items-center overflow-hidden rounded-none" role="img" aria-label="@Model.Label">
+    <span class="absolute -right-6 -bottom-8 text-white/5 [--icon-fond:currentColor]" aria-hidden="true"><sc-icon name="@Formatting.Icon(Model.Domain)" class="size-40" /></span>
+    <span class="@(Model.Large ? "size-28 sm:size-40" : "size-20 sm:size-24") relative grid place-items-center rounded-full bg-ambre/15 ring-1 ring-ambre/30">
+        <sc-icon name="@Formatting.Icon(Model.Domain)" class="@(Model.Large ? "size-14 sm:size-20" : "size-10 sm:size-12") text-or [--icon-fond:var(--laterite)] [--icon-fond-opacite:.55]" />
+    </span>
+    <span class="sc-bande-fine absolute inset-x-0 bottom-0"></span>
+</div>

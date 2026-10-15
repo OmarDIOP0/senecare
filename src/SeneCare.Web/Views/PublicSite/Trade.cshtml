@@ -41,7 +41,7 @@
                 <button type="submit" class="sc-btn-primaire min-h-12 px-6">@L["Site_RequestJob"]</button>
             </form>
         </div>
-        <partial name="Site/_Photo" model='new PhotoModel(Model.Image, Model.Name, "aspect-[4/3] w-full rounded-lg", Icon: Formatting.Icon(Model.Domain), Eager: true)' />
+        <partial name="Site/_TradeArt" model='new TradeArtModel(Model.Domain, Model.Name, "aspect-[4/3] w-full !rounded-3xl", Large: true)' />
     </div>
 </section>
 

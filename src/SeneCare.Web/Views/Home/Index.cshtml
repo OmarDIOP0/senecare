@@ -93,12 +93,9 @@
         {
             <li>
                 <a href="/metiers/@trade.Slug" class="group grid h-full grid-cols-[6.5rem_1fr] overflow-hidden rounded-2xl border border-ligne bg-surface text-charbon no-underline shadow-carte transition hover:-translate-y-0.5 hover:border-ambre/60 hover:no-underline sm:flex sm:flex-col">
-                    <partial name="Site/_Photo" model='new PhotoModel(trade.Image, trade.Name, "h-full w-full sm:aspect-[4/3] sm:h-auto", Icon: Formatting.Icon(trade.Domain))' />
+                    <partial name="Site/_TradeArt" model='new TradeArtModel(trade.Domain, trade.Name, "h-full w-full sm:aspect-[4/3] sm:h-auto")' />
                     <span class="flex flex-1 flex-col p-4 sm:p-5">
-                        <span class="flex items-center gap-2.5">
-                            <span class="grid size-9 place-items-center rounded-xl bg-ocre-clair text-laterite [--icon-fond:var(--ambre)] [--icon-fond-opacite:.55]"><sc-icon name="@Formatting.Icon(trade.Domain)" class="size-5" /></span>
-                            <span class="text-lg font-bold">@trade.Name</span>
-                        </span>
+                        <span class="text-lg font-bold">@trade.Name</span>
                         <span class="mt-2 flex-1 text-[15px] text-charbon-doux">@trade.Summary</span>
                         @if (Site.Visible(trade))
                         {

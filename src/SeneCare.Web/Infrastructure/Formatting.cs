@@ -31,13 +31,13 @@ public static class Formatting
     /// <summary>Lucide icon for a trade.</summary>
     public static string Icon(ServiceDomain domain) => domain switch
     {
-        ServiceDomain.Electricity => "zap",
-        ServiceDomain.Plumbing => "droplet",
-        ServiceDomain.Waterproofing => "cloud-rain",
+        ServiceDomain.Electricity => "plug",
+        ServiceDomain.Plumbing => "pipe-wrench",
+        ServiceDomain.Waterproofing => "umbrella",
         ServiceDomain.Masonry => "brick-wall",
         ServiceDomain.Carpentry => "door-open",
         ServiceDomain.Security => "cctv",
-        ServiceDomain.Outdoor => "trees",
+        ServiceDomain.Outdoor => "plant",
         _ => "wrench",
     };
 

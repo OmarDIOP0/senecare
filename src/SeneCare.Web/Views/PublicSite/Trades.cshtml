@@ -10,7 +10,7 @@
         @foreach (var trade in Site.Trades)
         {
             <li class="grid overflow-hidden rounded-lg border border-ligne bg-surface shadow-xs sm:grid-cols-[13rem_1fr]">
-                <partial name="Site/_Photo" model='new PhotoModel(trade.Image, trade.Name, "aspect-[16/9] h-full w-full sm:aspect-auto", Icon: Formatting.Icon(trade.Domain))' />
+                <partial name="Site/_TradeArt" model='new TradeArtModel(trade.Domain, trade.Name, "aspect-[16/9] h-full w-full sm:aspect-auto")' />
                 <div class="flex flex-col p-5">
                     <h2 class="flex items-center gap-2 text-xl"><sc-icon name="@Formatting.Icon(trade.Domain)" class="size-5 text-laterite" />@trade.Name</h2>
                     <p class="mt-2 text-[15px] text-charbon-doux">@trade.Intro</p>

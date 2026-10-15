@@ -73,16 +73,14 @@ public sealed class OtpChallenge : Entity
     /// with a constant-time comparison of hashes.
     /// </summary>
     /// <summary>
-    /// A right code sent again within this delay after it was accepted (form sent twice on a slow network)
-    /// counts as accepted: same person, same code, no new access.
+    /// Strictly single use. A form sent twice is handled by the page (sent once) and by the controller (already
+    /// signed in → next step), never by accepting the code a second time.
     /// </summary>
-    public static readonly TimeSpan ResubmitGrace = TimeSpan.FromMinutes(2);
-
     public OtpVerificationResult Verify(bool codeMatches, DateTimeOffset now)
     {
-        if (ConsumedAt is { } consumed)
+        if (ConsumedAt is not null)
         {
-            return codeMatches && now - consumed <= ResubmitGrace ? OtpVerificationResult.Success : OtpVerificationResult.AlreadyUsed;
+            return OtpVerificationResult.AlreadyUsed;
         }
 
         if (IsExpired(now))

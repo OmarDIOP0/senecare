@@ -103,6 +103,20 @@ try
     // First: the real scheme (https) and client IP from the proxy, before HTTPS redirection and rate limits.
     app.UseForwardedHeaders();
 
+    // Security headers on every response: no framing by other sites (clickjacking), no MIME sniffing, no full
+    // URL leaked to other sites, and only this site may use the camera (photos), microphone (voice notes) and
+    // position (map).
+    app.Use(async (context, next) =>
+    {
+        var headers = context.Response.Headers;
+        headers["X-Content-Type-Options"] = "nosniff";
+        headers["X-Frame-Options"] = "DENY";
+        headers["Content-Security-Policy"] = "frame-ancestors 'none'";
+        headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+        headers["Permissions-Policy"] = "camera=(self), microphone=(self), geolocation=(self), payment=()";
+        await next();
+    });
+
     if (!app.Environment.IsDevelopment())
     {
         app.UseExceptionHandler("/Home/Error");

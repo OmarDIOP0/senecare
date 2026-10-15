@@ -19,7 +19,8 @@
         <div class="flex flex-wrap items-center gap-3">
             <h2 id="tarifs-particuliers" class="sc-section-titre">@L["Public_Nav_Households"]</h2>
         </div>
-        <div class="mt-6 overflow-x-auto rounded-lg border border-ligne bg-surface shadow-xs">
+        @* Desktop / tablet: the comparison table. Phones: one card per offer below, nothing hidden sideways. *@
+        <div class="mt-6 hidden overflow-x-auto rounded-lg border border-ligne bg-surface shadow-xs md:block">
             <table class="sc-table min-w-[36rem]">
                 <thead>
                     <tr>
@@ -73,6 +74,44 @@
                 </tbody>
             </table>
         </div>
+        <div class="mt-6 grid gap-4 md:hidden">
+            <article class="rounded-2xl border border-ambre bg-linear-to-br from-ocre-clair via-surface to-ocre-clair p-5 ring-1 ring-ambre/40">
+                <h3 class="text-lg font-bold">@home.Name</h3>
+                <p class="mt-2"><span class="font-display text-3xl"><sc-amount value="@home.MonthlyPrice.Amount" /></span> <span class="text-sm text-charbon-doux">@L["Home_Offer_PerMonth"]</span></p>
+                <p class="text-sm text-charbon-doux">@L["Home_Offer_Registration", Formatting.Fcfa(home.RegistrationFee)]</p>
+                @if (home.OffersAnnual)
+                {
+                    <p class="mt-3 flex flex-wrap items-center gap-2 rounded-md bg-surface/70 px-3 py-2 text-sm">
+                        <span>@L["Site_Pricing_Yearly"] :</span> <span class="font-bold"><sc-amount value="@home.AnnualPrice.Amount" /></span> @L["Register_PerYear"]
+                        <span class="sc-badge bg-ambre text-sur-ocre">@L["Register_FreeMonths", home.AnnualFreeMonths]</span>
+                    </p>
+                }
+                <dl class="mt-3 divide-y divide-ligne text-[15px]">
+                    <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-charbon-doux">@L["Site_Pricing_Critical"]</dt><dd class="text-right font-semibold">@Delay(home.CriticalDelay)</dd></div>
+                    @if (showExtras)
+                    {
+                        @foreach (var item in extras.Household.Rows)
+                        {
+                            <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-charbon-doux">@item.Label</dt><dd class="text-right font-semibold">@item.Plan</dd></div>
+                        }
+                    }
+                </dl>
+            </article>
+            @if (showExtras)
+            {
+                <article class="rounded-2xl border border-ligne bg-surface p-5">
+                    <h3 class="text-lg font-bold">@extras.Household.OneOffLabel</h3>
+                    <p class="mt-2 font-semibold">@extras.Household.OneOffPrice</p>
+                    <dl class="mt-3 divide-y divide-ligne text-[15px]">
+                        <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-charbon-doux">@L["Site_Pricing_Critical"]</dt><dd class="text-right font-semibold">@L["Site_Pricing_DependsAvailability"]</dd></div>
+                        @foreach (var item in extras.Household.Rows)
+                        {
+                            <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-charbon-doux">@item.Label</dt><dd class="text-right font-semibold">@item.OneOff</dd></div>
+                        }
+                    </dl>
+                </article>
+            }
+        </div>
         <a href="/inscription" class="sc-btn-primaire mt-5 px-6">@L["Site_Households_Subscribe"]</a>
     </section>
 }
@@ -85,7 +124,8 @@
             <h2 id="tarifs-entreprises" class="sc-section-titre">@L["Public_Nav_Business"]</h2>
         </div>
         <p class="mt-2 text-[15px] text-charbon-doux">@L["Site_Pricing_BusinessNote", Formatting.Fcfa(business[0].RegistrationFee)]</p>
-        <div class="mt-6 overflow-x-auto rounded-lg border border-ligne bg-surface shadow-xs">
+        @* Desktop / tablet: the comparison table. Phones: one card per offer below, nothing hidden sideways. *@
+        <div class="mt-6 hidden overflow-x-auto rounded-lg border border-ligne bg-surface shadow-xs md:block">
             <table class="sc-table min-w-[44rem]">
                 <thead>
                     <tr>
@@ -146,6 +186,34 @@
                     }
                 </tbody>
             </table>
+        </div>
+        <div class="mt-6 grid gap-4 md:hidden">
+            @foreach (var (index, plan) in business.Index())
+            {
+                var featured = index == 1;
+                <article class="@(featured ? "border-ambre bg-linear-to-br from-ocre-clair via-surface to-ocre-clair ring-1 ring-ambre/40" : "border-ligne bg-surface") relative rounded-2xl border p-5">
+                    @if (featured)
+                    {
+                        <span class="absolute -top-3 right-5 inline-flex items-center gap-1.5 rounded-full bg-ambre px-3 py-1 font-mono text-[10px] font-bold tracking-[0.12em] text-sur-ocre uppercase">
+                            <sc-icon name="crown" class="size-3.5 [--icon-fond:var(--surface)]" />@L["Register_Popular"]
+                        </span>
+                    }
+                    <h3 class="text-lg font-bold">@plan.Name</h3>
+                    <p class="mt-2"><span class="font-display text-2xl"><sc-amount value="@plan.MonthlyPrice.Amount" /></span> <span class="text-sm text-charbon-doux">@L["Home_Offer_PerMonth"]</span></p>
+                    <dl class="mt-3 divide-y divide-ligne text-[15px]">
+                        <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-charbon-doux">@L["Site_Pricing_Critical"]</dt><dd class="text-right font-semibold">@Delay(plan.CriticalDelay)</dd></div>
+                        <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-charbon-doux">@L["Site_Pricing_Visits"]</dt><dd class="text-right font-semibold">@(plan.IncludedVisitsPerPeriod is { } visits ? L["Offer_VisitsCount", visits] : L["Offer_VisitsUnlimited"])</dd></div>
+                        <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-charbon-doux">@L["Site_Pricing_Diagnostic"]</dt><dd class="text-right font-semibold">@(plan.DiagnosticRequired ? L["Site_Pricing_DiagnosticYes"] : "—")</dd></div>
+                        @if (showExtras && Extra(plan.Code) is { } extra)
+                        {
+                            <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-charbon-doux">@L["Site_Pricing_Sites"]</dt><dd class="text-right font-semibold">@extra.Sites</dd></div>
+                            <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-charbon-doux">@L["Site_Pricing_Parts"]</dt><dd class="text-right font-semibold">@extra.Parts</dd></div>
+                            <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-charbon-doux">@L["Site_Pricing_Contact"]</dt><dd class="text-right font-semibold">@extra.Contact</dd></div>
+                            <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-charbon-doux">@L["Site_Pricing_Report"]</dt><dd class="text-right font-semibold">@extra.Report</dd></div>
+                        }
+                    </dl>
+                </article>
+            }
         </div>
         <a href="/inscription?profil=Business" class="sc-btn-primaire mt-5 px-6">@L["Site_Business_Cta"]</a>
     </section>

@@ -29,11 +29,11 @@
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="sc-label" for="inscr-@plan.Id">@L["Subscription_Registration"] (FCFA)</label>
-                    <input id="inscr-@plan.Id" name="registrationFee" type="number" min="0" step="500" class="sc-input" value="@plan.RegistrationFee.Amount" />
+                    <input id="inscr-@plan.Id" name="registrationFee" type="number" min="0" step="1" class="sc-input" value="@plan.RegistrationFee.Amount" />
                 </div>
                 <div>
                     <label class="sc-label" for="mois-@plan.Id">@L["Subscription_Monthly"] (FCFA)</label>
-                    <input id="mois-@plan.Id" name="monthlyPrice" type="number" min="1" step="500" class="sc-input" value="@plan.MonthlyPrice.Amount" />
+                    <input id="mois-@plan.Id" name="monthlyPrice" type="number" min="1" step="1" class="sc-input" value="@plan.MonthlyPrice.Amount" />
                 </div>
                 <div>
                     <label class="sc-label" for="prio-@plan.Id">@L["Admin_Priority"]</label>

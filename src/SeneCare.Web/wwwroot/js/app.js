@@ -748,6 +748,8 @@
       if (submit) submit.hidden = index !== steps.length - 1;
       // A new step starts at its top (the previous one, step 3, is long and leaves the page scrolled down).
       if (shown) {
+        // A message about the step just left (« Placez le lieu… ») no longer applies on the new one.
+        document.getElementById("sc-toasts")?.replaceChildren();
         // Below the sticky header (its real height), instantly: the new step is read from its first line.
         const header = document.querySelector("header.sticky, header[class*='sticky']");
         const top = form.getBoundingClientRect().top + window.scrollY - (header?.offsetHeight ?? 0) - 16;

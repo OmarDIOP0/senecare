@@ -98,10 +98,10 @@ public class NeighborhoodSearchTests(WebAppFixture app)
     }
 
     [PostgresFact]
-    public async Task Unknown_neighborhood_says_so()
+    public async Task Unknown_neighborhood_says_so_and_offers_to_add_it()
     {
         var html = WebUtility.HtmlDecode(await app.CreateClient().GetStringAsync(new Uri("/quartiers/recherche?q=zzzz&field=q1", UriKind.Relative)));
 
-        Assert.Contains("Aucun quartier trouvé", html, StringComparison.Ordinal);
+        Assert.Contains("« zzzz » n'est pas encore dans notre liste", html, StringComparison.Ordinal);
     }
 }

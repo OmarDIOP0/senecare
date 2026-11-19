@@ -42,10 +42,5 @@ public sealed class AntiforgeryRecoveryFilter(ITempDataDictionaryFactory tempDat
     }
 
     /// <summary>The page the form came from when it is ours, the home page otherwise.</summary>
-    private static string BackTo(HttpRequest request) =>
-        Uri.TryCreate(request.Headers.Referer.ToString(), UriKind.Absolute, out var referer)
-        && string.Equals(referer.Authority, request.Host.Value, StringComparison.OrdinalIgnoreCase)
-        && referer.PathAndQuery.StartsWith('/')
-            ? referer.PathAndQuery
-            : "/";
+    private static string BackTo(HttpRequest request) => SafeReferer.PathOf(request) ?? "/";
 }

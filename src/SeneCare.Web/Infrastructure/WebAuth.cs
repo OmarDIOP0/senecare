@@ -46,10 +46,7 @@ public static class RateLimits
         tempData["flash.warning"] = localizer["Error_too_many_attempts"].Value;
         tempData.Save();
 
-        var back = Uri.TryCreate(request.Headers.Referer.ToString(), UriKind.Absolute, out var referer)
-            && string.Equals(referer.Authority, request.Host.Value, StringComparison.OrdinalIgnoreCase)
-                ? referer.PathAndQuery
-                : "/connexion";
+        var back = SafeReferer.PathOf(request) ?? "/connexion";
         http.Response.StatusCode = StatusCodes.Status303SeeOther;
         http.Response.Headers.Location = back;
         return ValueTask.CompletedTask;
@@ -93,5 +90,25 @@ public sealed class RegistrationRedirectHandler : IAuthorizationMiddlewareResult
         }
 
         return _default.HandleAsync(next, context, policy, authorizeResult);
+    }
+}
+
+/// <summary>The page a form came from, as a local path — never another site (open redirect).</summary>
+public static class SafeReferer
+{
+    /// <summary>Null unless the Referer is this site and its path is plainly local (no « // », no « \ »).</summary>
+    public static string? PathOf(HttpRequest request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        if (!Uri.TryCreate(request.Headers.Referer.ToString(), UriKind.Absolute, out var referer)
+            || !string.Equals(referer.Authority, request.Host.Value, StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        var path = referer.PathAndQuery;
+        return path.StartsWith('/') && !path.StartsWith("//", StringComparison.Ordinal) && !path.Contains('\\', StringComparison.Ordinal)
+            ? path
+            : null;
     }
 }

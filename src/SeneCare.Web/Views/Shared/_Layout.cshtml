@@ -22,7 +22,7 @@
     <partial name="Ui/_Head" />
     @await RenderSectionAsync("Head", required: false)
 </head>
-<body class="flex min-h-dvh flex-col pb-16 lg:pb-0">
+<body class="flex min-h-dvh flex-col @(showContact && !onSignIn ? "pb-16 lg:pb-0" : "")">
 <partial name="Ui/_TestBanner" />
     <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-surface focus:px-3 focus:py-2 focus:text-charbon">@L["Layout_SkipToContent"]</a>
 
@@ -235,8 +235,8 @@
         </div>
     </footer>
 
-    @* ---- Phones: call and WhatsApp always at hand ---- *@
-    @if (showContact)
+    @* ---- Phones: call and WhatsApp always at hand, except on sign-in / sign-up where the bar hid the form's buttons ---- *@
+    @if (showContact && !onSignIn)
     {
         <div class="fixed inset-x-0 bottom-0 z-40 grid auto-cols-fr grid-flow-col gap-2 border-t border-ligne bg-surface p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] lg:hidden">
             @if (contact.HasPhone)

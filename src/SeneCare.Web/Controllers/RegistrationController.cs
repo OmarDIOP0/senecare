@@ -129,15 +129,20 @@ public sealed class RegistrationController(
             {
                 // The chosen offer is now a subscription waiting for its Wave payment.
                 TempData["flash.toast"] = this.Localizer()["Register_Done"].Value;
-                return LocalRedirect(string.IsNullOrEmpty(model.PlanCode) ? "/" : "/abonnement");
+                return Welcome(string.IsNullOrEmpty(model.PlanCode) ? "/" : "/abonnement");
             }
 
             // Account created, home refused (e.g. a photo): finish it on the usual form.
             TempData["flash.error"] = this.ErrorMessage(added.Error);
         }
 
-        return LocalRedirect(string.IsNullOrEmpty(model.PlanCode) && !withProperty ? "/" : "/logements/nouveau?bienvenue=1");
+        return string.IsNullOrEmpty(model.PlanCode) && !withProperty
+            ? LocalRedirect("/")
+            : Welcome("/logements/nouveau?bienvenue=1");
     }
+
+    /// <summary>A new customer sees the welcome screens once, then goes on (« Passer » included).</summary>
+    private LocalRedirectResult Welcome(string next) => LocalRedirect("/bienvenue?suite=" + Uri.EscapeDataString(next));
 
     private async Task<RegistrationViewModel> RebuildAsync(RegistrationViewModel model, Guid userId, CancellationToken cancellationToken)
     {

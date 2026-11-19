@@ -12,7 +12,6 @@ public class PublicHomeTests(WebAppFixture app)
     {
         var client = app.CreateClient();
         using var request = new HttpRequestMessage(HttpMethod.Get, "/");
-        request.Headers.Add("Cookie", "sc_bienvenue=1");
 
         var response = await client.SendAsync(request);
         var html = WebUtility.HtmlDecode(await response.Content.ReadAsStringAsync()).Replace(' ', ' ').Replace(' ', ' ');
@@ -55,17 +54,29 @@ public class PublicHomeTests(WebAppFixture app)
     }
 
     [PostgresFact]
-    public async Task Finishing_the_welcome_screens_is_remembered_on_the_device()
+    public async Task A_first_visit_lands_on_the_home_page_not_on_the_welcome_screens()
+    {
+        var home = await app.CreateClient().GetAsync(new Uri("/", UriKind.Relative));
+
+        Assert.Equal(HttpStatusCode.OK, home.StatusCode);
+        Assert.Contains("Créer mon compte", WebUtility.HtmlDecode(await home.Content.ReadAsStringAsync()), StringComparison.Ordinal);
+    }
+
+    [PostgresFact]
+    public async Task The_welcome_screens_lead_on_to_where_the_new_customer_was_going()
     {
         var client = app.CreateClient();
+        var page = "/bienvenue?suite=" + Uri.EscapeDataString("/abonnement");
 
-        var welcome = await client.GetStringAsync(new Uri("/bienvenue", UriKind.Relative));
-        Assert.Contains("Signalez en 30 secondes", WebUtility.HtmlDecode(welcome), StringComparison.Ordinal);
+        var welcome = WebUtility.HtmlDecode(await client.GetStringAsync(new Uri(page, UriKind.Relative)));
+        Assert.Contains("Signalez en 30 secondes", welcome, StringComparison.Ordinal);
+        Assert.Contains("name=\"suite\" value=\"/abonnement\"", welcome, StringComparison.Ordinal);
 
-        var finished = await client.SubmitAsync("/bienvenue", "/bienvenue", new Dictionary<string, string>());
-        Assert.Equal("/", finished.Location());
+        var skipped = await client.SubmitAsync(page, "/bienvenue", new Dictionary<string, string> { ["suite"] = "/abonnement" });
+        Assert.Equal("/abonnement", skipped.Location());
 
-        var home = await client.GetAsync(new Uri("/", UriKind.Relative));
-        Assert.Equal(HttpStatusCode.OK, home.StatusCode);
+        // Never towards another site.
+        var outside = await client.SubmitAsync("/bienvenue?suite=%2F%2Fexemple.com", "/bienvenue", new Dictionary<string, string> { ["suite"] = "//exemple.com" });
+        Assert.Equal("/", outside.Location());
     }
 }

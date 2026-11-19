@@ -21,6 +21,10 @@
     <div class="sc-motif sc-motif-bogolan h-1.5 w-full text-laterite/20" aria-hidden="true"></div>
     <form method="post" asp-action="Finish" class="flex min-h-dvh flex-col" data-onboarding>
         <input type="hidden" name="rejouer" value="@(Model ? "true" : "false")" />
+        @if (ViewData["Suite"] is string suite)
+        {
+            <input type="hidden" name="suite" value="@suite" />
+        }
         <header class="flex h-14 items-center justify-between px-4">
             <partial name="Ui/_Brand" />
             <button type="submit" class="sc-btn-discret">@L["Onboarding_Skip"]</button>

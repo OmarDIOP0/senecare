@@ -132,31 +132,33 @@ public sealed class SpaceController(
     });
 }
 
-/// <summary>Four illustrated welcome screens, shown on first launch; replayable from the profile.</summary>
+/// <summary>
+/// Four illustrated welcome screens, shown once right after the account is created (then « suite », usually the
+/// payment page); replayable from the profile.
+/// </summary>
 [AllowAnonymous]
 [Route("/bienvenue")]
 public sealed class OnboardingController : Controller
 {
-    public const string CookieName = "sc_bienvenue";
-
     [HttpGet("")]
-    public IActionResult Index(bool rejouer = false) => View(rejouer);
-
-    /// <summary>« Commencer » or « Passer »: remember it on this device (functional cookie, 1 year).</summary>
-    [HttpPost("")]
-    public IActionResult Finish(bool rejouer = false)
+    public IActionResult Index(bool rejouer = false, string? suite = null)
     {
-        Response.Cookies.Append(CookieName, "1", new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Lax,
-            IsEssential = true,
-            MaxAge = TimeSpan.FromDays(365),
-        });
+        ViewData["Suite"] = Url.IsLocalUrl(suite) ? suite : null;
+        return View(rejouer);
+    }
+
+    /// <summary>« Commencer » or « Passer »: on to where the person was going.</summary>
+    [HttpPost("")]
+    public IActionResult Finish(bool rejouer = false, string? suite = null)
+    {
         if (rejouer)
         {
             return LocalRedirect("/compte");
+        }
+
+        if (Url.IsLocalUrl(suite))
+        {
+            return LocalRedirect(suite);
         }
 
         // A visitor discovers what SeneCare does on the home page (not the sign-in form of an account they do not have).

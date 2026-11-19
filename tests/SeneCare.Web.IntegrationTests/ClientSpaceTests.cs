@@ -198,7 +198,6 @@ public partial class ClientSpaceTests(WebAppFixture app)
     private async Task<string> PublicHomeAsync()
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, "/");
-        request.Headers.Add("Cookie", "sc_bienvenue=1");
         var response = await app.CreateClient().SendAsync(request);
         return WebUtility.HtmlDecode(await response.Content.ReadAsStringAsync());
     }

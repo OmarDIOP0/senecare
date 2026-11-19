@@ -93,7 +93,8 @@ public sealed partial class OfferAndPaymentTests(WebAppFixture app)
             ["Annual"] = "false",
             ["AcceptsPrivacyPolicy"] = "true",
         }, [("photos", "facade.png", Png)]);
-        Assert.Equal("/abonnement", done.Location());
+        // The welcome screens once, then the payment page.
+        Assert.Equal("/bienvenue?suite=%2Fabonnement", done.Location());
 
         await using (var db = app.Database.CreateContext())
         {

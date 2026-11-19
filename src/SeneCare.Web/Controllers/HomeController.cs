@@ -12,8 +12,8 @@ namespace SeneCare.Web.Controllers;
 public sealed class HomeController(GetPublicHomeHandler publicHome) : Controller
 {
     /// <summary>
-    /// Signed in → own space. First visit on this device → welcome screens. Otherwise the public home:
-    /// offers, trades, steps, figures and advice, all read from the database.
+    /// Signed in → own space. Otherwise the public home: offers, trades, steps, figures and advice, all read from
+    /// the database. The welcome screens come once, after the account is created (not in front of the home page).
     /// </summary>
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
@@ -21,11 +21,6 @@ public sealed class HomeController(GetPublicHomeHandler publicHome) : Controller
         if (User.Identity?.IsAuthenticated == true && User.IsRegistered())
         {
             return LocalRedirect("/espace");
-        }
-
-        if (!Request.Cookies.ContainsKey(OnboardingController.CookieName))
-        {
-            return LocalRedirect("/bienvenue");
         }
 
         return View(await publicHome.HandleAsync(cancellationToken));

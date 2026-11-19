@@ -22,8 +22,7 @@ public sealed record TokenResponse(
     string RefreshToken,
     DateTimeOffset RefreshTokenExpiresAt,
     bool IsNewUser,
-    bool IsRegistrationComplete,
-    bool MustChangePassword = false);
+    bool IsRegistrationComplete);
 
 public sealed record LoginRequest(string? Phone, string? Password);
 
@@ -69,9 +68,15 @@ public static class AuthEndpoints
             return Problem(result.Error);
         }
 
+        // Temporary password (admin reset): no session until the person chooses their own one on the website.
+        if (result.Value.MustChangePassword)
+        {
+            return Problem(new AppError("password.must_change"));
+        }
+
         var issued = await tokens.IssueAsync(result.Value.UserId, http.Connection.RemoteIpAddress?.ToString(), cancellationToken);
         var complete = await IsRegistrationCompleteAsync(db, result.Value.UserId, cancellationToken);
-        return TypedResults.Ok(ToResponse(issued, false, complete) with { MustChangePassword = result.Value.MustChangePassword });
+        return TypedResults.Ok(ToResponse(issued, false, complete));
     }
 
     private static async Task<Results<Ok<TokenResponse>, ProblemHttpResult>> SignupAsync(
@@ -181,6 +186,7 @@ public static class AuthEndpoints
         {
             "otp.cooldown" or "otp.too_many_requests" or "auth.locked" => StatusCodes.Status429TooManyRequests,
             "auth.invalid" => StatusCodes.Status401Unauthorized,
+            "password.must_change" => StatusCodes.Status403Forbidden,
             "auth.otp_disabled" => StatusCodes.Status404NotFound,
             "auth.phone_taken" => StatusCodes.Status409Conflict,
             _ => StatusCodes.Status400BadRequest,

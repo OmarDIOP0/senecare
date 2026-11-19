@@ -85,8 +85,13 @@ internal sealed class IdentityService(UserManager<ApplicationUser> userManager, 
         user.MustChangePassword = mustChange;
         await userManager.SetLockoutEndDateAsync(user, null);
         await userManager.ResetAccessFailedCountAsync(user);
-        // New security stamp: other sessions signed in with the old password are closed.
+        // New security stamp: other web sessions signed in with the old password are closed…
         await userManager.UpdateSecurityStampAsync(user);
+        // …and so are the mobile app sessions (refresh tokens), like for an erasure.
+        var now = DateTimeOffset.UtcNow;
+        await db.RefreshTokens
+            .Where(t => t.UserId == userId && t.RevokedAt == null)
+            .ExecuteUpdateAsync(s => s.SetProperty(t => t.RevokedAt, now), cancellationToken);
         return null;
     }
 

@@ -125,6 +125,7 @@
   <data name="Error_phone_invalid" xml:space="preserve"><value>Ce numéro n'est pas un mobile sénégalais valide (9 chiffres commençant par 77, 78, 76, 75, 71 ou 70).</value></data>
   <data name="Error_otp_cooldown" xml:space="preserve"><value>Patientez une minute avant de demander un nouveau code.</value></data>
   <data name="Error_otp_too_many_requests" xml:space="preserve"><value>Trop de codes demandés pour ce numéro. Réessayez dans une heure.</value></data>
+  <data name="Error_too_many_attempts" xml:space="preserve"><value>Trop d'essais en peu de temps depuis ce réseau. Patientez 10 minutes, puis réessayez.</value></data>
   <data name="Error_otp_invalid" xml:space="preserve"><value>Code incorrect. Vérifiez le message et réessayez.</value></data>
   <data name="Error_otp_too_many_attempts" xml:space="preserve"><value>Trop d'essais. Demandez un nouveau code.</value></data>
   <data name="Error_otp_expired" xml:space="preserve"><value>Ce code a expiré. Demandez-en un nouveau.</value></data>

@@ -63,7 +63,7 @@ public class PublicHomeTests(WebAppFixture app)
         Assert.Contains("Signalez en 30 secondes", WebUtility.HtmlDecode(welcome), StringComparison.Ordinal);
 
         var finished = await client.SubmitAsync("/bienvenue", "/bienvenue", new Dictionary<string, string>());
-        Assert.Equal("/connexion", finished.Location());
+        Assert.Equal("/", finished.Location());
 
         var home = await client.GetAsync(new Uri("/", UriKind.Relative));
         Assert.Equal(HttpStatusCode.OK, home.StatusCode);

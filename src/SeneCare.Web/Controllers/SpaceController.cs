@@ -159,6 +159,7 @@ public sealed class OnboardingController : Controller
             return LocalRedirect("/compte");
         }
 
-        return User.Identity?.IsAuthenticated == true ? LocalRedirect("/espace") : LocalRedirect("/connexion");
+        // A visitor discovers what SeneCare does on the home page (not the sign-in form of an account they do not have).
+        return User.Identity?.IsAuthenticated == true ? LocalRedirect("/espace") : LocalRedirect("/");
     }
 }

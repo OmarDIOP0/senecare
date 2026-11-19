@@ -1,0 +1,219 @@
+
+## 1. Première visite de l'accueil
+  chargement : 1.1 s → /bienvenue
+  📸 desktop-01-premiere-visite.png
+  titre : Votre bâtiment mérite qu'on en prenne soin | Signalez en 30 secondes, même avec une photo | Nos techniciens interviennent et assurent le suivi | Ensemble, on reverdit votre quartier
+  boutons visibles : SENECARE · Passer · Suivant
+  ⏱ 2.1 s
+
+## 2. Écrans de bienvenue → accueil
+  je touche « Passer »
+  📸 desktop-02-accueil.png
+  maintenant sur : /connexion — h1 : Connexion
+  ⏱ 1.1 s
+
+## 3. Elle cherche comment s'inscrire
+  lien d'inscription visible : « Créer mon compte »
+  📸 desktop-03-page-connexion.png
+  📸 desktop-04-inscription-etape1.png
+  ÉTAPE 1/5 — VOTRE PROFIL | Étape 2/5 — Votre accès
+  ⏱ 1.0 s
+
+## 4. Étape 1 → 2, puis erreurs volontaires sur le numéro et le mot de passe
+  📸 desktop-05-etape2-vide.png
+  envoi à vide → URL /connexion ; message : Ce numéro n'est pas un mobile sénégalais valide (9 chiffres commençant par 77, 78, 76, 75, 71 ou 70).
+  📸 desktop-06-etape2-vide-envoye.png
+  numéro trop court → Ce numéro n'est pas un mobile sénégalais valide (9 chiffres commençant par 77, 78, 76, 75, 71 ou 70).
+  numéro mal commencé → Ce numéro n'est pas un mobile sénégalais valide (9 chiffres commençant par 77, 78, 76, 75, 71 ou 70).
+  mot de passe « 1234 » → Le mot de passe doit faire au moins 8 caractères. ; étape ÉTAPE 2/5 — VOTRE ACCÈS
+  📸 desktop-07-mdp-trop-court.png
+  confirmation différente → Les deux mots de passe ne sont pas identiques.
+  numéro conservé après erreur : « 77 749 59 87 » ; profil coché : Household
+  📸 desktop-08-mdp-differents.png
+  📸 desktop-09-etape3.png
+  après le double-clic → /inscription ; ÉTAPE 3/5 — VOTRE LOGEMENT
+  ⏱ 8.9 s
+
+## 5. Étape 3 : elle oublie des champs
+  « Suivant » sans rien remplir → FullName : Veuillez remplir ce champ.
+  📸 desktop-10-etape3-oubli.png
+  📸 desktop-11-quartier-faute.png
+  quartier « Gran yof » (faute) → « Gran yof » n'est pas encore dans notre liste. Ajoutez-le en choisissant sa commune.
+
+Commune
+Choisissez la commune
+Bakel
+Bambey
+Bignona
+Birkelane
+Bounkiling
+Dagana
+Richard-Toll
+Biscuiterie
+Cambérène
+Dakar-Plateau
+Dieuppeul-Derklé
+Fann-Point E-Amitié
+Gorée
+Grand Dakar
+Grand Yoff
+Gueule Tapée-Fass-Colobane
+Hann Bel-Air
+HLM
+Médina
+Mermoz-Sacré-Cœur
+Ngor
+Ouakam
+Parcelles Assainies
+Patte d'Oie
+Sicap-Liberté
+Yoff
+Diourbel
+Fatick
+Foundiougne
+Gossas
+Goudiry
+Goudomp
+Golf Sud
+Médina Gounass
+Ndiarème Limamoulaye
+Sam Notaire
+Wakhinane Nimzatt
+Guinguinéo
+Kaffrine
+Kanel
+Kahone
+Kaolack
+Ndoffane
+Kébémer
+Kédougou
+Jaxaay-Parcelles-Niakoul Rap
+Keur Massar Nord
+Keur Massar Sud
+Malika
+Yeumbeul Nord
+Yeumbeul Sud
+Kolda
+Koumpentoum
+Koungheul
+Linguère
+Louga
+Malem-Hodar
+Matam
+Ourossogui
+Mbacké
+Touba Mosquée
+Joal-Fadiouth
+Mbour
+Ngaparou
+Nguékhokh
+Popenguine-Ndayane
+Saly Portudal
+Somone
+Thiadiaye
+Médina Yoro Foulah
+Nioro du Rip
+Oussouye
+Dalifort
+Diamaguène Sicap Mbao
+Djiddah Thiaroye Kao
+Guinaw Rail Nord
+Guinaw Rail Sud
+Mbao
+Pikine Est
+Pikine Nord
+Pikine Ouest
+Thiaroye Gare
+Thiaroye-sur-Mer
+Tivaouane Diacksao
+Podor
+Ranérou
+Bambilor
+Bargny
+Diamniadio
+Rufisque Est
+Rufisque Nord
+Rufisque Ouest
+Sangalkam
+Sébikotane
+Sendou
+Tivaouane Peulh-Niaga
+Yène
+Mpal
+Saint-Louis
+Salémata
+Saraya
+Sédhiou
+Tambacounda
+Khombole
+Pout
+Thiès Est
+Thiès Nord
+Thiès Ouest
+Mboro
+Mékhé
+Tivaouane
+Vélingara
+Ziguinchor
+Ajouter « Gran yof »
+  choisi : Grand Yoff Dakar, Dakar
+  « Suivant » sans point sur la carte → Placez le lieu sur la carte : touchez la carte ou utilisez votre position. ; étape ÉTAPE 3/5 — VOTRE LOGEMENT
+  📸 desktop-12-sans-carte.png
+  📸 desktop-13-etape4-formule.png
+  ÉTAPE 4/5 — VOTRE FORMULE
+  ⏱ 7.3 s
+
+## 6. Étape 4 → 5 : formule et consentement
+  📸 desktop-14-etape5.png
+  bouton final désactivé avant la case : true ; explication visible : SeneCare utilise votre numéro, votre nom et l'adresse de vos logements uniquement pour organiser et suivre les interventions. Ces données ne sont ni vendues ni 
+  📸 desktop-15-apres-inscription.png
+  arrivée : /abonnement — Abonnement ; message : Compte créé. Votre abonnement est prêt à payer.
+  ⏱ 7.3 s
+
+## 7. Payer : où cliquer ?
+  boutons de paiement : (aucun)
+  texte d'aide : FORMULE ET PAIEMENTS | Échéances, paiements et factures. | VOTRE FORMULE | Ma maison | OÙ EN EST VOTRE COMPTE | Facture FAC-2026-000002 | 18 500 FCFA | Le paiement Wave n'est pas encore ouvert. Écrivez-nous sur WhatsApp : nous vous envoyons le lien de paiement et activons votre compte. | 18 500 FCFA
+  📸 desktop-16-abonnement-bas.png
+  ⏱ 0.5 s
+
+## 8. Elle veut signaler une panne
+  📸 desktop-17-signaler.png
+  /signaler — Signaler un problème
+Activez votre abonnement
+
+Le signalement est disponible dès que votre abonnement est actif.
+
+Abonnement
+  ⏱ 2.1 s
+
+## 9. Elle se promène : Accueil, Demandes, Logement
+  lien /^accueil$/i introuvable
+  📸 desktop-18-espace-demandesi.png
+  /interventions — h1 : Demandes
+  📸 desktop-19-espace-logementi.png
+  /logements — h1 : Logements
+  ⏱ 2.9 s
+
+## 10. Retour arrière du navigateur et rechargement
+  retour → /interventions
+  rechargement → /interventions
+  📸 desktop-20-retour-recharge.png
+  ⏱ 0.6 s
+
+## 11. Déconnexion
+  bouton de déconnexion trouvé : NON
+  📸 desktop-21-apres-deconnexion.png
+  après déconnexion → /interventions
+  ⏱ 0.2 s
+
+## 12. Elle revient : mauvais mot de passe, champ vide, puis le bon
+  ❌ locator.click: Error: strict mode violation: locator('form button[type=submit]') resolved to 4 elements:
+  📸 desktop-22-erreur.png
+  ⏱ 2.7 s
+
+## 13. Accessibilité rapide (clavier, images)
+  images sans texte alternatif : 0
+  focus clavier : A « +221 76 291 91 45 » outline=solid 2px
+  📸 desktop-23-focus-clavier.png
+  liens / boutons de moins de 32 px de haut (hors liens dans le texte) : 9
+  ⏱ 0.7 s

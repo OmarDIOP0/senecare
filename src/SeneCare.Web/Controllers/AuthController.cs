@@ -197,7 +197,13 @@ public sealed class AuthController(
         var signedIn = await passwordSignIn.HandleAsync(new PasswordSignInCommand(model.Phone, model.Password), cancellationToken);
         if (!signedIn.IsSuccess)
         {
-            ModelState.AddModelError(signedIn.Error!.Code == "phone.invalid" ? nameof(model.Phone) : string.Empty, this.ErrorMessage(signedIn.Error));
+            var field = signedIn.Error!.Code switch
+            {
+                "phone.invalid" or "phone.required" => nameof(model.Phone),
+                "password.required" => nameof(model.Password),
+                _ => string.Empty,
+            };
+            ModelState.AddModelError(field, this.ErrorMessage(signedIn.Error));
             return View(model);
         }
 

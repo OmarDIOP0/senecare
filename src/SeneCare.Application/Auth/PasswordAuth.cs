@@ -77,13 +77,23 @@ public sealed class PasswordSignInHandler(IApplicationDbContext db, IIdentitySer
     public async Task<Result<PasswordSignedIn>> HandleAsync(PasswordSignInCommand command, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(command);
+        if (string.IsNullOrWhiteSpace(command.Phone))
+        {
+            return Result<PasswordSignedIn>.Failure("phone.required");
+        }
+
         if (!PhoneNumber.TryParse(command.Phone, out var phone))
         {
             return Result<PasswordSignedIn>.Failure("phone.invalid");
         }
 
+        if (string.IsNullOrEmpty(command.Password))
+        {
+            return Result<PasswordSignedIn>.Failure("password.required");
+        }
+
         var user = await db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.PhoneNumber == phone, cancellationToken);
-        if (user is null || string.IsNullOrEmpty(command.Password))
+        if (user is null)
         {
             return Result<PasswordSignedIn>.Failure("auth.invalid");
         }
@@ -115,6 +125,11 @@ public sealed class PasswordSignUpHandler(IApplicationDbContext db, IIdentitySer
     public async Task<Result<Guid>> HandleAsync(PasswordSignUpCommand command, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(command);
+        if (string.IsNullOrWhiteSpace(command.Phone))
+        {
+            return Result<Guid>.Failure("phone.required");
+        }
+
         if (!PhoneNumber.TryParse(command.Phone, out var phone))
         {
             return Result<Guid>.Failure("phone.invalid");

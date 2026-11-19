@@ -10,9 +10,13 @@ namespace SeneCare.Infrastructure.Persistence.Seed;
 /// (comma-separated, user-secrets or environment variable — never in the repository) get the
 /// SuperAdmin role at startup. They then sign in with their phone + OTP like everyone else.
 /// </summary>
-public sealed partial class AdminBootstrapper(SeneCareDbContext db, IConfiguration configuration, TimeProvider clock, ILogger<AdminBootstrapper> logger)
+public sealed partial class AdminBootstrapper(
+    SeneCareDbContext db, IConfiguration configuration, TimeProvider clock, ILogger<AdminBootstrapper> logger, SeneCare.Application.Abstractions.IIdentityService identity)
 {
     public const string ConfigurationKey = "Bootstrap:SuperAdminPhones";
+
+    /// <summary>Initial password of these admins (environment variable only), asked to be changed at first sign-in.</summary>
+    public const string PasswordKey = "Bootstrap:SuperAdminPassword";
 
     public async Task RunAsync(CancellationToken cancellationToken = default)
     {
@@ -48,7 +52,34 @@ public sealed partial class AdminBootstrapper(SeneCareDbContext db, IConfigurati
         }
 
         await db.SaveChangesAsync(cancellationToken);
+
+        // Password sign-in: an admin without a password gets the configured one (never replaces a chosen one).
+        var password = configuration[PasswordKey];
+        foreach (var phone in phones)
+        {
+            var user = await db.Users.FirstAsync(u => u.PhoneNumber == phone, cancellationToken);
+            await identity.EnsureIdentityUserAsync(user, cancellationToken);
+            if (await identity.HasPasswordAsync(user.Id, cancellationToken))
+            {
+                continue;
+            }
+
+            if (string.IsNullOrWhiteSpace(password) || SeneCare.Application.Auth.PasswordRules.Check(password, phone) is not null)
+            {
+                LogNoPassword(logger, phone.Formatted);
+                continue;
+            }
+
+            await identity.SetPasswordAsync(user.Id, password, mustChange: true, cancellationToken);
+            LogPasswordSet(logger, phone.Formatted);
+        }
     }
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Administrator {Phone} has no password: set Bootstrap__SuperAdminPassword (8 characters or more) to sign in.")]
+    private static partial void LogNoPassword(ILogger logger, string phone);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Initial password set for administrator {Phone} (to change at first sign-in).")]
+    private static partial void LogPasswordSet(ILogger logger, string phone);
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "SuperAdmin role granted to {Phone} (Bootstrap:SuperAdminPhones)")]
     private static partial void LogGranted(ILogger logger, string phone);

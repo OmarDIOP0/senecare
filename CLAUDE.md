@@ -37,14 +37,15 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
   photos compressées côté client avant upload (max ~300 Ko), upload repris si coupure.
 - Hors-ligne : un signalement doit pouvoir être rédigé sans réseau et partir
   automatiquement au retour de la connexion (Background Sync + file IndexedDB).
-- Identité : connexion par NUMÉRO DE TÉLÉPHONE (+221, 9 chiffres, préfixes 77/78/76/75/71/70 définis dans `PhoneNumber.MobilePrefixes`,
-  contrôlés aussi pendant la saisie) + code OTP
-  par SMS, WhatsApp en option. Email facultatif. Mot de passe optionnel.
-  En développement seulement : `Otp:ShowCodeOnPage` (actif dans appsettings.Development.json) affiche le
-  code sous les 6 cases, `Otp:SkipVerification` saute l'étape ; autorisés en Development et sur le site de
-  test (Staging), l'application refuse de démarrer avec l'un de ces réglages en Production. Jamais pour un compte
-  de l'équipe (admin, finance, technicien) sauf `Otp:IncludeStaff` (Development seulement) : sur Render, l'admin
-  lit son code dans les journaux (« [WhatsApp → 77 …] »).
+- Identité : connexion par NUMÉRO DE TÉLÉPHONE (+221, 9 chiffres, préfixes 77/78/76/75/71/70 définis dans
+  `PhoneNumber.MobilePrefixes`, contrôlés aussi pendant la saisie) + MOT DE PASSE (décision utilisateur : pas de
+  service SMS/WhatsApp au départ, pas de frais). `Auth:Mode = Password` par défaut : 8 caractères au moins, pas le
+  numéro, verrouillage 15 min après 5 erreurs, même message quel que soit le problème. Mot de passe oublié :
+  lien WhatsApp vers SeneCare, puis Admin › Clients › « Réinitialiser le mot de passe » (Super-admin, Support)
+  → mot de passe provisoire à changer à la connexion suivante (`TemporaryPasswordFilter`). Premier admin :
+  `Bootstrap__SuperAdminPhones` + `Bootstrap__SuperAdminPassword` (provisoire). Le code OTP par WhatsApp / SMS
+  reste en veille (`Auth:Mode = Otp`, réglages `Otp:*`) pour le jour où un fournisseur de messages est choisi ;
+  les tests d'intégration existants tournent en mode Otp, `PasswordAuthTests` en mode Password.
 - Paiement : Wave, Orange Money, Free Money (via un agrégateur type PayDunya, PayTech
   ou CinetPay derrière une interface IPaymentProvider), + paiement en espèces/virement
   saisi par l'admin. Reçus PDF. Relances avant échéance.
@@ -141,6 +142,7 @@ Parcours client :
   (`Registration/Index`) 3 nom (+ entreprise) et logement / premier site (carte, quartier, photos),
   4 formule (mensuel / annuel « 2 mois offerts » pour les particuliers ; Essentiel / Professionnel /
   Premium, facturés au trimestre, pour les entreprises), 5 confirmation + consentements.
+  En mode mot de passe, l'étape 2 demande le numéro et le mot de passe (deux fois), sans code.
   Compte, logement et abonnement sont créés ensemble, puis `/abonnement` pour payer.
   D'autres logements s'ajoutent ensuite depuis l'espace.
 - Paiement réel : lien marchand Wave configuré par l'admin (`/admin/paiements`), « J'ai payé » + référence,

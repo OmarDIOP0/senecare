@@ -12,7 +12,7 @@ services:
     healthCheckPath: /health
     autoDeploy: true            # each push on the branch redeploys
     envVars:
-      # Test site: banner « Version de test », code shown under the boxes (refused in Production).
+      # Test site: banner « Version de test ». Sign-in by phone + password (Auth:Mode = Password, the default).
       - key: ASPNETCORE_ENVIRONMENT
         value: Staging
       # postgresql://user:password@host:5432/database (?sslmode=require accepted). Asked at creation.
@@ -27,8 +27,9 @@ services:
         value: "true"
       - key: Database__SeedOnStartup
         value: "true"
-      - key: Otp__ShowCodeOnPage
-        value: "true"
       # Your number (77 123 45 67): Super-admin at startup. Asked by Render when the Blueprint is created.
       - key: Bootstrap__SuperAdminPhones
+        sync: false
+      # Initial password of these admins (8 characters or more), to change at first sign-in. Asked at creation.
+      - key: Bootstrap__SuperAdminPassword
         sync: false

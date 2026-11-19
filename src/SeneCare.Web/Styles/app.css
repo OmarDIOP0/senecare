@@ -215,6 +215,10 @@
 }
 
 @layer base {
+  /* Password fields have their own « Afficher » button: no second eye from Edge. */
+  input[type="password"]::-ms-reveal,
+  input[type="password"]::-ms-clear { display: none; }
+
   html {
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;

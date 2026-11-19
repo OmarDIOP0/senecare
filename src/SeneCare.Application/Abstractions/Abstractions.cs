@@ -106,6 +106,27 @@ public interface IIdentityService
 
     /// <summary>Erasure: the sign-in record follows the placeholder number and every session is invalidated.</summary>
     Task ForgetAsync(User user, CancellationToken cancellationToken = default);
+
+    Task<bool> HasPasswordAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    Task<bool> MustChangePasswordAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    /// <summary>Checks the password, counting failures (lockout after 5 for 15 minutes).</summary>
+    Task<PasswordCheck> CheckPasswordAsync(Guid userId, string password, CancellationToken cancellationToken = default);
+
+    /// <summary>Replaces the password (and unlocks the account). Null when done, otherwise an error code.</summary>
+    Task<string?> SetPasswordAsync(Guid userId, string password, bool mustChange, CancellationToken cancellationToken = default);
+}
+
+public enum PasswordCheck
+{
+    Failed = 0,
+    Success = 1,
+
+    /// <summary>Right temporary password given by an admin: a new one must be chosen now.</summary>
+    SuccessMustChange = 2,
+    LockedOut = 3,
+    NoPassword = 4,
 }
 
 public sealed record AuthTokens(string AccessToken, DateTimeOffset AccessTokenExpiresAt, string RefreshToken, DateTimeOffset RefreshTokenExpiresAt);

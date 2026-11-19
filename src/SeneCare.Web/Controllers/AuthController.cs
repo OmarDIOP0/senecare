@@ -12,10 +12,17 @@ using SeneCare.Web.ViewModels;
 
 namespace SeneCare.Web.Controllers;
 
-/// <summary>Sign-in by phone number + one-time code (no password). Anonymous except sign-out.</summary>
+/// <summary>
+/// Sign-in and the number step of the sign-up. Default (Auth:Mode = Password): phone number + password.
+/// Auth:Mode = Otp keeps the one-time code by WhatsApp / SMS for when a messaging provider is set up.
+/// Anonymous except sign-out.
+/// </summary>
 public sealed class AuthController(
     RequestOtpHandler requestOtp,
     VerifyOtpHandler verifyOtp,
+    PasswordSignInHandler passwordSignIn,
+    PasswordSignUpHandler passwordSignUp,
+    Microsoft.Extensions.Options.IOptions<AuthOptions> authOptions,
     AcceptInvitationHandler acceptInvitation,
     SignInManager<ApplicationUser> signInManager,
     UserManager<ApplicationUser> userManager,
@@ -56,7 +63,12 @@ public sealed class AuthController(
             }
         }
 
-        return View(new SignInViewModel { Phone = phone });
+        return View(new SignInViewModel
+        {
+            Phone = phone,
+            UsesOtp = authOptions.Value.UsesOtp,
+            Invited = TempData.Peek(InvitationController.InvitationKey) is not null,
+        });
     }
 
     [HttpPost("/connexion")]
@@ -64,6 +76,13 @@ public sealed class AuthController(
     public async Task<IActionResult> SignIn(SignInViewModel model, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(model);
+        model.UsesOtp = authOptions.Value.UsesOtp;
+        model.Invited = TempData.Peek(InvitationController.InvitationKey) is not null;
+        if (!model.UsesOtp)
+        {
+            return await PasswordAsync(model, cancellationToken);
+        }
+
         var result = await requestOtp.HandleAsync(new RequestOtpCommand(model.Phone, model.Channel, ClientIp), cancellationToken);
         if (!result.IsSuccess)
         {
@@ -104,6 +123,11 @@ public sealed class AuthController(
     [HttpGet("/connexion/code")]
     public IActionResult Code()
     {
+        if (!authOptions.Value.UsesOtp)
+        {
+            return RedirectToAction(nameof(SignIn));
+        }
+
         if (!TryGetPendingChallenge(out _, out var phone, out var channel))
         {
             return AfterCodeOrSignIn();
@@ -123,6 +147,11 @@ public sealed class AuthController(
     public async Task<IActionResult> Code(CodeViewModel model, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(model);
+        if (!authOptions.Value.UsesOtp)
+        {
+            return RedirectToAction(nameof(SignIn));
+        }
+
         if (!TryGetPendingChallenge(out var challengeId, out var phone, out var channel))
         {
             return AfterCodeOrSignIn();
@@ -146,11 +175,40 @@ public sealed class AuthController(
         return await SignInVerifiedAsync(result.Value.UserId, cancellationToken);
     }
 
-    private async Task<IActionResult> SignInVerifiedAsync(Guid userId, CancellationToken cancellationToken)
+    /// <summary>Password mode: « Créer mon compte » step 2 (number + password) or the sign-in.</summary>
+    private async Task<IActionResult> PasswordAsync(SignInViewModel model, CancellationToken cancellationToken)
+    {
+        if (model.Signup)
+        {
+            var created = await passwordSignUp.HandleAsync(new PasswordSignUpCommand(model.Phone, model.Password, model.ConfirmPassword), cancellationToken);
+            if (!created.IsSuccess)
+            {
+                var field = created.Error!.Code.StartsWith("phone", StringComparison.Ordinal) || created.Error.Code == "auth.phone_taken"
+                    ? nameof(model.Phone)
+                    : nameof(model.Password);
+                ModelState.AddModelError(field, this.ErrorMessage(created.Error));
+                return model.Invited ? View(model) : View("~/Views/Registration/Start.cshtml", model);
+            }
+
+            TempData[SignupProfileKey] = (model.Profile ?? AccountKind.Household).ToString();
+            return await SignInVerifiedAsync(created.Value, cancellationToken);
+        }
+
+        var signedIn = await passwordSignIn.HandleAsync(new PasswordSignInCommand(model.Phone, model.Password), cancellationToken);
+        if (!signedIn.IsSuccess)
+        {
+            ModelState.AddModelError(signedIn.Error!.Code == "phone.invalid" ? nameof(model.Phone) : string.Empty, this.ErrorMessage(signedIn.Error));
+            return View(model);
+        }
+
+        return await SignInVerifiedAsync(signedIn.Value.UserId, cancellationToken, signedIn.Value.MustChangePassword);
+    }
+
+    private async Task<IActionResult> SignInVerifiedAsync(Guid userId, CancellationToken cancellationToken, bool mustChangePassword = false)
     {
         TempData.Remove(SignupKey);
         var identityUser = await userManager.FindByIdAsync(userId.ToString())
-            ?? throw new InvalidOperationException("Identity user missing after OTP verification.");
+            ?? throw new InvalidOperationException("Identity user missing after sign-in.");
 
         if (AsGuid(TempData[InvitationController.InvitationKey]) is { } id)
         {
@@ -167,6 +225,12 @@ public sealed class AuthController(
         await signInManager.SignInAsync(identityUser, isPersistent: registered);
 
         var returnUrl = TempData[ReturnUrlKey] as string;
+        if (mustChangePassword)
+        {
+            // Temporary password from SENECARE: the person chooses their own before anything else.
+            return LocalRedirect(AccountController.ChangePasswordPath);
+        }
+
         if (registered)
         {
             // Already a customer who went through « Créer mon compte »: straight to the space.
@@ -181,7 +245,7 @@ public sealed class AuthController(
     [EnableRateLimiting(RateLimits.Otp)]
     public async Task<IActionResult> Resend(OtpChannel channel, CancellationToken cancellationToken)
     {
-        if (!TryGetPendingChallenge(out _, out var phone, out _))
+        if (!authOptions.Value.UsesOtp || !TryGetPendingChallenge(out _, out var phone, out _))
         {
             return RedirectToAction(nameof(SignIn));
         }
@@ -202,6 +266,7 @@ public sealed class AuthController(
     }
 
     [HttpPost("/deconnexion")]
+    [AllowWithTemporaryPassword]
     [Authorize(Policy = Policies.Authenticated)]
     public async Task<IActionResult> SignOutUser()
     {

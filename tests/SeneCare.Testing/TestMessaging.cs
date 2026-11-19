@@ -57,6 +57,8 @@ public static class TestData
         ["Security:HashKey"] = HashKey,
         ["Jwt:SigningKey"] = JwtKey,
         ["RateLimits:Otp:PermitLimit"] = "10000",
+        // Most tests sign in with the one-time code; PasswordAuthTests switch the host to passwords.
+        ["Auth:Mode"] = "Otp",
         ["Database:MigrateOnStartup"] = "false",
         ["Database:SeedOnStartup"] = "false",
         ["Storage:Root"] = Path.Combine(Path.GetTempPath(), "senecare-tests-uploads"),

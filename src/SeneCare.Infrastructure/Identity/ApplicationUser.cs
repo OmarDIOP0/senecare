@@ -3,10 +3,14 @@ using Microsoft.AspNetCore.Identity;
 namespace SeneCare.Infrastructure.Identity;
 
 /// <summary>
-/// Authentication record (security stamp, lockout, optional password later). Same Id as the domain
+/// Authentication record (password hash, security stamp, lockout). Same Id as the domain
 /// <see cref="Domain.Users.User"/>, which holds the business data (name, roles, consents).
 /// </summary>
-public sealed class ApplicationUser : IdentityUser<Guid>;
+public sealed class ApplicationUser : IdentityUser<Guid>
+{
+    /// <summary>Temporary password given by an admin (or the first admin's configured one): to be replaced at sign-in.</summary>
+    public bool MustChangePassword { get; set; }
+}
 
 /// <summary>Rotating refresh token for the API. Only a hash is stored; a family groups successive rotations.</summary>
 public sealed class RefreshToken

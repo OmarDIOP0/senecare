@@ -26,6 +26,47 @@
   <data name="SignIn_ChannelSms" xml:space="preserve"><value>SMS</value></data>
   <data name="SignIn_ChannelWhatsApp" xml:space="preserve"><value>WhatsApp</value></data>
   <data name="SignIn_Submit" xml:space="preserve"><value>Recevoir mon code</value></data>
+  <data name="SignIn_Intro_Password" xml:space="preserve"><value>Entrez votre numéro et votre mot de passe.</value></data>
+  <data name="SignIn_Intro_Invited" xml:space="preserve"><value>Vous rejoignez votre entreprise sur SeneCare. Première fois ? Créez votre mot de passe.</value></data>
+  <data name="SignIn_Submit_Password" xml:space="preserve"><value>Se connecter</value></data>
+  <data name="SignIn_Invited_Choice" xml:space="preserve"><value>Avez-vous déjà un compte SeneCare ?</value></data>
+  <data name="SignIn_Invited_New" xml:space="preserve"><value>Première fois</value></data>
+  <data name="SignIn_Invited_Existing" xml:space="preserve"><value>J'ai un compte</value></data>
+  <data name="Password_Label" xml:space="preserve"><value>Mot de passe</value></data>
+  <data name="Password_Confirm" xml:space="preserve"><value>Confirmez le mot de passe</value></data>
+  <data name="Password_Current" xml:space="preserve"><value>Mot de passe actuel</value></data>
+  <data name="Password_New" xml:space="preserve"><value>Nouveau mot de passe</value></data>
+  <data name="Password_Show" xml:space="preserve"><value>Afficher</value></data>
+  <data name="Password_Hide" xml:space="preserve"><value>Masquer</value></data>
+  <data name="Password_Hint" xml:space="preserve"><value>{0} caractères au moins, lettres et/ou chiffres. Pas votre numéro de téléphone.</value></data>
+  <data name="Password_Forgot" xml:space="preserve"><value>Mot de passe oublié ? Écrivez-nous sur WhatsApp</value></data>
+  <data name="Password_Forgot_Message" xml:space="preserve"><value>Bonjour SeneCare, j'ai oublié mon mot de passe. Mon numéro : </value></data>
+  <data name="Password_Forgot_NoContact" xml:space="preserve"><value>Mot de passe oublié ? Contactez SeneCare, nous vous en donnons un nouveau.</value></data>
+  <data name="Password_Change_Title" xml:space="preserve"><value>Changer mon mot de passe</value></data>
+  <data name="Password_Change_Text" xml:space="preserve"><value>Saisissez votre mot de passe actuel, puis le nouveau deux fois.</value></data>
+  <data name="Password_Choose_Title" xml:space="preserve"><value>Choisissez votre mot de passe</value></data>
+  <data name="Password_Choose_Text" xml:space="preserve"><value>Vous vous êtes connecté avec un mot de passe provisoire. Choisissez le vôtre pour continuer.</value></data>
+  <data name="Password_Save" xml:space="preserve"><value>Enregistrer le mot de passe</value></data>
+  <data name="Password_Changed" xml:space="preserve"><value>Mot de passe enregistré.</value></data>
+  <data name="Register_StepAccess" xml:space="preserve"><value>Votre accès</value></data>
+  <data name="Register_StepAccess_Title" xml:space="preserve"><value>Votre numéro et votre mot de passe</value></data>
+  <data name="Register_StepAccess_Text" xml:space="preserve"><value>Ils vous serviront à vous connecter à votre espace.</value></data>
+  <data name="Admin_ResetPassword" xml:space="preserve"><value>Réinitialiser le mot de passe</value></data>
+  <data name="Admin_ResetPassword_Confirm" xml:space="preserve"><value>Donner un mot de passe provisoire à {0} ? Son mot de passe actuel ne marchera plus et il devra en choisir un nouveau à sa prochaine connexion.</value></data>
+  <data name="Admin_ResetPassword_Done" xml:space="preserve"><value>Mot de passe provisoire de {0}</value></data>
+  <data name="Admin_ResetPassword_Give" xml:space="preserve"><value>Donnez-le à la personne (WhatsApp ou téléphone). Il ne s'affichera plus : notez-le avant de quitter la page.</value></data>
+  <data name="Admin_ResetPassword_Message" xml:space="preserve"><value>SeneCare : votre mot de passe provisoire est {0}. Connectez-vous avec votre numéro, puis choisissez votre propre mot de passe.</value></data>
+  <data name="Admin_ResetPassword_SendWhatsApp" xml:space="preserve"><value>Envoyer par WhatsApp</value></data>
+  <data name="Error_auth_invalid" xml:space="preserve"><value>Numéro ou mot de passe incorrect.</value></data>
+  <data name="Error_auth_locked" xml:space="preserve"><value>Trop d'essais. Votre compte est bloqué 15 minutes, ou demandez un nouveau mot de passe à SeneCare.</value></data>
+  <data name="Error_auth_phone_taken" xml:space="preserve"><value>Ce numéro a déjà un compte. Connectez-vous avec votre mot de passe.</value></data>
+  <data name="Error_password_too_short" xml:space="preserve"><value>Le mot de passe doit faire au moins 8 caractères.</value></data>
+  <data name="Error_password_too_long" xml:space="preserve"><value>Mot de passe trop long (128 caractères au plus).</value></data>
+  <data name="Error_password_is_phone" xml:space="preserve"><value>Votre numéro de téléphone ne peut pas servir de mot de passe.</value></data>
+  <data name="Error_password_too_simple" xml:space="preserve"><value>Mot de passe trop simple : variez les caractères.</value></data>
+  <data name="Error_password_mismatch" xml:space="preserve"><value>Les deux mots de passe ne sont pas identiques.</value></data>
+  <data name="Error_password_current_wrong" xml:space="preserve"><value>Mot de passe actuel incorrect.</value></data>
+  <data name="Error_password_staff" xml:space="preserve"><value>Le mot de passe d'un membre de l'équipe ne se réinitialise pas ici.</value></data>
   <data name="Code_Title" xml:space="preserve"><value>Code de vérification</value></data>
   <data name="Code_Heading" xml:space="preserve"><value>Entrez le code reçu</value></data>
   <data name="Code_SentTo" xml:space="preserve"><value>Code envoyé au +221 {0} par {1}. Il est valable 5 minutes.</value></data>
@@ -1165,7 +1206,7 @@
   <data name="Home_QuickForm_TradeAny" xml:space="preserve"><value>Je ne sais pas</value></data>
   <data name="Home_QuickForm_Area" xml:space="preserve"><value>Quartier</value></data>
   <data name="Home_QuickForm_AreaPlaceholder" xml:space="preserve"><value>Ex. : Mermoz, Ouakam, Thiès</value></data>
-  <data name="Home_QuickForm_PhoneHelp" xml:space="preserve"><value>Vous recevrez un code sur WhatsApp pour suivre votre demande. Pas de mot de passe.</value></data>
+  <data name="Home_QuickForm_PhoneHelp" xml:space="preserve"><value>Vous vous connectez ensuite avec votre numéro et votre mot de passe pour suivre votre demande.</value></data>
   <data name="Home_Trades_Text" xml:space="preserve"><value>Les dépannages et l'entretien courant d'une maison ou de locaux, par des techniciens du métier.</value></data>
   <data name="Home_Techs_Text" xml:space="preserve"><value>Des techniciens salariés, formés à leur métier, qui interviennent dans leur zone.</value></data>
   <data name="Home_Techs_Years" xml:space="preserve"><value>{0} ans de métier</value></data>

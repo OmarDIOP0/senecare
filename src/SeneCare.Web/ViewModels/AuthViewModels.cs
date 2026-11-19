@@ -16,6 +16,17 @@ public sealed class SignInViewModel
     /// <summary>Step 2 of the sign-up (« Créer mon compte »): the number comes after the profile choice.</summary>
     public bool Signup { get; set; }
 
+    /// <summary>Password mode (default): the password; with <see cref="Signup"/>, typed twice.</summary>
+    public string? Password { get; set; }
+
+    public string? ConfirmPassword { get; set; }
+
+    /// <summary>Auth:Mode = Otp: the one-time code flow instead of the password (set by the controller).</summary>
+    public bool UsesOtp { get; set; }
+
+    /// <summary>Joining a company from an invitation: sign in, or create a password the first time.</summary>
+    public bool Invited { get; set; }
+
     public AccountKind? Profile { get; set; }
 }
 
@@ -105,4 +116,16 @@ public sealed class TeamViewModel
     public bool RequiresApproval { get; set; }
 
     public Guid CurrentUserId { get; set; }
+}
+
+public sealed class ChangePasswordViewModel
+{
+    public string? CurrentPassword { get; set; }
+
+    public string? NewPassword { get; set; }
+
+    public string? ConfirmPassword { get; set; }
+
+    /// <summary>Signed in with a temporary password: the current one is not asked again.</summary>
+    public bool MustChange { get; set; }
 }

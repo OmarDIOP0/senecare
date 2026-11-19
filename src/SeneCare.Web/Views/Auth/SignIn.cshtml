@@ -5,11 +5,14 @@
     ViewData["Title"] = L["SignIn_Title"];
     var phoneError = ViewData.ModelState[nameof(Model.Phone)]?.Errors.FirstOrDefault()?.ErrorMessage;
     var phoneInput = new PhoneInputModel(nameof(Model.Phone), Model.Phone, L["SignIn_PhoneLabel"], phoneError);
+    var passwordError = ViewData.ModelState[nameof(Model.Password)]?.Errors.FirstOrDefault()?.ErrorMessage;
+    var formError = ViewData.ModelState[string.Empty]?.Errors.FirstOrDefault()?.ErrorMessage;
+    var contact = await SiteContact.GetAsync();
 }
 
 <p class="sc-eyebrow">@L["SignIn_Eyebrow"]</p>
 <h1 class="mt-3 font-display text-2xl leading-tight font-bold tracking-[-0.02em] sm:text-[1.875rem]">@L["SignIn_Heading"]</h1>
-<p class="mt-2 text-charbon-doux">@L["SignIn_Intro"]</p>
+<p class="mt-2 text-charbon-doux">@(Model.UsesOtp ? L["SignIn_Intro"] : Model.Invited ? L["SignIn_Intro_Invited"] : L["SignIn_Intro_Password"])</p>
 
 @if (User.Identity?.IsAuthenticated == true)
 {
@@ -21,10 +24,45 @@
 }
 
 <form method="post" asp-action="SignIn" class="mt-8 grid gap-5" novalidate data-send-once>
+    @if (formError is not null)
+    {
+        <p class="sc-error rounded-md bg-rouge-clair px-4 py-3" role="alert">@formError</p>
+    }
     <partial name="Ui/_PhoneInput" model="phoneInput" />
-
-
-    <button type="submit" class="sc-btn-primaire min-h-12 w-full text-base">@L["SignIn_Submit"]<sc-icon name="arrow-right" class="size-5" /></button>
+    @if (!Model.UsesOtp)
+    {
+        @if (Model.Invited)
+        {
+            @* Joining a company: first time on SeneCare (create a password) or already a customer (sign in). *@
+            <fieldset class="grid grid-cols-2 gap-2">
+                <legend class="sr-only">@L["SignIn_Invited_Choice"]</legend>
+                <label class="sc-choix"><input type="radio" name="Signup" value="true" checked="@Model.Signup" data-invite-new />@L["SignIn_Invited_New"]</label>
+                <label class="sc-choix"><input type="radio" name="Signup" value="false" checked="@(!Model.Signup)" />@L["SignIn_Invited_Existing"]</label>
+            </fieldset>
+        }
+        <partial name="Ui/_PasswordInput" model='new PasswordInputModel(nameof(Model.Password), L["Password_Label"].Value, passwordError, NewPassword: Model.Invited && Model.Signup)' />
+        @if (Model.Invited)
+        {
+            <div class="hidden [form:has(input[data-invite-new]:checked)_&]:block">
+                <partial name="Ui/_PasswordInput" model='new PasswordInputModel(nameof(Model.ConfirmPassword), L["Password_Confirm"].Value)' />
+            </div>
+        }
+        else
+        {
+            @* No SMS: SENECARE gives a temporary password (Admin › Clients). *@
+            <p class="-mt-2 text-sm">
+                @if (contact.WhatsAppUrl is { } help)
+                {
+                    <a href="@help?text=@Uri.EscapeDataString(L["Password_Forgot_Message"].Value)" class="sc-lien" target="_blank" rel="noopener">@L["Password_Forgot"]</a>
+                }
+                else
+                {
+                    <span class="text-charbon-doux">@L["Password_Forgot_NoContact"]</span>
+                }
+            </p>
+        }
+    }
+    <button type="submit" class="sc-btn-primaire min-h-12 w-full text-base">@(Model.UsesOtp ? L["SignIn_Submit"] : L["SignIn_Submit_Password"])<sc-icon name="arrow-right" class="size-5" /></button>
 </form>
 
 <div class="mt-8 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-sourdine p-4">

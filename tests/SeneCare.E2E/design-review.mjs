@@ -36,6 +36,8 @@ const server = spawn("dotnet", command, {
     Otp__MaxPerIpPerHour: "1000", Otp__MaxPerPhonePerHour: "1000", RateLimits__Otp__PermitLimit: "1000", Bootstrap__SuperAdminPhones: adminPhone,
     // The flows below read the code from the server log: keep the code step even in Development.
     Otp__SkipVerification: "false",
+    // The flows sign in with the one-time code (password sign-in has its own integration tests).
+    Auth__Mode: "Otp",
   },
 });
 server.stdout.on("data", (d) => log.push(d.toString()));

@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using SeneCare.Application.Accounts;
+using SeneCare.Application.Auth;
 using SeneCare.Application.Business;
 using SeneCare.Application.Users;
 using SeneCare.Domain.Accounts;
@@ -14,11 +16,46 @@ namespace SeneCare.Web.Controllers;
 [Authorize]
 public sealed class AccountController(GetUserProfileHandler getProfile) : Controller
 {
+    public const string ChangePasswordPath = "/compte/mot-de-passe";
+
     [HttpGet("/compte")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         var profile = await getProfile.HandleAsync(User.GetUserId()!.Value, cancellationToken);
         return profile is null ? Challenge() : View(profile);
+    }
+
+    /// <summary>« Changer mon mot de passe »; also where a temporary password (admin reset) leads first.</summary>
+    [HttpGet(ChangePasswordPath)]
+    [Authorize(Policy = Policies.Authenticated)]
+    [AllowWithTemporaryPassword]
+    public IActionResult ChangePassword() =>
+        View(new ChangePasswordViewModel { MustChange = User.MustChangePassword() });
+
+    [HttpPost(ChangePasswordPath)]
+    [Authorize(Policy = Policies.Authenticated)]
+    [AllowWithTemporaryPassword]
+    [EnableRateLimiting(RateLimits.Otp)]
+    public async Task<IActionResult> ChangePassword(
+        ChangePasswordViewModel model, [FromServices] ChangePasswordHandler handler,
+        [FromServices] SignInManager<ApplicationUser> signInManager, [FromServices] UserManager<ApplicationUser> userManager,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(model);
+        var userId = User.GetUserId()!.Value;
+        var result = await handler.HandleAsync(new ChangePasswordCommand(userId, model.CurrentPassword, model.NewPassword, model.ConfirmPassword), cancellationToken);
+        if (!result.IsSuccess)
+        {
+            ModelState.AddModelError(result.Error!.Code == "password.current_wrong" ? nameof(model.CurrentPassword) : nameof(model.NewPassword), this.ErrorMessage(result.Error));
+            model.MustChange = User.MustChangePassword();
+            return View(model);
+        }
+
+        // New cookie: without the « temporary password » mark, with the new security stamp.
+        var identityUser = await userManager.FindByIdAsync(userId.ToString());
+        await signInManager.RefreshSignInAsync(identityUser!);
+        TempData["flash.toast"] = this.Localizer()["Password_Changed"].Value;
+        return LocalRedirect("/");
     }
 }
 

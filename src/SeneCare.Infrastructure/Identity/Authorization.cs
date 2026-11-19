@@ -13,6 +13,9 @@ public static class SeneCareClaimTypes
     /// <summary>« true » once name + consent are given and the user has an account (or is staff).</summary>
     public const string Registered = "sc:registered";
 
+    /// <summary>Signed in with a temporary password: every page leads to « choose your password ».</summary>
+    public const string MustChangePassword = "sc:must_change_password";
+
     public const string Phone = "sc:phone";
 }
 
@@ -41,6 +44,9 @@ public static class ClaimsPrincipalExtensions
         [.. (principal?.FindAll(SeneCareClaimTypes.Membership) ?? [])
             .Select(c => MembershipClaim.Parse(c.Value))
             .OfType<MembershipClaim>()];
+
+    public static bool MustChangePassword(this ClaimsPrincipal principal) =>
+        principal?.HasClaim(SeneCareClaimTypes.MustChangePassword, "true") == true;
 
     public static bool IsRegistered(this ClaimsPrincipal principal) =>
         principal?.HasClaim(SeneCareClaimTypes.Registered, "true") == true;
@@ -81,6 +87,9 @@ public static class Policies
     /// <summary>SENECARE back-office (super-admin, dispatcher, finance, support) — not technicians.</summary>
     public const string BackOffice = nameof(BackOffice);
 
+    /// <summary>Who may reset a customer's password: super-admin and support.</summary>
+    public const string AccountSupport = nameof(AccountSupport);
+
     public static void AddSeneCarePolicies(this AuthorizationOptions options, params string[] authenticationSchemes)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -107,6 +116,8 @@ public static class Policies
         options.AddPolicy(AdminFinance, Registered(c =>
             c.User.IsInRole(nameof(PlatformRole.Finance)) || c.User.IsInRole(nameof(PlatformRole.SuperAdmin))));
         options.AddPolicy(SuperAdmin, Registered(c => c.User.IsInRole(nameof(PlatformRole.SuperAdmin))));
+        options.AddPolicy(AccountSupport, Registered(c =>
+            c.User.IsInRole(nameof(PlatformRole.Support)) || c.User.IsInRole(nameof(PlatformRole.SuperAdmin))));
         options.AddPolicy(BackOffice, Registered(c => Enum.GetValues<PlatformRole>()
             .Where(r => r is not (PlatformRole.Customer or PlatformRole.Technician))
             .Any(r => c.User.IsInRole(r.ToString()))));

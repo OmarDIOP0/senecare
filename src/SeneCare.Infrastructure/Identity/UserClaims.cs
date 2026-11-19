@@ -52,6 +52,10 @@ internal sealed class SeneCareUserClaimsPrincipalFactory(
     {
         var identity = await base.GenerateClaimsAsync(user);
         identity.AddClaims(await claimsBuilder.BuildAsync(user.Id));
+        if (user.MustChangePassword)
+        {
+            identity.AddClaim(new Claim(SeneCareClaimTypes.MustChangePassword, "true"));
+        }
         return identity;
     }
 }

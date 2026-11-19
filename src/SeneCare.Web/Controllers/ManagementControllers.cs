@@ -38,6 +38,36 @@ public sealed class CustomersController(CustomerDirectory directory) : Controlle
         var file = await directory.FileAsync(User.GetUserId()!.Value, id, HttpContext.Connection.RemoteIpAddress?.ToString(), cancellationToken);
         return file is null ? NotFound() : View(file);
     }
+
+    /// <summary>
+    /// « Mot de passe oublié »: a temporary password, shown once on the customer file to be given to the person
+    /// (WhatsApp, phone). It must be changed at the next sign-in. Super-admin and support only.
+    /// </summary>
+    [HttpPost("{id:guid}/membres/{userId:guid}/mot-de-passe")]
+    [Authorize(Policy = Policies.AccountSupport)]
+    public async Task<IActionResult> ResetPassword(Guid id, Guid userId, [FromServices] SeneCare.Application.Auth.ResetPasswordHandler reset, CancellationToken cancellationToken)
+    {
+        var file = await directory.FileAsync(User.GetUserId()!.Value, id, HttpContext.Connection.RemoteIpAddress?.ToString(), cancellationToken);
+        var member = file?.Members.FirstOrDefault(m => m.UserId == userId);
+        if (member is null)
+        {
+            return NotFound();
+        }
+
+        var result = await reset.HandleAsync(User.GetUserId()!.Value, userId, cancellationToken);
+        if (result.IsSuccess)
+        {
+            TempData["reset.password"] = result.Value;
+            TempData["reset.phone"] = member.Phone;
+            TempData["reset.name"] = member.Name ?? member.Phone;
+        }
+        else
+        {
+            TempData["flash.toast"] = this.ErrorMessage(result.Error);
+        }
+
+        return RedirectToAction(nameof(Show), new { id });
+    }
 }
 
 /// <summary>Technicians: trades, zones, working week, activation, certification.</summary>

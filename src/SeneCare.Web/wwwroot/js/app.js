@@ -87,6 +87,19 @@
     });
   });
 
+  // ---- Password fields: « Afficher / Masquer ». ----
+  document.addEventListener("click", (event) => {
+    const toggle = event.target.closest("[data-password-toggle]");
+    if (!toggle) return;
+    const input = document.getElementById(toggle.getAttribute("aria-controls"));
+    if (!input) return;
+    const show = input.type === "password";
+    input.type = show ? "text" : "password";
+    toggle.textContent = show ? toggle.dataset.textHide : toggle.dataset.textShow;
+    toggle.setAttribute("aria-pressed", String(show));
+    input.focus();
+  });
+
   // ---- Privacy consent (law 2008-12): the button that sends the form waits for the box to be ticked. ----
   document.querySelectorAll("form input[name=AcceptsPrivacyPolicy][type=checkbox]").forEach((box) => {
     const buttons = [...box.form.querySelectorAll("button[type=submit]")];

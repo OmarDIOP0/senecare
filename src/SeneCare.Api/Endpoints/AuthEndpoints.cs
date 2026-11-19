@@ -22,13 +22,23 @@ public sealed record TokenResponse(
     string RefreshToken,
     DateTimeOffset RefreshTokenExpiresAt,
     bool IsNewUser,
-    bool IsRegistrationComplete);
+    bool IsRegistrationComplete,
+    bool MustChangePassword = false);
+
+public sealed record LoginRequest(string? Phone, string? Password);
+
+public sealed record SignupRequest(string? Phone, string? Password, string? ConfirmPassword);
+
+public sealed record ChangePasswordRequest(string? CurrentPassword, string? NewPassword, string? ConfirmPassword);
 
 public sealed record RefreshRequest(string? RefreshToken);
 
 public sealed record RegisterRequest(string? FullName, AccountKind? Profile, string? CompanyName, bool AcceptsPrivacyPolicy, bool AcceptsWhatsApp);
 
-/// <summary>/api/v1/auth: phone + OTP sign-in for the mobile app, JWT access token + rotating refresh token.</summary>
+/// <summary>
+/// /api/v1/auth for the mobile app: phone + password (default) or phone + one-time code (Auth:Mode = Otp),
+/// JWT access token + rotating refresh token.
+/// </summary>
 public static class AuthEndpoints
 {
     public const string RateLimitPolicy = "otp";
@@ -37,6 +47,9 @@ public static class AuthEndpoints
     {
         var auth = api.MapGroup("/auth").WithTags("Auth");
 
+        auth.MapPost("/login", LoginAsync).RequireRateLimiting(RateLimitPolicy);
+        auth.MapPost("/signup", SignupAsync).RequireRateLimiting(RateLimitPolicy);
+        auth.MapPost("/password", ChangePasswordAsync).RequireAuthorization(Policies.Authenticated).RequireRateLimiting(RateLimitPolicy);
         auth.MapPost("/otp", RequestOtpAsync).RequireRateLimiting(RateLimitPolicy);
         auth.MapPost("/otp/verify", VerifyOtpAsync).RequireRateLimiting(RateLimitPolicy);
         auth.MapPost("/refresh", RefreshAsync);
@@ -47,9 +60,56 @@ public static class AuthEndpoints
         return api;
     }
 
-    private static async Task<Results<Accepted<OtpResponse>, ProblemHttpResult>> RequestOtpAsync(
-        OtpRequest request, RequestOtpHandler handler, HttpContext http, CancellationToken cancellationToken)
+    private static async Task<Results<Ok<TokenResponse>, ProblemHttpResult>> LoginAsync(
+        LoginRequest request, PasswordSignInHandler handler, IAuthTokenService tokens, IApplicationDbContext db, HttpContext http, CancellationToken cancellationToken)
     {
+        var result = await handler.HandleAsync(new PasswordSignInCommand(request.Phone, request.Password), cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return Problem(result.Error);
+        }
+
+        var issued = await tokens.IssueAsync(result.Value.UserId, http.Connection.RemoteIpAddress?.ToString(), cancellationToken);
+        var complete = await IsRegistrationCompleteAsync(db, result.Value.UserId, cancellationToken);
+        return TypedResults.Ok(ToResponse(issued, false, complete) with { MustChangePassword = result.Value.MustChangePassword });
+    }
+
+    private static async Task<Results<Ok<TokenResponse>, ProblemHttpResult>> SignupAsync(
+        SignupRequest request, PasswordSignUpHandler handler, IAuthTokenService tokens, HttpContext http, CancellationToken cancellationToken)
+    {
+        var result = await handler.HandleAsync(new PasswordSignUpCommand(request.Phone, request.Password, request.ConfirmPassword), cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return Problem(result.Error);
+        }
+
+        // Then POST /auth/register (name, profile, consent), like after the code in OTP mode.
+        var issued = await tokens.IssueAsync(result.Value, http.Connection.RemoteIpAddress?.ToString(), cancellationToken);
+        return TypedResults.Ok(ToResponse(issued, true, false));
+    }
+
+    private static async Task<Results<NoContent, ProblemHttpResult>> ChangePasswordAsync(
+        ChangePasswordRequest request, ClaimsPrincipal user, ChangePasswordHandler handler, CancellationToken cancellationToken)
+    {
+        var result = await handler.HandleAsync(new ChangePasswordCommand(user.GetUserId()!.Value, request.CurrentPassword, request.NewPassword, request.ConfirmPassword), cancellationToken);
+        return result.IsSuccess ? TypedResults.NoContent() : Problem(result.Error);
+    }
+
+    private static async Task<bool> IsRegistrationCompleteAsync(IApplicationDbContext db, Guid userId, CancellationToken cancellationToken)
+    {
+        var user = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.FirstOrDefaultAsync(db.Users, u => u.Id == userId, cancellationToken);
+        var hasAccount = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.AnyAsync(db.CustomerAccounts, a => a.Members.Any(m => m.UserId == userId), cancellationToken);
+        return user is not null && RegistrationStatus.IsComplete(user, hasAccount);
+    }
+
+    private static async Task<Results<Accepted<OtpResponse>, ProblemHttpResult>> RequestOtpAsync(
+        OtpRequest request, RequestOtpHandler handler, Microsoft.Extensions.Options.IOptions<AuthOptions> options, HttpContext http, CancellationToken cancellationToken)
+    {
+        if (!options.Value.UsesOtp)
+        {
+            return Problem(new AppError("auth.otp_disabled"));
+        }
+
         var result = await handler.HandleAsync(new RequestOtpCommand(request.Phone, request.Channel, http.Connection.RemoteIpAddress?.ToString()), cancellationToken);
         return result.IsSuccess
             ? TypedResults.Accepted((string?)null, new OtpResponse(result.Value.ChallengeId, result.Value.ExpiresAt, result.Value.ResendAvailableAt))
@@ -57,8 +117,13 @@ public static class AuthEndpoints
     }
 
     private static async Task<Results<Ok<TokenResponse>, ProblemHttpResult>> VerifyOtpAsync(
-        VerifyRequest request, VerifyOtpHandler handler, IAuthTokenService tokens, HttpContext http, CancellationToken cancellationToken)
+        VerifyRequest request, VerifyOtpHandler handler, IAuthTokenService tokens, Microsoft.Extensions.Options.IOptions<AuthOptions> options, HttpContext http, CancellationToken cancellationToken)
     {
+        if (!options.Value.UsesOtp)
+        {
+            return Problem(new AppError("auth.otp_disabled"));
+        }
+
         var result = await handler.HandleAsync(new VerifyOtpCommand(request.ChallengeId, request.Code), cancellationToken);
         if (!result.IsSuccess)
         {
@@ -112,7 +177,14 @@ public static class AuthEndpoints
     private static ProblemHttpResult Problem(AppError? error)
     {
         var code = error?.Code ?? "error";
-        var status = code is "otp.cooldown" or "otp.too_many_requests" ? StatusCodes.Status429TooManyRequests : StatusCodes.Status400BadRequest;
+        var status = code switch
+        {
+            "otp.cooldown" or "otp.too_many_requests" or "auth.locked" => StatusCodes.Status429TooManyRequests,
+            "auth.invalid" => StatusCodes.Status401Unauthorized,
+            "auth.otp_disabled" => StatusCodes.Status404NotFound,
+            "auth.phone_taken" => StatusCodes.Status409Conflict,
+            _ => StatusCodes.Status400BadRequest,
+        };
         var extensions = new Dictionary<string, object?> { ["code"] = code };
         if (error?.RetryAt is { } retryAt)
         {

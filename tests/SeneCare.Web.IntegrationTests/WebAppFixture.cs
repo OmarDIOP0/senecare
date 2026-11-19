@@ -47,12 +47,30 @@ public sealed class WebAppFixture : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
+        if (_passwordFactory is not null)
+        {
+            await _passwordFactory.DisposeAsync();
+        }
+
         if (_factory is not null)
         {
             await _factory.DisposeAsync();
         }
 
         await Database.DisposeAsync();
+    }
+
+    private WebApplicationFactory<Program>? _passwordFactory;
+
+    /// <summary>Same host, signing in with phone + password (Auth:Mode = Password, the production default).</summary>
+    public HttpClient CreatePasswordClient()
+    {
+        _passwordFactory ??= _factory!.WithWebHostBuilder(builder => builder.UseSetting("Auth:Mode", "Password"));
+        return _passwordFactory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            BaseAddress = new Uri("https://localhost"),
+            AllowAutoRedirect = false,
+        });
     }
 
     /// <summary>A browser-like client: keeps cookies, HTTPS (secure cookies), does not follow redirects.</summary>

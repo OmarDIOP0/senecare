@@ -71,6 +71,8 @@ try
             options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             // Outdated form token: back to the page with a message, never a blank « HTTP 400 ».
             options.Filters.Add<SeneCare.Web.Infrastructure.AntiforgeryRecoveryFilter>();
+            // Temporary password: « choose your password » before anything else.
+            options.Filters.Add<SeneCare.Web.Infrastructure.TemporaryPasswordFilter>();
         })
         .AddViewLocalization()
         .AddDataAnnotationsLocalization(options =>

@@ -33,6 +33,10 @@ public static class DependencyInjection
         services.AddScoped<Admin.ReviewModeration>();
         services.AddScoped<RequestOtpHandler>();
         services.AddScoped<VerifyOtpHandler>();
+        services.AddScoped<PasswordSignInHandler>();
+        services.AddScoped<PasswordSignUpHandler>();
+        services.AddScoped<ChangePasswordHandler>();
+        services.AddScoped<ResetPasswordHandler>();
         services.AddScoped<CompleteRegistrationHandler>();
         services.AddScoped<InviteMemberHandler>();
         services.AddScoped<GetInvitationHandler>();

@@ -97,3 +97,6 @@ public sealed record WizardHeadingModel(int Step, int Total, string Label, strin
 
 /// <summary>Trade illustration (icon on a blue tile) used where a trade photo would go.</summary>
 public sealed record TradeArtModel(SeneCare.Domain.Common.ServiceDomain Domain, string Label, string Class, bool Large = false);
+
+/// <summary>Password field with a show / hide button. <c>NewPassword</c>: browser suggests a new one.</summary>
+public sealed record PasswordInputModel(string Name, string Label, string? Error = null, bool NewPassword = false, string? Hint = null);

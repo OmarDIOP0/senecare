@@ -38,6 +38,7 @@ public static class DependencyInjection
         services.AddSingleton(TimeProvider.System);
 
         services.Configure<OtpOptions>(configuration.GetSection(OtpOptions.SectionName));
+        services.Configure<AuthOptions>(configuration.GetSection(AuthOptions.SectionName));
         services.Configure<SecurityOptions>(configuration.GetSection(SecurityOptions.SectionName));
         services.AddSingleton<ISecretHasher, HmacSecretHasher>();
         services.AddScoped<IDocumentNumberGenerator, DocumentNumberGenerator>();
@@ -70,6 +71,15 @@ public static class DependencyInjection
                 options.User.AllowedUserNameCharacters = "+0123456789";
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                options.Lockout.AllowedForNewUsers = true;
+                // Rules are checked in PasswordRules (8 characters, not the phone number): no imposed symbols,
+                // a password people can type on any phone keyboard.
+                options.Password.RequiredLength = Application.Auth.PasswordRules.MinLength;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredUniqueChars = 1;
             })
             .AddEntityFrameworkStores<SeneCareDbContext>()
             .AddClaimsPrincipalFactory<SeneCareUserClaimsPrincipalFactory>();

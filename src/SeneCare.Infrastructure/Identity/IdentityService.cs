@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using SeneCare.Application.Abstractions;
+using SeneCare.Application.Auth;
 using Microsoft.EntityFrameworkCore;
 using SeneCare.Domain.Users;
 using SeneCare.Infrastructure.Persistence;
@@ -16,7 +17,13 @@ internal sealed class IdentityService(UserManager<ApplicationUser> userManager, 
         {
             identityUser.PhoneNumber = user.PhoneNumber.E164;
             identityUser.UserName = user.PhoneNumber.E164;
+            identityUser.MustChangePassword = false;
             await userManager.UpdateAsync(identityUser);
+            if (await userManager.HasPasswordAsync(identityUser))
+            {
+                await userManager.RemovePasswordAsync(identityUser);
+            }
+
             // New security stamp: cookies issued before are rejected at their next validation.
             await userManager.UpdateSecurityStampAsync(identityUser);
         }
@@ -25,6 +32,62 @@ internal sealed class IdentityService(UserManager<ApplicationUser> userManager, 
         await db.RefreshTokens
             .Where(t => t.UserId == user.Id && t.RevokedAt == null)
             .ExecuteUpdateAsync(s => s.SetProperty(t => t.RevokedAt, now), cancellationToken);
+    }
+
+    public async Task<bool> HasPasswordAsync(Guid userId, CancellationToken cancellationToken = default) =>
+        await userManager.FindByIdAsync(userId.ToString()) is { } user && await userManager.HasPasswordAsync(user);
+
+    public async Task<bool> MustChangePasswordAsync(Guid userId, CancellationToken cancellationToken = default) =>
+        await userManager.FindByIdAsync(userId.ToString()) is { MustChangePassword: true };
+
+    public async Task<PasswordCheck> CheckPasswordAsync(Guid userId, string password, CancellationToken cancellationToken = default)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null || !await userManager.HasPasswordAsync(user))
+        {
+            return PasswordCheck.NoPassword;
+        }
+
+        if (await userManager.IsLockedOutAsync(user))
+        {
+            return PasswordCheck.LockedOut;
+        }
+
+        if (!await userManager.CheckPasswordAsync(user, password))
+        {
+            await userManager.AccessFailedAsync(user);
+            return await userManager.IsLockedOutAsync(user) ? PasswordCheck.LockedOut : PasswordCheck.Failed;
+        }
+
+        await userManager.ResetAccessFailedCountAsync(user);
+        return user.MustChangePassword ? PasswordCheck.SuccessMustChange : PasswordCheck.Success;
+    }
+
+    public async Task<string?> SetPasswordAsync(Guid userId, string password, bool mustChange, CancellationToken cancellationToken = default)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            return "user.not_found";
+        }
+
+        if (await userManager.HasPasswordAsync(user))
+        {
+            await userManager.RemovePasswordAsync(user);
+        }
+
+        var added = await userManager.AddPasswordAsync(user, password);
+        if (!added.Succeeded)
+        {
+            return "password.too_short";
+        }
+
+        user.MustChangePassword = mustChange;
+        await userManager.SetLockoutEndDateAsync(user, null);
+        await userManager.ResetAccessFailedCountAsync(user);
+        // New security stamp: other sessions signed in with the old password are closed.
+        await userManager.UpdateSecurityStampAsync(user);
+        return null;
     }
 
     public async Task EnsureIdentityUserAsync(User user, CancellationToken cancellationToken = default)

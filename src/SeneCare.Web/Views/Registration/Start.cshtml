@@ -7,7 +7,9 @@
     var phoneError = ViewData.ModelState[nameof(Model.Phone)]?.Errors.FirstOrDefault()?.ErrorMessage;
     var phoneInput = new PhoneInputModel(nameof(Model.Phone), Model.Phone, L["SignIn_PhoneLabel"], phoneError);
     // Back with a wrong number, or « Changer de numéro » from the code page: open on the number.
-    var start = phoneError is not null || Context.Request.Query.ContainsKey("numero") ? 1 : 0;
+    var passwordError = ViewData.ModelState[nameof(Model.Password)]?.Errors.FirstOrDefault()?.ErrorMessage;
+    var usesOtp = Context.RequestServices.GetRequiredService<Microsoft.Extensions.Options.IOptions<SeneCare.Application.Auth.AuthOptions>>().Value.UsesOtp;
+    var start = phoneError is not null || passwordError is not null || Context.Request.Query.ContainsKey("numero") ? 1 : 0;
 }
 
 @* Steps 1–2 of « Créer mon compte ». The code is then checked on /connexion/code (step 2 too), the rest
@@ -22,14 +24,24 @@
     </fieldset>
 
     <fieldset class="grid gap-5" data-wizard-step>
-        <partial name="Signup/_StepHeading" model='new WizardHeadingModel(2, 5, L["Register_StepPhone"].Value, L["Register_StepPhone_Title"].Value, L["Register_StepPhone_Text"].Value)' />
-        <partial name="Ui/_PhoneInput" model="phoneInput" />
+        @if (usesOtp)
+        {
+            <partial name="Signup/_StepHeading" model='new WizardHeadingModel(2, 5, L["Register_StepPhone"].Value, L["Register_StepPhone_Title"].Value, L["Register_StepPhone_Text"].Value)' />
+            <partial name="Ui/_PhoneInput" model="phoneInput" />
+        }
+        else
+        {
+            <partial name="Signup/_StepHeading" model='new WizardHeadingModel(2, 5, L["Register_StepAccess"].Value, L["Register_StepAccess_Title"].Value, L["Register_StepAccess_Text"].Value)' />
+            <partial name="Ui/_PhoneInput" model="phoneInput" />
+            <partial name="Ui/_PasswordInput" model='new PasswordInputModel(nameof(Model.Password), L["Password_Label"].Value, passwordError, NewPassword: true)' />
+            <partial name="Ui/_PasswordInput" model='new PasswordInputModel(nameof(Model.ConfirmPassword), L["Password_Confirm"].Value)' />
+        }
     </fieldset>
 
     <div class="flex flex-wrap gap-3">
         <button type="button" class="sc-btn-secondaire min-h-12 flex-1 text-base sm:flex-none sm:px-8" data-wizard-prev hidden>@L["Register_Back"]</button>
         <button type="button" class="sc-btn-primaire min-h-12 flex-[2] text-base" data-wizard-next hidden>@L["Register_Next"]<sc-icon name="arrow-right" class="size-5" /></button>
-        <button type="submit" class="sc-btn-primaire min-h-12 flex-[2] text-base" data-wizard-submit>@L["SignIn_Submit"]<sc-icon name="arrow-right" class="size-5" /></button>
+        <button type="submit" class="sc-btn-primaire min-h-12 flex-[2] text-base" data-wizard-submit>@(usesOtp ? L["SignIn_Submit"] : L["Register_Next"])<sc-icon name="arrow-right" class="size-5" /></button>
     </div>
     <p class="text-center text-sm text-charbon-doux">@L["Register_HaveAccount"] <a href="/connexion" class="sc-lien font-semibold">@L["Register_SignInLink"]</a></p>
 </form>

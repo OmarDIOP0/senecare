@@ -32,6 +32,8 @@
     <p class="mt-4"><a href="/entreprise/equipe" class="sc-btn-secondaire">@L["Account_Team"]</a></p>
 }
 
+<p class="mt-6"><a href="@SeneCare.Web.Controllers.AccountController.ChangePasswordPath" class="sc-btn-secondaire"><sc-icon name="shield-check" class="size-4" />@L["Password_Change_Title"]</a></p>
+
 <div class="mt-8 grid gap-2 sm:grid-cols-2">
     <a href="/bienvenue?rejouer=true" class="sc-btn-secondaire">@L["Account_Replay"]</a>
     <form method="post" asp-controller="Space" asp-action="ReplayTour">

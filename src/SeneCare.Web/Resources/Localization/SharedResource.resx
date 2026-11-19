@@ -1097,16 +1097,15 @@
   <data name="Home_Trade_Report" xml:space="preserve"><value>Signaler</value></data>
   <data name="Home_Trades_Unsure_Title" xml:space="preserve"><value>Vous ne savez pas quel métier choisir ?</value></data>
   <data name="Home_Trades_Unsure_Text" xml:space="preserve"><value>Décrivez le problème avec une photo, on envoie le bon technicien.</value></data>
-  <data name="Home_Steps_Eyebrow" xml:space="preserve"><value>Comment ça marche</value></data>
-  <data name="Home_Steps_Title" xml:space="preserve"><value>De la photo au rapport, en quatre étapes</value></data>
-  <data name="Home_Step1_Title" xml:space="preserve"><value>Vous décrivez le problème</value></data>
-  <data name="Home_Step1_Text" xml:space="preserve"><value>En ligne ou sur WhatsApp, avec une photo. Ça marche même sans réseau : la demande part au retour de la connexion.</value></data>
-  <data name="Home_Step2_Title" xml:space="preserve"><value>On vous propose un créneau</value></data>
-  <data name="Home_Step2_Text" xml:space="preserve"><value>Un conseiller qualifie la demande et vous propose trois créneaux, le jour même pour une urgence.</value></data>
-  <data name="Home_Step3_Title" xml:space="preserve"><value>Le technicien intervient</value></data>
-  <data name="Home_Step3_Text" xml:space="preserve"><value>Vous recevez son nom et son numéro, vous le suivez en route. Le prix des pièces est annoncé avant la pose.</value></data>
-  <data name="Home_Step4_Title" xml:space="preserve"><value>Vous validez</value></data>
-  <data name="Home_Step4_Text" xml:space="preserve"><value>Rapport avec photos avant et après, facture et paiement Wave dans l'application.</value></data>
+  <data name="Home_Steps_Eyebrow" xml:space="preserve"><value>Pour commencer</value></data>
+  <data name="Home_Steps_Prices" xml:space="preserve"><value>Voir les tarifs</value></data>
+  <data name="Home_Steps_Title" xml:space="preserve"><value>Comment ça marche, en 3 étapes</value></data>
+  <data name="Home_Step1_Title" xml:space="preserve"><value>Créez votre compte</value></data>
+  <data name="Home_Step1_Text" xml:space="preserve"><value>Votre numéro, un mot de passe et votre logement : deux minutes. Vous payez ensuite l'abonnement par Wave.</value></data>
+  <data name="Home_Step2_Title" xml:space="preserve"><value>Signalez un problème</value></data>
+  <data name="Home_Step2_Text" xml:space="preserve"><value>Une photo et quelques mots depuis votre téléphone. Sans réseau, la demande part au retour de la connexion.</value></data>
+  <data name="Home_Step3_Title" xml:space="preserve"><value>Nous intervenons</value></data>
+  <data name="Home_Step3_Text" xml:space="preserve"><value>Un technicien vient au créneau convenu. Vous avez son nom et son numéro, puis un rapport avec photos avant et après.</value></data>
   <data name="Home_Offers_Eyebrow" xml:space="preserve"><value>Nos offres</value></data>
   <data name="Home_Offers_Title" xml:space="preserve"><value>Un abonnement clair, sans surprise</value></data>
   <data name="Home_Offer_Household_Text" xml:space="preserve"><value>Pour votre maison ou votre villa : tous les métiers, un suivi de chaque intervention et des conseils avant chaque saison.</value></data>

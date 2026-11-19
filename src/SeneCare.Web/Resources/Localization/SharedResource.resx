@@ -1361,7 +1361,7 @@
   <data name="Register_Step4" xml:space="preserve"><value>Confirmation</value></data>
   <data name="Register_Step4_Title" xml:space="preserve"><value>Et ensuite ?</value></data>
   <data name="Register_Next2" xml:space="preserve"><value>Vous payez l'inscription et la première période par Wave, puis vous cliquez sur « J'ai payé ».</value></data>
-  <data name="Register_Next3" xml:space="preserve"><value>Nous vérifions le paiement et activons votre compte. Vous êtes prévenu sur WhatsApp ou par SMS.</value></data>
+  <data name="Register_Next3" xml:space="preserve"><value>Nous vérifions le paiement et activons votre compte. Votre espace l'indique dès que c'est fait.</value></data>
   <data name="Register_Back" xml:space="preserve"><value>Retour</value></data>
   <data name="Register_Next" xml:space="preserve"><value>Suivant</value></data>
   <data name="Register_Panel_Eyebrow" xml:space="preserve"><value>Votre espace SeneCare</value></data>
@@ -1425,7 +1425,7 @@
   <data name="Subscription_Receipt" xml:space="preserve"><value>Reçu PDF</value></data>
   <data name="Subscription_InvoicePdf" xml:space="preserve"><value>Facture PDF</value></data>
   <data name="Pay_PendingTitle" xml:space="preserve"><value>Paiement reçu, vérification en cours</value></data>
-  <data name="Pay_PendingNotice" xml:space="preserve"><value>Vous recevrez un message WhatsApp dès l'activation.</value></data>
+  <data name="Pay_PendingNotice" xml:space="preserve"><value>Cette page affichera « Actif » dès la vérification.</value></data>
   <data name="AdminPay_Eyebrow" xml:space="preserve"><value>Encaissements</value></data>
   <data name="AdminPay_Methods" xml:space="preserve"><value>Moyens de paiement</value></data>
   <data name="AdminPay_WaveText" xml:space="preserve"><value>Lien marchand : le client paie, puis déclare son paiement ici.</value></data>

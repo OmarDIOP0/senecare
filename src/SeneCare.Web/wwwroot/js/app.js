@@ -439,6 +439,13 @@
 
   document.addEventListener("click", (event) => {
     if (event.target.closest("[data-reload]")) location.reload();
+    // « Copier le lien » (team invitation): the text is also selectable by hand when the clipboard is refused.
+    const copy = event.target.closest("[data-copy]");
+    if (copy) {
+      navigator.clipboard?.writeText(copy.dataset.copy)
+        .then(() => window.scToast?.(copy.dataset.copied ?? "", "succes"))
+        .catch(() => {});
+    }
   });
 
   // ---- « Installer l'application »: Android prompt, or the illustrated guide on iPhone. ----

@@ -18,7 +18,18 @@
 
 @if (TempData["flash.success"] is string invited)
 {
-    <p class="sc-alert mt-4" role="status">@L["Team_InviteSent", invited]</p>
+    <section class="sc-alert mt-4 grid gap-3" role="status">
+        <p class="font-semibold">@L["Team_InviteSent", invited]</p>
+        @if (TempData["invite.link"] is string link && TempData["invite.whatsapp"] is string share)
+        {
+            <p class="text-sm">@L["Team_InviteShareHint"]</p>
+            <p class="rounded-md border border-ligne bg-surface px-3 py-2 font-mono text-sm break-all select-all">@link</p>
+            <p class="flex flex-wrap gap-2">
+                <a href="@share" class="sc-btn-primaire min-h-11" target="_blank" rel="noopener"><sc-icon name="message-circle" class="size-5" />@L["Team_InviteShareWhatsApp"]</a>
+                <button type="button" class="sc-btn-secondaire min-h-11" data-copy="@link" data-copied="@L["Team_InviteCopied"]">@L["Team_InviteCopy"]</button>
+            </p>
+        }
+    </section>
 }
 
 <div class="mt-6 hidden overflow-x-auto rounded-lg border border-ligne bg-surface md:block">

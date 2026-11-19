@@ -87,7 +87,11 @@ public sealed class TeamController(GetTeamHandler getTeam, InviteMemberHandler i
             return View(await BuildModelAsync(invite, cancellationToken));
         }
 
-        TempData["flash.success"] = result.Value.Phone.Formatted;
+        // Shown once: the manager sends the link (the token is only stored hashed).
+        var sent = result.Value;
+        TempData["flash.success"] = sent.Phone.Formatted;
+        TempData["invite.link"] = sent.Link;
+        TempData["invite.whatsapp"] = $"https://wa.me/{sent.Phone.E164.TrimStart('+')}?text={Uri.EscapeDataString(sent.Message)}";
         return RedirectToAction(nameof(Index));
     }
 

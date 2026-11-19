@@ -109,10 +109,14 @@
   <data name="Team_Heading" xml:space="preserve"><value>Équipe de {0}</value></data>
   <data name="Team_Members" xml:space="preserve"><value>Membres</value></data>
   <data name="Team_InviteHeading" xml:space="preserve"><value>Inviter un employé</value></data>
-  <data name="Team_InviteIntro" xml:space="preserve"><value>Il recevra un lien par WhatsApp ou SMS, valable 7 jours.</value></data>
+  <data name="Team_InviteIntro" xml:space="preserve"><value>Nous créons un lien d'invitation valable 7 jours. Vous l'envoyez ensuite à l'employé, par exemple avec « Partager sur WhatsApp ».</value></data>
+  <data name="Team_InviteShareHint" xml:space="preserve"><value>Envoyez-lui ce lien. Il ne s'affichera plus : partagez-le ou copiez-le maintenant.</value></data>
+  <data name="Team_InviteShareWhatsApp" xml:space="preserve"><value>Partager sur WhatsApp</value></data>
+  <data name="Team_InviteCopy" xml:space="preserve"><value>Copier le lien</value></data>
+  <data name="Team_InviteCopied" xml:space="preserve"><value>Lien copié.</value></data>
   <data name="Team_RoleLabel" xml:space="preserve"><value>Rôle</value></data>
-  <data name="Team_InviteSubmit" xml:space="preserve"><value>Envoyer l'invitation</value></data>
-  <data name="Team_InviteSent" xml:space="preserve"><value>Invitation envoyée au {0}.</value></data>
+  <data name="Team_InviteSubmit" xml:space="preserve"><value>Créer l'invitation</value></data>
+  <data name="Team_InviteSent" xml:space="preserve"><value>Invitation créée pour le {0}.</value></data>
   <data name="Invitation_Title" xml:space="preserve"><value>Invitation</value></data>
   <data name="Invitation_Heading" xml:space="preserve"><value>{0} vous invite sur SeneCare</value></data>
   <data name="Invitation_Intro" xml:space="preserve"><value>Vous pourrez signaler les pannes de vos locaux et suivre les interventions.</value></data>

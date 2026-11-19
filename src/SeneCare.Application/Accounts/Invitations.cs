@@ -18,9 +18,14 @@ public sealed record InviteMemberCommand(
     IReadOnlyCollection<Guid> PropertyScope,
     string InvitationUrlTemplate);
 
-public sealed record InvitationSent(Guid InvitationId, PhoneNumber Phone, DateTimeOffset ExpiresAt);
+/// <param name="Link">The invitation link, known only now (the token is stored hashed): shown once to the manager.</param>
+/// <param name="Message">The ready-made invitation text with the link, for « Partager sur WhatsApp ».</param>
+public sealed record InvitationSent(Guid InvitationId, PhoneNumber Phone, DateTimeOffset ExpiresAt, string Link, string Message);
 
-/// <summary>A business manager invites an employee by phone; the link arrives by WhatsApp or SMS.</summary>
+/// <summary>
+/// A business manager invites an employee by phone. The link is given back to the manager, who shares it on
+/// WhatsApp; it is also sent by the messaging service once one is configured (console only until then).
+/// </summary>
 public sealed class InviteMemberHandler(
     IApplicationDbContext db,
     ISecretHasher hasher,
@@ -83,7 +88,7 @@ public sealed class InviteMemberHandler(
             await sms.SendAsync(phone, message, cancellationToken);
         }
 
-        return Result<InvitationSent>.Success(new InvitationSent(invitation.Id, phone, invitation.ExpiresAt));
+        return Result<InvitationSent>.Success(new InvitationSent(invitation.Id, phone, invitation.ExpiresAt, link, message));
     }
 }
 

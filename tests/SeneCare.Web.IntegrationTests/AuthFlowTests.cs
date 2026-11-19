@@ -141,8 +141,16 @@ public class AuthFlowTests(WebAppFixture app)
         });
         Assert.Equal("/entreprise/equipe", invited.Location());
 
-        // The employee opens the link received by WhatsApp.
+        // The manager sees the link once, with « Partager sur WhatsApp » towards the employee's number.
         var link = app.Messages.LastLinkFor(employeePhone);
+        var shown = WebUtility.HtmlDecode(await manager.GetStringAsync(new Uri("/entreprise/equipe", UriKind.Relative)));
+        Assert.Contains(link.ToString(), shown, StringComparison.Ordinal);
+        Assert.Contains("https://wa.me/" + employeePhone.E164.TrimStart('+') + "?text=", shown, StringComparison.Ordinal);
+        Assert.Contains("Partager sur WhatsApp", shown, StringComparison.Ordinal);
+        var later = WebUtility.HtmlDecode(await manager.GetStringAsync(new Uri("/entreprise/equipe", UriKind.Relative)));
+        Assert.DoesNotContain(link.ToString(), later, StringComparison.Ordinal);
+
+        // The employee opens the link.
         var employee = app.CreateClient();
         var invitationPage = await employee.GetStringAsync(new Uri(link.PathAndQuery, UriKind.Relative));
         Assert.Contains("Teranga Services vous invite", WebUtility.HtmlDecode(invitationPage), StringComparison.Ordinal);

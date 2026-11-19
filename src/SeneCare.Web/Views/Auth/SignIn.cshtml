@@ -53,7 +53,7 @@
             <p class="-mt-2 text-sm">
                 @if (contact.WhatsAppUrl is { } help)
                 {
-                    <a href="@help?text=@Uri.EscapeDataString(L["Password_Forgot_Message"].Value)" class="sc-lien" target="_blank" rel="noopener">@L["Password_Forgot"]</a>
+                    <a href="@help?text=@Uri.EscapeDataString(L["Password_Forgot_Message"].Value)" class="sc-lien sc-tap" target="_blank" rel="noopener">@L["Password_Forgot"]</a>
                 }
                 else
                 {

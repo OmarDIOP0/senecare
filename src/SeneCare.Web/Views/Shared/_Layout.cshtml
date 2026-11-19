@@ -30,15 +30,15 @@
     @if (showContact)
     {
         <div class="bg-nuit-2 text-sm text-sur-nuit">
-            <div class="mx-auto flex min-h-9 w-full max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-1.5 lg:px-6">
+            <div class="mx-auto flex min-h-9 w-full max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-0 lg:px-6 lg:py-1.5">
                 <div class="flex flex-wrap items-center gap-x-5 gap-y-1">
                     @if (contact.HasPhone)
                     {
-                        <a href="tel:@contact.PhoneLink" class="inline-flex items-center gap-1.5 font-semibold text-white no-underline hover:underline"><sc-icon name="phone" class="size-4" />@contact.PhoneDisplay</a>
+                        <a href="tel:@contact.PhoneLink" class="sc-tap inline-flex items-center gap-1.5 font-semibold text-white no-underline hover:underline"><sc-icon name="phone" class="size-4" />@contact.PhoneDisplay</a>
                     }
                     @if (contact.HasWhatsApp)
                     {
-                        <a href="@contact.WhatsAppUrl" class="inline-flex items-center gap-1.5 text-white no-underline hover:underline" target="_blank" rel="noopener"><sc-icon name="message-circle" class="size-4" />WhatsApp</a>
+                        <a href="@contact.WhatsAppUrl" class="sc-tap inline-flex items-center gap-1.5 text-white no-underline hover:underline" target="_blank" rel="noopener"><sc-icon name="message-circle" class="size-4" />WhatsApp</a>
                     }
                 </div>
                 <div class="hidden flex-wrap items-center gap-x-5 md:flex">
@@ -155,58 +155,58 @@
         <div class="mx-auto grid w-full max-w-7xl gap-10 px-4 py-14 sm:grid-cols-2 lg:grid-cols-5 lg:px-6">
             <div>
                 <h2 class="font-mono text-xs font-bold tracking-[0.16em] text-or uppercase">@L["Public_Nav_Trades"]</h2>
-                <ul class="mt-4 grid gap-2.5 text-[15px]">
+                <ul class="mt-4 grid gap-2.5 text-[15px] max-lg:gap-0">
                     @foreach (var trade in Site.Trades)
                     {
-                        <li><a href="/metiers/@trade.Slug" class="no-underline hover:underline">@trade.Name</a></li>
+                        <li><a href="/metiers/@trade.Slug" class="sc-tap no-underline hover:underline">@trade.Name</a></li>
                     }
                 </ul>
             </div>
             <div>
                 <h2 class="font-mono text-xs font-bold tracking-[0.16em] text-or uppercase">@L["Site_Footer_Areas"]</h2>
-                <ul class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5 text-[15px] lg:grid-cols-1">
+                <ul class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5 text-[15px] max-lg:gap-y-0 lg:grid-cols-1">
                     @foreach (var hood in Site.Neighborhoods.Take(12))
                     {
                         <li>@hood</li>
                     }
-                    <li><a href="/quartiers" class="font-semibold no-underline hover:underline">@L["Site_Footer_AllAreas"]</a></li>
+                    <li><a href="/quartiers" class="sc-tap font-semibold no-underline hover:underline">@L["Site_Footer_AllAreas"]</a></li>
                 </ul>
             </div>
             <div>
                 <h2 class="font-mono text-xs font-bold tracking-[0.16em] text-or uppercase">@L["App_Name"]</h2>
-                <ul class="mt-4 grid gap-2.5 text-[15px]">
-                    <li><a href="/particuliers" class="no-underline hover:underline">@L["Public_Nav_Households"]</a></li>
-                    <li><a href="/entreprises" class="no-underline hover:underline">@L["Public_Nav_Business"]</a></li>
-                    <li><a href="/tarifs" class="no-underline hover:underline">@L["Site_Nav_Pricing"]</a></li>
-                    <li><a href="/quartiers" class="no-underline hover:underline">@L["Site_Footer_Program"]</a></li>
-                    <li><a href="/classement-quartiers" class="no-underline hover:underline">@L["Public_Footer_Ranking"]</a></li>
+                <ul class="mt-4 grid gap-2.5 text-[15px] max-lg:gap-0">
+                    <li><a href="/particuliers" class="sc-tap no-underline hover:underline">@L["Public_Nav_Households"]</a></li>
+                    <li><a href="/entreprises" class="sc-tap no-underline hover:underline">@L["Public_Nav_Business"]</a></li>
+                    <li><a href="/tarifs" class="sc-tap no-underline hover:underline">@L["Site_Nav_Pricing"]</a></li>
+                    <li><a href="/quartiers" class="sc-tap no-underline hover:underline">@L["Site_Footer_Program"]</a></li>
+                    <li><a href="/classement-quartiers" class="sc-tap no-underline hover:underline">@L["Public_Footer_Ranking"]</a></li>
                 </ul>
             </div>
             <div>
                 <h2 class="font-mono text-xs font-bold tracking-[0.16em] text-or uppercase">@L["Site_Footer_Help"]</h2>
-                <ul class="mt-4 grid gap-2.5 text-[15px]">
-                    <li><a href="/faq" class="no-underline hover:underline">@L["Site_Faq"]</a></li>
-                    <li><a href="/connexion" class="no-underline hover:underline">@L["Public_ClientSpace"]</a></li>
-                    <li><a href="/demander" class="no-underline hover:underline">@L["Site_RequestJob"]</a></li>
-                    <li><a href="/confidentialite" class="no-underline hover:underline">@L["Public_Footer_Privacy"]</a></li>
+                <ul class="mt-4 grid gap-2.5 text-[15px] max-lg:gap-0">
+                    <li><a href="/faq" class="sc-tap no-underline hover:underline">@L["Site_Faq"]</a></li>
+                    <li><a href="/connexion" class="sc-tap no-underline hover:underline">@L["Public_ClientSpace"]</a></li>
+                    <li><a href="/demander" class="sc-tap no-underline hover:underline">@L["Site_RequestJob"]</a></li>
+                    <li><a href="/confidentialite" class="sc-tap no-underline hover:underline">@L["Public_Footer_Privacy"]</a></li>
                 </ul>
             </div>
             <div>
                 <h2 class="font-mono text-xs font-bold tracking-[0.16em] text-or uppercase">@L["Site_Footer_Contact"]</h2>
                 @if (showContact)
                 {
-                    <ul class="mt-4 grid gap-2.5 text-[15px]">
+                    <ul class="mt-4 grid gap-2.5 text-[15px] max-lg:gap-0">
                         @if (contact.HasPhone)
                         {
-                            <li><a href="tel:@contact.PhoneLink" class="inline-flex items-center gap-2 font-semibold no-underline hover:underline"><sc-icon name="phone" class="size-4" />@contact.PhoneDisplay</a></li>
+                            <li><a href="tel:@contact.PhoneLink" class="sc-tap inline-flex items-center gap-2 font-semibold no-underline hover:underline"><sc-icon name="phone" class="size-4" />@contact.PhoneDisplay</a></li>
                         }
                         @if (contact.HasWhatsApp)
                         {
-                            <li><a href="@contact.WhatsAppUrl" class="inline-flex items-center gap-2 no-underline hover:underline" target="_blank" rel="noopener"><sc-icon name="message-circle" class="size-4" />WhatsApp</a></li>
+                            <li><a href="@contact.WhatsAppUrl" class="sc-tap inline-flex items-center gap-2 no-underline hover:underline" target="_blank" rel="noopener"><sc-icon name="message-circle" class="size-4" />WhatsApp</a></li>
                         }
                         @if (contact.Email is { } email)
                         {
-                            <li><a href="mailto:@email" class="inline-flex items-center gap-2 no-underline hover:underline"><sc-icon name="mail" class="size-4" />@email</a></li>
+                            <li><a href="mailto:@email" class="sc-tap inline-flex items-center gap-2 no-underline hover:underline"><sc-icon name="mail" class="size-4" />@email</a></li>
                         }
                         @if (contact.Address is { } address)
                         {
@@ -220,13 +220,13 @@
                     <p class="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm">
                         @foreach (var social in contact.Social)
                         {
-                            <a href="@social.Url" target="_blank" rel="noopener" class="underline">@social.Name</a>
+                            <a href="@social.Url" target="_blank" rel="noopener" class="sc-tap underline">@social.Name</a>
                         }
                     </p>
                 }
                 else
                 {
-                    <p class="mt-4 text-[15px]"><a href="/connexion" class="underline">@L["Public_ClientSpace"]</a></p>
+                    <p class="mt-4 text-[15px]"><a href="/connexion" class="sc-tap underline">@L["Public_ClientSpace"]</a></p>
                 }
             </div>
         </div>
@@ -234,17 +234,17 @@
             <div class="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-5 text-sm lg:px-6">
                 <p>© @DateTime.UtcNow.Year SENE DESIGN · @L["App_Signature"]</p>
                 <p class="flex flex-wrap gap-x-5 gap-y-1">
-                    <a href="/mentions-legales" class="no-underline hover:underline">@L["Site_Legal"]</a>
-                    <a href="/cgu" class="no-underline hover:underline">@L["Site_Terms"]</a>
-                    <a href="/confidentialite" class="no-underline hover:underline">@L["Public_Footer_Privacy"]</a>
+                    <a href="/mentions-legales" class="sc-tap no-underline hover:underline">@L["Site_Legal"]</a>
+                    <a href="/cgu" class="sc-tap no-underline hover:underline">@L["Site_Terms"]</a>
+                    <a href="/confidentialite" class="sc-tap no-underline hover:underline">@L["Public_Footer_Privacy"]</a>
                 </p>
             </div>
             @if (ViewData["PhotoCredits"] is true)
             {
                 @* Unsplash licence: attribution not required, given anyway. *@
                 <p class="mx-auto w-full max-w-7xl px-4 pb-5 text-xs lg:px-6">@L["Public_Footer_Photos"]
-                    <a href="https://unsplash.com/@@emmages" rel="noopener" class="underline">Emmanuel Ikwuegbu</a>,
-                    <a href="https://unsplash.com/@@mkumbwajr" rel="noopener" class="underline">Ali Mkumbwa</a> / Unsplash</p>
+                    <a href="https://unsplash.com/@@emmages" rel="noopener" class="sc-tap underline">Emmanuel Ikwuegbu</a>,
+                    <a href="https://unsplash.com/@@mkumbwajr" rel="noopener" class="sc-tap underline">Ali Mkumbwa</a> / Unsplash</p>
             }
         </div>
     </footer>

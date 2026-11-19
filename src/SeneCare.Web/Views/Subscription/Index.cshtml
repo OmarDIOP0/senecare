@@ -235,7 +235,7 @@
                                 <div class="min-w-0">
                                     <p class="font-semibold"><sc-amount value="@invoice.Total.Amount" /></p>
                                     <p class="text-sm text-charbon-doux">@invoice.Number · @Day(invoice.DueDate)</p>
-                                    <a href="/abonnement/factures/@(invoice.Id).pdf" class="mt-1 inline-flex items-center gap-1 text-sm font-semibold"><sc-icon name="download" class="size-4" />@(invoice.Status == InvoiceStatus.Paid ? L["Subscription_Receipt"] : L["Subscription_InvoicePdf"])</a>
+                                    <a href="/abonnement/factures/@(invoice.Id).pdf" class="sc-tap mt-1 inline-flex items-center gap-1 text-sm font-semibold"><sc-icon name="download" class="size-4" />@(invoice.Status == InvoiceStatus.Paid ? L["Subscription_Receipt"] : L["Subscription_InvoicePdf"])</a>
                                 </div>
                                 <span class="sc-badge shrink-0 @InvoiceBadge(invoice.Status)">@L["InvoiceStatus_" + invoice.Status]</span>
                             </li>

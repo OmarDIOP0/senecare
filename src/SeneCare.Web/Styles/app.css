@@ -308,6 +308,9 @@
   .sc-btn-whatsapp { @apply sc-btn bg-[#25d366] text-[#0b2e13] hover:brightness-95; }
   .sc-btn-icone { @apply inline-flex size-11 items-center justify-center rounded-full text-charbon-doux hover:bg-sourdine hover:text-charbon lg:size-10; }
   .sc-lien { @apply font-semibold text-laterite-fonce underline decoration-2 underline-offset-4 hover:text-laterite; }
+  /* Phones and tablets: a link or button standing on its own is at least 44 px tall, for a finger on an
+     entry-level screen. Links inside a sentence are left as they are. */
+  .sc-tap { @apply max-lg:inline-flex max-lg:min-h-11 max-lg:min-w-11 max-lg:items-center; }
 
   /* ---- Forms: label above, help below, visible focus ---------------------- */
   .sc-label { @apply block text-sm font-semibold text-charbon; }

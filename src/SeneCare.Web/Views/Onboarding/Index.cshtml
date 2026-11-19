@@ -47,11 +47,11 @@
         </div>
 
         <footer class="flex flex-col items-center gap-5 px-6 pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-            <nav class="flex gap-2" aria-label="@L["Onboarding_Pagination"]">
+            <nav class="flex" aria-label="@L["Onboarding_Pagination"]">
                 @for (var i = 0; i < slides.Length; i++)
                 {
                     <a href="#ecran-@(i + 1)" data-onboarding-dot="@i" aria-current="@(i == 0 ? "step" : null)"
-                       class="group grid size-6 place-items-center" aria-label="@L["Onboarding_SlideOf", i + 1, slides.Length]">
+                       class="group grid size-11 place-items-center" aria-label="@L["Onboarding_SlideOf", i + 1, slides.Length]">
                         <span class="block h-1.5 w-1.5 rounded-full bg-ligne transition-all duration-200 group-aria-[current=step]:w-5 group-aria-[current=step]:bg-charbon"></span>
                     </a>
                 }

@@ -86,7 +86,7 @@
             <h2 id="metiers-titre" class="sc-section-titre mt-3">@L["Home_Trades_Title"]</h2>
             <p class="mt-3 max-w-2xl text-[15px] text-charbon-doux">@L["Home_Trades_Text"]</p>
         </div>
-        <a href="/metiers" class="sc-lien">@L["Site_AllTrades"]</a>
+        <a href="/metiers" class="sc-lien sc-tap">@L["Site_AllTrades"]</a>
     </div>
     <ul class="mt-8 grid gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
         @foreach (var trade in Site.Trades)
@@ -285,14 +285,14 @@
             @foreach (var item in Site.Faq.Items.Take(6))
             {
                 <details class="group rounded-2xl border border-ligne bg-surface px-5 py-4 shadow-carte open:border-ambre/60">
-                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold [&::-webkit-details-marker]:hidden">
+                    <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 font-semibold [&::-webkit-details-marker]:hidden">
                         @item.Question<span class="grid size-8 shrink-0 place-items-center rounded-full bg-sourdine transition-transform group-open:rotate-180"><sc-icon name="chevron-down" class="size-4" /></span>
                     </summary>
                     <p class="mt-3 text-[15px] text-charbon-doux">@item.Answer</p>
                 </details>
             }
         </div>
-        <a href="/faq" class="sc-lien mt-5 inline-block">@L["Site_FaqAll"]</a>
+        <a href="/faq" class="sc-lien sc-tap mt-5 inline-block">@L["Site_FaqAll"]</a>
     </section>
 }
 

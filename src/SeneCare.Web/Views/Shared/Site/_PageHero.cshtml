@@ -4,7 +4,7 @@
         @if (Model.Crumb is not null)
         {
             <nav aria-label="@L["Site_Breadcrumb"]" class="font-mono text-xs font-bold tracking-[0.14em] text-ocre-texte uppercase">
-                <a href="/" class="text-ocre-texte no-underline hover:underline">@L["Home_Title"]</a> <span aria-hidden="true">/</span> <span>@Model.Crumb</span>
+                <a href="/" class="sc-tap text-ocre-texte no-underline hover:underline">@L["Home_Title"]</a> <span aria-hidden="true">/</span> <span>@Model.Crumb</span>
             </nav>
         }
         <h1 class="mt-4 text-[2rem] leading-[1.08] font-bold sm:text-[2.75rem]">@Model.Title</h1>

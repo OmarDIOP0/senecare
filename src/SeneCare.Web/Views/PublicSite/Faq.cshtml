@@ -11,7 +11,7 @@
             @foreach (var item in Site.Faq.Items)
             {
                 <details class="group px-5 py-4">
-                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold [&::-webkit-details-marker]:hidden">
+                    <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 font-semibold [&::-webkit-details-marker]:hidden">
                         @item.Question<sc-icon name="chevron-down" class="size-5 shrink-0 text-charbon-doux transition-transform group-open:rotate-180" />
                     </summary>
                     <p class="mt-3 text-[15px] text-charbon-doux">@item.Answer</p>

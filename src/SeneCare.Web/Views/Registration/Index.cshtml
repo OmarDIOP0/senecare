@@ -21,7 +21,7 @@
     <span class="text-charbon-doux">@L["Register_SignedInAs", Model.Phone is { } current ? "+221 " + current : ""]</span>
     <form method="post" action="/deconnexion">
         @Html.AntiForgeryToken()
-        <button type="submit" class="sc-lien font-semibold">@L["Register_OtherNumber"]</button>
+        <button type="submit" class="sc-lien sc-tap font-semibold">@L["Register_OtherNumber"]</button>
     </form>
 </div>
 

@@ -6,13 +6,13 @@ Captures : [docs/rapport-ux/](docs/rapport-ux/) (`desktop-NN-…png`, `mobile-NN
 
 ## 1. Résumé
 
-**Note : 6/10 avant corrections, 7,5/10 après.**
+**Note : 6/10 avant corrections, 7,5/10 après la première série, 8/10 après la seconde (en-tête, bienvenue, 44 px, déconnexion).**
 
 1. L'inscription en 5 étapes est claire et tolère bien les erreurs : messages en français simple, numéro gardé après une erreur, double-clic et rechargement sans dégât, aucune erreur dans la console.
 2. Le seul blocage grave : après une dizaine d'essais depuis le même réseau, le site affichait une page blanche « HTTP ERROR 429 ». Il est corrigé : un message explique quoi faire et la limite passe à 30.
 3. Plusieurs petits pièges perdaient une débutante : « Passer » menait à la connexion, « Se déconnecter » était introuvable, la barre Appeler / WhatsApp cachait les boutons sur téléphone, le bouton final était grisé sans explication. Tous sont corrigés.
 4. Il reste une décision importante pour la mise en ligne : le lien de paiement Wave n'est pas réglé sur le site de test. Mme Diallo ne peut donc pas payer, et sans abonnement actif elle ne peut pas signaler de panne.
-5. Neuf corrections, un commit chacune, et 197 tests verts. Rien n'est poussé ni déployé.
+5. Deux séries de corrections, un commit chacune, et 198 tests verts. Rien n'est poussé ni déployé.
 
 ## 2. Le parcours de Mme Diallo
 
@@ -53,11 +53,14 @@ Gravité : 🔴 bloquant · 🟠 gênant, risque d'abandon · 🟡 inconfort.
 | 11 | Pages publiques, page hors ligne | Si la base ne répond pas, la mise en page plantait, y compris sur la page « hors ligne ». Trouvé par les tests. | 🟠 | — | **Corrigé** (1eba376) |
 | 12 | /abonnement (site de test) | Lien Wave non réglé : impossible de payer, donc de signaler une panne. | 🟠 | desktop-16, desktop-17 | **À décider** (réglage admin, pas de code) |
 | 13 | Recherche de quartier | Une faute (« Gran yof ») propose d'ajouter un quartier en double. | 🟡 | desktop-11 | **À décider** |
-| 14 | En-tête public, 1366 px | « Créer mon compte » n'apparaît dans l'en-tête qu'en très grand écran ; ailleurs, il faut passer par « Espace client ». | 🟡 | desktop-02 | **À décider** |
-| 15 | Après déconnexion | Le bouton « retour » du navigateur affiche « Confirmer le renvoi du formulaire ». | 🟡 | desktop-34 (vu au 2ᵉ passage) | Non corrigé |
-| 16 | Plusieurs pages | 9 liens ou boutons de moins de 32 px de haut (petits liens du pied de page, bandeau de contact). | 🟡 | desktop-23 | Non corrigé |
+| 14 | En-tête public, 1366 px | « Créer mon compte » n'apparaît dans l'en-tête qu'en très grand écran ; ailleurs, il faut passer par « Espace client ». | 🟡 | desktop-02 → desktop-50, mobile-50 | **Corrigé** (ed79d53) : « Créer mon compte » à toutes les tailles, « Se connecter » en lien, le reste dans ☰ |
+| 15 | Après déconnexion | Le bouton « retour » du navigateur affiche « Confirmer le renvoi du formulaire ». | 🟡 | desktop-34 (vu au 2ᵉ passage) | **Corrigé** (7e141e3) : « Cache-Control: no-store » sur les pages connectées |
+| 16 | Plusieurs pages | 9 liens ou boutons de moins de 32 px de haut (petits liens du pied de page, bandeau de contact). | 🟡 | desktop-23 → mobile-54 | **Corrigé** (d71b4ee) : 44 px minimum sur mobile, vérifié sur 13 pages |
 | 17 | Première connexion | La visite guidée s'ouvre par-dessus l'espace ; on peut la passer. | 🟡 | desktop-32 | Non corrigé (voulu) |
 | 18 | Menu « Plus » (téléphone) | « Se déconnecter » reste dans le menu « Plus », comme dans la plupart des applications mobiles. | 🟡 | mobile-21 | Non corrigé (acceptable) |
+| 19 | Accueil public (1re visite) | Les écrans de bienvenue s'intercalaient devant l'accueil. | 🟡 | desktop-01 → mobile-51, mobile-52 | **Corrigé** (48ff685, f95ed25) : affichés une fois après la création du compte ; section « Comment ça marche, en 3 étapes » sur l'accueil |
+| 20 | Accueil public (téléphone) | « Se connecter » introuvable sur la première page : la barre du bas ne proposait qu'Appeler / WhatsApp. | 🟠 | mobile-50 | **Corrigé** (ed79d53) : barre du bas « Se connecter » + WhatsApp |
+| 21 | Équipe (entreprise) | L'invitation promettait un lien « par WhatsApp ou SMS » jamais envoyé. | 🟡 | — | **Corrigé** (119f5fc) : texte exact, lien affiché une fois, « Partager sur WhatsApp » et « Copier le lien » |
 
 ## 4. Fichiers modifiés
 
@@ -79,14 +82,18 @@ Gravité : 🔴 bloquant · 🟠 gênant, risque d'abandon · 🟡 inconfort.
 
 Tests : 197 sur 197 (Domain 102, Application 1, Infrastructure 7, API 8, Web 79).
 
-## 5. Recommandations non appliquées : décisions à prendre
+## 5. Recommandations : décisions prises et restantes
 
-1. **Lien de paiement Wave sur le site de test** (🟠). À régler dans Admin › Paiements. Sans lui, aucun client test ne peut aller au bout. À vous de choisir : un vrai lien marchand, ou un lien de test.
-2. **Recherche de quartier tolérante aux fautes** (🟡). Proposer « Grand Yoff » quand on tape « Gran yof », avant de proposer l'ajout. Il faudrait l'extension PostgreSQL `pg_trgm` (une migration) ou une comparaison maison. C'est un changement de base, donc il attend votre accord.
-3. **« Créer mon compte » dans l'en-tête à 1366 px** (🟡). Il faut décider quel bouton garder quand la place manque : « Demander une intervention » ou « Créer mon compte ». Cela touche la mise en page de l'en-tête.
-4. **Les écrans de bienvenue sur l'accueil public** (🟡). Ils s'intercalent entre le visiteur et la page d'accueil. Faut-il les réserver à l'application installée, ou au premier passage dans l'espace ?
-5. **Seuil de la limite d'essais** (à surveiller). Il est fixé à 30 essais par 10 minutes et par adresse, et se règle dans `RateLimits:Otp:PermitLimit`. Si des clients d'un même opérateur se bloquent encore, on pourra passer à une limite par numéro.
-6. **Retour arrière après déconnexion** (🟡). Il faudrait rediriger la déconnexion (POST) vers une page en GET avec des en-têtes « no-store ». C'est un petit changement, mais il touche le cache hors ligne et demande des tests sur téléphone.
-7. **Cibles tactiles de moins de 32 px** (🟡). Agrandir les liens du pied de page et du bandeau de contact (44 px conseillés). C'est un ajustement de style sur plusieurs pages.
-8. **Texte d'invitation d'équipe** (🟡). « Il recevra un lien par WhatsApp ou SMS » promet aussi un envoi qui n'existe pas encore. Je ne l'ai pas changé, faute d'avoir testé ce parcours entreprise.
-9. **Mise en ligne.** Rien n'est poussé. Pour que le site de test profite des corrections : `git push`, puis le déploiement automatique sur Render.
+Décidées et appliquées le 19 novembre 2026 (voir les lignes 14 à 21 du tableau) :
+- En-tête : « Créer mon compte » est le bouton principal à toutes les tailles et « Se connecter » un lien texte ; le reste passe dans ☰. Vérifié à 360, 375, 1024 et 1366 px, sans débordement.
+- Sur téléphone, la barre du bas propose « Se connecter » (ou « Mon espace ») et WhatsApp. Le numéro reste dans le bandeau du haut.
+- Les écrans de bienvenue s'affichent une seule fois, après la création du compte, avec « Passer ». L'accueil a sa section « Comment ça marche, en 3 étapes ».
+- Après la déconnexion, « retour » ne réaffiche plus les pages du compte.
+- Toutes les zones cliquables font au moins 44 px sur mobile.
+- L'invitation d'équipe a un texte exact, un bouton « Partager sur WhatsApp » et un bouton « Copier le lien ».
+
+Restent à décider :
+1. **Lien de paiement Wave sur le site de test** (🟠). C'est un réglage dans Admin › Paiements. Sans lui, aucun client test ne peut aller au bout.
+2. **Recherche de quartier tolérante aux fautes** (🟡). Elle demande l'extension PostgreSQL `pg_trgm`, donc une migration ; elle attend votre accord.
+3. **Seuil de la limite d'essais** (à surveiller). Il est fixé à 30 par 10 minutes et par adresse, réglable avec `RateLimits:Otp:PermitLimit`.
+4. **Mise en ligne.** Rien n'est poussé. Pour que le site de test profite des corrections : `git push`, puis le déploiement automatique sur Render.

@@ -126,9 +126,11 @@ Tokens (Styles/app.css, noms conservés, aucune couleur en dur dans les vues) :
   Curseur « main » sur tout ce qui est cliquable.
 
 Site public (`_Layout`, `PublicSiteController`, `Views/PublicSite`, contenus `Content/site-content.json`) :
-- Bandeau de contact, en-tête bleu Atlantique (menu des métiers, Espace client, « Demander une intervention »),
-  pied de page dense, barre Appeler / WhatsApp sur mobile.
-- Accueil : hero + formulaire rapide (`/demander`), métiers avec photo, étapes, techniciens, exemple
+- Bandeau de contact, en-tête bleu Atlantique : « Créer mon compte » bouton principal à toutes les tailles,
+  « Se connecter » en lien texte, le reste (métiers, pages, « Demander une intervention ») dans ☰ quand la place
+  manque. Pied de page dense. Sur mobile, barre du bas « Se connecter » (ou « Mon espace ») + WhatsApp, masquée
+  sur /connexion et /inscription. Zones cliquables ≥ 44 px sur mobile (classe `.sc-tap`).
+- Accueil : hero + formulaire rapide (`/demander`), métiers avec photo, « Comment ça marche, en 3 étapes », techniciens, exemple
   d'intervention, avis, chiffres, conseils, FAQ, appel final. Pages métiers, particuliers, entreprises,
   quartiers, tarifs (mensuel / annuel), FAQ, mentions, CGU.
 - Coordonnées de SeneCare (téléphone, WhatsApp, e-mail, adresse, horaires, zones, réseaux) : réglées dans
@@ -143,7 +145,8 @@ Parcours client :
   4 formule (mensuel / annuel « 2 mois offerts » pour les particuliers ; Essentiel / Professionnel /
   Premium, facturés au trimestre, pour les entreprises), 5 confirmation + consentements.
   En mode mot de passe, l'étape 2 demande le numéro et le mot de passe (deux fois), sans code.
-  Compte, logement et abonnement sont créés ensemble, puis `/abonnement` pour payer.
+  Compte, logement et abonnement sont créés ensemble, puis les écrans de bienvenue (une seule fois, « Passer »),
+  puis `/abonnement` pour payer. Les écrans de bienvenue ne s'affichent jamais devant l'accueil public.
   D'autres logements s'ajoutent ensuite depuis l'espace.
 - Paiement réel : lien marchand Wave configuré par l'admin (`/admin/paiements`), « J'ai payé » + référence,
   vérification par la Finance (notification), activation et message WhatsApp / SMS au client. Factures et

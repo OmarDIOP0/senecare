@@ -90,6 +90,7 @@
   <data name="Register_ConsentTitle" xml:space="preserve"><value>Vos données personnelles</value></data>
   <data name="Register_ConsentText" xml:space="preserve"><value>SeneCare utilise votre numéro, votre nom et l'adresse de vos logements uniquement pour organiser et suivre les interventions. Ces données ne sont ni vendues ni partagées, sauf avec les techniciens qui interviennent chez vous. Vous pouvez demander à les consulter ou à les supprimer à tout moment (loi n° 2008-12 sur la protection des données personnelles).</value></data>
   <data name="Register_ConsentCheckbox" xml:space="preserve"><value>J'accepte la politique de confidentialité</value></data>
+  <data name="Register_ConsentHint" xml:space="preserve"><value>Cochez cette case pour pouvoir créer votre compte.</value></data>
   <data name="Register_ConsentLink" xml:space="preserve"><value>Lire la politique de confidentialité</value></data>
   <data name="Register_WhatsAppCheckbox" xml:space="preserve"><value>Je souhaite recevoir le suivi de mes interventions sur WhatsApp</value></data>
   <data name="Register_Submit" xml:space="preserve"><value>Créer mon compte</value></data>

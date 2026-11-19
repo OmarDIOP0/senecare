@@ -8,6 +8,7 @@
         <input type="checkbox" asp-for="AcceptsPrivacyPolicy" class="mt-1 size-5" required />
         <span class="font-semibold">@L["Register_ConsentCheckbox"]</span>
     </label>
+    <p class="ml-8 flex items-center gap-1.5 text-sm font-semibold text-laterite" data-consent-hint hidden><sc-icon name="info" class="size-4" />@L["Register_ConsentHint"]</p>
     <label class="mt-1 flex min-h-12 items-start gap-3">
         <input type="checkbox" asp-for="AcceptsWhatsApp" class="mt-1 size-5" />
         <span>@L["Register_WhatsAppCheckbox"]</span>

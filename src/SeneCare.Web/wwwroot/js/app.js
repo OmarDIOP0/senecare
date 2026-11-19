@@ -103,7 +103,12 @@
   // ---- Privacy consent (law 2008-12): the button that sends the form waits for the box to be ticked. ----
   document.querySelectorAll("form input[name=AcceptsPrivacyPolicy][type=checkbox]").forEach((box) => {
     const buttons = [...box.form.querySelectorAll("button[type=submit]")];
-    const sync = () => buttons.forEach((b) => { b.disabled = !box.checked; });
+    // A greyed-out button says nothing to a beginner: a line under the box tells what is missing.
+    const hint = box.form.querySelector("[data-consent-hint]");
+    const sync = () => {
+      buttons.forEach((b) => { b.disabled = !box.checked; });
+      if (hint) hint.hidden = box.checked;
+    };
     box.addEventListener("change", sync);
     sync();
   });

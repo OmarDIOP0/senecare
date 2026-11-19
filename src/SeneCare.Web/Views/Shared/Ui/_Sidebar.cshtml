@@ -85,6 +85,13 @@
            class="flex h-9 items-center gap-2.5 rounded-md px-2 text-sm no-underline hover:no-underline @ItemClass(Model.ActiveKey == AppNavigation.Settings.Key)">
             <sc-icon name="settings" class="size-[18px]" />@L[AppNavigation.Settings.LabelKey]
         </a>
+        @* Always in sight: a beginner does not think of opening the avatar menu to leave. *@
+        <form method="post" action="/deconnexion" data-logout>
+            @Html.AntiForgeryToken()
+            <button type="submit" class="flex h-9 w-full items-center gap-2.5 rounded-md px-2 text-sm @ItemClass(false)">
+                <sc-icon name="log-out" class="size-[18px]" />@L["Account_SignOut"]
+            </button>
+        </form>
         <div class="mt-2 flex items-center gap-2.5 rounded-md px-2 py-1.5">
             <span class="grid size-8 shrink-0 place-items-center rounded-full bg-sourdine text-xs font-medium text-charbon">@Model.Initials</span>
             <span class="min-w-0 leading-tight">

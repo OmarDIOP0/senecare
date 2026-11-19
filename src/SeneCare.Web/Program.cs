@@ -134,6 +134,27 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
 
+    // Signed-in pages are never kept by the browser: after « Se déconnecter », « retour » cannot show the account
+    // again (shared phones). Responses that set their own policy (photos, static files) keep it. The service worker
+    // still keeps its offline copies (the Cache API ignores this header) and deletes them at sign-out.
+    app.Use((context, next) =>
+    {
+        if (context.User.Identity?.IsAuthenticated == true)
+        {
+            context.Response.OnStarting(() =>
+            {
+                if (!context.Response.Headers.ContainsKey(Microsoft.Net.Http.Headers.HeaderNames.CacheControl))
+                {
+                    context.Response.Headers.CacheControl = "no-store";
+                }
+
+                return Task.CompletedTask;
+            });
+        }
+
+        return next(context);
+    });
+
     app.MapStaticAssets();
     // Liveness (process up) and readiness (database reachable) probes.
     app.MapHealthChecks("/health", new HealthCheckOptions { Predicate = check => !check.Tags.Contains(SeneCare.Infrastructure.DependencyInjection.ReadinessTag) });

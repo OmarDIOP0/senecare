@@ -52,6 +52,23 @@ public sealed class PasswordAuthTests(WebAppFixture app)
     }
 
     [PostgresFact]
+    public async Task Signed_in_pages_are_not_kept_by_the_browser_public_pages_are()
+    {
+        var client = app.CreatePasswordClient();
+        Assert.False((await client.GetAsync(new Uri("/tarifs", UriKind.Relative))).Headers.CacheControl?.NoStore ?? false);
+
+        await client.SubmitAsync("/inscription", "/connexion", new Dictionary<string, string>
+        {
+            ["Signup"] = "true", ["Phone"] = TestData.NewPhone().Formatted, ["Password"] = Password, ["ConfirmPassword"] = Password,
+        });
+
+        // « Retour » after signing out must ask the server again (which sends to the sign-in page).
+        var page = await client.GetAsync(new Uri("/inscription", UriKind.Relative));
+        Assert.Equal(HttpStatusCode.OK, page.StatusCode);
+        Assert.True(page.Headers.CacheControl?.NoStore);
+    }
+
+    [PostgresFact]
     public async Task Refuses_a_short_password_or_two_different_ones()
     {
         var client = app.CreatePasswordClient();

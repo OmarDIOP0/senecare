@@ -1234,7 +1234,6 @@
   <data name="Site_Trade_PageTitle" xml:space="preserve"><value>{0} à Dakar et Thiès</value></data>
   <data name="Site_Trade_Heading" xml:space="preserve"><value>{0} : dépannage et entretien</value></data>
   <data name="Site_Trade_Delay" xml:space="preserve"><value>Délai d'intervention</value></data>
-  <data name="Site_Trade_Price" xml:space="preserve"><value>Prix de départ</value></data>
   <data name="Site_Trade_WhatWeDo" xml:space="preserve"><value>Ce que nous faisons</value></data>
   <data name="Site_Trade_Other" xml:space="preserve"><value>Votre problème n'est pas dans la liste ?</value></data>
   <data name="Site_Trade_Describe" xml:space="preserve"><value>Décrivez-le, on vous dit si on peut intervenir.</value></data>

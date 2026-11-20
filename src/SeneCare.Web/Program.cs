@@ -54,6 +54,7 @@ try
     builder.Services.AddAuthorization(options => options.AddSeneCarePolicies());
     builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, RegistrationRedirectHandler>();
     builder.Services.AddSeneCareRateLimits(builder.Configuration);
+    builder.Services.AddSeneCareCompression();
 
     // Emit French accents as-is (é, à…) instead of &#xE9; entities: lighter, readable pages.
     builder.Services.Configure<WebEncoderOptions>(options =>
@@ -104,6 +105,10 @@ try
 
     // First: the real scheme (https) and client IP from the proxy, before HTTPS redirection and rate limits.
     app.UseForwardedHeaders();
+
+    // Small pages on slow networks: compressed (Brotli / gzip) and, for static files, kept by the browser.
+    app.UseResponseCompression();
+    app.UseStaticFileCaching();
 
     // Security headers on every response: no framing by other sites (clickjacking), no MIME sniffing, no full
     // URL leaked to other sites, and only this site may use the camera (photos), microphone (voice notes) and

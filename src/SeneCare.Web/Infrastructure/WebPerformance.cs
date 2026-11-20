@@ -12,10 +12,14 @@ public static class WebPerformance
     /// <summary>Folders of stable files linked without a version (fonts from the CSS, photos of the public site).</summary>
     private static readonly string[] StableFolders = ["/fonts/", "/img/", "/images/"];
 
+    /// <summary>Signed-in screens that show secrets or other people's data: never compressed (BREACH, see below).</summary>
+    private static readonly string[] SensitivePaths = ["/admin", "/compte", "/entreprise", "/invitation"];
+
     /// <summary>
-    /// Brotli, else gzip, for the pages themselves (the home page: about 86 KB of HTML → about 12 KB). Static files
-    /// are compressed once at publish by MapStaticAssets. HTTPS included: the antiforgery token changes with each
-    /// page, which takes away what a BREACH-style attack would need.
+    /// Brotli, else gzip, for the pages themselves (the home page: about 86 KB of HTML → about 19 KB). Static files
+    /// are compressed once at publish by MapStaticAssets. Over HTTPS, compressing a page that holds a secret and
+    /// text chosen by an attacker can leak that secret through response sizes (BREACH): see
+    /// <see cref="UseSeneCareCompression"/> for what is left out.
     /// </summary>
     public static IServiceCollection AddSeneCareCompression(this IServiceCollection services)
     {
@@ -31,6 +35,18 @@ public static class WebPerformance
         services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
         return services;
     }
+
+    /// <summary>
+    /// Compression for anonymous visitors (the public site, most of the traffic on 3G) and for the customer's own
+    /// pages; not for signed-in screens with temporary passwords, invitation links, other people's files or exports.
+    /// The sign-in cookie is SameSite=Lax as well, so a foreign page cannot replay signed-in requests. Place after
+    /// UseAuthentication (the user must be known).
+    /// </summary>
+    public static IApplicationBuilder UseSeneCareCompression(this IApplicationBuilder app) =>
+        app.UseWhen(
+            context => context.User.Identity?.IsAuthenticated != true
+                || !SensitivePaths.Any(p => context.Request.Path.StartsWithSegments(p, StringComparison.OrdinalIgnoreCase)),
+            branch => branch.UseResponseCompression());
 
     /// <summary>
     /// Versioned static files (« app.css?v=… »): kept a year, never asked again (a new version has a new URL).

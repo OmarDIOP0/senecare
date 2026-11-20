@@ -106,8 +106,7 @@ try
     // First: the real scheme (https) and client IP from the proxy, before HTTPS redirection and rate limits.
     app.UseForwardedHeaders();
 
-    // Small pages on slow networks: compressed (Brotli / gzip) and, for static files, kept by the browser.
-    app.UseResponseCompression();
+    // Static files kept by the browser (slow networks, expensive data).
     app.UseStaticFileCaching();
 
     // Security headers on every response: no framing by other sites (clickjacking), no MIME sniffing, no full
@@ -138,6 +137,9 @@ try
     app.UseRateLimiter();
     app.UseAuthentication();
     app.UseAuthorization();
+
+    // Pages compressed (Brotli / gzip), except signed-in screens holding secrets (BREACH).
+    app.UseSeneCareCompression();
 
     // Signed-in pages are never kept by the browser: after « Se déconnecter », « retour » cannot show the account
     // again (shared phones). Responses that set their own policy (photos, static files) keep it. The service worker

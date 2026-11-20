@@ -12,10 +12,10 @@ using SeneCare.Testing;
 
 namespace SeneCare.Infrastructure.IntegrationTests;
 
-[Collection(PostgresTestGroup.Name)]
-public class SeedTests(PostgresFixture fixture)
+[Collection(DatabaseTestGroup.Name)]
+public class SeedTests(DatabaseFixture fixture)
 {
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Seed_creates_reference_data()
     {
         await using var db = fixture.CreateContext();
@@ -38,7 +38,7 @@ public class SeedTests(PostgresFixture fixture)
         Assert.True(plans[3].IncludedVisitsPerPeriod > plans[1].IncludedVisitsPerPeriod);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Seed_is_idempotent()
     {
         await using var db = fixture.CreateContext();
@@ -51,12 +51,12 @@ public class SeedTests(PostgresFixture fixture)
     }
 }
 
-[Collection(PostgresTestGroup.Name)]
-public class AggregatePersistenceTests(PostgresFixture fixture)
+[Collection(DatabaseTestGroup.Name)]
+public class AggregatePersistenceTests(DatabaseFixture fixture)
 {
     private static readonly DateTimeOffset Now = new(2026, 10, 12, 8, 0, 0, TimeSpan.Zero);
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Phone_number_is_unique()
     {
         var phone = UniquePhone();
@@ -71,7 +71,7 @@ public class AggregatePersistenceTests(PostgresFixture fixture)
         await Assert.ThrowsAsync<DbUpdateException>(() => db2.SaveChangesAsync());
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Service_request_round_trips_with_history_appointment_and_rating()
     {
         var (user, account, property) = await CreateHouseholdAsync();
@@ -112,7 +112,7 @@ public class AggregatePersistenceTests(PostgresFixture fixture)
         Assert.Single(loaded.PreferredSlots);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Business_subscription_invoice_and_diagnostic_round_trip()
     {
         var manager = User.Register(UniquePhone(), Now);
@@ -157,7 +157,7 @@ public class AggregatePersistenceTests(PostgresFixture fixture)
         Assert.Equal(new DateOnly(2026, 4, 1), loadedSubscription.PrepareRenewal(loadedDiagnostic).Start);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Children_added_to_a_loaded_aggregate_are_inserted()
     {
         var manager = User.Register(UniquePhone(), Now);

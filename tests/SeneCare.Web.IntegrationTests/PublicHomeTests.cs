@@ -7,7 +7,7 @@ namespace SeneCare.Web.IntegrationTests;
 [Collection(WebAppTestGroup.Name)]
 public class PublicHomeTests(WebAppFixture app)
 {
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Home_page_renders_in_french_with_the_offers_from_the_database()
     {
         var client = app.CreateClient();
@@ -28,7 +28,7 @@ public class PublicHomeTests(WebAppFixture app)
         Assert.Contains("2 500 000 FCFA", pricing, StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Every_public_page_renders()
     {
         var client = app.CreateClient();
@@ -41,7 +41,7 @@ public class PublicHomeTests(WebAppFixture app)
         Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync(new Uri("/metiers/inconnu", UriKind.Relative))).StatusCode);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task The_quick_request_form_leads_to_sign_in_then_the_report_form()
     {
         var response = await app.CreateClient().GetAsync(new Uri("/demander?metier=Plumbing&telephone=77%20123%2045%2067", UriKind.Relative));
@@ -53,7 +53,7 @@ public class PublicHomeTests(WebAppFixture app)
         Assert.Contains("phone=77%20123%2045%2067", location, StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task A_first_visit_lands_on_the_home_page_not_on_the_welcome_screens()
     {
         var home = await app.CreateClient().GetAsync(new Uri("/", UriKind.Relative));
@@ -62,7 +62,7 @@ public class PublicHomeTests(WebAppFixture app)
         Assert.Contains("Créer mon compte", WebUtility.HtmlDecode(await home.Content.ReadAsStringAsync()), StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task The_welcome_screens_lead_on_to_where_the_new_customer_was_going()
     {
         var client = app.CreateClient();

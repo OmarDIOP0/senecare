@@ -16,7 +16,7 @@ public class AuthApiTests(ApiFixture api)
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { Converters = { new JsonStringEnumConverter() } };
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Mobile_sign_up_flow_issues_tokens_and_registers_the_customer()
     {
         var client = api.Factory.CreateClient();
@@ -44,7 +44,7 @@ public class AuthApiTests(ApiFixture api)
         Assert.Equal(AccountKind.Household, Assert.Single(me.Memberships).Kind);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Wrong_code_returns_a_problem_with_a_stable_code()
     {
         var client = api.Factory.CreateClient();
@@ -59,7 +59,7 @@ public class AuthApiTests(ApiFixture api)
         Assert.Equal("otp.invalid", problem.GetProperty("code").GetString());
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Requesting_a_second_code_too_soon_returns_429()
     {
         var client = api.Factory.CreateClient();
@@ -71,7 +71,7 @@ public class AuthApiTests(ApiFixture api)
         Assert.Equal(HttpStatusCode.TooManyRequests, again.StatusCode);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Refresh_token_rotates_and_reuse_revokes_the_whole_family()
     {
         var client = api.Factory.CreateClient();
@@ -87,7 +87,7 @@ public class AuthApiTests(ApiFixture api)
         Assert.Equal(HttpStatusCode.Unauthorized, (await RefreshAsync(client, second.RefreshToken)).StatusCode);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Logout_revokes_the_refresh_token()
     {
         var client = api.Factory.CreateClient();

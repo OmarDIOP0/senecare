@@ -78,7 +78,7 @@ try
         .AddDataAnnotationsLocalization(options =>
             options.DataAnnotationLocalizerProvider = (_, factory) => factory.Create(typeof(SharedResource)));
 
-    // Behind a proxy (Render, Docker): it terminates HTTPS and says so in X-Forwarded-Proto.
+    // Behind a proxy (IIS, Docker…): it terminates HTTPS and says so in X-Forwarded-Proto.
     builder.Services.Configure<Microsoft.AspNetCore.Builder.ForwardedHeadersOptions>(options =>
     {
         options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor
@@ -86,7 +86,7 @@ try
         options.KnownIPNetworks.Clear();
         options.KnownProxies.Clear();
     });
-    // Sign-in and form keys in PostgreSQL: they survive redeploys and are shared with the Api.
+    // Sign-in and form keys in the database: they survive redeploys and are shared with the Api.
     builder.Services.AddDataProtection()
         .SetApplicationName("SeneCare")
         .PersistKeysToDbContext<SeneCare.Infrastructure.Persistence.SeneCareDbContext>();

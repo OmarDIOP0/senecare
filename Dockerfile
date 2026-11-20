@@ -1,4 +1,4 @@
-# SENECARE web app (ASP.NET Core MVC). Used by Render (render.yaml) and any Docker host.
+# SENECARE web app (ASP.NET Core MVC) for any Docker host (the database is SQL Server, set in ConnectionStrings__Default).
 # The CSS is compiled before committing (wwwroot/css/app.css), so the image needs no Node.js.
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
@@ -24,5 +24,5 @@ COPY --from=build /app .
 RUN mkdir -p /app/App_Data && chown -R $APP_UID /app/App_Data
 USER $APP_UID
 EXPOSE 8080
-# Render (and most hosts) give the port in $PORT.
+# Most container hosts give the port in $PORT.
 ENTRYPOINT ["sh", "-c", "ASPNETCORE_HTTP_PORTS=${PORT:-8080} exec dotnet SeneCare.Web.dll"]

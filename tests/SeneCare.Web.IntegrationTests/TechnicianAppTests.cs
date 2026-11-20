@@ -21,7 +21,7 @@ public sealed class TechnicianAppTests(WebAppFixture app)
     private static readonly byte[] Png = Convert.FromBase64String(
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/q842iQAAAABJRU5ErkJggg==");
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Technician_goes_from_en_route_to_done_and_the_customer_gets_the_report()
     {
         var (customer, requestId) = await CustomerRequestAsync();
@@ -103,7 +103,7 @@ public sealed class TechnicianAppTests(WebAppFixture app)
         Assert.StartsWith("%PDF", Encoding.ASCII.GetString(await pdf.Content.ReadAsByteArrayAsync())[..4], StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Technicians_only_reach_their_own_missions_and_customers_files()
     {
         var (customer, requestId) = await CustomerRequestAsync();
@@ -127,7 +127,7 @@ public sealed class TechnicianAppTests(WebAppFixture app)
         Assert.StartsWith("/acces-refuse", (await customer.GetAsync(new Uri("/technicien", UriKind.Relative))).Location(), StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Technician_records_the_quarterly_diagnostic_on_site()
     {
         var manager = app.CreateClient();

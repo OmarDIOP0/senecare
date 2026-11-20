@@ -88,7 +88,7 @@ public class DesignPageTests(SeneCareWebFactory factory) : IClassFixture<SeneCar
 [Collection(WebAppTestGroup.Name)]
 public class NeighborhoodSearchTests(WebAppFixture app)
 {
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Search_ignores_accents_and_case()
     {
         var html = WebUtility.HtmlDecode(await app.CreateClient().GetStringAsync(new Uri("/quartiers/recherche?q=SACRE%20coeur&field=q1", UriKind.Relative)));
@@ -97,7 +97,7 @@ public class NeighborhoodSearchTests(WebAppFixture app)
         Assert.Contains("data-pick=\"q1\"", html, StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Unknown_neighborhood_says_so_and_offers_to_add_it()
     {
         var html = WebUtility.HtmlDecode(await app.CreateClient().GetStringAsync(new Uri("/quartiers/recherche?q=zzzz&field=q1", UriKind.Relative)));

@@ -2,9 +2,9 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SeneCare.Infrastructure.Persistence;
 
 #nullable disable
@@ -12,44 +12,68 @@ using SeneCare.Infrastructure.Persistence;
 namespace SeneCare.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SeneCareDbContext))]
-    [Migration("20261012193152_ClientSpace")]
-    partial class ClientSpace
+    [Migration("20261120214855_InitialSqlServer")]
+    partial class InitialSqlServer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.12")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .HasAnnotation("ProductVersion", "10.0.13")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.HasSequence("invoice_number_seq");
 
             modelBuilder.HasSequence("service_request_number_seq");
 
+            modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FriendlyName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("friendly_name");
+
+                    b.Property<string>("Xml")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("xml");
+
+                    b.HasKey("Id")
+                        .HasName("pk_data_protection_keys");
+
+                    b.ToTable("data_protection_keys", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("claim_type");
 
                     b.Property<string>("ClaimValue")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("claim_value");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
@@ -65,21 +89,21 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                 {
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("login_provider");
 
                     b.Property<string>("ProviderKey")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("provider_key");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("provider_display_name");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("user_id");
 
                     b.HasKey("LoginProvider", "ProviderKey")
@@ -94,22 +118,22 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("user_id");
 
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("login_provider");
 
                     b.Property<string>("Name")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("name");
 
                     b.Property<string>("Value")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("value");
 
                     b.HasKey("UserId", "LoginProvider", "Name")
@@ -121,60 +145,60 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Accounts.AccountInvitation", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<DateTimeOffset?>("AcceptedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("accepted_at");
 
                     b.Property<Guid?>("AcceptedByUserId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("accepted_by_user_id");
 
                     b.Property<Guid>("AccountId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("account_id");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<DateTimeOffset>("ExpiresAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("expires_at");
 
                     b.Property<Guid>("InvitedByUserId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("invited_by_user_id");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
+                        .HasColumnType("nvarchar(16)")
                         .HasColumnName("phone_number");
 
-                    b.PrimitiveCollection<Guid[]>("PropertyScope")
+                    b.PrimitiveCollection<string>("PropertyScope")
                         .IsRequired()
-                        .HasColumnType("uuid[]")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("property_scope");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("role");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("status");
 
                     b.Property<string>("TokenHash")
                         .IsRequired()
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasColumnType("nvarchar(64)")
                         .HasColumnName("token_hash");
 
                     b.HasKey("Id")
@@ -193,30 +217,30 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Accounts.AccountMember", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<DateTimeOffset>("JoinedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("joined_at");
 
-                    b.PrimitiveCollection<Guid[]>("PropertyScope")
+                    b.PrimitiveCollection<string>("PropertyScope")
                         .IsRequired()
-                        .HasColumnType("uuid[]")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("property_scope");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("role");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("user_id");
 
                     b.Property<Guid>("account_id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("account_id");
 
                     b.HasKey("Id")
@@ -235,32 +259,41 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Accounts.CustomerAccount", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
+                    b.Property<string>("ChosenPlanCode")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)")
+                        .HasColumnName("chosen_plan_code");
+
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasMaxLength(160)
-                        .HasColumnType("character varying(160)")
+                        .HasColumnType("nvarchar(160)")
                         .HasColumnName("display_name");
 
                     b.Property<string>("Kind")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("kind");
 
                     b.Property<string>("Ninea")
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
+                        .HasColumnType("nvarchar(20)")
                         .HasColumnName("ninea");
 
+                    b.Property<bool>("PrefersAnnual")
+                        .HasColumnType("bit")
+                        .HasColumnName("prefers_annual");
+
                     b.Property<bool>("RequiresRequestApproval")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("requires_request_approval");
 
                     b.HasKey("Id")
@@ -272,31 +305,31 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Accounts.Property", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<Guid>("AccountId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("account_id");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<string>("Kind")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("kind");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
+                        .HasColumnType("nvarchar(120)")
                         .HasColumnName("name");
 
                     b.HasKey("Id")
@@ -311,20 +344,20 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Billing.Invoice", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<Guid>("AccountId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("account_id");
 
                     b.Property<long>("AmountPaid")
                         .HasColumnType("bigint")
                         .HasColumnName("amount_paid");
 
-                    b.PrimitiveCollection<Guid[]>("AppliedPaymentIds")
+                    b.PrimitiveCollection<string>("AppliedPaymentIds")
                         .IsRequired()
-                        .HasColumnType("uuid[]")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("applied_payment_ids");
 
                     b.Property<DateOnly>("DueDate")
@@ -332,27 +365,27 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasColumnName("due_date");
 
                     b.Property<DateTimeOffset?>("IssuedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("issued_at");
 
                     b.Property<string>("Number")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
+                        .HasColumnType("nvarchar(32)")
                         .HasColumnName("number");
 
                     b.Property<DateTimeOffset?>("PaidAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("paid_at");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("status");
 
                     b.Property<Guid?>("SubscriptionId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("subscription_id");
 
                     b.HasKey("Id")
@@ -377,7 +410,7 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Billing.Payment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<long>("Amount")
@@ -387,39 +420,48 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.Property<string>("Channel")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("channel");
 
                     b.Property<DateTimeOffset?>("CompletedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("completed_at");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
+                    b.Property<string>("CustomerReference")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("customer_reference");
+
+                    b.Property<Guid?>("DeclaredByUserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("declared_by_user_id");
+
                     b.Property<Guid>("InvoiceId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("invoice_id");
 
                     b.Property<string>("Note")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("note");
 
                     b.Property<string>("ProviderReference")
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("provider_reference");
 
                     b.Property<Guid?>("RecordedByUserId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("recorded_by_user_id");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("status");
 
                     b.HasKey("Id")
@@ -433,50 +475,57 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_payments_channel_provider_reference")
                         .HasFilter("provider_reference IS NOT NULL");
 
+                    b.HasIndex("Status", "DeclaredByUserId")
+                        .HasDatabaseName("ix_payments_status_declared_by_user_id");
+
                     b.ToTable("payments", (string)null);
                 });
 
             modelBuilder.Entity("SeneCare.Domain.Billing.Subscription", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<Guid>("AccountId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("account_id");
 
                     b.Property<DateTimeOffset?>("ActivatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("activated_at");
 
                     b.Property<int>("BillingPeriodMonths")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("billing_period_months");
 
                     b.Property<DateTimeOffset?>("CancelledAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("cancelled_at");
 
-                    b.PrimitiveCollection<Guid[]>("CoveredPropertyIds")
+                    b.PrimitiveCollection<string>("CoveredPropertyIds")
                         .IsRequired()
-                        .HasColumnType("uuid[]")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("covered_property_ids");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("DiagnosticRequired")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("diagnostic_required");
+
+                    b.Property<int>("FreeMonthsPerPeriod")
+                        .HasColumnType("int")
+                        .HasColumnName("free_months_per_period");
 
                     b.Property<long>("MonthlyPrice")
                         .HasColumnType("bigint")
                         .HasColumnName("monthly_price");
 
                     b.Property<Guid>("PlanId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("plan_id");
 
                     b.Property<long>("RegistrationFee")
@@ -486,13 +535,13 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.Property<string>("Segment")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("segment");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("status");
 
                     b.HasKey("Id")
@@ -513,23 +562,23 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Common.MediaFile", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<Guid?>("AccountId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("account_id");
 
                     b.Property<string>("ContentType")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
+                        .HasColumnType("nvarchar(100)")
                         .HasColumnName("content_type");
 
                     b.Property<string>("Kind")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("kind");
 
                     b.Property<long>("SizeBytes")
@@ -539,15 +588,15 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.Property<string>("StorageKey")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("character varying(300)")
+                        .HasColumnType("nvarchar(300)")
                         .HasColumnName("storage_key");
 
                     b.Property<DateTimeOffset>("UploadedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("uploaded_at");
 
                     b.Property<Guid>("UploadedByUserId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("uploaded_by_user_id");
 
                     b.HasKey("Id")
@@ -563,45 +612,90 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.ToTable("media_files", (string)null);
                 });
 
+            modelBuilder.Entity("SeneCare.Domain.Content.PreventiveAdvice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(600)
+                        .HasColumnType("nvarchar(600)")
+                        .HasColumnName("body");
+
+                    b.Property<string>("Domain")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)")
+                        .HasColumnName("domain");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_published");
+
+                    b.PrimitiveCollection<string>("Months")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("months");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_preventive_advices");
+
+                    b.HasIndex("IsPublished")
+                        .HasDatabaseName("ix_preventive_advices_is_published");
+
+                    b.ToTable("preventive_advices", (string)null);
+                });
+
             modelBuilder.Entity("SeneCare.Domain.Diagnostics.ControlPoint", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<string>("Comment")
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)")
+                        .HasColumnType("nvarchar(1000)")
                         .HasColumnName("comment");
 
                     b.Property<Guid?>("ConvertedRequestId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("converted_request_id");
 
                     b.Property<string>("Domain")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("domain");
 
                     b.Property<string>("Label")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
+                        .HasColumnType("nvarchar(200)")
                         .HasColumnName("label");
 
                     b.Property<Guid?>("PropertyId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("property_id");
 
                     b.Property<string>("Result")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("result");
 
                     b.Property<Guid?>("diagnostic_id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("diagnostic_id");
 
                     b.HasKey("Id")
@@ -616,54 +710,54 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Diagnostics.Diagnostic", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<Guid>("AccountId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("account_id");
 
                     b.Property<string>("Recommendations")
                         .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)")
+                        .HasColumnType("nvarchar(4000)")
                         .HasColumnName("recommendations");
 
                     b.Property<Guid?>("ReportMediaFileId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("report_media_file_id");
 
                     b.Property<DateTimeOffset>("ScheduledFor")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("scheduled_for");
 
                     b.Property<DateTimeOffset?>("StartedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("started_at");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("status");
 
                     b.Property<DateTimeOffset?>("SubmittedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("submitted_at");
 
                     b.Property<Guid>("SubscriptionId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("subscription_id");
 
                     b.Property<Guid?>("TechnicianId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("technician_id");
 
                     b.Property<DateTimeOffset?>("ValidatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("validated_at");
 
                     b.Property<Guid?>("ValidatedByUserId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("validated_by_user_id");
 
                     b.HasKey("Id")
@@ -681,26 +775,26 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Interventions.ChecklistItem", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<string>("Comment")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("comment");
 
                     b.Property<bool>("IsDone")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("is_done");
 
                     b.Property<string>("Label")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("label");
 
                     b.Property<Guid?>("intervention_id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("intervention_id");
 
                     b.HasKey("Id")
@@ -715,61 +809,61 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Interventions.Intervention", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<DateTimeOffset?>("CompletedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("completed_at");
 
                     b.Property<Guid?>("CustomerSignatureMediaFileId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("customer_signature_media_file_id");
 
                     b.Property<string>("Domain")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("domain");
 
                     b.Property<Guid>("LeadTechnicianId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("lead_technician_id");
 
                     b.Property<string>("NoSignatureReason")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("no_signature_reason");
 
                     b.Property<Guid>("PropertyId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("property_id");
 
                     b.Property<string>("Report")
                         .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)")
+                        .HasColumnType("nvarchar(4000)")
                         .HasColumnName("report");
 
                     b.Property<Guid?>("ReportMediaFileId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("report_media_file_id");
 
                     b.Property<Guid>("RequestId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("request_id");
 
                     b.Property<string>("SignedByName")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("signed_by_name");
 
                     b.Property<DateTimeOffset?>("StartedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("started_at");
 
-                    b.PrimitiveCollection<Guid[]>("TeamTechnicianIds")
+                    b.PrimitiveCollection<string>("TeamTechnicianIds")
                         .IsRequired()
-                        .HasColumnType("uuid[]")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("team_technician_ids");
 
                     b.Property<DateOnly?>("WarrantyEndsOn")
@@ -794,23 +888,23 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Locations.Commune", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<Guid>("DepartmentId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("department_id");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
+                        .HasColumnType("nvarchar(120)")
                         .HasColumnName("name");
 
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("slug");
 
                     b.HasKey("Id")
@@ -826,23 +920,23 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Locations.Department", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
+                        .HasColumnType("nvarchar(120)")
                         .HasColumnName("name");
 
                     b.Property<Guid>("RegionId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("region_id");
 
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("slug");
 
                     b.HasKey("Id")
@@ -858,30 +952,42 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Locations.Neighborhood", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<Guid>("CommuneId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("commune_id");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
+                        .HasColumnType("nvarchar(120)")
                         .HasColumnName("name");
 
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("slug");
+
+                    b.Property<DateTimeOffset?>("SuggestedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("suggested_at");
+
+                    b.Property<Guid?>("SuggestedByUserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("suggested_by_user_id");
 
                     b.HasKey("Id")
                         .HasName("pk_neighborhoods");
 
                     b.HasIndex("Name")
                         .HasDatabaseName("ix_neighborhoods_name");
+
+                    b.HasIndex("SuggestedAt")
+                        .HasDatabaseName("ix_neighborhoods_suggested_at")
+                        .HasFilter("suggested_at IS NOT NULL");
 
                     b.HasIndex("CommuneId", "Slug")
                         .IsUnique()
@@ -893,19 +999,19 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Locations.Region", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
+                        .HasColumnType("nvarchar(120)")
                         .HasColumnName("name");
 
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("slug");
 
                     b.HasKey("Id")
@@ -921,7 +1027,7 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Neighborhoods.GreeningOperation", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<DateOnly>("Date")
@@ -931,19 +1037,19 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)")
+                        .HasColumnType("nvarchar(2000)")
                         .HasColumnName("description");
 
                     b.Property<bool>("IsPublished")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("is_published");
 
                     b.Property<int>("TreesPlanted")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("trees_planted");
 
                     b.Property<Guid?>("program_id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("program_id");
 
                     b.HasKey("Id")
@@ -958,29 +1064,29 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Neighborhoods.NeighborhoodProgram", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<DateTimeOffset?>("ActivatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("activated_at");
 
                     b.Property<int>("MemberCount")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("member_count");
 
                     b.Property<Guid>("NeighborhoodId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("neighborhood_id");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("status");
 
                     b.Property<int>("Threshold")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("threshold");
 
                     b.HasKey("Id")
@@ -996,34 +1102,40 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Plans.Plan", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
+                    b.Property<int>("AnnualFreeMonths")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(2)
+                        .HasColumnName("annual_free_months");
+
                     b.Property<int>("BillingPeriodMonths")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("billing_period_months");
 
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
+                        .HasColumnType("nvarchar(32)")
                         .HasColumnName("code");
 
                     b.Property<bool>("DiagnosticRequired")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("diagnostic_required");
 
-                    b.PrimitiveCollection<int[]>("IncludedDomains")
+                    b.PrimitiveCollection<string>("IncludedDomains")
                         .IsRequired()
-                        .HasColumnType("integer[]")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("included_domains");
 
                     b.Property<int?>("IncludedVisitsPerPeriod")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("included_visits_per_period");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<long>("MonthlyPrice")
@@ -1033,11 +1145,11 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(80)
-                        .HasColumnType("character varying(80)")
+                        .HasColumnType("nvarchar(80)")
                         .HasColumnName("name");
 
                     b.Property<int>("Priority")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("priority");
 
                     b.Property<long>("RegistrationFee")
@@ -1047,7 +1159,7 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.Property<string>("Segment")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("segment");
 
                     b.HasKey("Id")
@@ -1064,17 +1176,17 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                 {
                     b.Property<string>("Key")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
+                        .HasColumnType("nvarchar(100)")
                         .HasColumnName("key");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("updated_at");
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)")
+                        .HasColumnType("nvarchar(2000)")
                         .HasColumnName("value");
 
                     b.HasKey("Key")
@@ -1086,46 +1198,46 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Platform.AuditLog", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<string>("Action")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("action");
 
                     b.Property<Guid?>("ActorUserId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("actor_user_id");
 
                     b.Property<DateTimeOffset>("At")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("at");
 
                     b.Property<string>("Details")
                         .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)")
+                        .HasColumnType("nvarchar(4000)")
                         .HasColumnName("details");
 
                     b.Property<string>("EntityId")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("entity_id");
 
                     b.Property<string>("EntityType")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("entity_type");
 
                     b.Property<string>("IpAddress")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("ip_address");
 
                     b.Property<bool>("IsSensitiveData")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("is_sensitive_data");
 
                     b.HasKey("Id")
@@ -1146,59 +1258,59 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Platform.Notification", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<int>("Attempts")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("attempts");
 
                     b.Property<string>("Channel")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("channel");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsCritical")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("is_critical");
 
                     b.Property<string>("LastError")
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)")
+                        .HasColumnType("nvarchar(1000)")
                         .HasColumnName("last_error");
 
                     b.Property<string>("PayloadJson")
                         .IsRequired()
-                        .HasColumnType("jsonb")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("payload_json");
 
                     b.Property<DateTimeOffset?>("ReadAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("read_at");
 
                     b.Property<DateTimeOffset?>("SentAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("sent_at");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("status");
 
                     b.Property<string>("TemplateKey")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
+                        .HasColumnType("nvarchar(100)")
                         .HasColumnName("template_key");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
@@ -1216,29 +1328,29 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Requests.Appointment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<DateTimeOffset?>("ConfirmedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("confirmed_at");
 
                     b.Property<DateTimeOffset>("ProposedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("proposed_at");
 
                     b.Property<Guid>("ProposedByUserId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("proposed_by_user_id");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("status");
 
                     b.Property<Guid?>("service_request_id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("service_request_id");
 
                     b.HasKey("Id")
@@ -1253,83 +1365,83 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Requests.ServiceRequest", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<Guid>("AccountId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("account_id");
 
                     b.Property<string>("ClientReference")
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasColumnType("nvarchar(64)")
                         .HasColumnName("client_reference");
 
                     b.Property<DateTimeOffset?>("CompletedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("completed_at");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)")
+                        .HasColumnType("nvarchar(2000)")
                         .HasColumnName("description");
 
                     b.Property<string>("DisputeReason")
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)")
+                        .HasColumnType("nvarchar(1000)")
                         .HasColumnName("dispute_reason");
 
                     b.Property<string>("Domain")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("domain");
 
                     b.Property<string>("Number")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
+                        .HasColumnType("nvarchar(32)")
                         .HasColumnName("number");
 
                     b.Property<Guid>("PropertyId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("property_id");
 
                     b.Property<Guid>("ReportedByUserId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("reported_by_user_id");
 
                     b.Property<DateTimeOffset?>("RespondedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("responded_at");
 
                     b.Property<DateTimeOffset?>("SlaDeadline")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("sla_deadline");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("status");
 
                     b.Property<DateTimeOffset?>("SubmittedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("submitted_at");
 
                     b.Property<string>("Urgency")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("urgency");
 
                     b.Property<Guid?>("WarrantyInterventionId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("warranty_intervention_id");
 
                     b.HasKey("Id")
@@ -1362,37 +1474,37 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Technicians.Technician", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    b.PrimitiveCollection<Guid[]>("CommuneIds")
+                    b.PrimitiveCollection<string>("CommuneIds")
                         .IsRequired()
-                        .HasColumnType("uuid[]")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("commune_ids");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<bool>("IsCertified")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("is_certified");
 
                     b.Property<int>("RatingCount")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("rating_count");
 
                     b.Property<int>("RatingSum")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("rating_sum");
 
-                    b.PrimitiveCollection<int[]>("Skills")
+                    b.PrimitiveCollection<string>("Skills")
                         .IsRequired()
-                        .HasColumnType("integer[]")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("skills");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
@@ -1408,46 +1520,46 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Users.OtpChallenge", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<int>("Attempts")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("attempts");
 
                     b.Property<string>("Channel")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("channel");
 
                     b.Property<string>("CodeHash")
                         .IsRequired()
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasColumnType("nvarchar(64)")
                         .HasColumnName("code_hash");
 
                     b.Property<DateTimeOffset?>("ConsumedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("consumed_at");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<DateTimeOffset>("ExpiresAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("expires_at");
 
                     b.Property<string>("IpAddress")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnName("ip_address");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
+                        .HasColumnType("nvarchar(16)")
                         .HasColumnName("phone_number");
 
                     b.HasKey("Id")
@@ -1465,43 +1577,56 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SeneCare.Domain.Users.User", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    b.PrimitiveCollection<string[]>("CompletedTours")
+                    b.Property<DateTimeOffset?>("AnonymizedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("anonymized_at");
+
+                    b.PrimitiveCollection<string>("CompletedTours")
                         .IsRequired()
-                        .HasColumnType("text[]")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("completed_tours");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasColumnType("nvarchar(256)")
                         .HasColumnName("email");
 
                     b.Property<string>("FullName")
                         .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
+                        .HasColumnType("nvarchar(120)")
                         .HasColumnName("full_name");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<string>("Language")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("nvarchar(40)")
                         .HasColumnName("language");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
+                        .HasColumnType("nvarchar(16)")
                         .HasColumnName("phone_number");
+
+                    b.Property<string>("ReferralCode")
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)")
+                        .HasColumnName("referral_code");
+
+                    b.Property<Guid?>("ReferredByUserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("referred_by_user_id");
 
                     b.HasKey("Id")
                         .HasName("pk_users");
@@ -1510,78 +1635,90 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_users_phone_number");
 
+                    b.HasIndex("ReferralCode")
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_referral_code")
+                        .HasFilter("[referral_code] IS NOT NULL");
+
+                    b.HasIndex("ReferredByUserId")
+                        .HasDatabaseName("ix_users_referred_by_user_id");
+
                     b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("SeneCare.Infrastructure.Identity.ApplicationUser", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("access_failed_count");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("concurrency_stamp");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasColumnType("nvarchar(256)")
                         .HasColumnName("email");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("email_confirmed");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("lockout_enabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("lockout_end");
+
+                    b.Property<bool>("MustChangePassword")
+                        .HasColumnType("bit")
+                        .HasColumnName("must_change_password");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasColumnType("nvarchar(256)")
                         .HasColumnName("normalized_email");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasColumnType("nvarchar(256)")
                         .HasColumnName("normalized_user_name");
 
                     b.Property<string>("PasswordHash")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("password_hash");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("phone_number");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("phone_number_confirmed");
 
                     b.Property<string>("SecurityStamp")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("security_stamp");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("two_factor_enabled");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasColumnType("nvarchar(256)")
                         .HasColumnName("user_name");
 
                     b.HasKey("Id")
@@ -1592,7 +1729,8 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex");
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[normalized_user_name] IS NOT NULL");
 
                     b.ToTable("identity_users", (string)null);
                 });
@@ -1601,42 +1739,42 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<string>("CreatedByIp")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnName("created_by_ip");
 
                     b.Property<DateTimeOffset>("ExpiresAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("expires_at");
 
                     b.Property<Guid>("FamilyId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("family_id");
 
                     b.Property<Guid?>("ReplacedByTokenId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("replaced_by_token_id");
 
                     b.Property<DateTimeOffset?>("RevokedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("revoked_at");
 
                     b.Property<string>("TokenHash")
                         .IsRequired()
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasColumnType("nvarchar(64)")
                         .HasColumnName("token_hash");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
@@ -1710,21 +1848,21 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsOne("SeneCare.Domain.Accounts.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("PropertyId")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("id");
 
                             b1.Property<string>("Details")
                                 .HasMaxLength(250)
-                                .HasColumnType("character varying(250)")
+                                .HasColumnType("nvarchar(250)")
                                 .HasColumnName("address_details");
 
                             b1.Property<string>("Landmark")
                                 .HasMaxLength(250)
-                                .HasColumnType("character varying(250)")
+                                .HasColumnType("nvarchar(250)")
                                 .HasColumnName("landmark");
 
                             b1.Property<Guid>("NeighborhoodId")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("neighborhood_id");
 
                             b1.HasKey("PropertyId");
@@ -1741,15 +1879,15 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                             b1.OwnsOne("SeneCare.Domain.Common.GeoPoint", "Location", b2 =>
                                 {
                                     b2.Property<Guid>("AddressPropertyId")
-                                        .HasColumnType("uuid")
+                                        .HasColumnType("uniqueidentifier")
                                         .HasColumnName("id");
 
                                     b2.Property<double>("Latitude")
-                                        .HasColumnType("double precision")
+                                        .HasColumnType("float")
                                         .HasColumnName("latitude");
 
                                     b2.Property<double>("Longitude")
-                                        .HasColumnType("double precision")
+                                        .HasColumnType("float")
                                         .HasColumnName("longitude");
 
                                     b2.HasKey("AddressPropertyId");
@@ -1767,22 +1905,32 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsMany("SeneCare.Domain.Common.MediaAttachment", "Photos", b1 =>
                         {
                             b1.Property<Guid>("property_id")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("property_id");
 
-                            b1.Property<Guid>("MediaFileId")
+                            b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid")
-                                .HasColumnName("media_file_id");
+                                .HasColumnType("int")
+                                .HasColumnName("id");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("Kind")
                                 .IsRequired()
                                 .HasMaxLength(40)
-                                .HasColumnType("character varying(40)")
+                                .HasColumnType("nvarchar(40)")
                                 .HasColumnName("kind");
 
-                            b1.HasKey("property_id", "MediaFileId")
+                            b1.Property<Guid>("MediaFileId")
+                                .HasColumnType("uniqueidentifier")
+                                .HasColumnName("media_file_id");
+
+                            b1.HasKey("property_id", "Id")
                                 .HasName("pk_property_photos");
+
+                            b1.HasIndex("property_id", "MediaFileId")
+                                .IsUnique()
+                                .HasDatabaseName("ix_property_photos_property_id_media_file_id");
 
                             b1.ToTable("property_photos", (string)null);
 
@@ -1815,7 +1963,7 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsOne("SeneCare.Domain.Common.DateRange", "Period", b1 =>
                         {
                             b1.Property<Guid>("InvoiceId")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("id");
 
                             b1.Property<DateOnly>("End")
@@ -1838,30 +1986,30 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsMany("SeneCare.Domain.Billing.InvoiceLine", "Lines", b1 =>
                         {
                             b1.Property<Guid>("invoice_id")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("invoice_id");
 
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("integer")
+                                .HasColumnType("int")
                                 .HasColumnName("id");
 
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("Description")
                                 .IsRequired()
                                 .HasMaxLength(200)
-                                .HasColumnType("character varying(200)")
+                                .HasColumnType("nvarchar(200)")
                                 .HasColumnName("description");
 
                             b1.Property<string>("Kind")
                                 .IsRequired()
                                 .HasMaxLength(40)
-                                .HasColumnType("character varying(40)")
+                                .HasColumnType("nvarchar(40)")
                                 .HasColumnName("kind");
 
                             b1.Property<int>("Quantity")
-                                .HasColumnType("integer")
+                                .HasColumnType("int")
                                 .HasColumnName("quantity");
 
                             b1.Property<long>("UnitPrice")
@@ -1912,7 +2060,7 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsOne("SeneCare.Domain.Common.DateRange", "CurrentPeriod", b1 =>
                         {
                             b1.Property<Guid>("SubscriptionId")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("id");
 
                             b1.Property<DateOnly>("End")
@@ -1946,27 +2094,38 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsMany("SeneCare.Domain.Common.MediaAttachment", "Photos", b1 =>
                         {
                             b1.Property<Guid>("control_point_id")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("control_point_id");
 
-                            b1.Property<Guid>("MediaFileId")
+                            b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid")
-                                .HasColumnName("media_file_id");
+                                .HasColumnType("int")
+                                .HasColumnName("id");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("Kind")
                                 .IsRequired()
                                 .HasMaxLength(40)
-                                .HasColumnType("character varying(40)")
+                                .HasColumnType("nvarchar(40)")
                                 .HasColumnName("kind");
 
-                            b1.HasKey("control_point_id", "MediaFileId");
+                            b1.Property<Guid>("MediaFileId")
+                                .HasColumnType("uniqueidentifier")
+                                .HasColumnName("media_file_id");
+
+                            b1.HasKey("control_point_id", "Id")
+                                .HasName("pk_diagnostic_control_point_photos");
+
+                            b1.HasIndex("control_point_id", "MediaFileId")
+                                .IsUnique()
+                                .HasDatabaseName("ix_diagnostic_control_point_photos_control_point_id_media_file_id");
 
                             b1.ToTable("diagnostic_control_point_photos", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("control_point_id")
-                                .HasConstraintName("fk_diagnostic_control_point_photos_diagnostic_control_points_c");
+                                .HasConstraintName("fk_diagnostic_control_point_photos_diagnostic_control_points_control_point_id");
                         });
 
                     b.Navigation("Photos");
@@ -1984,7 +2143,7 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsOne("SeneCare.Domain.Common.DateRange", "PeriodCovered", b1 =>
                         {
                             b1.Property<Guid>("DiagnosticId")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("id");
 
                             b1.Property<DateOnly>("End")
@@ -2029,22 +2188,32 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsMany("SeneCare.Domain.Common.MediaAttachment", "Photos", b1 =>
                         {
                             b1.Property<Guid>("intervention_id")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("intervention_id");
 
-                            b1.Property<Guid>("MediaFileId")
+                            b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid")
-                                .HasColumnName("media_file_id");
+                                .HasColumnType("int")
+                                .HasColumnName("id");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("Kind")
                                 .IsRequired()
                                 .HasMaxLength(40)
-                                .HasColumnType("character varying(40)")
+                                .HasColumnType("nvarchar(40)")
                                 .HasColumnName("kind");
 
-                            b1.HasKey("intervention_id", "MediaFileId")
+                            b1.Property<Guid>("MediaFileId")
+                                .HasColumnType("uniqueidentifier")
+                                .HasColumnName("media_file_id");
+
+                            b1.HasKey("intervention_id", "Id")
                                 .HasName("pk_intervention_photos");
+
+                            b1.HasIndex("intervention_id", "MediaFileId")
+                                .IsUnique()
+                                .HasDatabaseName("ix_intervention_photos_intervention_id_media_file_id");
 
                             b1.ToTable("intervention_photos", (string)null);
 
@@ -2056,31 +2225,31 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsMany("SeneCare.Domain.Interventions.PartUsed", "PartsUsed", b1 =>
                         {
                             b1.Property<Guid>("intervention_id")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("intervention_id");
 
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("integer")
+                                .HasColumnType("int")
                                 .HasColumnName("id");
 
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("Name")
                                 .IsRequired()
                                 .HasMaxLength(500)
-                                .HasColumnType("character varying(500)")
+                                .HasColumnType("nvarchar(500)")
                                 .HasColumnName("name");
 
                             b1.Property<decimal>("Quantity")
                                 .HasPrecision(10, 2)
-                                .HasColumnType("numeric(10,2)")
+                                .HasColumnType("decimal(10,2)")
                                 .HasColumnName("quantity");
 
                             b1.Property<string>("Unit")
                                 .IsRequired()
                                 .HasMaxLength(500)
-                                .HasColumnType("character varying(500)")
+                                .HasColumnType("nvarchar(500)")
                                 .HasColumnName("unit");
 
                             b1.Property<long?>("UnitCost")
@@ -2143,22 +2312,32 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsMany("SeneCare.Domain.Common.MediaAttachment", "Photos", b1 =>
                         {
                             b1.Property<Guid>("operation_id")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("operation_id");
 
-                            b1.Property<Guid>("MediaFileId")
+                            b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid")
-                                .HasColumnName("media_file_id");
+                                .HasColumnType("int")
+                                .HasColumnName("id");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("Kind")
                                 .IsRequired()
                                 .HasMaxLength(40)
-                                .HasColumnType("character varying(40)")
+                                .HasColumnType("nvarchar(40)")
                                 .HasColumnName("kind");
 
-                            b1.HasKey("operation_id", "MediaFileId")
+                            b1.Property<Guid>("MediaFileId")
+                                .HasColumnType("uniqueidentifier")
+                                .HasColumnName("media_file_id");
+
+                            b1.HasKey("operation_id", "Id")
                                 .HasName("pk_greening_operation_photos");
+
+                            b1.HasIndex("operation_id", "MediaFileId")
+                                .IsUnique()
+                                .HasDatabaseName("ix_greening_operation_photos_operation_id_media_file_id");
 
                             b1.ToTable("greening_operation_photos", (string)null);
 
@@ -2185,20 +2364,32 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsMany("SeneCare.Domain.Plans.PlanSlaPolicy", "SlaPolicies", b1 =>
                         {
                             b1.Property<Guid>("plan_id")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("plan_id");
 
-                            b1.Property<string>("Urgency")
-                                .HasMaxLength(40)
-                                .HasColumnType("character varying(40)")
-                                .HasColumnName("urgency");
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasColumnName("id");
 
-                            b1.Property<TimeSpan>("MaxDelay")
-                                .HasColumnType("interval")
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<long>("MaxDelay")
+                                .HasColumnType("bigint")
                                 .HasColumnName("max_delay");
 
-                            b1.HasKey("plan_id", "Urgency")
+                            b1.Property<string>("Urgency")
+                                .IsRequired()
+                                .HasMaxLength(40)
+                                .HasColumnType("nvarchar(40)")
+                                .HasColumnName("urgency");
+
+                            b1.HasKey("plan_id", "Id")
                                 .HasName("pk_plan_sla_policies");
+
+                            b1.HasIndex("plan_id", "Urgency")
+                                .IsUnique()
+                                .HasDatabaseName("ix_plan_sla_policies_plan_id_urgency");
 
                             b1.ToTable("plan_sla_policies", (string)null);
 
@@ -2221,15 +2412,15 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsOne("SeneCare.Domain.Common.TimeSlot", "ChosenSlot", b1 =>
                         {
                             b1.Property<Guid>("AppointmentId")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("id");
 
                             b1.Property<DateTimeOffset>("End")
-                                .HasColumnType("timestamp with time zone")
+                                .HasColumnType("datetimeoffset")
                                 .HasColumnName("chosen_end");
 
                             b1.Property<DateTimeOffset>("Start")
-                                .HasColumnType("timestamp with time zone")
+                                .HasColumnType("datetimeoffset")
                                 .HasColumnName("chosen_start");
 
                             b1.HasKey("AppointmentId");
@@ -2244,22 +2435,22 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsMany("SeneCare.Domain.Common.TimeSlot", "ProposedSlots", b1 =>
                         {
                             b1.Property<Guid>("appointment_id")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("appointment_id");
 
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("integer")
+                                .HasColumnType("int")
                                 .HasColumnName("id");
 
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<DateTimeOffset>("End")
-                                .HasColumnType("timestamp with time zone")
+                                .HasColumnType("datetimeoffset")
                                 .HasColumnName("end");
 
                             b1.Property<DateTimeOffset>("Start")
-                                .HasColumnType("timestamp with time zone")
+                                .HasColumnType("datetimeoffset")
                                 .HasColumnName("start");
 
                             b1.HasKey("appointment_id", "Id")
@@ -2303,20 +2494,32 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsOne("SeneCare.Domain.Requests.Rating", "Rating", b1 =>
                         {
                             b1.Property<Guid>("ServiceRequestId")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("id");
+
+                            b1.Property<Guid?>("AuthorUserId")
+                                .HasColumnType("uniqueidentifier")
+                                .HasColumnName("rating_author_user_id");
 
                             b1.Property<string>("Comment")
                                 .HasMaxLength(1000)
-                                .HasColumnType("character varying(1000)")
+                                .HasColumnType("nvarchar(1000)")
                                 .HasColumnName("rating_comment");
 
                             b1.Property<DateTimeOffset>("GivenAt")
-                                .HasColumnType("timestamp with time zone")
+                                .HasColumnType("datetimeoffset")
                                 .HasColumnName("rating_given_at");
 
+                            b1.Property<bool>("IsHidden")
+                                .HasColumnType("bit")
+                                .HasColumnName("rating_is_hidden");
+
+                            b1.Property<bool>("PublicationConsent")
+                                .HasColumnType("bit")
+                                .HasColumnName("rating_publication_consent");
+
                             b1.Property<int>("Score")
-                                .HasColumnType("integer")
+                                .HasColumnType("int")
                                 .HasColumnName("rating_score");
 
                             b1.HasKey("ServiceRequestId");
@@ -2331,38 +2534,38 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsMany("SeneCare.Domain.Requests.RequestStatusChange", "History", b1 =>
                         {
                             b1.Property<Guid>("service_request_id")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("service_request_id");
 
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("integer")
+                                .HasColumnType("int")
                                 .HasColumnName("id");
 
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<DateTimeOffset>("At")
-                                .HasColumnType("timestamp with time zone")
+                                .HasColumnType("datetimeoffset")
                                 .HasColumnName("at");
 
                             b1.Property<Guid?>("ByUserId")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("by_user_id");
 
                             b1.Property<string>("Comment")
                                 .HasMaxLength(1000)
-                                .HasColumnType("character varying(1000)")
+                                .HasColumnType("nvarchar(1000)")
                                 .HasColumnName("comment");
 
                             b1.Property<string>("From")
                                 .HasMaxLength(40)
-                                .HasColumnType("character varying(40)")
+                                .HasColumnType("nvarchar(40)")
                                 .HasColumnName("from");
 
                             b1.Property<string>("To")
                                 .IsRequired()
                                 .HasMaxLength(40)
-                                .HasColumnType("character varying(40)")
+                                .HasColumnType("nvarchar(40)")
                                 .HasColumnName("to");
 
                             b1.HasKey("service_request_id", "Id")
@@ -2378,49 +2581,59 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsMany("SeneCare.Domain.Common.MediaAttachment", "Attachments", b1 =>
                         {
                             b1.Property<Guid>("service_request_id")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("service_request_id");
 
-                            b1.Property<Guid>("MediaFileId")
+                            b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid")
-                                .HasColumnName("media_file_id");
+                                .HasColumnType("int")
+                                .HasColumnName("id");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("Kind")
                                 .IsRequired()
                                 .HasMaxLength(40)
-                                .HasColumnType("character varying(40)")
+                                .HasColumnType("nvarchar(40)")
                                 .HasColumnName("kind");
 
-                            b1.HasKey("service_request_id", "MediaFileId")
+                            b1.Property<Guid>("MediaFileId")
+                                .HasColumnType("uniqueidentifier")
+                                .HasColumnName("media_file_id");
+
+                            b1.HasKey("service_request_id", "Id")
                                 .HasName("pk_service_request_attachments");
+
+                            b1.HasIndex("service_request_id", "MediaFileId")
+                                .IsUnique()
+                                .HasDatabaseName("ix_service_request_attachments_service_request_id_media_file_id");
 
                             b1.ToTable("service_request_attachments", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("service_request_id")
-                                .HasConstraintName("fk_service_request_attachments_service_requests_service_reques");
+                                .HasConstraintName("fk_service_request_attachments_service_requests_service_request_id");
                         });
 
                     b.OwnsMany("SeneCare.Domain.Common.TimeSlot", "PreferredSlots", b1 =>
                         {
                             b1.Property<Guid>("service_request_id")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("service_request_id");
 
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("integer")
+                                .HasColumnType("int")
                                 .HasColumnName("id");
 
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<DateTimeOffset>("End")
-                                .HasColumnType("timestamp with time zone")
+                                .HasColumnType("datetimeoffset")
                                 .HasColumnName("end");
 
                             b1.Property<DateTimeOffset>("Start")
-                                .HasColumnType("timestamp with time zone")
+                                .HasColumnType("datetimeoffset")
                                 .HasColumnName("start");
 
                             b1.HasKey("service_request_id", "Id")
@@ -2430,7 +2643,7 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("service_request_id")
-                                .HasConstraintName("fk_service_request_preferred_slots_service_requests_service_re");
+                                .HasConstraintName("fk_service_request_preferred_slots_service_requests_service_request_id");
                         });
 
                     b.Navigation("Attachments");
@@ -2454,19 +2667,19 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsMany("SeneCare.Domain.Technicians.Unavailability", "Unavailabilities", b1 =>
                         {
                             b1.Property<Guid>("technician_id")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("technician_id");
 
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("integer")
+                                .HasColumnType("int")
                                 .HasColumnName("id");
 
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("Reason")
                                 .HasMaxLength(200)
-                                .HasColumnType("character varying(200)")
+                                .HasColumnType("nvarchar(200)")
                                 .HasColumnName("reason");
 
                             b1.HasKey("technician_id", "Id")
@@ -2481,19 +2694,19 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                             b1.OwnsOne("SeneCare.Domain.Common.TimeSlot", "Slot", b2 =>
                                 {
                                     b2.Property<Guid>("Unavailabilitytechnician_id")
-                                        .HasColumnType("uuid")
+                                        .HasColumnType("uniqueidentifier")
                                         .HasColumnName("technician_id");
 
                                     b2.Property<int>("UnavailabilityId")
-                                        .HasColumnType("integer")
+                                        .HasColumnType("int")
                                         .HasColumnName("id");
 
                                     b2.Property<DateTimeOffset>("End")
-                                        .HasColumnType("timestamp with time zone")
+                                        .HasColumnType("datetimeoffset")
                                         .HasColumnName("slot_end");
 
                                     b2.Property<DateTimeOffset>("Start")
-                                        .HasColumnType("timestamp with time zone")
+                                        .HasColumnType("datetimeoffset")
                                         .HasColumnName("slot_start");
 
                                     b2.HasKey("Unavailabilitytechnician_id", "UnavailabilityId");
@@ -2502,7 +2715,7 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
 
                                     b2.WithOwner()
                                         .HasForeignKey("Unavailabilitytechnician_id", "UnavailabilityId")
-                                        .HasConstraintName("fk_technician_unavailabilities_technician_unavailabilities_tec");
+                                        .HasConstraintName("fk_technician_unavailabilities_technician_unavailabilities_technician_id_id");
                                 });
 
                             b1.Navigation("Slot")
@@ -2512,28 +2725,28 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsMany("SeneCare.Domain.Technicians.WeeklyAvailability", "WeeklyAvailability", b1 =>
                         {
                             b1.Property<Guid>("technician_id")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("technician_id");
 
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("integer")
+                                .HasColumnType("int")
                                 .HasColumnName("id");
 
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("Day")
                                 .IsRequired()
                                 .HasMaxLength(40)
-                                .HasColumnType("character varying(40)")
+                                .HasColumnType("nvarchar(40)")
                                 .HasColumnName("day");
 
                             b1.Property<TimeOnly>("End")
-                                .HasColumnType("time without time zone")
+                                .HasColumnType("time")
                                 .HasColumnName("end");
 
                             b1.Property<TimeOnly>("Start")
-                                .HasColumnType("time without time zone")
+                                .HasColumnType("time")
                                 .HasColumnName("start");
 
                             b1.HasKey("technician_id", "Id")
@@ -2556,34 +2769,34 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsMany("SeneCare.Domain.Users.UserConsent", "Consents", b1 =>
                         {
                             b1.Property<Guid>("user_id")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("user_id");
 
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("integer")
+                                .HasColumnType("int")
                                 .HasColumnName("id");
 
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<DateTimeOffset>("GivenAt")
-                                .HasColumnType("timestamp with time zone")
+                                .HasColumnType("datetimeoffset")
                                 .HasColumnName("given_at");
 
                             b1.Property<string>("PolicyVersion")
                                 .IsRequired()
                                 .HasMaxLength(20)
-                                .HasColumnType("character varying(20)")
+                                .HasColumnType("nvarchar(20)")
                                 .HasColumnName("policy_version");
 
                             b1.Property<string>("Type")
                                 .IsRequired()
                                 .HasMaxLength(40)
-                                .HasColumnType("character varying(40)")
+                                .HasColumnType("nvarchar(40)")
                                 .HasColumnName("type");
 
                             b1.Property<DateTimeOffset?>("WithdrawnAt")
-                                .HasColumnType("timestamp with time zone")
+                                .HasColumnType("datetimeoffset")
                                 .HasColumnName("withdrawn_at");
 
                             b1.HasKey("user_id", "Id")
@@ -2599,20 +2812,32 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.OwnsMany("SeneCare.Domain.Users.UserRole", "Roles", b1 =>
                         {
                             b1.Property<Guid>("user_id")
-                                .HasColumnType("uuid")
+                                .HasColumnType("uniqueidentifier")
                                 .HasColumnName("user_id");
 
-                            b1.Property<string>("Role")
-                                .HasMaxLength(40)
-                                .HasColumnType("character varying(40)")
-                                .HasColumnName("role");
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasColumnName("id");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<DateTimeOffset>("GrantedAt")
-                                .HasColumnType("timestamp with time zone")
+                                .HasColumnType("datetimeoffset")
                                 .HasColumnName("granted_at");
 
-                            b1.HasKey("user_id", "Role")
+                            b1.Property<string>("Role")
+                                .IsRequired()
+                                .HasMaxLength(40)
+                                .HasColumnType("nvarchar(40)")
+                                .HasColumnName("role");
+
+                            b1.HasKey("user_id", "Id")
                                 .HasName("pk_user_roles");
+
+                            b1.HasIndex("user_id", "Role")
+                                .IsUnique()
+                                .HasDatabaseName("ix_user_roles_user_id_role");
 
                             b1.ToTable("user_roles", (string)null);
 

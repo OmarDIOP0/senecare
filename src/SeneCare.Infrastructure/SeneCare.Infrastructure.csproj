@@ -6,14 +6,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- PostgreSQL provider for EF Core. -->
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
-    <!-- snake_case tables/columns: PostgreSQL convention, avoids quoting identifiers in SQL. -->
+    <!-- SQL Server provider for EF Core (hosting: SmarterASP.NET, Windows / IIS). -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <!-- Patched version of a SqlClient dependency (the one it brings has known vulnerabilities). -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
+    <!-- snake_case tables/columns: readable names, kept from the first schema. -->
     <PackageReference Include="EFCore.NamingConventions" />
     <!-- Identity stores (users, security stamp, lockout) on EF Core. -->
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
-    <!-- Cookie / antiforgery keys stored in PostgreSQL: a container (Render, Docker) loses its disk at each
-         deploy, which would sign everybody out. -->
+    <!-- Cookie / antiforgery keys stored in the database: a redeploy or a new server must not sign everybody out. -->
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" />
     <!-- JWT for the REST API (future mobile app). -->
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />

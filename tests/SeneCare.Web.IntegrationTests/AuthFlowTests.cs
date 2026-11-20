@@ -9,7 +9,7 @@ namespace SeneCare.Web.IntegrationTests;
 [Collection(WebAppTestGroup.Name)]
 public class AuthFlowTests(WebAppFixture app)
 {
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Household_customer_signs_up_with_phone_otp_and_consent()
     {
         var client = app.CreateClient();
@@ -37,7 +37,7 @@ public class AuthFlowTests(WebAppFixture app)
         Assert.True(await db.CustomerAccounts.AnyAsync(a => a.Kind == AccountKind.Household && a.Members.Any(m => m.UserId == user.Id)));
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Sms_contains_a_6_digit_code_and_stored_hash_is_not_the_code()
     {
         var client = app.CreateClient();
@@ -53,7 +53,7 @@ public class AuthFlowTests(WebAppFixture app)
         Assert.Equal(TimeSpan.FromMinutes(5), challenge.ExpiresAt - challenge.CreatedAt);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Invalid_phone_number_is_rejected_with_a_french_message()
     {
         var client = app.CreateClient();
@@ -64,7 +64,7 @@ public class AuthFlowTests(WebAppFixture app)
         Assert.Contains("n'est pas un mobile sénégalais valide", WebUtility.HtmlDecode(await response.Content.ReadAsStringAsync()), StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Wrong_codes_are_limited_to_five_attempts()
     {
         var client = app.CreateClient();
@@ -87,7 +87,7 @@ public class AuthFlowTests(WebAppFixture app)
         Assert.Equal(HttpStatusCode.OK, late.StatusCode);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task A_new_code_cannot_be_requested_within_a_minute()
     {
         var client = app.CreateClient();
@@ -100,7 +100,7 @@ public class AuthFlowTests(WebAppFixture app)
         Assert.Single(app.Messages.Messages, m => m.To == phone);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Registration_requires_consent_and_unregistered_users_are_sent_back_to_it()
     {
         var client = app.CreateClient();
@@ -118,7 +118,7 @@ public class AuthFlowTests(WebAppFixture app)
         Assert.Contains("accepter la politique de confidentialité", WebUtility.HtmlDecode(await refused.Content.ReadAsStringAsync()), StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Household_customer_cannot_open_the_business_team_page()
     {
         var client = await RegisteredClientAsync(AccountKind.Household, "Ibrahima Sow");
@@ -128,7 +128,7 @@ public class AuthFlowTests(WebAppFixture app)
         Assert.StartsWith("/acces-refuse", team.Location(), StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Business_manager_invites_an_employee_who_joins_with_otp()
     {
         var manager = await RegisteredClientAsync(AccountKind.Business, "Fatou Diop", "Teranga Services");
@@ -180,7 +180,7 @@ public class AuthFlowTests(WebAppFixture app)
         Assert.StartsWith("/acces-refuse", forbidden.Location(), StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Signing_out_ends_the_session()
     {
         var client = await RegisteredClientAsync(AccountKind.Household, "Ndeye Faye");

@@ -72,7 +72,7 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
   - `src/SeneCare.Domain` : entités, value objects, enums, événements, règles métier
   - `src/SeneCare.Application` : cas d'usage, CQRS léger (MediatR ou handlers maison),
     FluentValidation, DTO, interfaces
-  - `src/SeneCare.Infrastructure` : EF Core + PostgreSQL, Identity, SMS/WhatsApp, paiement,
+  - `src/SeneCare.Infrastructure` : EF Core + SQL Server, Identity, SMS/WhatsApp, paiement,
     stockage fichiers, jobs Hangfire, PDF QuestPDF
   - `src/SeneCare.Web` : **ASP.NET Core MVC** (Controllers + Views, partial views pour HTMX)
     + HTMX + Alpine.js + Tailwind CSS, PWA.
@@ -81,21 +81,23 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
     Utiliser des Areas MVC par espace (Client, Entreprise, Technicien, Admin).
   - `src/SeneCare.Api` : API REST versionnée /api/v1, JWT, OpenAPI
     → prépare la future app mobile native (Flutter/MAUI)
-  - `tests/` : xUnit, tests unitaires Domain/Application, tests d'intégration
-    avec Testcontainers PostgreSQL, Playwright pour les parcours clés
-    (sans Docker pour l'instant : tests d'intégration sur le PostgreSQL local via `SENECARE_TEST_DB`)
+  - `tests/` : xUnit, tests unitaires Domain/Application, tests d'intégration sur SQL Server
+    (base jetable par exécution, créée sur le SQL Server local via `SENECARE_TEST_DB`), Playwright pour les parcours clés.
+- Base : SQL Server (décision utilisateur, hébergement SmarterASP.NET Windows / IIS), noms en snake_case
+  (`EFCore.NamingConventions`), une migration de départ `InitialSqlServer`. Durées (`TimeSpan`) stockées en ticks
+  (`bigint`, le type `time` s'arrête à 24 h) ; listes d'identifiants en JSON ; numéros de demande / facture par
+  séquences SQL Server.
 - Pourquoi MVC + HTMX et pas un SPA lourd : rendu serveur rapide sur réseau faible,
   peu de JS, SEO pour les pages publiques. L'API sert la future app native.
 - Temps réel : SignalR (statut d'intervention, position technicien).
 - Carte : Leaflet + OpenStreetMap (gratuit, léger).
 - Logs : Serilog. Santé : HealthChecks. Configuration par environnement + secrets
   hors du code.
-- Docker + docker-compose (web, api, postgres, redis éventuel).
-- Déploiement de test sur Render : `Dockerfile` (racine) + Blueprint `render.yaml` (web Docker, offre gratuite,
-  région Frankfurt ; base Postgres existante collée à la création, une seule base gratuite par compte Render ; `ASPNETCORE_ENVIRONMENT=Staging` → bandeau « Version de test » et code affiché).
-  Derrière le proxy : en-têtes X-Forwarded-* pris en compte, port lu dans `$PORT`, adresse `postgresql://…`
-  acceptée (`PostgresConnectionString`), clés Data Protection en base (table `data_protection_keys`).
-  Limites de l'offre gratuite : mise en veille, photos perdues au redémarrage, base expirant après 30 jours.
+- Docker + docker-compose (SQL Server de développement, optionnel).
+- Déploiement : SmarterASP.NET (Windows / IIS, SQL Server ; publication à préparer). L'ancien site de test Render
+  (PostgreSQL) est abandonné. `ASPNETCORE_ENVIRONMENT=Staging` → bandeau « Version de test ». Derrière un proxy :
+  en-têtes X-Forwarded-* pris en compte, port lu dans `$PORT` si présent, clés Data Protection en base
+  (table `data_protection_keys`).
 
 ## 5. Direction visuelle — chaleureuse, locale, vivante (palette Atlantique & terre cuite)
 Références de mise en page : wurus.app (typographies, panneaux sombres, bandes de motifs, inscription en

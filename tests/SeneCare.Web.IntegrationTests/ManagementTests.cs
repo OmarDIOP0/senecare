@@ -15,7 +15,7 @@ public sealed class ManagementTests(WebAppFixture app)
     private static readonly byte[] Png = Convert.FromBase64String(
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/q842iQAAAABJRU5ErkJggg==");
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Finance_records_a_bank_transfer_and_the_company_subscription_starts()
     {
         var (manager, accountId) = await CompanyAsync();
@@ -51,7 +51,7 @@ public sealed class ManagementTests(WebAppFixture app)
         Assert.True(await check.AuditLogs.AnyAsync(a => a.Action == "payment.record_manual" && a.EntityId == payment.Id.ToString()));
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task A_new_price_applies_to_new_subscriptions_only()
     {
         var admin = await StaffAsync(PlatformRole.SuperAdmin);
@@ -83,7 +83,7 @@ public sealed class ManagementTests(WebAppFixture app)
         GC.KeepAlive(before);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Dispatcher_adds_a_technician_who_can_sign_in_and_can_be_deactivated()
     {
         var dispatcher = await StaffAsync(PlatformRole.Dispatcher);
@@ -129,7 +129,7 @@ public sealed class ManagementTests(WebAppFixture app)
         Assert.False((await check.Technicians.SingleAsync(t => t.Id == technicianId)).IsActive);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Support_finds_a_customer_by_phone_and_reads_the_file()
     {
         var phone = TestData.NewPhone();
@@ -156,7 +156,7 @@ public sealed class ManagementTests(WebAppFixture app)
         Assert.StartsWith("/acces-refuse", (await support.GetAsync(new Uri("/admin/parametres", UriKind.Relative))).Location(), StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Super_admin_maintains_neighborhoods_and_settings()
     {
         var admin = await StaffAsync(PlatformRole.SuperAdmin);

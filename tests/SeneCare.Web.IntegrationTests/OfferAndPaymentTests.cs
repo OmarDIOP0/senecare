@@ -18,7 +18,7 @@ public sealed partial class OfferAndPaymentTests(WebAppFixture app)
     private static readonly byte[] Png = Convert.FromBase64String(
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/q842iQAAAABJRU5ErkJggg==");
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task A_yearly_home_plan_chosen_at_sign_up_is_billed_twelve_months_minus_two()
     {
         var customer = await SignUpAsync("Household", "HOME", annual: true, company: null);
@@ -37,7 +37,7 @@ public sealed partial class OfferAndPaymentTests(WebAppFixture app)
         Assert.Contains("2 mois offerts", page, StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task A_company_gets_its_chosen_plan_with_its_first_site()
     {
         var manager = await SignUpAsync("Business", "PROFESSIONNEL", annual: false, company: "Teranga Logistique");
@@ -51,7 +51,7 @@ public sealed partial class OfferAndPaymentTests(WebAppFixture app)
         Assert.Equal(2_500_000, subscription.MonthlyPrice.Amount);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Sign_up_in_five_steps_creates_the_account_its_first_site_and_the_subscription_to_pay()
     {
         var client = app.CreateClient();
@@ -118,7 +118,7 @@ public sealed partial class OfferAndPaymentTests(WebAppFixture app)
         Assert.Contains("Choisissez votre quartier", WebUtility.HtmlDecode(await refused.Content.ReadAsStringAsync()), StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Declaring_and_verifying_a_payment_notifies_finance_then_the_customer_with_a_receipt()
     {
         var finance = await StaffAsync(PlatformRole.Finance);

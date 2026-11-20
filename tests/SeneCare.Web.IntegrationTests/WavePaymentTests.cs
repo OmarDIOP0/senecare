@@ -20,7 +20,7 @@ public sealed partial class WavePaymentTests(WebAppFixture app)
     private static readonly byte[] Png = Convert.FromBase64String(
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/q842iQAAAABJRU5ErkJggg==");
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Customer_pays_with_wave_and_finance_activates_the_subscription()
     {
         var finance = await StaffAsync(PlatformRole.Finance);
@@ -74,7 +74,7 @@ public sealed partial class WavePaymentTests(WebAppFixture app)
         Assert.DoesNotContain("Activez votre abonnement", page, StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Rejected_payment_shows_the_reason_and_can_be_declared_again()
     {
         await SetWaveLinkAsync(WaveLink);
@@ -112,7 +112,7 @@ public sealed partial class WavePaymentTests(WebAppFixture app)
         }
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Only_finance_reaches_payments_and_only_wave_links_are_accepted()
     {
         var customer = await HouseholdAsync();
@@ -130,7 +130,7 @@ public sealed partial class WavePaymentTests(WebAppFixture app)
         Assert.Equal(WaveLink, (await db.AppSettings.SingleAsync(s => s.Key == SettingKeys.WaveLink)).Value);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Customer_can_pay_with_orange_money_instead_of_wave()
     {
         // Finance opens Orange Money: a merchant code and a link; bad values are refused.

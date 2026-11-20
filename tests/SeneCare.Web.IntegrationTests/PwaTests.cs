@@ -71,7 +71,7 @@ public partial class PwaTests(SeneCareWebFactory factory) : IClassFixture<SeneCa
 [Collection(WebAppTestGroup.Name)]
 public class GuidedTourTests(WebAppFixture app)
 {
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Tour_runs_once_and_can_be_replayed_from_the_profile()
     {
         var client = await RegisteredAsync(AccountKind.Household);
@@ -90,7 +90,7 @@ public class GuidedTourTests(WebAppFixture app)
         Assert.Contains("id=\"sc-tour\"", await client.GetStringAsync(new Uri("/espace", UriKind.Relative)), StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Tour_progress_is_stored_on_the_server_not_the_device()
     {
         var phone = TestData.NewPhone();
@@ -113,7 +113,7 @@ public class GuidedTourTests(WebAppFixture app)
         Assert.Contains("client", (await db.Users.SingleAsync(u => u.PhoneNumber == phone)).CompletedTours);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Business_space_has_its_own_navigation_and_tour()
     {
         var client = await RegisteredAsync(AccountKind.Business);
@@ -126,7 +126,7 @@ public class GuidedTourTests(WebAppFixture app)
         Assert.DoesNotContain("href=\"/logements\"", html, StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Placeholder_sections_respect_policies()
     {
         var client = await RegisteredAsync(AccountKind.Household);

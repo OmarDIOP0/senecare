@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
-using Npgsql;
+using Microsoft.Data.SqlClient;
 using SeneCare.Infrastructure.Persistence;
 using SeneCare.Infrastructure.Persistence.Seed;
 using Xunit;
@@ -8,12 +8,12 @@ using Xunit;
 namespace SeneCare.Testing;
 
 /// <summary>
-/// Runs against a real local PostgreSQL. Set <c>SENECARE_TEST_DB</c> to a connection string of a user
-/// allowed to create databases (e.g. <c>Host=localhost;Database=postgres;Username=senecare;Password=…</c>).
+/// Runs against a real local SQL Server. Set <c>SENECARE_TEST_DB</c> to a connection string of a login
+/// allowed to create databases (e.g. <c>Server=localhost;Database=master;Trusted_Connection=True;TrustServerCertificate=True</c>).
 /// Each fixture creates a throw-away database (migrated + seeded) and drops it at the end.
 /// Tests are skipped when the variable is not set (Testcontainers can replace this once Docker is available).
 /// </summary>
-public sealed class PostgresFixture : IAsyncLifetime
+public sealed class DatabaseFixture : IAsyncLifetime
 {
     public const string EnvironmentVariable = "SENECARE_TEST_DB";
 
@@ -31,9 +31,9 @@ public sealed class PostgresFixture : IAsyncLifetime
         }
 
         _adminConnectionString = Environment.GetEnvironmentVariable(EnvironmentVariable)!;
-        var builder = new NpgsqlConnectionStringBuilder(_adminConnectionString)
+        var builder = new SqlConnectionStringBuilder(_adminConnectionString)
         {
-            Database = "senecare_tests_" + Guid.NewGuid().ToString("N")[..12],
+            InitialCatalog = "senecare_tests_" + Guid.NewGuid().ToString("N")[..12],
         };
         ConnectionString = builder.ConnectionString;
 
@@ -49,26 +49,26 @@ public sealed class PostgresFixture : IAsyncLifetime
             return;
         }
 
-        NpgsqlConnection.ClearAllPools();
+        SqlConnection.ClearAllPools();
         await using var db = CreateContext();
         await db.Database.EnsureDeletedAsync();
     }
 
     public SeneCareDbContext CreateContext() =>
         new(new DbContextOptionsBuilder<SeneCareDbContext>()
-            .UseNpgsql(ConnectionString, npgsql => npgsql.MigrationsHistoryTable("__ef_migrations_history"))
+            .UseSqlServer(ConnectionString, sql => sql.MigrationsHistoryTable("__ef_migrations_history"))
             .UseSnakeCaseNamingConvention()
             .Options);
 }
 
-/// <summary>A fact that needs PostgreSQL; skipped with an explanation when it is not configured.</summary>
-public sealed class PostgresFactAttribute : FactAttribute
+/// <summary>A fact that needs the database; skipped with an explanation when it is not configured.</summary>
+public sealed class DatabaseFactAttribute : FactAttribute
 {
-    public PostgresFactAttribute()
+    public DatabaseFactAttribute()
     {
-        if (!PostgresFixture.IsConfigured)
+        if (!DatabaseFixture.IsConfigured)
         {
-            Skip = $"Set {PostgresFixture.EnvironmentVariable} to run database tests.";
+            Skip = $"Set {DatabaseFixture.EnvironmentVariable} to run database tests.";
         }
     }
 }

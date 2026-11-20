@@ -9,7 +9,7 @@ Le contexte produit et technique complet est dans [CLAUDE.md](CLAUDE.md).
 
 - [.NET SDK 10](https://dotnet.microsoft.com/download) (version figée dans `global.json`)
 - [Node.js](https://nodejs.org) 20+ (compilation Tailwind CSS)
-- PostgreSQL 16+ installé localement (Docker optionnel : `docker compose up -d`)
+- SQL Server 2019+ installé localement (Developer / Express, ou LocalDB ; Docker optionnel : `docker compose up -d`)
 
 ## Structure
 
@@ -23,7 +23,7 @@ src/
 tests/
   SeneCare.Domain.Tests, SeneCare.Application.Tests
   SeneCare.Web.IntegrationTests, SeneCare.Api.IntegrationTests
-  SeneCare.Infrastructure.IntegrationTests (PostgreSQL réel)
+  SeneCare.Infrastructure.IntegrationTests (SQL Server réel)
 docs/
   domain-model.md          modèle de domaine (diagrammes, règles métier)
 ```
@@ -100,19 +100,13 @@ npm run assets:build
 dotnet test SeneCare.slnx
 ```
 
-### Base de données (PostgreSQL)
+### Base de données (SQL Server)
 
-Une seule fois, dans `psql` (ou pgAdmin) connecté en `postgres` :
-
-```sql
-CREATE ROLE senecare LOGIN PASSWORD 'votre-mot-de-passe' CREATEDB;
-CREATE DATABASE senecare OWNER senecare;
-```
-
-Puis donner la connexion au site (stockée hors du dépôt) :
+En local, l'authentification Windows suffit (aucun mot de passe). Donner la connexion au site
+(stockée hors du dépôt) ; la base `senecare` est créée par les migrations :
 
 ```bash
-dotnet user-secrets --project src/SeneCare.Web set "ConnectionStrings:Default" "Host=localhost;Database=senecare;Username=senecare;Password=votre-mot-de-passe"
+dotnet user-secrets --project src/SeneCare.Web set "ConnectionStrings:Default" "Server=localhost;Database=senecare;Trusted_Connection=True;TrustServerCertificate=True"
 ```
 
 En développement, le site applique les migrations et charge les données de référence
@@ -126,17 +120,17 @@ dotnet ef migrations add NomDeLaMigration --project src/SeneCare.Infrastructure 
 ```
 
 ```bash
-dotnet ef database update --project src/SeneCare.Infrastructure --startup-project src/SeneCare.Infrastructure --connection "Host=localhost;Database=senecare;Username=senecare;Password=..."
+dotnet ef database update --project src/SeneCare.Infrastructure --startup-project src/SeneCare.Infrastructure --connection "Server=localhost;Database=senecare;Trusted_Connection=True;TrustServerCertificate=True"
 ```
 
 ### Tests de base de données
 
 Les tests `SeneCare.Infrastructure.IntegrationTests` créent une base temporaire, la migrent,
 la remplissent puis la suppriment. Ils sont ignorés si `SENECARE_TEST_DB` n'est pas défini
-(compte autorisé à créer des bases, par exemple le rôle `senecare` ci-dessus) :
+(connexion autorisée à créer des bases, par exemple l'authentification Windows sur `master`) :
 
 ```powershell
-$env:SENECARE_TEST_DB = "Host=localhost;Database=postgres;Username=senecare;Password=..."
+$env:SENECARE_TEST_DB = "Server=localhost;Database=master;Trusted_Connection=True;TrustServerCertificate=True"
 dotnet test SeneCare.slnx
 ```
 
@@ -148,7 +142,7 @@ Aucun secret dans le dépôt. `appsettings.Example.json` liste les clés attendu
 en développement, utiliser les user-secrets :
 
 ```bash
-dotnet user-secrets --project src/SeneCare.Web set "ConnectionStrings:Default" "Host=localhost;Database=senecare;Username=senecare;Password=..."
+dotnet user-secrets --project src/SeneCare.Web set "ConnectionStrings:Default" "Server=localhost;Database=senecare;Trusted_Connection=True;TrustServerCertificate=True"
 ```
 
 Clés obligatoires pour le site et l'API (même `Security:HashKey` pour les deux) :

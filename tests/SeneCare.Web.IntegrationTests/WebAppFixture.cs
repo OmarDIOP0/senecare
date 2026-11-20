@@ -10,21 +10,21 @@ using SeneCare.Testing;
 
 namespace SeneCare.Web.IntegrationTests;
 
-/// <summary>The site on a throw-away PostgreSQL database, with SMS/WhatsApp captured in memory.</summary>
+/// <summary>The site on a throw-away SQL Server database, with SMS/WhatsApp captured in memory.</summary>
 public sealed class WebAppFixture : IAsyncLifetime
 {
     private WebApplicationFactory<Program>? _factory;
 
     public IServiceProvider Services => _factory!.Services;
 
-    public PostgresFixture Database { get; } = new();
+    public DatabaseFixture Database { get; } = new();
 
     public CapturingMessageSender Messages { get; } = new();
 
     public async Task InitializeAsync()
     {
         await Database.InitializeAsync();
-        if (!PostgresFixture.IsConfigured)
+        if (!DatabaseFixture.IsConfigured)
         {
             return;
         }

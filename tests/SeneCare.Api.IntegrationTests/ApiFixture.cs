@@ -7,10 +7,10 @@ using SeneCare.Testing;
 
 namespace SeneCare.Api.IntegrationTests;
 
-/// <summary>The API in a "Testing" environment with test keys; database only when PostgreSQL is configured.</summary>
+/// <summary>The API in a "Testing" environment with test keys; database only when SENECARE_TEST_DB is configured.</summary>
 public sealed class ApiFixture : IAsyncLifetime
 {
-    public PostgresFixture Database { get; } = new();
+    public DatabaseFixture Database { get; } = new();
 
     public CapturingMessageSender Messages { get; } = new();
 
@@ -19,7 +19,7 @@ public sealed class ApiFixture : IAsyncLifetime
     public async Task InitializeAsync()
     {
         await Database.InitializeAsync();
-        var connectionString = PostgresFixture.IsConfigured ? Database.ConnectionString : "Host=localhost;Database=unused";
+        var connectionString = DatabaseFixture.IsConfigured ? Database.ConnectionString : "Server=localhost;Database=unused";
 
         Factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {

@@ -17,7 +17,7 @@ public sealed class PasswordAuthTests(WebAppFixture app)
 {
     private const string Password = "Teranga2026";
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Signs_up_with_a_number_and_a_password_then_signs_in_with_them()
     {
         var phone = TestData.NewPhone();
@@ -52,7 +52,7 @@ public sealed class PasswordAuthTests(WebAppFixture app)
         Assert.Equal("/inscription", right.Location());
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Signed_in_pages_are_not_kept_by_the_browser_public_pages_are()
     {
         var client = app.CreatePasswordClient();
@@ -69,7 +69,7 @@ public sealed class PasswordAuthTests(WebAppFixture app)
         Assert.True(page.Headers.CacheControl?.NoStore);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Refuses_a_short_password_or_two_different_ones()
     {
         var client = app.CreatePasswordClient();
@@ -87,7 +87,7 @@ public sealed class PasswordAuthTests(WebAppFixture app)
         }
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Locks_the_account_after_five_wrong_passwords()
     {
         var phone = TestData.NewPhone();
@@ -108,7 +108,7 @@ public sealed class PasswordAuthTests(WebAppFixture app)
         Assert.Contains("bloqué", WebUtility.HtmlDecode(await locked.Content.ReadAsStringAsync()), StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task A_temporary_password_from_support_must_be_replaced_before_anything_else()
     {
         // A finished household account.
@@ -154,7 +154,7 @@ public sealed class PasswordAuthTests(WebAppFixture app)
         Assert.Equal(HttpStatusCode.OK, (await phoneClient.GetAsync(new Uri("/abonnement", UriKind.Relative))).StatusCode);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task A_first_admin_not_registered_yet_can_choose_a_password_then_finish_registration()
     {
         // Like Bootstrap:SuperAdminPhones + SuperAdminPassword: a number with a temporary password, no name yet.

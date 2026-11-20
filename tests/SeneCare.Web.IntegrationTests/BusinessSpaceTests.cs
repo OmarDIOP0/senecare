@@ -21,7 +21,7 @@ public sealed class BusinessSpaceTests(WebAppFixture app)
     private static readonly byte[] Png = Convert.FromBase64String(
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/q842iQAAAABJRU5ErkJggg==");
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Manager_chooses_an_offer_covering_every_site_and_sees_the_dashboard()
     {
         var company = await CompanyAsync();
@@ -61,7 +61,7 @@ public sealed class BusinessSpaceTests(WebAppFixture app)
         Assert.Contains("Prochain :", home, StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Employee_requests_wait_for_the_site_manager_who_approves_or_refuses()
     {
         var company = await CompanyAsync();
@@ -115,7 +115,7 @@ public sealed class BusinessSpaceTests(WebAppFixture app)
         }
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Diagnostic_report_is_readable_as_pdf_and_anomalies_become_requests()
     {
         var company = await CompanyAsync();
@@ -163,7 +163,7 @@ public sealed class BusinessSpaceTests(WebAppFixture app)
         Assert.Equal(requestId, (await check.Diagnostics.SingleAsync(d => d.Id == diagnosticId)).ControlPoints.Single(c => c.Id == pointId).ConvertedRequestId);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Exports_are_excel_ready_and_limited_to_the_members_sites()
     {
         var company = await CompanyAsync();
@@ -191,7 +191,7 @@ public sealed class BusinessSpaceTests(WebAppFixture app)
         Assert.Contains("Facture;Échéance", invoices, StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task A_trade_outside_the_offer_is_refused()
     {
         var company = await CompanyAsync();

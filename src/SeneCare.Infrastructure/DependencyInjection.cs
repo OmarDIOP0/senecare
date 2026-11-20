@@ -23,13 +23,13 @@ public static class DependencyInjection
     public const string ConnectionStringName = "Default";
     public const string ReadinessTag = "ready";
 
-    /// <summary>Registers infrastructure services: PostgreSQL (EF Core), messaging, hashing, seeding, health checks.</summary>
+    /// <summary>Registers infrastructure services: SQL Server (EF Core), messaging, hashing, seeding, health checks.</summary>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<SeneCareDbContext>(options => options
-            .UseNpgsql(
-                PostgresConnectionString.Normalize(configuration.GetConnectionString(ConnectionStringName)),
-                npgsql => npgsql.MigrationsHistoryTable("__ef_migrations_history"))
+            .UseSqlServer(
+                configuration.GetConnectionString(ConnectionStringName),
+                sql => sql.MigrationsHistoryTable("__ef_migrations_history"))
             .UseSnakeCaseNamingConvention());
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<SeneCareDbContext>());
 

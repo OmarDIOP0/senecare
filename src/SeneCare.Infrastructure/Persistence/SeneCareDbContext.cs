@@ -85,6 +85,8 @@ public sealed class SeneCareDbContext(DbContextOptions<SeneCareDbContext> option
         configurationBuilder.Properties<Money>().HaveConversion<MoneyConverter>();
         configurationBuilder.Properties<PhoneNumber>().HaveConversion<PhoneNumberConverter>().HaveMaxLength(16);
         configurationBuilder.Properties<string>().HaveMaxLength(500);
+        // Durations (delays of 24 h, 72 h, a week…): SQL Server « time » stops at 23:59:59, so ticks in a bigint.
+        configurationBuilder.Properties<TimeSpan>().HaveConversion<long>();
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -96,7 +98,7 @@ public sealed class SeneCareDbContext(DbContextOptions<SeneCareDbContext> option
         {
             key.ToTable("data_protection_keys");
             key.Property(k => k.FriendlyName).HasMaxLength(200);
-            key.Property(k => k.Xml).HasColumnType("text").Metadata.SetMaxLength(null);
+            key.Property(k => k.Xml).HasColumnType("nvarchar(max)").Metadata.SetMaxLength(null);
         });
 
         builder.HasSequence<long>(ServiceRequestNumberSequence);

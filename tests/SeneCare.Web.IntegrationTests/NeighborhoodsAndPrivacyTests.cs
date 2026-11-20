@@ -16,7 +16,7 @@ public sealed class NeighborhoodsAndPrivacyTests(WebAppFixture app)
     private static readonly byte[] Png = Convert.FromBase64String(
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/q842iQAAAABJRU5ErkJggg==");
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task A_neighborhood_reaching_its_threshold_gets_greening_operations_members_see_once_published()
     {
         var admin = await StaffAsync(PlatformRole.SuperAdmin);
@@ -72,7 +72,7 @@ public sealed class NeighborhoodsAndPrivacyTests(WebAppFixture app)
         Assert.Contains("25 arbres plantés", WebUtility.HtmlDecode(await customer.GetStringAsync(new Uri("/espace", UriKind.Relative))), StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Published_advice_of_the_month_replaces_the_built_in_one()
     {
         var support = await StaffAsync(PlatformRole.Support);
@@ -105,7 +105,7 @@ public sealed class NeighborhoodsAndPrivacyTests(WebAppFixture app)
         }
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Access_to_personal_data_is_logged_and_the_export_contains_the_persons_data()
     {
         var phone = TestData.NewPhone();
@@ -150,7 +150,7 @@ public sealed class NeighborhoodsAndPrivacyTests(WebAppFixture app)
         Assert.StartsWith("/acces-refuse", (await support.GetAsync(new Uri("/admin/journal", UriKind.Relative))).Location(), StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Erasure_anonymises_the_person_and_their_home_but_keeps_invoices()
     {
         var phone = TestData.NewPhone();
@@ -213,7 +213,7 @@ public sealed class NeighborhoodsAndPrivacyTests(WebAppFixture app)
         Assert.DoesNotContain(phone.E164, export, StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Erasure_is_refused_for_a_company_last_manager_and_for_staff()
     {
         var phone = TestData.NewPhone();

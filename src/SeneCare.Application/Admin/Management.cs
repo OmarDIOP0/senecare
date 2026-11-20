@@ -53,7 +53,7 @@ public sealed class CustomerDirectory(IApplicationDbContext db, TimeProvider clo
             // A full number (77 123 45 67) finds its owner; otherwise search names.
             var pattern = "%" + term.ToLowerInvariant().Replace("%", string.Empty, StringComparison.Ordinal).Replace("_", string.Empty, StringComparison.Ordinal) + "%";
             var phone = PhoneNumber.TryParse(term, out var parsed) ? parsed : null;
-#pragma warning disable CA1304, CA1311 // Runs in PostgreSQL as lower(): no .NET culture involved.
+#pragma warning disable CA1304, CA1311 // Runs in SQL Server as LOWER(): no .NET culture involved.
             var users = phone is null
                 ? db.Users.Where(u => u.FullName != null && EF.Functions.Like(u.FullName.ToLower(), pattern))
                 : db.Users.Where(u => u.PhoneNumber == phone);

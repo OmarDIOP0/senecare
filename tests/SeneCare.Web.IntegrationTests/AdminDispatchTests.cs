@@ -20,7 +20,7 @@ public sealed class AdminDispatchTests(WebAppFixture app)
     private static readonly byte[] Png = Convert.FromBase64String(
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/q842iQAAAABJRU5ErkJggg==");
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Dispatcher_proposes_slots_the_customer_chooses_then_a_suggested_technician_is_assigned()
     {
         var (customer, requestId) = await CustomerRequestAsync(Urgency.High);
@@ -68,7 +68,7 @@ public sealed class AdminDispatchTests(WebAppFixture app)
         Assert.Equal(HttpStatusCode.OK, (await dispatcher.GetAsync(new Uri("/admin/dispatch/carte", UriKind.Relative))).StatusCode);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task A_request_requalified_critical_is_dispatched_at_once_with_the_offer_delay()
     {
         var (_, requestId) = await CustomerRequestAsync(Urgency.Normal);
@@ -92,7 +92,7 @@ public sealed class AdminDispatchTests(WebAppFixture app)
         Assert.True(await check.Interventions.AnyAsync(i => i.RequestId == requestId && i.LeadTechnicianId == technicianId));
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Back_office_pages_follow_the_admin_sub_roles()
     {
         var (customer, _) = await CustomerRequestAsync(Urgency.Normal);
@@ -108,7 +108,7 @@ public sealed class AdminDispatchTests(WebAppFixture app)
         Assert.StartsWith("/acces-refuse", (await dispatcher.GetAsync(new Uri("/admin/paiements", UriKind.Relative))).Location(), StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Supervisor_assigns_the_quarterly_diagnostic_and_validates_the_report()
     {
         var manager = app.CreateClient();

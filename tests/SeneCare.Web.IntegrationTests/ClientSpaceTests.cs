@@ -16,7 +16,7 @@ public partial class ClientSpaceTests(WebAppFixture app)
     private static readonly byte[] Png = Convert.FromBase64String(
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/q842iQAAAABJRU5ErkJggg==");
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Adding_a_home_creates_a_pending_subscription_and_blocks_reports_until_active()
     {
         var client = await HouseholdAsync();
@@ -42,7 +42,7 @@ public partial class ClientSpaceTests(WebAppFixture app)
         Assert.Contains("Étanchéité avant l'hivernage", health, StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Report_is_created_with_number_sla_and_photo_and_is_idempotent_for_offline_replays()
     {
         var client = await HouseholdAsync();
@@ -70,7 +70,7 @@ public partial class ClientSpaceTests(WebAppFixture app)
         Assert.Equal(1, await check.ServiceRequests.CountAsync(r => r.ClientReference == reference));
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task A_customer_never_sees_another_customers_request_or_photos()
     {
         var owner = await HouseholdAsync();
@@ -96,7 +96,7 @@ public partial class ClientSpaceTests(WebAppFixture app)
         Assert.Equal("image/png", photo.Content.Headers.ContentType?.MediaType);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Files_that_are_not_real_images_are_refused()
     {
         var client = await HouseholdAsync();
@@ -114,7 +114,7 @@ public partial class ClientSpaceTests(WebAppFixture app)
         Assert.Contains("n'est pas une photo", WebUtility.HtmlDecode(await response.Content.ReadAsStringAsync()), StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Full_journey_slot_choice_intervention_validation_and_health_book()
     {
         var client = await HouseholdAsync();
@@ -155,7 +155,7 @@ public partial class ClientSpaceTests(WebAppFixture app)
         Assert.Contains("Fuite sous l'évier", health, StringComparison.Ordinal);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task A_review_is_published_only_with_consent_and_until_hidden_by_SENECARE()
     {
         var client = await HouseholdAsync();
@@ -186,7 +186,7 @@ public partial class ClientSpaceTests(WebAppFixture app)
         Assert.True((await db.ServiceRequests.SingleAsync(r => r.Id == requestId)).Rating!.IsHidden);
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task A_review_without_consent_stays_private()
     {
         // The full journey validates « Rapide et propre » without ticking the consent box.
@@ -219,7 +219,7 @@ public partial class ClientSpaceTests(WebAppFixture app)
         return client;
     }
 
-    [PostgresFact]
+    [DatabaseFact]
     public async Task Home_shows_the_request_in_progress_and_the_neighborhood_gauge()
     {
         var client = await HouseholdAsync();

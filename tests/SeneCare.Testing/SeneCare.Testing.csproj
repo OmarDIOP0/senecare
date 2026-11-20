@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- Shared test helpers: throw-away PostgreSQL database, message capture, test keys. -->
+  <!-- Shared test helpers: throw-away SQL Server database, message capture, test keys. -->
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <IsTestProject>false</IsTestProject>

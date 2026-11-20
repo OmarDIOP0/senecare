@@ -118,7 +118,7 @@ internal sealed class NotificationConfiguration : IEntityTypeConfiguration<Notif
     {
         builder.ToTable("notifications");
         builder.Property(n => n.TemplateKey).HasMaxLength(100);
-        builder.Property(n => n.PayloadJson).HasColumnType("jsonb").Metadata.SetMaxLength(null);
+        builder.Property(n => n.PayloadJson).HasColumnType("nvarchar(max)").Metadata.SetMaxLength(null);
         builder.Property(n => n.LastError).HasMaxLength(1000);
         builder.HasIndex(n => new { n.UserId, n.CreatedAt });
         builder.HasIndex(n => n.Status);

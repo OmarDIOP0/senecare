@@ -13,12 +13,14 @@ using SeneCare.Web.ViewModels;
 
 namespace SeneCare.Web.Controllers;
 
-[Authorize]
+// No class-level [Authorize]: it would add « registration finished » to every action, and a first admin signed in
+// with a temporary password (not registered yet) could then never reach « choose your password » (redirect loop).
 public sealed class AccountController(GetUserProfileHandler getProfile) : Controller
 {
     public const string ChangePasswordPath = "/compte/mot-de-passe";
 
     [HttpGet("/compte")]
+    [Authorize]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         var profile = await getProfile.HandleAsync(User.GetUserId()!.Value, cancellationToken);
@@ -55,7 +57,8 @@ public sealed class AccountController(GetUserProfileHandler getProfile) : Contro
         var identityUser = await userManager.FindByIdAsync(userId.ToString());
         await signInManager.RefreshSignInAsync(identityUser!);
         TempData["flash.toast"] = this.Localizer()["Password_Changed"].Value;
-        return LocalRedirect("/");
+        // Registration not finished yet (first admin): on to name and consent.
+        return LocalRedirect(User.IsRegistered() ? "/" : "/inscription");
     }
 }
 

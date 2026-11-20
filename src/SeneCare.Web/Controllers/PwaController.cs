@@ -4,11 +4,15 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using SeneCare.Web.Infrastructure;
 
 namespace SeneCare.Web.Controllers;
 
 /// <summary>Service worker (generated with versioned asset URLs) and the offline page.</summary>
 [AllowAnonymous]
+// Service worker, manifest and offline page are files, not account pages: redirecting them to « choose your
+// password » would break the installed app.
+[AllowWithTemporaryPassword]
 public sealed class PwaController(IFileVersionProvider versions) : Controller
 {
     /// <summary>

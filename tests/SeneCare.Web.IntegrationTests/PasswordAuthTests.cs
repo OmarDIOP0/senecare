@@ -1,5 +1,6 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using SeneCare.Domain.Platform;
 using SeneCare.Domain.Users;
 using SeneCare.Testing;
@@ -151,6 +152,44 @@ public sealed class PasswordAuthTests(WebAppFixture app)
         });
         Assert.Equal("/", changed.Location());
         Assert.Equal(HttpStatusCode.OK, (await phoneClient.GetAsync(new Uri("/abonnement", UriKind.Relative))).StatusCode);
+    }
+
+    [PostgresFact]
+    public async Task A_first_admin_not_registered_yet_can_choose_a_password_then_finish_registration()
+    {
+        // Like Bootstrap:SuperAdminPhones + SuperAdminPassword: a number with a temporary password, no name yet.
+        var phone = TestData.NewPhone();
+        await app.CreatePasswordClient().SubmitAsync("/inscription", "/connexion", new Dictionary<string, string>
+        {
+            ["Signup"] = "true", ["Phone"] = phone.Formatted, ["Password"] = Password, ["ConfirmPassword"] = Password,
+        });
+        Guid userId;
+        await using (var db = app.Database.CreateContext())
+        {
+            userId = await db.Users.Where(u => u.PhoneNumber == phone).Select(u => u.Id).SingleAsync();
+        }
+
+        using (var scope = app.Services.CreateScope())
+        {
+            await scope.ServiceProvider.GetRequiredService<SeneCare.Application.Abstractions.IIdentityService>()
+                .SetPasswordAsync(userId, "Provisoire-2026", mustChange: true);
+        }
+
+        var admin = app.CreatePasswordClient();
+        var signedIn = await admin.SubmitAsync("/connexion", "/connexion", new Dictionary<string, string> { ["Phone"] = phone.Formatted, ["Password"] = "Provisoire-2026" });
+        Assert.Equal("/compte/mot-de-passe", signedIn.Location());
+
+        // No loop: the page opens, and so does the service worker.
+        Assert.Equal(HttpStatusCode.OK, (await admin.GetAsync(new Uri("/compte/mot-de-passe", UriKind.Relative))).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await admin.GetAsync(new Uri("/sw.js", UriKind.Relative))).StatusCode);
+        Assert.Equal("/compte/mot-de-passe", (await admin.GetAsync(new Uri("/inscription", UriKind.Relative))).Location());
+
+        var changed = await admin.SubmitAsync("/compte/mot-de-passe", "/compte/mot-de-passe", new Dictionary<string, string>
+        {
+            ["NewPassword"] = "Dakar-Yoff-2026", ["ConfirmPassword"] = "Dakar-Yoff-2026",
+        });
+        Assert.Equal("/inscription", changed.Location());
+        Assert.Equal(HttpStatusCode.OK, (await admin.GetAsync(new Uri("/inscription", UriKind.Relative))).StatusCode);
     }
 
     private async Task<HttpClient> StaffAsync(PlatformRole role)

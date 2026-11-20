@@ -1,0 +1,34 @@
+@model PagerModel
+@* « Précédent / Suivant » for a paged list; keeps the other query values (search, filters). *@
+@{
+    string Link(int number)
+    {
+        var values = Context.Request.Query
+            .Where(q => !string.Equals(q.Key, "page", StringComparison.OrdinalIgnoreCase))
+            .SelectMany(q => q.Value.Select(v => $"{Uri.EscapeDataString(q.Key)}={Uri.EscapeDataString(v ?? string.Empty)}"))
+            .Append($"page={number}");
+        return Context.Request.Path + "?" + string.Join('&', values);
+    }
+}
+@if (Model.HasPrevious || Model.HasNext)
+{
+    <nav class="mt-4 flex items-center justify-between gap-3" aria-label="@L["Pager_Label"]">
+        @if (Model.HasPrevious)
+        {
+            <a href="@Link(Model.Number - 1)" class="sc-btn-secondaire min-h-11 text-sm" rel="prev">← @L["Pager_Previous"]</a>
+        }
+        else
+        {
+            <span></span>
+        }
+        <span class="text-sm text-charbon-doux">@L["Pager_Page", Model.Number]</span>
+        @if (Model.HasNext)
+        {
+            <a href="@Link(Model.Number + 1)" class="sc-btn-secondaire min-h-11 text-sm" rel="next">@L["Pager_Next"] →</a>
+        }
+        else
+        {
+            <span></span>
+        }
+    </nav>
+}

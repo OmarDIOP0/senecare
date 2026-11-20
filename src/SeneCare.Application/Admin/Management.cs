@@ -39,7 +39,7 @@ public sealed record CustomerFile(
 /// <summary>Households and companies, searchable by name or phone (support, finance).</summary>
 public sealed class CustomerDirectory(IApplicationDbContext db, TimeProvider clock)
 {
-    public async Task<IReadOnlyList<CustomerRow>> SearchAsync(string? query, AccountKind? kind, CancellationToken cancellationToken = default)
+    public async Task<Page<CustomerRow>> SearchAsync(string? query, AccountKind? kind, int page, CancellationToken cancellationToken = default)
     {
         var accounts = db.CustomerAccounts.AsNoTracking();
         if (kind is { } k)
@@ -62,8 +62,8 @@ public sealed class CustomerDirectory(IApplicationDbContext db, TimeProvider clo
 #pragma warning restore CA1304, CA1311
         }
 
-        var list = await accounts.OrderByDescending(a => a.CreatedAt).Take(100).ToListAsync(cancellationToken);
-        return await RowsAsync(list, cancellationToken);
+        var found = await accounts.OrderByDescending(a => a.CreatedAt).ToPageAsync(page, cancellationToken);
+        return found.Map(await RowsAsync(found.Items, cancellationToken));
     }
 
     /// <summary>Customer file. Opening it is an access to personal data: logged as sensitive.</summary>

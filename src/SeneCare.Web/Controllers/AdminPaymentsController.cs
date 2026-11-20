@@ -16,13 +16,13 @@ namespace SeneCare.Web.Controllers;
 public sealed class AdminPaymentsController(PaymentVerificationHandler payments) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(CancellationToken cancellationToken, int page = 1)
     {
         ViewData["WaveLink"] = await payments.WaveLinkAsync(cancellationToken);
         var (orangeCode, orangeLink) = await payments.OrangeMoneyAsync(cancellationToken);
         ViewData["OrangeMoneyCode"] = orangeCode;
         ViewData["OrangeMoneyLink"] = orangeLink;
-        ViewData["Unpaid"] = await payments.UnpaidAsync(cancellationToken);
+        ViewData["Unpaid"] = await payments.UnpaidAsync(page, cancellationToken);
         return View(await payments.PendingAsync(cancellationToken));
     }
 

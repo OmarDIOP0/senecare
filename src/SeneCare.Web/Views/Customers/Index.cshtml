@@ -1,4 +1,4 @@
-@model IReadOnlyList<SeneCare.Application.Admin.CustomerRow>
+@model SeneCare.Application.Common.Page<SeneCare.Application.Admin.CustomerRow>
 @using SeneCare.Domain.Accounts
 @{
     Layout = "_AppLayout";
@@ -39,7 +39,7 @@
             </tr>
         </thead>
         <tbody class="divide-y divide-ligne">
-            @foreach (var c in Model)
+            @foreach (var c in Model.Items)
             {
                 <tr>
                     <td class="px-3 py-2"><a href="/admin/clients/@c.AccountId" class="font-medium">@c.Name</a><span class="block text-xs">@(c.Kind == AccountKind.Business ? L["Register_ProfileBusiness"] : L["Register_ProfileHousehold"])</span></td>
@@ -56,3 +56,5 @@
 {
     <p class="sc-texte-doux mt-3">@L["Admin_NoResult"]</p>
 }
+
+<partial name="Ui/_Pager" model="new PagerModel(Model.Number, Model.HasNext)" />

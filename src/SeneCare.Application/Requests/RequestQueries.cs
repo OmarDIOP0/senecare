@@ -67,6 +67,22 @@ public sealed class RequestQueries(IApplicationDbContext db, AccessControl acces
         return await SummariesAsync(requests, cancellationToken);
     }
 
+    /// <summary>
+    /// The « Demandes » page: every open request (few, the ones being handled) on the first page, then the
+    /// finished ones by pages, newest first.
+    /// </summary>
+    public async Task<Page<RequestSummary>> PageAsync(Guid userId, int page, CancellationToken cancellationToken = default)
+    {
+        var propertyIds = await access.PropertyIdsOfAsync(userId, cancellationToken);
+        var finals = Enum.GetValues<RequestStatus>().Where(RequestStateMachine.IsFinal).ToList();
+        var visible = db.ServiceRequests.AsNoTracking().Where(r => propertyIds.Contains(r.PropertyId));
+        var open = Paging.Clamp(page) == 1
+            ? await visible.Where(r => !finals.Contains(r.Status)).OrderByDescending(r => r.CreatedAt).ToListAsync(cancellationToken)
+            : [];
+        var finished = await visible.Where(r => finals.Contains(r.Status)).OrderByDescending(r => r.CreatedAt).ToPageAsync(page, cancellationToken);
+        return finished.Map(await SummariesAsync([.. open, .. finished.Items], cancellationToken));
+    }
+
     public async Task<RequestDetail?> DetailAsync(Guid userId, Guid requestId, CancellationToken cancellationToken = default)
     {
         var request = await db.ServiceRequests.AsNoTracking().FirstOrDefaultAsync(r => r.Id == requestId, cancellationToken);

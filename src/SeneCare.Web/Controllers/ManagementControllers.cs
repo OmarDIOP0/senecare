@@ -25,11 +25,11 @@ public sealed class ManagementController : Controller
 public sealed class CustomersController(CustomerDirectory directory) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index(string? q, AccountKind? type, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(string? q, AccountKind? type, CancellationToken cancellationToken, int page = 1)
     {
         ViewData["Query"] = q;
         ViewData["Type"] = type;
-        return View(await directory.SearchAsync(q, type, cancellationToken));
+        return View(await directory.SearchAsync(q, type, page, cancellationToken));
     }
 
     [HttpGet("{id:guid}")]

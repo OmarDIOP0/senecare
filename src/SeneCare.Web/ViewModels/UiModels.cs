@@ -100,3 +100,9 @@ public sealed record TradeArtModel(SeneCare.Domain.Common.ServiceDomain Domain, 
 
 /// <summary>Password field with a show / hide button. <c>NewPassword</c>: browser suggests a new one.</summary>
 public sealed record PasswordInputModel(string Name, string Label, string? Error = null, bool NewPassword = false, string? Hint = null);
+
+/// <summary>Page number and whether a next page exists (Ui/_Pager).</summary>
+public sealed record PagerModel(int Number, bool HasNext)
+{
+    public bool HasPrevious => Number > 1;
+}

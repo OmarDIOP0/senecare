@@ -151,6 +151,10 @@
   <data name="Error_generic" xml:space="preserve"><value>Une erreur est survenue. Réessayez.</value></data>
   <data name="Common_Close" xml:space="preserve"><value>Fermer</value></data>
   <data name="Common_Loading" xml:space="preserve"><value>Chargement…</value></data>
+  <data name="Pager_Label" xml:space="preserve"><value>Pages</value></data>
+  <data name="Pager_Previous" xml:space="preserve"><value>Précédent</value></data>
+  <data name="Pager_Next" xml:space="preserve"><value>Suivant</value></data>
+  <data name="Pager_Page" xml:space="preserve"><value>Page {0}</value></data>
   <data name="Status_AwaitingApproval" xml:space="preserve"><value>À valider</value></data>
   <data name="Status_Submitted" xml:space="preserve"><value>Reçu</value></data>
   <data name="Status_UnderReview" xml:space="preserve"><value>En analyse</value></data>

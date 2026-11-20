@@ -105,18 +105,18 @@ public sealed class PaymentVerificationHandler(
     }
 
     /// <summary>Invoices waiting for money (for cash / bank transfer recording).</summary>
-    public async Task<IReadOnlyList<UnpaidInvoice>> UnpaidAsync(CancellationToken cancellationToken = default)
+    public async Task<Page<UnpaidInvoice>> UnpaidAsync(int page = 1, CancellationToken cancellationToken = default)
     {
         var rows = await (
                 from i in db.Invoices
                 join a in db.CustomerAccounts on i.AccountId equals a.Id
                 where i.Status == InvoiceStatus.Issued || i.Status == InvoiceStatus.Overdue
-                orderby i.DueDate
+                orderby i.DueDate, i.Number
                 select new { Invoice = i, Account = a.DisplayName })
             .AsNoTracking()
-            .Take(200)
-            .ToListAsync(cancellationToken);
-        return [.. rows.Select(r => new UnpaidInvoice(r.Invoice.Id, r.Invoice.Number, r.Account, r.Invoice.Total - r.Invoice.AmountPaid, r.Invoice.DueDate, r.Invoice.Status))];
+            .ToPageAsync(page, cancellationToken);
+        IReadOnlyList<UnpaidInvoice> items = [.. rows.Items.Select(r => new UnpaidInvoice(r.Invoice.Id, r.Invoice.Number, r.Account, r.Invoice.Total - r.Invoice.AmountPaid, r.Invoice.DueDate, r.Invoice.Status))];
+        return rows.Map(items);
     }
 
     /// <summary>

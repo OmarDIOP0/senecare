@@ -145,8 +145,8 @@ public sealed class InterventionsController(
     IWebHostEnvironment environment) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken) =>
-        View(await queries.ListAsync(User.GetUserId()!.Value, cancellationToken));
+    public async Task<IActionResult> Index(CancellationToken cancellationToken, int page = 1) =>
+        View(await queries.PageAsync(User.GetUserId()!.Value, page, cancellationToken));
 
     /// <summary>Intervention report (generated from the technician's notes, checklist and parts).</summary>
     [HttpGet("{id:guid}/rapport.pdf")]

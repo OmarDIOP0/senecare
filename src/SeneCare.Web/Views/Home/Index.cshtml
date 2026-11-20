@@ -72,7 +72,8 @@
         <partial name="Site/_Photo" model='new PhotoModel("/images/hero-technicien.webp", L["Home_Photo_Electrician_Alt"].Value, "aspect-[4/5] w-full rounded-3xl", 1200, 900, "wrench", Eager: true)' />
         <div class="sc-panneau absolute -bottom-6 -left-10 w-72 p-5 shadow-sm">
             <p class="font-mono text-[10px] font-bold tracking-[0.16em] text-or uppercase">@L["Home_Hero_Card_Eyebrow"]</p>
-            <p class="mt-2 flex items-center gap-2 font-semibold text-white"><span class="size-2 rounded-full bg-[#3ccf7a] motion-safe:animate-pulse"></span>@L["Home_Demo_Step3"]</p>
+            @* A plain promise from the specification, not a staged « live » event (no name, no time). *@
+            <p class="mt-2 flex items-center gap-2 font-semibold text-white"><sc-icon name="wrench" class="size-4 text-or" />@L["Home_Hero_Card_Title"]</p>
             <p class="mt-1 text-sm text-sur-nuit/80">@L["Home_Hero_Card_Text"]</p>
         </div>
     </div>

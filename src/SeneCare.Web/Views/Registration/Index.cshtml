@@ -125,7 +125,7 @@
                     <div id="carte" class="h-56 bg-sable" data-map data-lat-input="Property_Latitude" data-lng-input="Property_Longitude"
                          role="application" aria-label="@L["Property_Map"]"></div>
                 </div>
-                <button type="button" class="sc-btn-secondaire mt-2" data-map-locate data-text-locating="@L["Property_Locating"]" data-text-denied="@L["Property_Locate_Denied"]">
+                <button type="button" class="sc-btn-secondaire mt-2" data-map-locate data-text-locating="@L["Property_Locating"]" data-text-denied="@L["Property_Locate_Denied"]" data-text-blocked="@L["Property_Locate_Blocked"]" data-text-off="@L["Property_Locate_Off"]" data-text-timeout="@L["Property_Locate_Timeout"]">
                     <sc-icon name="locate-fixed" />@L["Property_Locate"]
                 </button>
                 <input type="hidden" asp-for="Property.Latitude" data-required-message="@L["Error_address_locate"]" data-required-focus="#carte" />

@@ -315,6 +315,9 @@
   <data name="Property_Locate" xml:space="preserve"><value>Utiliser ma position</value></data>
   <data name="Property_Locating" xml:space="preserve"><value>Localisation…</value></data>
   <data name="Property_Locate_Denied" xml:space="preserve"><value>Position indisponible. Touchez la carte à la place.</value></data>
+  <data name="Property_Locate_Blocked" xml:space="preserve"><value>La localisation est bloquée pour SeneCare. Touchez le cadenas à côté de l'adresse du site, autorisez « Position », puis réessayez. Ou touchez la carte.</value></data>
+  <data name="Property_Locate_Off" xml:space="preserve"><value>La localisation de votre téléphone est désactivée. Activez-la dans les réglages rapides, puis réessayez. Ou touchez la carte.</value></data>
+  <data name="Property_Locate_Timeout" xml:space="preserve"><value>Position introuvable pour l'instant (à l'intérieur, le GPS capte mal). Réessayez près d'une fenêtre, ou touchez la carte.</value></data>
   <data name="Property_Landmark" xml:space="preserve"><value>Point de repère</value></data>
   <data name="Property_Landmark_Placeholder" xml:space="preserve"><value>Ex. : derrière la mosquée, portail vert</value></data>
   <data name="Property_Landmark_Hint" xml:space="preserve"><value>Ce que le technicien voit en arrivant : mosquée, boutique, école, couleur du portail…</value></data>
@@ -1096,7 +1099,6 @@
   <data name="Home_Demo_Title" xml:space="preserve"><value>Fuite sous l'évier de la cuisine</value></data>
   <data name="Home_Demo_Step1" xml:space="preserve"><value>Signalement reçu</value></data>
   <data name="Home_Demo_Step2" xml:space="preserve"><value>Rendez-vous confirmé, jeudi 10 h</value></data>
-  <data name="Home_Demo_Step3" xml:space="preserve"><value>Technicien en route</value></data>
   <data name="Home_Demo_Step4" xml:space="preserve"><value>Intervention et rapport</value></data>
   <data name="Home_Demo_Paid" xml:space="preserve"><value>Abonnement payé par Wave</value></data>
   <data name="Home_Promise_Offline" xml:space="preserve"><value>Signalez même sans réseau</value></data>
@@ -1226,7 +1228,7 @@
   <data name="Home_QuickForm_TradeAny" xml:space="preserve"><value>Je ne sais pas</value></data>
   <data name="Home_QuickForm_Area" xml:space="preserve"><value>Quartier</value></data>
   <data name="Home_QuickForm_AreaPlaceholder" xml:space="preserve"><value>Ex. : Mermoz, Ouakam, Thiès</value></data>
-  <data name="Home_QuickForm_PhoneHelp" xml:space="preserve"><value>Vous vous connectez ensuite avec votre numéro et votre mot de passe pour suivre votre demande.</value></data>
+  <data name="Home_QuickForm_PhoneHelp" xml:space="preserve"><value>Ensuite, vous vous connectez avec ce numéro, ou vous créez votre compte et choisissez votre abonnement. Vous décrivez alors le problème, avec une photo.</value></data>
   <data name="Home_Trades_Text" xml:space="preserve"><value>Les dépannages et l'entretien courant d'une maison ou de locaux, par des techniciens du métier.</value></data>
   <data name="Home_Techs_Text" xml:space="preserve"><value>Des techniciens salariés, formés à leur métier, qui interviennent dans leur zone.</value></data>
   <data name="Home_Techs_Years" xml:space="preserve"><value>{0} ans de métier</value></data>
@@ -1451,8 +1453,9 @@
   <data name="AdminPay_Active" xml:space="preserve"><value>Actif</value></data>
   <data name="AdminPay_Soon" xml:space="preserve"><value>Bientôt</value></data>
   <data name="AdminPay_CashHint" xml:space="preserve"><value>Espèces et virements : enregistrez-les depuis la liste des factures à encaisser ci-dessous.</value></data>
-  <data name="Home_Hero_Card_Eyebrow" xml:space="preserve"><value>En ce moment</value></data>
-  <data name="Home_Hero_Card_Text" xml:space="preserve"><value>Ibrahima arrive à Mermoz vers 10 h. Suivi en direct dans l'application.</value></data>
+  <data name="Home_Hero_Card_Eyebrow" xml:space="preserve"><value>Après votre demande</value></data>
+  <data name="Home_Hero_Card_Title" xml:space="preserve"><value>Un technicien vient chez vous</value></data>
+  <data name="Home_Hero_Card_Text" xml:space="preserve"><value>Il arrive le plus tôt possible, selon le niveau d'urgence.</value></data>
   <data name="Site_Faq_Eyebrow" xml:space="preserve"><value>Questions fréquentes</value></data>
   <data name="Site_Cta_Eyebrow" xml:space="preserve"><value>Besoin d'un technicien ?</value></data>
   <data name="Site_Pricing_Yearly" xml:space="preserve"><value>Paiement annuel</value></data>

@@ -32,13 +32,15 @@
     const locate = document.querySelector("[data-map-locate]");
 
     // On a phone the person is usually at home: ask for the position as soon as the map shows (the browser
-    // asks for the permission), once. On a computer the button stays the way to do it.
+    // asks for the permission), once. On a computer the button stays the way to do it. Not when the site is
+    // already blocked: the browser would not ask again, the person would only get an error.
     let asked = false;
-    const askPositionOnPhone = () => {
+    const askPositionOnPhone = async () => {
       if (asked || marker || !locate || !navigator.geolocation || !matchMedia("(pointer: coarse)").matches) return;
       if (element.offsetParent === null) return;
       asked = true;
-      locate.click();
+      const state = await navigator.permissions?.query({ name: "geolocation" }).then((p) => p.state).catch(() => "prompt");
+      if (state !== "denied") locate.click();
     };
 
     // Inside the sign-up steps the map starts hidden: resize and recentre it once it is shown.
@@ -59,9 +61,14 @@
           locate.lastChild.textContent = label;
           place({ lat: position.coords.latitude, lng: position.coords.longitude }, 18);
         },
-        () => {
+        (error) => {
           locate.lastChild.textContent = label;
-          window.scToast?.(locate.dataset.textDenied, "erreur");
+          // Say what to do: unblock the site, switch the phone's location on, or try again / touch the map.
+          const text = error.code === 1 ? locate.dataset.textBlocked
+            : error.code === 2 ? locate.dataset.textOff
+              : error.code === 3 ? locate.dataset.textTimeout
+                : locate.dataset.textDenied;
+          window.scToast?.(text ?? locate.dataset.textDenied, "erreur");
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 },
       );

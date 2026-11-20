@@ -154,7 +154,9 @@ Parcours client :
   Compte, logement et abonnement sont créés ensemble, puis les écrans de bienvenue (une seule fois, « Passer »),
   puis `/abonnement` pour payer. Les écrans de bienvenue ne s'affichent jamais devant l'accueil public.
   D'autres logements s'ajoutent ensuite depuis l'espace.
-- Paiement réel : lien marchand Wave configuré par l'admin (`/admin/paiements`), « J'ai payé » + référence,
+- Paiement réel : Wave (lien marchand) et Orange Money (code marchand / numéro payé par #144#, et/ou lien),
+  configurés par l'admin (`/admin/paiements`, réglages `payments.*`) ; le client choisit parmi ceux ouverts,
+  puis « J'ai payé » + référence (moyen enregistré sur le paiement),
   vérification par la Finance (notification), activation et message WhatsApp / SMS au client. Factures et
   reçus PDF. Pas de bouton de simulation dans l'interface.
 

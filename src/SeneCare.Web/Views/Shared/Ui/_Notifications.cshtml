@@ -36,7 +36,8 @@ else
             using var doc = JsonDocument.Parse(string.IsNullOrWhiteSpace(n.PayloadJson) ? "{}" : n.PayloadJson);
             var payload = doc.RootElement;
             var title = L[key + "_Title"];
-            var text = L[key + "_Text", Value(payload, "invoice"), Value(payload, "amount"), Value(payload, "reason")];
+            var channel = Value(payload, "channel");
+            var text = L[key + "_Text", Value(payload, "invoice"), Value(payload, "amount"), Value(payload, "reason"), channel.Length == 0 ? "Wave" : L["Channel_" + channel].Value];
             <li class="border-b border-ligne last:border-b-0">
                 <a href="@look.Url" class="flex gap-3 px-4 py-3 text-charbon no-underline hover:bg-sourdine hover:no-underline @(n.IsUnread ? "bg-laterite-clair/40" : "")">
                     <span class="grid size-10 shrink-0 place-items-center rounded-full @look.Tint"><sc-icon name="@look.Icon" class="size-5" /></span>

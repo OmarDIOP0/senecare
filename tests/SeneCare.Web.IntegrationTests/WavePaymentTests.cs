@@ -130,6 +130,58 @@ public sealed partial class WavePaymentTests(WebAppFixture app)
         Assert.Equal(WaveLink, (await db.AppSettings.SingleAsync(s => s.Key == SettingKeys.WaveLink)).Value);
     }
 
+    [PostgresFact]
+    public async Task Customer_can_pay_with_orange_money_instead_of_wave()
+    {
+        // Finance opens Orange Money: a merchant code and a link; bad values are refused.
+        var finance = await StaffAsync(PlatformRole.Finance);
+        await finance.SubmitAsync("/admin/paiements", "/admin/paiements/orange-money", new Dictionary<string, string> { ["code"] = "abc", ["link"] = "" });
+        await finance.SubmitAsync("/admin/paiements", "/admin/paiements/orange-money", new Dictionary<string, string> { ["code"] = "", ["link"] = "http://om.exemple.sn/payer" });
+        await using (var db = app.Database.CreateContext())
+        {
+            Assert.False(await db.AppSettings.AnyAsync(s => s.Key == SettingKeys.OrangeMoneyCode && s.Value == "abc"));
+            Assert.False(await db.AppSettings.AnyAsync(s => s.Key == SettingKeys.OrangeMoneyLink && s.Value.StartsWith("http:")));
+        }
+
+        Assert.Equal(HttpStatusCode.Redirect, (await finance.SubmitAsync("/admin/paiements", "/admin/paiements/orange-money", new Dictionary<string, string>
+        {
+            ["code"] = "  445  566 ", ["link"] = "https://om.exemple.sn/payer?montant={montant}",
+        })).StatusCode);
+        await SetWaveLinkAsync(WaveLink);
+
+        // The customer sees both ways to pay and chooses Orange Money.
+        var customer = await HouseholdAsync();
+        await AddHomeAsync(customer);
+        var page = WebUtility.HtmlDecode(await customer.GetStringAsync(new Uri("/abonnement", UriKind.Relative)));
+        Assert.Contains("name=\"channel\" value=\"Wave\"", page, StringComparison.Ordinal);
+        Assert.Contains("name=\"channel\" value=\"OrangeMoney\"", page, StringComparison.Ordinal);
+        Assert.Contains("445 566", page, StringComparison.Ordinal);
+        Assert.Contains("tel:%23144%23", page, StringComparison.Ordinal);
+        Assert.Contains("https://om.exemple.sn/payer?montant=18500", page, StringComparison.Ordinal);
+        var invoiceId = Guid.Parse(InvoiceAction().Match(page).Groups[1].Value);
+
+        // Cash and transfers are recorded by Finance only: a customer cannot declare them.
+        await customer.SubmitAsync("/abonnement", $"/abonnement/factures/{invoiceId}/paiement", new Dictionary<string, string> { ["channel"] = "Cash" });
+        await using (var db = app.Database.CreateContext())
+        {
+            Assert.False(await db.Payments.AnyAsync(p => p.InvoiceId == invoiceId));
+        }
+
+        await customer.SubmitAsync("/abonnement", $"/abonnement/factures/{invoiceId}/paiement", new Dictionary<string, string>
+        {
+            ["channel"] = "OrangeMoney", ["reference"] = "MP261120.1234.A56789",
+        });
+        await using (var db = app.Database.CreateContext())
+        {
+            Assert.Equal(PaymentChannel.OrangeMoney, (await db.Payments.SingleAsync(p => p.InvoiceId == invoiceId)).Channel);
+        }
+
+        // Finance sees which merchant account to check.
+        var admin = WebUtility.HtmlDecode(await finance.GetStringAsync(new Uri("/admin/paiements", UriKind.Relative)));
+        Assert.Contains("MP261120.1234.A56789", admin, StringComparison.Ordinal);
+        Assert.Contains("<dd class=\"font-semibold\">Orange Money</dd>", admin, StringComparison.Ordinal);
+    }
+
     private async Task SetWaveLinkAsync(string link)
     {
         var finance = await StaffAsync(PlatformRole.Finance);

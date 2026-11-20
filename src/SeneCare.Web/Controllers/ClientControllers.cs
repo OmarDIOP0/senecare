@@ -249,11 +249,11 @@ public sealed class SubscriptionController(
         return View(items);
     }
 
-    /// <summary>« J'ai payé » after paying with the Wave link: a Finance admin checks and activates.</summary>
+    /// <summary>« J'ai payé » after paying with Wave or Orange Money: a Finance admin checks and activates.</summary>
     [HttpPost("factures/{invoiceId:guid}/paiement")]
-    public async Task<IActionResult> DeclarePayment(Guid invoiceId, string? reference, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeclarePayment(Guid invoiceId, string? reference, SeneCare.Domain.Billing.PaymentChannel channel = SeneCare.Domain.Billing.PaymentChannel.Wave, CancellationToken cancellationToken = default)
     {
-        var result = await declarePayment.HandleAsync(User.GetUserId()!.Value, invoiceId, reference, cancellationToken);
+        var result = await declarePayment.HandleAsync(User.GetUserId()!.Value, invoiceId, reference, channel, cancellationToken);
         TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Payment_Declared"].Value : this.ErrorMessage(result.Error);
         return RedirectToAction(nameof(Index));
     }

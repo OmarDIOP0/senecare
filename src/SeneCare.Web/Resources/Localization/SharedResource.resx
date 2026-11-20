@@ -273,7 +273,7 @@
   <data name="Tour_Client_Track_Title" xml:space="preserve"><value>Suivre vos interventions</value></data>
   <data name="Tour_Client_Track_Text" xml:space="preserve"><value>Rendez-vous, technicien en route, rapport : tout se suit ici.</value></data>
   <data name="Tour_Client_Subscription_Title" xml:space="preserve"><value>Votre abonnement</value></data>
-  <data name="Tour_Client_Subscription_Text" xml:space="preserve"><value>Échéances, factures et reçus, avec paiement par Wave.</value></data>
+  <data name="Tour_Client_Subscription_Text" xml:space="preserve"><value>Échéances, factures et reçus, avec paiement par Wave ou Orange Money.</value></data>
   <data name="Tour_Client_Property_Title" xml:space="preserve"><value>Votre logement</value></data>
   <data name="Tour_Client_Property_Text" xml:space="preserve"><value>Adresse, point de repère et photos pour que le technicien trouve du premier coup.</value></data>
   <data name="Tour_Business_Sites_Title" xml:space="preserve"><value>Vos sites</value></data>
@@ -340,7 +340,7 @@
   <data name="Subscription_FirstPayment" xml:space="preserve"><value>Premier paiement</value></data>
   <data name="Subscription_Period" xml:space="preserve"><value>Période en cours</value></data>
   <data name="Subscription_NextDueLabel" xml:space="preserve"><value>Prochaine échéance</value></data>
-  <data name="Subscription_PendingText" xml:space="preserve"><value>Votre abonnement démarre dès le paiement de l'inscription et du premier mois, par Wave, Orange Money ou Free Money (bientôt disponible).</value></data>
+  <data name="Subscription_PendingText" xml:space="preserve"><value>Votre abonnement démarre dès le paiement de l'inscription et du premier mois, par Wave ou Orange Money.</value></data>
   <data name="Subscription_Invoices" xml:space="preserve"><value>Factures et reçus</value></data>
   <data name="Subscription_NoInvoice" xml:space="preserve"><value>Aucune facture pour le moment.</value></data>
   <data name="Subscription_DueOn" xml:space="preserve"><value>Échéance : {0}</value></data>
@@ -477,25 +477,32 @@
   <data name="Pay_Step2" xml:space="preserve"><value>Vérifiez le montant et indiquez {0} dans la note du paiement si Wave le propose.</value></data>
   <data name="Pay_Step3" xml:space="preserve"><value>Revenez ici et touchez « J'ai payé ». Nous vérifions et activons votre compte.</value></data>
   <data name="Pay_WithWave" xml:space="preserve"><value>Payer avec Wave</value></data>
+  <data name="Pay_Choose" xml:space="preserve"><value>Payer avec</value></data>
+  <data name="Pay_Om_Step1" xml:space="preserve"><value>Ouvrez Orange Money : composez #144# ou utilisez l'application.</value></data>
+  <data name="Pay_Om_Step1_Link" xml:space="preserve"><value>Touchez « Payer avec Orange Money » et vérifiez le montant.</value></data>
+  <data name="Pay_Om_Step2" xml:space="preserve"><value>Payez {0} au code marchand ou numéro {1}.</value></data>
+  <data name="Pay_Om_Step3" xml:space="preserve"><value>Gardez le SMS de confirmation : son identifiant de transaction sert de référence.</value></data>
+  <data name="Pay_WithOrange" xml:space="preserve"><value>Payer avec Orange Money</value></data>
+  <data name="Pay_DialOrange" xml:space="preserve"><value>Composer #144#</value></data>
   <data name="Pay_ScanQr" xml:space="preserve"><value>Afficher le QR code Wave</value></data>
-  <data name="Pay_Reference" xml:space="preserve"><value>Référence de la transaction Wave (facultatif)</value></data>
+  <data name="Pay_Reference" xml:space="preserve"><value>Référence de la transaction (facultatif)</value></data>
   <data name="Pay_Reference_Placeholder" xml:space="preserve"><value>Ex : T_ABC123…</value></data>
-  <data name="Pay_Reference_Hint" xml:space="preserve"><value>Elle figure dans le SMS ou l'historique Wave. Elle accélère la vérification.</value></data>
+  <data name="Pay_Reference_Hint" xml:space="preserve"><value>Elle figure dans le SMS de confirmation ou l'historique de votre application. Elle accélère la vérification.</value></data>
   <data name="Pay_Declare" xml:space="preserve"><value>J'ai payé</value></data>
   <data name="Pay_Verifying" xml:space="preserve"><value>Paiement signalé le {0}. L'équipe SENECARE le vérifie : vous serez prévenu dès l'activation.</value></data>
   <data name="Pay_Rejected" xml:space="preserve"><value>Votre dernier paiement n'a pas pu être confirmé : {0}. Vous pouvez réessayer ou nous appeler.</value></data>
-  <data name="Pay_NotConfigured" xml:space="preserve"><value>Le paiement Wave n'est pas encore ouvert. Écrivez-nous sur WhatsApp : nous vous envoyons le lien de paiement et activons votre compte.</value></data>
+  <data name="Pay_NotConfigured" xml:space="preserve"><value>Le paiement en ligne n'est pas encore ouvert. Écrivez-nous sur WhatsApp : nous vous envoyons le moyen de payer et activons votre compte.</value></data>
   <data name="Pay_AskOnWhatsApp" xml:space="preserve"><value>Payer avec l'aide de SeneCare sur WhatsApp</value></data>
   <data name="Payment_Declared" xml:space="preserve"><value>Paiement signalé. Nous le vérifions.</value></data>
   <data name="AdminPay_Title" xml:space="preserve"><value>Paiements à vérifier</value></data>
-  <data name="AdminPay_Intro" xml:space="preserve"><value>Comparez chaque déclaration avec l'historique du compte marchand Wave avant de valider. Valider marque la facture payée et active l'abonnement.</value></data>
+  <data name="AdminPay_Intro" xml:space="preserve"><value>Comparez chaque déclaration avec l'historique du compte marchand (Wave ou Orange Money) avant de valider. Valider marque la facture payée et active l'abonnement.</value></data>
   <data name="AdminPay_Pending" xml:space="preserve"><value>En attente ({0})</value></data>
   <data name="AdminPay_None" xml:space="preserve"><value>Aucun paiement en attente de vérification.</value></data>
   <data name="AdminPay_DeclaredOn" xml:space="preserve"><value>signalé le {0}</value></data>
   <data name="AdminPay_Invoice" xml:space="preserve"><value>Facture</value></data>
   <data name="AdminPay_Channel" xml:space="preserve"><value>Moyen</value></data>
   <data name="AdminPay_CustomerRef" xml:space="preserve"><value>Référence client</value></data>
-  <data name="AdminPay_CheckHint" xml:space="preserve"><value>Cherchez dans Wave Business un paiement de ce montant, ce numéro ou la note {0}.</value></data>
+  <data name="AdminPay_CheckHint" xml:space="preserve"><value>Cherchez sur le compte marchand indiqué un paiement de ce montant, depuis ce numéro, ou la note {0}.</value></data>
   <data name="AdminPay_Verify" xml:space="preserve"><value>Valider le paiement</value></data>
   <data name="AdminPay_Reject" xml:space="preserve"><value>Refuser</value></data>
   <data name="AdminPay_RejectReason" xml:space="preserve"><value>Motif (visible par le client)</value></data>
@@ -511,6 +518,9 @@
   <data name="Error_invoice_not_payable" xml:space="preserve"><value>Cette facture n'est plus à payer.</value></data>
   <data name="Error_payment_already_declared" xml:space="preserve"><value>Un paiement est déjà en cours de vérification pour cette facture.</value></data>
   <data name="Error_payment_wave_link_invalid" xml:space="preserve"><value>Le lien doit être un lien Wave en https (pay.wave.com).</value></data>
+  <data name="Error_payment_orange_code_invalid" xml:space="preserve"><value>Le code marchand ou le numéro doit contenir de 4 à 20 chiffres.</value></data>
+  <data name="Error_payment_orange_link_invalid" xml:space="preserve"><value>Le lien Orange Money doit commencer par https://.</value></data>
+  <data name="Error_payment_channel_invalid" xml:space="preserve"><value>Choisissez Wave ou Orange Money.</value></data>
   <data name="Error_payment_not_found" xml:space="preserve"><value>Paiement introuvable.</value></data>
   <data name="Error_payment_not_awaiting_verification" xml:space="preserve"><value>Ce paiement a déjà été traité.</value></data>
   <data name="Error_payment_rejection_reason" xml:space="preserve"><value>Indiquez le motif du refus.</value></data>
@@ -839,7 +849,7 @@
   <data name="Admin_Customers_Text" xml:space="preserve"><value>Recherche, comptes, sites, abonnements et factures.</value></data>
   <data name="Admin_Technicians" xml:space="preserve"><value>Techniciens</value></data>
   <data name="Admin_Technicians_Text" xml:space="preserve"><value>Métiers, zones, semaine de travail, certification.</value></data>
-  <data name="Admin_Payments_Text" xml:space="preserve"><value>Paiements Wave à vérifier, espèces et virements.</value></data>
+  <data name="Admin_Payments_Text" xml:space="preserve"><value>Paiements Wave et Orange Money à vérifier, espèces et virements.</value></data>
   <data name="Admin_Plans" xml:space="preserve"><value>Offres et tarifs</value></data>
   <data name="Admin_Plans_Text" xml:space="preserve"><value>Prix, délais d'intervention, visites, métiers couverts.</value></data>
   <data name="Admin_Plans_Intro" xml:space="preserve"><value>Les abonnements en cours gardent leur prix. Les nouveaux abonnements et les nouvelles demandes utilisent ces valeurs. Chaque modification est journalisée.</value></data>
@@ -886,6 +896,8 @@
   <data name="AdminPay_Note_Placeholder" xml:space="preserve"><value>Ex : reçu n° 0042, virement CBAO du 12/10</value></data>
   <data name="Channel_Cash" xml:space="preserve"><value>Espèces</value></data>
   <data name="Channel_BankTransfer" xml:space="preserve"><value>Virement</value></data>
+  <data name="Channel_Wave" xml:space="preserve"><value>Wave</value></data>
+  <data name="Channel_OrangeMoney" xml:space="preserve"><value>Orange Money</value></data>
   <data name="Setting_ContactTitle" xml:space="preserve"><value>Coordonnées de SeneCare</value></data>
   <data name="Setting_ContactText" xml:space="preserve"><value>Affichées sur le site public (bandeau, pied de page, boutons Appeler et WhatsApp). Un champ vide n'est pas affiché.</value></data>
   <data name="Setting_contact_phone" xml:space="preserve"><value>Téléphone</value></data>
@@ -1089,7 +1101,7 @@
   <data name="Home_Demo_Paid" xml:space="preserve"><value>Abonnement payé par Wave</value></data>
   <data name="Home_Promise_Offline" xml:space="preserve"><value>Signalez même sans réseau</value></data>
   <data name="Home_Promise_WhatsApp" xml:space="preserve"><value>Suivi par WhatsApp et SMS</value></data>
-  <data name="Home_Promise_Wave" xml:space="preserve"><value>Paiement par Wave</value></data>
+  <data name="Home_Promise_Wave" xml:space="preserve"><value>Paiement par Wave ou Orange Money</value></data>
   <data name="Home_Trades_Eyebrow" xml:space="preserve"><value>Nos métiers</value></data>
   <data name="Home_Trades_Title" xml:space="preserve"><value>Sept métiers, un seul interlocuteur</value></data>
   <data name="Home_Trade_Electricity" xml:space="preserve"><value>Coupures, courts-circuits, prises et tableaux électriques.</value></data>
@@ -1106,7 +1118,7 @@
   <data name="Home_Steps_Prices" xml:space="preserve"><value>Voir les tarifs</value></data>
   <data name="Home_Steps_Title" xml:space="preserve"><value>Comment ça marche, en 3 étapes</value></data>
   <data name="Home_Step1_Title" xml:space="preserve"><value>Créez votre compte</value></data>
-  <data name="Home_Step1_Text" xml:space="preserve"><value>Votre numéro, un mot de passe et votre logement : deux minutes. Vous payez ensuite l'abonnement par Wave.</value></data>
+  <data name="Home_Step1_Text" xml:space="preserve"><value>Votre numéro, un mot de passe et votre logement : deux minutes. Vous payez ensuite l'abonnement par Wave ou Orange Money.</value></data>
   <data name="Home_Step2_Title" xml:space="preserve"><value>Signalez un problème</value></data>
   <data name="Home_Step2_Text" xml:space="preserve"><value>Une photo et quelques mots depuis votre téléphone. Sans réseau, la demande part au retour de la connexion.</value></data>
   <data name="Home_Step3_Title" xml:space="preserve"><value>Nous intervenons</value></data>
@@ -1207,7 +1219,7 @@
   <data name="Site_Footer_Contact" xml:space="preserve"><value>Contact</value></data>
   <data name="Home_Hero_Point1" xml:space="preserve"><value>Intervention rapide selon le niveau d'urgence</value></data>
   <data name="Home_Hero_Point2" xml:space="preserve"><value>Nom et numéro du technicien avant son arrivée</value></data>
-  <data name="Home_Hero_Point3" xml:space="preserve"><value>Paiement par Wave, facture dans l'application</value></data>
+  <data name="Home_Hero_Point3" xml:space="preserve"><value>Paiement par Wave ou Orange Money, facture dans l'application</value></data>
   <data name="Home_Hero_Point4" xml:space="preserve"><value>Intervention garantie, reprise sans déplacement facturé</value></data>
   <data name="Home_QuickForm_Title" xml:space="preserve"><value>Décrivez votre besoin, on s'occupe du reste</value></data>
   <data name="Home_QuickForm_Trade" xml:space="preserve"><value>Métier</value></data>
@@ -1318,8 +1330,8 @@
   <data name="Site_Legal_SeePrivacy" xml:space="preserve"><value>Pour vos données personnelles, voir la</value></data>
   <data name="Tab_Subscription" xml:space="preserve"><value>Abonnement</value></data>
   <data name="Notif_Unread" xml:space="preserve"><value>Non lue</value></data>
-  <data name="Notif_payment_declared_Title" xml:space="preserve"><value>Paiement Wave à vérifier</value></data>
-  <data name="Notif_payment_declared_Text" xml:space="preserve"><value>Facture {0} · {1}. Vérifiez la réception sur le compte Wave.</value></data>
+  <data name="Notif_payment_declared_Title" xml:space="preserve"><value>Paiement à vérifier</value></data>
+  <data name="Notif_payment_declared_Text" xml:space="preserve"><value>Facture {0} · {1} par {3}. Vérifiez la réception sur ce compte marchand.</value></data>
   <data name="Notif_payment_verified_Title" xml:space="preserve"><value>Paiement reçu, abonnement actif</value></data>
   <data name="Notif_payment_verified_Text" xml:space="preserve"><value>Facture {0} réglée ({1}). Vous pouvez signaler un problème dès maintenant.</value></data>
   <data name="Notif_payment_rejected_Title" xml:space="preserve"><value>Paiement non retrouvé</value></data>
@@ -1360,7 +1372,7 @@
   <data name="Register_PlanTagline_PREMIUM" xml:space="preserve"><value>Les sites qui ne peuvent pas s'arrêter : délais les plus courts.</value></data>
   <data name="Register_Step4" xml:space="preserve"><value>Confirmation</value></data>
   <data name="Register_Step4_Title" xml:space="preserve"><value>Et ensuite ?</value></data>
-  <data name="Register_Next2" xml:space="preserve"><value>Vous payez l'inscription et la première période par Wave, puis vous cliquez sur « J'ai payé ».</value></data>
+  <data name="Register_Next2" xml:space="preserve"><value>Vous payez l'inscription et la première période par Wave ou Orange Money, puis vous cliquez sur « J'ai payé ».</value></data>
   <data name="Register_Next3" xml:space="preserve"><value>Nous vérifions le paiement et activons votre compte. Votre espace l'indique dès que c'est fait.</value></data>
   <data name="Register_Back" xml:space="preserve"><value>Retour</value></data>
   <data name="Register_Next" xml:space="preserve"><value>Suivant</value></data>
@@ -1368,10 +1380,9 @@
   <data name="Register_Panel_Title" xml:space="preserve"><value>L'entretien de votre bâtiment, organisé en quelques minutes.</value></data>
   <data name="Register_Panel_1" xml:space="preserve"><value>Signalez une panne avec une photo, même sans réseau.</value></data>
   <data name="Register_Panel_2" xml:space="preserve"><value>Suivez le technicien en route et appelez-le en un geste.</value></data>
-  <data name="Register_Panel_3" xml:space="preserve"><value>Payez par Wave, facture et reçu dans l'application.</value></data>
+  <data name="Register_Panel_3" xml:space="preserve"><value>Payez par Wave ou Orange Money, facture et reçu dans l'application.</value></data>
   <data name="Register_Panel_4" xml:space="preserve"><value>Chaque intervention reste dans le carnet de votre logement.</value></data>
   <data name="Register_Panel_Trades" xml:space="preserve"><value>Métiers</value></data>
-  <data name="Register_Panel_Urgent" xml:space="preserve"><value>Urgence</value></data>
   <data name="Register_Panel_Pay" xml:space="preserve"><value>Paiement</value></data>
   <data name="Register_StepPhone" xml:space="preserve"><value>Votre numéro</value></data>
   <data name="Register_StepPhone_Title" xml:space="preserve"><value>Votre numéro de téléphone</value></data>
@@ -1398,8 +1409,8 @@
   <data name="Register_Done" xml:space="preserve"><value>Compte créé. Votre abonnement est prêt à payer.</value></data>
   <data name="Error_registration_plan_unknown" xml:space="preserve"><value>Choisissez une formule qui correspond à votre profil.</value></data>
   <data name="Property_Welcome_Title" xml:space="preserve"><value>Compte créé, plus qu'une étape</value></data>
-  <data name="Property_Welcome_Home" xml:space="preserve"><value>Ajoutez votre logement : votre abonnement sera prêt à payer par Wave juste après.</value></data>
-  <data name="Property_Welcome_Business" xml:space="preserve"><value>Ajoutez votre premier site : votre formule sera prête à payer par Wave juste après.</value></data>
+  <data name="Property_Welcome_Home" xml:space="preserve"><value>Ajoutez votre logement : votre abonnement sera prêt à payer juste après.</value></data>
+  <data name="Property_Welcome_Business" xml:space="preserve"><value>Ajoutez votre premier site : votre formule sera prête à payer juste après.</value></data>
   <data name="Pdf_Invoice_Number" xml:space="preserve"><value>Facture n°</value></data>
   <data name="Pdf_Invoice_Issued" xml:space="preserve"><value>Émise le</value></data>
   <data name="Pdf_Invoice_Due" xml:space="preserve"><value>Échéance</value></data>
@@ -1419,7 +1430,7 @@
   <data name="Subscription_NotStarted" xml:space="preserve"><value>Démarre au paiement</value></data>
   <data name="Subscription_Progress" xml:space="preserve"><value>Où en est votre compte</value></data>
   <data name="Subscription_Stage1" xml:space="preserve"><value>Compte et logement enregistrés</value></data>
-  <data name="Subscription_Stage2" xml:space="preserve"><value>Paiement Wave de l'inscription</value></data>
+  <data name="Subscription_Stage2" xml:space="preserve"><value>Paiement de l'inscription</value></data>
   <data name="Subscription_Stage3" xml:space="preserve"><value>Vérification par SeneCare</value></data>
   <data name="Subscription_Stage4" xml:space="preserve"><value>Abonnement actif : vous pouvez signaler</value></data>
   <data name="Subscription_Receipt" xml:space="preserve"><value>Reçu PDF</value></data>
@@ -1429,6 +1440,13 @@
   <data name="AdminPay_Eyebrow" xml:space="preserve"><value>Encaissements</value></data>
   <data name="AdminPay_Methods" xml:space="preserve"><value>Moyens de paiement</value></data>
   <data name="AdminPay_WaveText" xml:space="preserve"><value>Lien marchand : le client paie, puis déclare son paiement ici.</value></data>
+  <data name="AdminPay_OrangeText" xml:space="preserve"><value>Code marchand ou numéro (payé par #144# ou l'application), et/ou lien de paiement. Le client choisit ensuite, puis déclare son paiement ici.</value></data>
+  <data name="AdminPay_OrangeCodeLabel" xml:space="preserve"><value>Code marchand ou numéro Orange Money</value></data>
+  <data name="AdminPay_OrangeCodeHint" xml:space="preserve"><value>Chiffres uniquement, affichés au client avec le montant. Laissez vide si vous n'utilisez que le lien.</value></data>
+  <data name="AdminPay_OrangeLinkLabel" xml:space="preserve"><value>Lien de paiement Orange Money (facultatif)</value></data>
+  <data name="AdminPay_OrangeLinkHint" xml:space="preserve"><value>Lien https. Mettez {montant} à l'endroit du montant pour le pré-remplir. Les deux champs vides masquent Orange Money.</value></data>
+  <data name="AdminPay_OrangeSave" xml:space="preserve"><value>Enregistrer Orange Money</value></data>
+  <data name="AdminPay_OrangeSaved" xml:space="preserve"><value>Orange Money enregistré.</value></data>
   <data name="AdminPay_NotSet" xml:space="preserve"><value>Lien à configurer</value></data>
   <data name="AdminPay_Active" xml:space="preserve"><value>Actif</value></data>
   <data name="AdminPay_Soon" xml:space="preserve"><value>Bientôt</value></data>

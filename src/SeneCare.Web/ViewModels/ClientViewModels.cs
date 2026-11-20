@@ -91,5 +91,5 @@ public sealed class ClientHomeModel
     public SeneCare.Application.Neighborhoods.ReferralStats? Referral { get; init; }
 }
 
-/// <summary>A subscription and, when something is due, the invoice to pay with the Wave link (+ its QR code).</summary>
+/// <summary>A subscription and, when something is due, the invoice to pay with Wave (+ its QR code) or Orange Money.</summary>
 public sealed record SubscriptionPageItem(SubscriptionSummary Subscription, SeneCare.Application.Payments.InvoiceDue? Due, string? QrSvg);

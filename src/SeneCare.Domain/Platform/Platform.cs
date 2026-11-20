@@ -163,6 +163,12 @@ public static class SettingKeys
     /// <summary>Wave merchant payment link (« {montant} » is replaced by the amount when present). Empty = not configured.</summary>
     public const string WaveLink = "payments.wave_link";
 
+    /// <summary>Orange Money merchant code or number (paid from #144# / the app). Empty = not shown.</summary>
+    public const string OrangeMoneyCode = "payments.orange_money_code";
+
+    /// <summary>Orange Money payment link (« {montant} » replaced by the amount when present). Empty = not shown.</summary>
+    public const string OrangeMoneyLink = "payments.orange_money_link";
+
     /// <summary>Public contact details (site header, footer, call / WhatsApp buttons). Empty = not shown.</summary>
     public const string ContactPhone = "contact.phone";
     public const string ContactWhatsApp = "contact.whatsapp";
@@ -187,6 +193,8 @@ public static class SettingKeys
         [WarrantyDays] = "90",
         [NeighborhoodThreshold] = "500",
         [WaveLink] = "",
+        [OrangeMoneyCode] = "",
+        [OrangeMoneyLink] = "",
         // SENECARE's number given by the owner; the rest is filled in Admin › Paramètres.
         [ContactPhone] = "762919145",
         [ContactWhatsApp] = "762919145",

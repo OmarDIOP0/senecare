@@ -8,8 +8,8 @@ using SeneCare.Web.Infrastructure;
 namespace SeneCare.Web.Controllers;
 
 /// <summary>
-/// Finance: Wave payments declared by customers (verify → invoice paid + subscription active, or reject),
-/// and the Wave merchant link setting. Every decision goes to the audit log.
+/// Finance: Wave and Orange Money payments declared by customers (verify → invoice paid + subscription active,
+/// or reject), and their merchant settings. Every decision goes to the audit log.
 /// </summary>
 [Authorize(Policy = Policies.AdminFinance)]
 [Route("/admin/paiements")]
@@ -19,6 +19,9 @@ public sealed class AdminPaymentsController(PaymentVerificationHandler payments)
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         ViewData["WaveLink"] = await payments.WaveLinkAsync(cancellationToken);
+        var (orangeCode, orangeLink) = await payments.OrangeMoneyAsync(cancellationToken);
+        ViewData["OrangeMoneyCode"] = orangeCode;
+        ViewData["OrangeMoneyLink"] = orangeLink;
         ViewData["Unpaid"] = await payments.UnpaidAsync(cancellationToken);
         return View(await payments.PendingAsync(cancellationToken));
     }
@@ -53,6 +56,14 @@ public sealed class AdminPaymentsController(PaymentVerificationHandler payments)
     {
         var result = await payments.SetWaveLinkAsync(User.GetUserId()!.Value, link, ClientIp, cancellationToken);
         TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["AdminPay_LinkSaved"].Value : this.ErrorMessage(result.Error);
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost("orange-money")]
+    public async Task<IActionResult> SetOrangeMoney(string? code, string? link, CancellationToken cancellationToken)
+    {
+        var result = await payments.SetOrangeMoneyAsync(User.GetUserId()!.Value, code, link, ClientIp, cancellationToken);
+        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["AdminPay_OrangeSaved"].Value : this.ErrorMessage(result.Error);
         return RedirectToAction(nameof(Index));
     }
 

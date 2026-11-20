@@ -219,6 +219,46 @@ public sealed class PaymentVerificationHandler(
         return Result<string>.Success(value);
     }
 
+    public async Task<(string Code, string Link)> OrangeMoneyAsync(CancellationToken cancellationToken = default) =>
+        (await settings.StringAsync(SettingKeys.OrangeMoneyCode, cancellationToken), await settings.StringAsync(SettingKeys.OrangeMoneyLink, cancellationToken));
+
+    /// <summary>
+    /// Orange Money: merchant code / number and/or payment link (settings, never in code). Either may be empty;
+    /// both empty hide Orange Money from customers.
+    /// </summary>
+    public async Task<Result<string>> SetOrangeMoneyAsync(Guid adminUserId, string? code, string? link, string? ipAddress, CancellationToken cancellationToken = default)
+    {
+        var codeValue = string.Join(' ', (code ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries));
+        var linkValue = link?.Trim() ?? string.Empty;
+        if (codeValue.Length > 0 && !OrangeMoney.IsValidCode(codeValue))
+        {
+            return Result<string>.Failure("payment.orange_code_invalid");
+        }
+
+        if (linkValue.Length > 0 && !OrangeMoney.IsValidLink(linkValue))
+        {
+            return Result<string>.Failure("payment.orange_link_invalid");
+        }
+
+        var now = clock.GetUtcNow();
+        foreach (var (key, value) in new[] { (SettingKeys.OrangeMoneyCode, codeValue), (SettingKeys.OrangeMoneyLink, linkValue) })
+        {
+            var setting = await db.AppSettings.FirstOrDefaultAsync(s => s.Key == key, cancellationToken);
+            if (setting is null)
+            {
+                db.AppSettings.Add(new AppSetting(key, value, now));
+            }
+            else
+            {
+                setting.Change(value, now);
+            }
+        }
+
+        db.AuditLogs.Add(new AuditLog(adminUserId, "settings.orange_money", nameof(AppSetting), SettingKeys.OrangeMoneyCode, false, ipAddress, $"{codeValue} | {linkValue}", now));
+        await db.SaveChangesAsync(cancellationToken);
+        return Result<string>.Success(codeValue);
+    }
+
     private void Audit(Guid adminUserId, string action, Payment payment, string? ipAddress, string? details, DateTimeOffset now) =>
         db.AuditLogs.Add(new AuditLog(adminUserId, action, nameof(Payment), payment.Id.ToString(), false, ipAddress, details, now));
 }

@@ -468,8 +468,8 @@ public sealed class SettingsManagement(IApplicationDbContext db, TimeProvider cl
     private static readonly HashSet<string> Numbers =
         [SettingKeys.PaymentGraceDays, SettingKeys.AutoValidateAfterDays, SettingKeys.WarrantyDays, SettingKeys.NeighborhoodThreshold];
 
-    /// <summary>Edited on their own screen (Wave link: payments page).</summary>
-    private static readonly HashSet<string> Elsewhere = [SettingKeys.WaveLink];
+    /// <summary>Edited on their own screen (Wave and Orange Money: payments page).</summary>
+    private static readonly HashSet<string> Elsewhere = [SettingKeys.WaveLink, SettingKeys.OrangeMoneyCode, SettingKeys.OrangeMoneyLink];
 
     public async Task<IReadOnlyList<SettingRow>> ListAsync(CancellationToken cancellationToken = default)
     {

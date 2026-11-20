@@ -110,13 +110,22 @@
                 </div>
             </div>
 
-            @* ---- What is due now: Wave ---- *@
+            @* ---- What is due now: Wave or Orange Money, as the admin opened them; the customer chooses ---- *@
             @if (due is not null)
             {
-                <div class="overflow-hidden rounded-3xl border border-ligne bg-surface shadow-carte" aria-labelledby="payer-@due.InvoiceId">
+                var channels = due.Channels;
+                var choose = channels.Count > 1;
+                // With two ways to pay, each panel shows when its radio is ticked (no script).
+                // Class names written out in full: Tailwind only builds the ones it reads in the source.
+                string Panel(PaymentChannel channel) => !choose
+                    ? "grid"
+                    : channel == PaymentChannel.Wave
+                        ? "hidden [.sc-pay:has(input[name=channel][value=Wave]:checked)_&]:grid"
+                        : "hidden [.sc-pay:has(input[name=channel][value=OrangeMoney]:checked)_&]:grid";
+                <div class="sc-pay overflow-hidden rounded-3xl border border-ligne bg-surface shadow-carte" aria-labelledby="payer-@due.InvoiceId">
                     <div class="flex flex-wrap items-center justify-between gap-4 border-b border-ligne bg-sourdine/60 px-6 py-4 sm:px-8">
                         <div class="flex items-center gap-3">
-                            <img src="~/images/wave-logo.png" alt="Wave" width="44" height="44" class="size-11 rounded-xl" />
+                            <span class="grid size-11 place-items-center rounded-xl bg-surface text-laterite [--icon-fond:var(--ambre)]"><sc-icon name="wallet" class="size-6" /></span>
                             <div>
                                 <h3 id="payer-@due.InvoiceId" class="text-lg">@(due.IsRegistration ? L["Pay_TitleFirst"] : L["Pay_TitleRenewal"])</h3>
                                 <p class="text-sm text-charbon-doux">@L["Pay_Invoice", due.Number]</p>
@@ -145,32 +154,98 @@
                                     <p class="mb-4 flex items-start gap-2 rounded-2xl bg-rouge-clair px-4 py-3 text-sm text-rouge" role="alert"><sc-icon name="triangle-alert" class="mt-0.5 size-4" />@L["Pay_Rejected", rejected.RejectionReason ?? string.Empty]</p>
                                 }
 
-                                @if (due.WaveUrl is { } waveUrl)
+                                @if (channels.Count > 0)
                                 {
-                                    <ol class="grid gap-3">
-                                        @foreach (var (index, text) in new[] { L["Pay_Step1"].Value, L["Pay_Step2", due.Number].Value, L["Pay_Step3"].Value }.Index())
+                                    <form method="post" asp-action="DeclarePayment" asp-route-invoiceId="@due.InvoiceId" class="grid gap-6">
+                                        @if (choose)
                                         {
-                                            <li class="flex items-start gap-3">
-                                                <span class="grid size-8 shrink-0 place-items-center rounded-full bg-[#1dc8ff]/15 font-mono text-sm font-bold text-[#0a6b8a] dark:text-[#7fdcff]">@(index + 1)</span>
-                                                <span class="pt-1 text-[15px]">@text</span>
-                                            </li>
+                                            <fieldset>
+                                                <legend class="sc-label-mono">@L["Pay_Choose"]</legend>
+                                                <div class="mt-2 grid grid-cols-2 gap-3">
+                                                    @foreach (var (index, channel) in channels.Index())
+                                                    {
+                                                        <label class="flex min-h-14 min-w-0 cursor-pointer items-center gap-2 rounded-2xl border border-ligne bg-surface px-3 py-2 font-semibold transition-colors hover:border-charbon/25 has-checked:border-ambre has-checked:bg-ocre-clair has-checked:ring-2 has-checked:ring-ambre/50 has-focus-visible:outline-2 has-focus-visible:outline-laterite">
+                                                            <input type="radio" name="channel" value="@channel" class="size-4 accent-laterite" checked="@(index == 0)" />
+                                                            <img src="@(channel == PaymentChannel.Wave ? "/images/wave-logo.png" : "/images/orange-money-logo.png")" alt="" width="32" height="32" class="size-8 rounded-lg" />
+                                                            <span class="min-w-0 leading-tight">@L["Channel_" + channel]</span>
+                                                        </label>
+                                                    }
+                                                </div>
+                                            </fieldset>
                                         }
-                                    </ol>
-                                    <a href="@waveUrl" class="sc-btn mt-6 min-h-12 w-full bg-[#1dc8ff] px-6 text-base text-[#04212b] hover:brightness-95 sm:w-auto" rel="noopener" target="_blank">
-                                        <img src="~/images/wave-logo.png" alt="" width="24" height="24" class="size-6 rounded-md" />@L["Pay_WithWave"]
-                                    </a>
-                                    <form method="post" asp-action="DeclarePayment" asp-route-invoiceId="@due.InvoiceId" class="mt-6 grid gap-3 rounded-2xl border border-dashed border-ligne p-4 sm:grid-cols-[1fr_auto] sm:items-end">
-                                        <div>
-                                            <label class="sc-label-mono" for="ref-@due.InvoiceId">@L["Pay_Reference"]</label>
-                                            <input id="ref-@due.InvoiceId" name="reference" class="sc-input" autocomplete="off" placeholder="@L["Pay_Reference_Placeholder"]" aria-describedby="ref-aide-@due.InvoiceId" />
+                                        else
+                                        {
+                                            <input type="hidden" name="channel" value="@channels[0]" />
+                                        }
+
+                                        @if (due.WaveUrl is { } waveUrl)
+                                        {
+                                            <div class="@Panel(PaymentChannel.Wave) gap-6">
+                                                <ol class="grid gap-3">
+                                                    @foreach (var (index, text) in new[] { L["Pay_Step1"].Value, L["Pay_Step2", due.Number].Value, L["Pay_Step3"].Value }.Index())
+                                                    {
+                                                        <li class="flex items-start gap-3">
+                                                            <span class="grid size-8 shrink-0 place-items-center rounded-full bg-[#1dc8ff]/15 font-mono text-sm font-bold text-[#0a6b8a] dark:text-[#7fdcff]">@(index + 1)</span>
+                                                            <span class="pt-1 text-[15px]">@text</span>
+                                                        </li>
+                                                    }
+                                                </ol>
+                                                <a href="@waveUrl" class="sc-btn min-h-12 w-full bg-[#1dc8ff] px-6 text-base text-[#04212b] hover:brightness-95 sm:w-auto sm:justify-self-start" rel="noopener" target="_blank">
+                                                    <img src="~/images/wave-logo.png" alt="" width="24" height="24" class="size-6 rounded-md" />@L["Pay_WithWave"]
+                                                </a>
+                                            </div>
+                                        }
+
+                                        @if (channels.Contains(PaymentChannel.OrangeMoney))
+                                        {
+                                            var omSteps = new List<string>
+                                            {
+                                                due.OrangeMoneyCode is not null ? L["Pay_Om_Step1"].Value : L["Pay_Om_Step1_Link"].Value,
+                                            };
+                                            if (due.OrangeMoneyCode is { } omCode)
+                                            {
+                                                omSteps.Add(L["Pay_Om_Step2", Formatting.Fcfa(due.Amount), omCode].Value);
+                                            }
+
+                                            omSteps.Add(L["Pay_Om_Step3"].Value);
+                                            omSteps.Add(L["Pay_Step3"].Value);
+                                            <div class="@Panel(PaymentChannel.OrangeMoney) gap-6">
+                                                <ol class="grid gap-3">
+                                                    @foreach (var (index, text) in omSteps.Index())
+                                                    {
+                                                        <li class="flex items-start gap-3">
+                                                            <span class="grid size-8 shrink-0 place-items-center rounded-full bg-sourdine font-mono text-sm font-bold text-charbon">@(index + 1)</span>
+                                                            <span class="pt-1 text-[15px]">@text</span>
+                                                        </li>
+                                                    }
+                                                </ol>
+                                                <p class="flex flex-wrap gap-3">
+                                                    @if (due.OrangeMoneyCode is not null)
+                                                    {
+                                                        @* Opens the phone's Orange Money menu (useless on a computer: hidden there). *@
+                                                        <a href="tel:%23144%23" class="sc-btn-secondaire min-h-12 md:hidden"><sc-icon name="phone" class="size-5 text-laterite" />@L["Pay_DialOrange"]</a>
+                                                    }
+                                                    @if (due.OrangeMoneyUrl is { } omUrl)
+                                                    {
+                                                        <a href="@omUrl" class="sc-btn-secondaire min-h-12" rel="noopener" target="_blank"><img src="~/images/orange-money-logo.png" alt="" width="24" height="24" class="size-6 rounded-md" />@L["Pay_WithOrange"]</a>
+                                                    }
+                                                </p>
+                                            </div>
+                                        }
+
+                                        <div class="grid gap-3 rounded-2xl border border-dashed border-ligne p-4 sm:grid-cols-[1fr_auto] sm:items-end">
+                                            <div>
+                                                <label class="sc-label-mono" for="ref-@due.InvoiceId">@L["Pay_Reference"]</label>
+                                                <input id="ref-@due.InvoiceId" name="reference" class="sc-input" autocomplete="off" maxlength="100" placeholder="@L["Pay_Reference_Placeholder"]" aria-describedby="ref-aide-@due.InvoiceId" />
+                                            </div>
+                                            <button type="submit" class="sc-btn-primaire min-h-12"><sc-icon name="check" class="size-4" />@L["Pay_Declare"]</button>
+                                            <p id="ref-aide-@due.InvoiceId" class="sc-aide sm:col-span-2">@L["Pay_Reference_Hint"]</p>
                                         </div>
-                                        <button type="submit" class="sc-btn-primaire min-h-12"><sc-icon name="check" class="size-4" />@L["Pay_Declare"]</button>
-                                        <p id="ref-aide-@due.InvoiceId" class="sc-aide sm:col-span-2">@L["Pay_Reference_Hint"]</p>
                                     </form>
                                 }
                                 else
                                 {
-                                    @* No Wave link yet (an admin sets it in Admin › Paiements): never a dead end, the customer can write to us. *@
+                                    @* Nothing opened yet (an admin sets it in Admin › Paiements): never a dead end, the customer can write to us. *@
                                     <p class="flex items-start gap-2 rounded-2xl bg-sourdine px-4 py-3 text-[15px] text-charbon-doux"><sc-icon name="info" class="mt-0.5 size-5" />@L["Pay_NotConfigured"]</p>
                                     @if ((await SiteContact.GetAsync()).WhatsAppUrl is { } help)
                                     {
@@ -181,7 +256,8 @@
                         </div>
                         @if (item.QrSvg is not null && !pending)
                         {
-                            <figure class="hidden w-44 self-start rounded-2xl border border-ligne bg-white p-3 md:block">
+                            @* The Wave QR code, only while Wave is the chosen way to pay. *@
+                            <figure class="hidden w-44 self-start rounded-2xl border border-ligne bg-white p-3 md:block @(choose ? "[.sc-pay:has(input[name=channel][value=OrangeMoney]:checked)_&]:hidden" : "")">
                                 @Html.Raw(item.QrSvg)
                                 <figcaption class="mt-2 text-center text-xs font-semibold text-charbon-doux">@L["Pay_ScanQr"]</figcaption>
                             </figure>

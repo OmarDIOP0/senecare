@@ -132,7 +132,9 @@ public sealed partial class OfferAndPaymentTests(WebAppFixture app)
 
         // Finance sees it in the bell.
         var bell = WebUtility.HtmlDecode(await finance.GetStringAsync(new Uri("/notifications", UriKind.Relative)));
-        Assert.Contains("Paiement Wave à vérifier", bell, StringComparison.Ordinal);
+        // …with the merchant account to check (Wave here).
+        Assert.Contains("Paiement à vérifier", bell, StringComparison.Ordinal);
+        Assert.Contains("par Wave", bell, StringComparison.Ordinal);
 
         Guid paymentId;
         await using (var db = app.Database.CreateContext())

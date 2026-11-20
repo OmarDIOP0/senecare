@@ -16,9 +16,26 @@ public sealed record UserProfileDto(
     IReadOnlyList<MembershipDto> Memberships,
     bool IsRegistrationComplete);
 
+/// <remarks>
+/// One instance per request, read by the page and by its frame (sidebar, menu): the profile is kept for the
+/// request instead of being loaded two or three times. Profile changes end with a redirect (a new request).
+/// </remarks>
 public sealed class GetUserProfileHandler(IApplicationDbContext db)
 {
+    private readonly Dictionary<Guid, UserProfileDto?> _known = [];
+
     public async Task<UserProfileDto?> HandleAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        if (!_known.TryGetValue(userId, out var profile))
+        {
+            profile = await LoadAsync(userId, cancellationToken);
+            _known[userId] = profile;
+        }
+
+        return profile;
+    }
+
+    private async Task<UserProfileDto?> LoadAsync(Guid userId, CancellationToken cancellationToken)
     {
         var user = await db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
         if (user is null)

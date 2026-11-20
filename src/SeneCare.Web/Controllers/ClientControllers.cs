@@ -226,7 +226,8 @@ public sealed class SubscriptionController(
     {
         var userId = User.GetUserId()!.Value;
         var dues = new Dictionary<Guid, InvoiceDue>();
-        foreach (var subscription in await queries.ListAsync(userId, cancellationToken))
+        var subscriptions = await queries.ListAsync(userId, cancellationToken);
+        foreach (var subscription in subscriptions)
         {
             if (await prepareInvoice.HandleAsync(userId, subscription.Id, cancellationToken) is { } due)
             {
@@ -234,8 +235,14 @@ public sealed class SubscriptionController(
             }
         }
 
-        // Read again: preparing may have just issued an invoice, which must appear in the list.
-        var items = (await queries.ListAsync(userId, cancellationToken))
+        // Read again only when preparing has just issued an invoice (it must appear in the list): usually not.
+        var known = subscriptions.SelectMany(s => s.Invoices).Select(i => i.Id).ToHashSet();
+        if (dues.Values.Any(d => !known.Contains(d.InvoiceId)))
+        {
+            subscriptions = await queries.ListAsync(userId, cancellationToken);
+        }
+
+        var items = subscriptions
             .Select(s => dues.TryGetValue(s.Id, out var due)
                 ? new SubscriptionPageItem(s, due, due.WaveUrl is { } url ? QrCode.Svg(url) : null)
                 : new SubscriptionPageItem(s, null, null))

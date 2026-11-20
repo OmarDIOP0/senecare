@@ -1115,7 +1115,6 @@
   <data name="Home_Offers_Title" xml:space="preserve"><value>Un abonnement clair, sans surprise</value></data>
   <data name="Home_Offer_Household_Text" xml:space="preserve"><value>Pour votre maison ou votre villa : tous les métiers, un suivi de chaque intervention et des conseils avant chaque saison.</value></data>
   <data name="Home_Offer_AllTrades" xml:space="preserve"><value>Les 7 métiers du bâtiment</value></data>
-  <data name="Home_Offer_Critical" xml:space="preserve"><value>Urgence critique : intervention sous {0}</value></data>
   <data name="Home_Offer_Tracking" xml:space="preserve"><value>Suivi en direct et rapport photo</value></data>
   <data name="Home_Offer_Registration" xml:space="preserve"><value>Inscription : {0}</value></data>
   <data name="Home_Offer_From" xml:space="preserve"><value>Abonnement</value></data>
@@ -1300,7 +1299,6 @@
   <data name="Site_Pricing_Feature" xml:space="preserve"><value>Prestation</value></data>
   <data name="Site_Pricing_Price" xml:space="preserve"><value>Prix</value></data>
   <data name="Site_Pricing_Monthly" xml:space="preserve"><value>Abonnement mensuel</value></data>
-  <data name="Site_Pricing_Critical" xml:space="preserve"><value>Urgence critique (coupure, grosse fuite)</value></data>
   <data name="Site_Pricing_Visits" xml:space="preserve"><value>Visites préventives</value></data>
   <data name="Site_Pricing_Diagnostic" xml:space="preserve"><value>Diagnostic technique</value></data>
   <data name="Site_Pricing_DiagnosticYes" xml:space="preserve"><value>Tous les 3 mois</value></data>
@@ -1348,11 +1346,8 @@
   <data name="Register_FreeMonths" xml:space="preserve"><value>{0} mois offerts</value></data>
   <data name="Register_HomePlanText" xml:space="preserve"><value>Les 7 métiers, la main-d'œuvre des dépannages et une visite avant l'hivernage.</value></data>
   <data name="Register_PerYear" xml:space="preserve"><value>par an</value></data>
-  <data name="Register_Critical" xml:space="preserve"><value>Urgence critique sous {0}</value></data>
   <data name="Register_BusinessBilling" xml:space="preserve"><value>Facturation par trimestre, après le diagnostic technique de vos sites.</value></data>
   <data name="Register_Popular" xml:space="preserve"><value>Recommandé</value></data>
-  <data name="Register_Feature_Critical" xml:space="preserve"><value>Urgence critique : technicien sous {0}</value></data>
-  <data name="Register_Feature_High" xml:space="preserve"><value>Urgence haute : sous {0}</value></data>
   <data name="Register_Feature_Visits" xml:space="preserve"><value>{0} visite(s) préventive(s) par trimestre</value></data>
   <data name="Register_Feature_VisitsOnDemand" xml:space="preserve"><value>Visites préventives selon besoin</value></data>
   <data name="Register_Feature_Priority0" xml:space="preserve"><value>Planning standard</value></data>

@@ -4,7 +4,6 @@
     ViewData["Title"] = L["Site_Business_Title"];
     ViewData["FullWidth"] = true;
     var plans = Model.Plans.Where(p => p.Segment == AccountKind.Business).ToList();
-    string Delay(TimeSpan t) => t.TotalHours < 48 ? L["Home_Hours", (int)t.TotalHours] : L["Home_Days", (int)t.TotalDays];
 }
 <partial name="Site/_PageHero" model='new SiteHeroModel(L["Site_Business_Heading"].Value, L["Site_Business_Text"].Value, L["Public_Nav_Business"].Value, ActionLabel: L["Site_Business_Cta"].Value, ActionUrl: "/inscription?profil=Business")' />
 
@@ -52,10 +51,6 @@
                     <h3 class="text-lg">@plan.Name</h3>
                     <p class="mt-2 text-2xl font-bold text-atlantique"><sc-amount value="@plan.MonthlyPrice.Amount" /> <span class="text-sm font-normal text-charbon-doux">@L["Home_Offer_PerMonth"]</span></p>
                     <ul class="mt-4 grid gap-1.5 text-[15px]">
-                        @if (plan.CriticalDelay is { } critical)
-                        {
-                            <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-4 text-baobab" />@L["Home_Offer_Critical", Delay(critical)]</li>
-                        }
                         <li class="flex items-start gap-2"><sc-icon name="check" class="mt-0.5 size-4 text-baobab" />@(plan.IncludedVisitsPerPeriod is { } visits ? L["Offer_VisitsCount", visits] : L["Offer_VisitsUnlimited"])</li>
                         @if (extra is not null && Site.Visible(Site.Plans))
                         {

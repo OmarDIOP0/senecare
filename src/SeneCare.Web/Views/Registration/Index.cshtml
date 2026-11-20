@@ -7,7 +7,6 @@
     var homePlans = Model.Plans.Where(p => p.Segment == AccountKind.Household).ToList();
     var businessPlans = Model.Plans.Where(p => p.Segment == AccountKind.Business).ToList();
     var selectedPlan = Model.PlanCode ?? homePlans.FirstOrDefault()?.Code;
-    string Delay(TimeSpan? t) => t is not { } d ? "" : d.TotalHours < 48 ? L["Home_Hours", (int)d.TotalHours] : L["Home_Days", (int)d.TotalDays];
 }
 @section Head {
     @* The map of step 3 (Leaflet, about 45 KB): only on this page. *@
@@ -175,13 +174,13 @@
                                 <span class="text-sm text-charbon-pale line-through"><sc-amount value="@(plan.MonthlyPrice.Amount * 12)" /></span>
                             </span>
                         }
-                        <span class="text-sm text-charbon-doux">@L["Home_Offer_Registration", Formatting.Fcfa(plan.RegistrationFee)] · @L["Register_Critical", Delay(plan.CriticalDelay)]</span>
+                        <span class="text-sm text-charbon-doux">@L["Home_Offer_Registration", Formatting.Fcfa(plan.RegistrationFee)]</span>
                     </label>
                 }
             </div>
 
             @* Businesses: three plans, quarterly billing (the diagnostic comes first). What each one adds is
-               read from the database (delays, visits, priority); the middle one is highlighted in gold. *@
+               read from the database (visits, priority, diagnostic; no delay is promised); the middle one is highlighted in gold. *@
             <div class="hidden gap-4 [form:has(input[value=Business]:checked)_&]:grid">
                 <p class="text-sm text-charbon-doux">@L["Register_BusinessBilling"]</p>
                 @{
@@ -196,8 +195,6 @@
                     // (text, better than the first plan?)
                     var features = new List<(string Text, bool Better)>
                     {
-                        (L["Register_Feature_Critical", Delay(plan.CriticalDelay)].Value, basePlan is not null && plan.CriticalDelay < basePlan.CriticalDelay),
-                        (L["Register_Feature_High", Delay(plan.HighDelay)].Value, basePlan is not null && plan.HighDelay < basePlan.HighDelay),
                         (visits, basePlan is not null && (plan.IncludedVisitsPerPeriod ?? 0) > (basePlan.IncludedVisitsPerPeriod ?? 0)),
                         (L["Register_Feature_Priority" + rank].Value, rank > 0),
                     };

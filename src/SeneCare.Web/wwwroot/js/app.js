@@ -70,21 +70,28 @@
     invalid.reportValidity();
   }, true);
 
-  // ---- Forms sent only once (data-send-once): on a slow network a second tap or the auto-send of the
-  // code would send it twice, and the second answer (« already used ») would replace the good one. ----
+  // ---- Every POST form is sent only once: on a slow network a second tap would send it twice (two
+  // payment declarations, two requests, a code « already used »). The button shows it is working. Marked once
+  // all the other handlers ran: a form kept on the phone (offline queue) or stopped by a check stays free.
+  // Released after a while anyway (a download, a lost answer), and when coming back from history. ----
   document.addEventListener("submit", (event) => {
-    const form = event.target.closest("form[data-send-once]");
-    if (!form || event.defaultPrevented) return;
+    const form = event.target.closest("form");
+    if (!form || form.method.toLowerCase() !== "post" || form.hasAttribute("data-send-again")) return;
     if (form.dataset.sending) { event.preventDefault(); return; }
-    form.dataset.sending = "1";
-    form.querySelectorAll("button[type=submit]").forEach((b) => b.setAttribute("aria-busy", "true"));
+    setTimeout(() => {
+      if (event.defaultPrevented) return;
+      form.dataset.sending = "1";
+      (event.submitter ?? form.querySelector("button[type=submit]"))?.setAttribute("aria-busy", "true");
+      setTimeout(() => releaseForm(form), 10000);
+    }, 0);
   });
+  const releaseForm = (form) => {
+    delete form.dataset.sending;
+    form.querySelectorAll("[aria-busy]").forEach((b) => b.removeAttribute("aria-busy"));
+  };
   // Back to the page from the browser history: the form can be sent again.
   window.addEventListener("pageshow", () => {
-    document.querySelectorAll("form[data-send-once][data-sending]").forEach((form) => {
-      delete form.dataset.sending;
-      form.querySelectorAll("button[aria-busy]").forEach((b) => b.removeAttribute("aria-busy"));
-    });
+    document.querySelectorAll("form[data-sending]").forEach(releaseForm);
   });
 
   // ---- Password fields: « Afficher / Masquer ». ----

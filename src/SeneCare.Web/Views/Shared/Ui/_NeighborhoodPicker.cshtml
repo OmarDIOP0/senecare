@@ -13,7 +13,12 @@
                role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="@id-resultats"
                aria-describedby="@id-aide @id-erreur" aria-invalid="@(Model.Error is null ? "false" : "true")"
                hx-get="/quartiers/recherche" hx-trigger="input changed delay:250ms, search" hx-sync="this:replace"
-               hx-target="#@id-resultats" hx-vals="@hxVals" />
+               hx-target="#@id-resultats" hx-vals="@hxVals" hx-indicator="#@id-chargement" />
+    </div>
+    @* While the search runs (slow network): two skeleton lines where the results will appear. *@
+    <div id="@id-chargement" class="sc-chargement mt-1.5 gap-2 rounded-md border border-ligne bg-surface p-3" aria-hidden="true">
+        <div class="sc-skeleton h-4 w-2/3"></div>
+        <div class="sc-skeleton h-4 w-1/2"></div>
     </div>
     <ul id="@id-resultats" role="listbox" aria-label="@L["Picker_NeighborhoodLabel"]"
         class="mt-1.5 divide-y divide-ligne overflow-hidden rounded-md border border-ligne bg-surface empty:hidden"></ul>

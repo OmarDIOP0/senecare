@@ -369,6 +369,16 @@
   }
 
   /* ---- Skeleton (instead of spinners) ------------------------------------- */
+  /* A button whose form is being sent: dimmed, a small turning ring, no second tap. */
+  button[aria-busy="true"] { @apply pointer-events-none relative opacity-70; }
+  button[aria-busy="true"]::after {
+    content: "";
+    @apply ml-1 inline-block size-4 animate-spin rounded-full border-2 border-current border-r-transparent align-[-2px];
+  }
+  /* Shown only while its HTMX request runs (hx-indicator): a skeleton instead of an empty gap. */
+  .sc-chargement { @apply hidden; }
+  .sc-chargement.htmx-request { @apply grid; }
+
   .sc-skeleton {
     @apply animate-shimmer rounded-md;
     background: linear-gradient(90deg, var(--sourdine) 0%, var(--surface) 50%, var(--sourdine) 100%) 0 0 / 200% 100%;

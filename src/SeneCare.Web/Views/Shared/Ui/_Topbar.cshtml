@@ -40,7 +40,14 @@
                 }
             </summary>
             <div class="sc-menu right-0 w-80 p-0" data-load-target>
-                <p class="px-3 py-6 text-center text-sm text-charbon-doux">@L["Common_Loading"]</p>
+                @* Skeleton until the list arrives (replaced by the fetch in app.js). *@
+                <div class="grid gap-3 p-4" aria-hidden="true">
+                    @for (var i = 0; i < 3; i++)
+                    {
+                        <div class="flex gap-3"><div class="sc-skeleton size-10 shrink-0 rounded-full"></div><div class="grid flex-1 gap-1.5"><div class="sc-skeleton h-3.5 w-2/3"></div><div class="sc-skeleton h-3 w-full"></div></div></div>
+                    }
+                </div>
+                <span class="sr-only" role="status">@L["Common_Loading"]</span>
             </div>
         </details>
 

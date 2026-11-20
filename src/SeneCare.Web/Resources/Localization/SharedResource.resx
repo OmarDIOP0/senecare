@@ -366,9 +366,9 @@
   <data name="Report_Description_Placeholder" xml:space="preserve"><value>Ex. : l'eau coule sous l'évier de la cuisine depuis ce matin</value></data>
   <data name="Report_Photos" xml:space="preserve"><value>Photos (conseillé)</value></data>
   <data name="Report_Step3" xml:space="preserve"><value>C'est urgent ?</value></data>
-  <data name="Report_Urgency_Critical" xml:space="preserve"><value>Coupure de courant, court-circuit, grosse fuite : intervention en moins de 4 h.</value></data>
-  <data name="Report_Urgency_High" xml:space="preserve"><value>Gêne importante : intervention en moins de 24 h.</value></data>
-  <data name="Report_Urgency_Normal" xml:space="preserve"><value>À régler rapidement : intervention en moins de 72 h.</value></data>
+  <data name="Report_Urgency_Critical" xml:space="preserve"><value>Coupure de courant, court-circuit, grosse fuite : traité en priorité.</value></data>
+  <data name="Report_Urgency_High" xml:space="preserve"><value>Gêne importante au quotidien.</value></data>
+  <data name="Report_Urgency_Normal" xml:space="preserve"><value>À régler rapidement, sans danger immédiat.</value></data>
   <data name="Report_Urgency_Planned" xml:space="preserve"><value>Pas pressé : on planifie ensemble.</value></data>
   <data name="Report_Slots" xml:space="preserve"><value>Vos disponibilités (facultatif)</value></data>
   <data name="Report_Slots_Hint" xml:space="preserve"><value>Jusqu'à 3 demi-journées. Nous vous proposerons des créneaux.</value></data>
@@ -475,7 +475,7 @@
   <data name="Pay_Invoice" xml:space="preserve"><value>Facture {0}</value></data>
   <data name="Pay_Step1" xml:space="preserve"><value>Touchez « Payer avec Wave » (ou scannez le QR code depuis un autre téléphone).</value></data>
   <data name="Pay_Step2" xml:space="preserve"><value>Vérifiez le montant et indiquez {0} dans la note du paiement si Wave le propose.</value></data>
-  <data name="Pay_Step3" xml:space="preserve"><value>Revenez ici et touchez « J'ai payé ». Nous vérifions et activons votre compte, en général dans la journée.</value></data>
+  <data name="Pay_Step3" xml:space="preserve"><value>Revenez ici et touchez « J'ai payé ». Nous vérifions et activons votre compte.</value></data>
   <data name="Pay_WithWave" xml:space="preserve"><value>Payer avec Wave</value></data>
   <data name="Pay_ScanQr" xml:space="preserve"><value>Afficher le QR code Wave</value></data>
   <data name="Pay_Reference" xml:space="preserve"><value>Référence de la transaction Wave (facultatif)</value></data>

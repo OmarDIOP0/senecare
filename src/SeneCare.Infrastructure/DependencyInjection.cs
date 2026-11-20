@@ -27,13 +27,15 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddMemoryCache();
+        services.AddSingleton<Caching.PublicCacheSignals>();
         services.AddSingleton<Caching.PublicCacheInvalidator>();
+        services.AddSingleton<QueryDiagnostics>();
         services.AddDbContext<SeneCareDbContext>((sp, options) => options
             .UseSqlServer(
                 configuration.GetConnectionString(ConnectionStringName),
                 sql => sql.MigrationsHistoryTable("__ef_migrations_history"))
             .UseSnakeCaseNamingConvention()
-            .AddInterceptors(sp.GetRequiredService<Caching.PublicCacheInvalidator>()));
+            .AddInterceptors(sp.GetRequiredService<Caching.PublicCacheInvalidator>(), sp.GetRequiredService<QueryDiagnostics>()));
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<SeneCareDbContext>());
 
         services.AddScoped<DatabaseSeeder>();

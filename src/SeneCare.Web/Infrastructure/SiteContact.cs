@@ -9,7 +9,7 @@ namespace SeneCare.Web.Infrastructure;
 /// SENECARE's contact details for the views (Admin › Paramètres): shown on every page, so kept in memory and read
 /// again only when a setting is saved (<see cref="PublicCacheInvalidator"/>) or after half an hour.
 /// </summary>
-public sealed partial class SiteContact(GetContactHandler handler, IMemoryCache cache, ILogger<SiteContact> logger)
+public sealed partial class SiteContact(GetContactHandler handler, IMemoryCache cache, PublicCacheSignals signals, ILogger<SiteContact> logger)
 {
     private static readonly PublicContact None = new(null, null, null, null, null, null, null, []);
     private PublicContact? _contact;
@@ -31,6 +31,7 @@ public sealed partial class SiteContact(GetContactHandler handler, IMemoryCache 
             return _contact = (await cache.GetOrCreateAsync(PublicCache.Contact, entry =>
             {
                 entry.AbsoluteExpirationRelativeToNow = PublicCache.ContactLifetime;
+                entry.AddExpirationToken(signals.TokenFor(PublicCache.Contact));
                 return handler.HandleAsync(cancellationToken);
             }))!;
         }

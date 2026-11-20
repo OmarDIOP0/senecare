@@ -1,6 +1,8 @@
+using System.Collections.Concurrent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Primitives;
 using SeneCare.Domain.Content;
 using SeneCare.Domain.Plans;
 using SeneCare.Domain.Platform;
@@ -33,8 +35,30 @@ public static class PublicCache
     };
 }
 
+/// <summary>
+/// One cancellation per cache key. A reader takes the token BEFORE it queries the database and attaches it to the
+/// entry; an invalidation cancels it. So an entry built from data read just before an erasure, and stored just
+/// after it, is born expired: an erased review can never stay on the site (no race between rebuild and removal).
+/// </summary>
+public sealed class PublicCacheSignals
+{
+    private readonly ConcurrentDictionary<string, CancellationTokenSource> _sources = new(StringComparer.Ordinal);
+
+    public IChangeToken TokenFor(string key) =>
+        new CancellationChangeToken(_sources.GetOrAdd(key, _ => new CancellationTokenSource()).Token);
+
+    public void Invalidate(string key)
+    {
+        if (_sources.TryRemove(key, out var source))
+        {
+            // Not disposed: an entry still being built may register on its token afterwards (it then expires at once).
+            source.Cancel();
+        }
+    }
+}
+
 /// <summary>Drops the public cache entries made stale by a successful save (admin edits, new review, erasure).</summary>
-public sealed class PublicCacheInvalidator(IMemoryCache cache) : SaveChangesInterceptor
+public sealed class PublicCacheInvalidator(IMemoryCache cache, PublicCacheSignals signals) : SaveChangesInterceptor
 {
     // One context per request, one save at a time on it: keys noted before the save, removed once it succeeded.
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<DbContext, HashSet<string>> _pending = [];
@@ -91,6 +115,7 @@ public sealed class PublicCacheInvalidator(IMemoryCache cache) : SaveChangesInte
         _pending.Remove(context);
         foreach (var key in keys)
         {
+            signals.Invalidate(key);
             cache.Remove(key);
         }
     }

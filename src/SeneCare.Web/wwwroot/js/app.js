@@ -430,18 +430,22 @@
     showConnection();
   });
 
-  // ---- One orange action at a time: while the home page's request form button is on screen, the header button
-  //      that leads to it steps aside (it fades, keeps its place, and leaves the keyboard order). ----
-  const requestLink = document.querySelector("header a[href='#reservation']");
-  const requestForm = document.querySelector("#reservation button[type=submit]");
-  if (requestLink && requestForm && "IntersectionObserver" in window) {
-    new IntersectionObserver(([entry]) => {
-      const aside = entry.isIntersecting;
+  // ---- One orange action at a time: while an orange button of the page itself is on screen (request form,
+  //      « Créer mon compte » under the prices…), the header's « Demander une intervention » steps aside: it fades,
+  //      keeps its place and leaves the keyboard order. The page's own action wins. ----
+  const requestLink = document.querySelector("header a.sc-btn-primaire[href='#reservation'], header a.sc-btn-primaire[href='/demander']");
+  const requestButtons = document.querySelectorAll("main .sc-btn-primaire");
+  if (requestLink && requestButtons.length > 0 && "IntersectionObserver" in window) {
+    const onScreen = new Set();
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => (entry.isIntersecting ? onScreen.add(entry.target) : onScreen.delete(entry.target)));
+      const aside = onScreen.size > 0;
       requestLink.classList.toggle("opacity-0", aside);
       requestLink.classList.toggle("pointer-events-none", aside);
       if (aside) requestLink.setAttribute("tabindex", "-1"); else requestLink.removeAttribute("tabindex");
       requestLink.setAttribute("aria-hidden", String(aside));
-    }, { threshold: 0.5 }).observe(requestForm);
+    }, { threshold: 0.5 });
+    requestButtons.forEach((button) => observer.observe(button));
   }
 
   // ---- Signing out: forget cached personal pages and unsent forms on this phone. ----

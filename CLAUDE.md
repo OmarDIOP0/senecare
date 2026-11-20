@@ -126,10 +126,15 @@ Tokens (Styles/app.css, noms conservés, aucune couleur en dur dans les vues) :
   Curseur « main » sur tout ce qui est cliquable.
 
 Site public (`_Layout`, `PublicSiteController`, `Views/PublicSite`, contenus `Content/site-content.json`) :
-- Bandeau de contact, en-tête bleu Atlantique : « Créer mon compte » bouton principal à toutes les tailles,
-  « Se connecter » en lien texte, le reste (métiers, pages, « Demander une intervention ») dans ☰ quand la place
-  manque. Pied de page dense. Sur mobile, barre du bas « Se connecter » (ou « Mon espace ») + WhatsApp, masquée
-  sur /connexion et /inscription. Zones cliquables ≥ 44 px sur mobile (classe `.sc-tap`).
+- Hiérarchie des actions (décision utilisateur) : le visiteur a une panne et veut un technicien. Une seule action
+  orange visible à la fois : « Demander une intervention » dans l'en-tête (« Réserver » sous 640 px), vers le
+  formulaire rapide `#reservation` sur l'accueil (le bouton de l'en-tête s'efface quand celui du formulaire est à
+  l'écran), `/demander` ailleurs. Une intervention exige un abonnement actif (pas d'intervention ponctuelle).
+- Bandeau de contact : téléphone partout, WhatsApp seulement à partir de 1024 px. En-tête bleu Atlantique :
+  « Se connecter » discret (lien texte, icône profil sous 768 px), « Créer mon compte » dans ☰ et sur la page de
+  connexion, métiers et pages dans ☰ quand la place manque. Pied de page dense. Sur mobile, barre du bas en style
+  secondaire : « Appeler » (ou « Mon suivi » → /interventions une fois connecté) + WhatsApp, masquée sur
+  /connexion et /inscription ; le contenu garde sa hauteur en marge basse. Zones cliquables ≥ 44 px (`.sc-tap`).
 - Accueil : hero + formulaire rapide (`/demander`), métiers avec photo, « Comment ça marche, en 3 étapes », techniciens, exemple
   d'intervention, avis, chiffres, conseils, FAQ, appel final. Pages métiers, particuliers, entreprises,
   quartiers, tarifs (mensuel / annuel), FAQ, mentions, CGU.

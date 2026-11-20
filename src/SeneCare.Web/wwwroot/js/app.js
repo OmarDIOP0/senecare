@@ -430,6 +430,20 @@
     showConnection();
   });
 
+  // ---- One orange action at a time: while the home page's request form button is on screen, the header button
+  //      that leads to it steps aside (it fades, keeps its place, and leaves the keyboard order). ----
+  const requestLink = document.querySelector("header a[href='#reservation']");
+  const requestForm = document.querySelector("#reservation button[type=submit]");
+  if (requestLink && requestForm && "IntersectionObserver" in window) {
+    new IntersectionObserver(([entry]) => {
+      const aside = entry.isIntersecting;
+      requestLink.classList.toggle("opacity-0", aside);
+      requestLink.classList.toggle("pointer-events-none", aside);
+      if (aside) requestLink.setAttribute("tabindex", "-1"); else requestLink.removeAttribute("tabindex");
+      requestLink.setAttribute("aria-hidden", String(aside));
+    }, { threshold: 0.5 }).observe(requestForm);
+  }
+
   // ---- Signing out: forget cached personal pages and unsent forms on this phone. ----
   document.addEventListener("submit", (event) => {
     if (event.target.closest("form[data-logout]")) {

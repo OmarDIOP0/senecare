@@ -15,6 +15,7 @@
   <data name="Error_Reference" xml:space="preserve"><value>Référence</value></data>
   <data name="Error_BackHome" xml:space="preserve"><value>Revenir à l'accueil</value></data>
   <data name="Common_Back" xml:space="preserve"><value>Retour</value></data>
+  <data name="Nav_Tracking" xml:space="preserve"><value>Mon suivi</value></data>
   <data name="Nav_SignIn" xml:space="preserve"><value>Se connecter</value></data>
   <data name="Nav_Account" xml:space="preserve"><value>Mon compte</value></data>
   <data name="Nav_SignOut" xml:space="preserve"><value>Se déconnecter</value></data>
@@ -1194,6 +1195,7 @@
   <data name="Site_Nav_Pricing" xml:space="preserve"><value>Tarifs</value></data>
   <data name="Site_AllTrades" xml:space="preserve"><value>Tous nos métiers</value></data>
   <data name="Site_RequestJob" xml:space="preserve"><value>Demander une intervention</value></data>
+  <data name="Site_RequestJob_Short" xml:space="preserve"><value>Réserver</value></data>
   <data name="Site_SeeTrade" xml:space="preserve"><value>Voir le détail</value></data>
   <data name="Site_Faq" xml:space="preserve"><value>Questions fréquentes</value></data>
   <data name="Site_FaqAll" xml:space="preserve"><value>Toutes les questions</value></data>

@@ -22,7 +22,8 @@
     <partial name="Ui/_Head" />
     @await RenderSectionAsync("Head", required: false)
 </head>
-<body class="flex min-h-dvh flex-col @(onSignIn ? "" : "pb-16 lg:pb-0")">
+@* Room for the phone action bar (its exact height, home indicator included) so nothing ends hidden under it. *@
+<body class="flex min-h-dvh flex-col @(onSignIn || !(signedIn || showContact) ? "" : "pb-[calc(3.5625rem_+_max(0.5rem,env(safe-area-inset-bottom)))] lg:pb-0")">
 <partial name="Ui/_TestBanner" />
     <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-surface focus:px-3 focus:py-2 focus:text-charbon">@L["Layout_SkipToContent"]</a>
 
@@ -38,7 +39,8 @@
                     }
                     @if (contact.HasWhatsApp)
                     {
-                        <a href="@contact.WhatsAppUrl" class="sc-tap inline-flex items-center gap-1.5 text-white no-underline hover:underline" target="_blank" rel="noopener"><sc-icon name="message-circle" class="size-4" />WhatsApp</a>
+                        @* Phones and tablets have WhatsApp in the bottom bar. *@
+                        <a href="@contact.WhatsAppUrl" class="hidden items-center gap-1.5 text-white no-underline hover:underline lg:inline-flex" target="_blank" rel="noopener"><sc-icon name="message-circle" class="size-4" />WhatsApp</a>
                     }
                 </div>
                 <div class="hidden flex-wrap items-center gap-x-5 md:flex">
@@ -80,21 +82,22 @@
                     <a href="@href" class="rounded-full px-3.5 py-2 text-[15px] font-semibold text-sur-nuit no-underline hover:bg-white/10 hover:text-white hover:no-underline">@label</a>
                 }
             </nav>
-            @* « Créer mon compte » is the main button at every width; « Se connecter » a text link; what does not fit
-               goes into the ☰ menu (which holds everything). *@
+            @* The one orange action is « Demander une intervention » (someone with a leak wants a technician). Signing in
+               is discreet: a text link, an icon on small screens. « Créer mon compte » is in ☰ and on the sign-in page. *@
             <div class="flex shrink-0 items-center gap-0.5 sm:gap-2">
                 <partial name="Ui/_AppStatus" />
-                <div class="hidden sm:block"><partial name="Site/_ThemeSwitch" /></div>
-                @if (signedIn)
+                <div class="hidden md:block"><partial name="Site/_ThemeSwitch" /></div>
+                @if (!onSignIn)
                 {
-                    <a href="/espace" class="sc-btn-primaire whitespace-nowrap max-sm:px-4"><sc-icon name="circle-user" class="size-5" />@L["Nav_Space"]</a>
+                    var accountUrl = signedIn ? "/espace" : "/connexion";
+                    var accountLabel = signedIn ? L["Nav_Space"].Value : L["Nav_SignIn"].Value;
+                    <a href="@accountUrl" class="hidden min-h-11 items-center rounded-full px-3 text-[15px] font-semibold whitespace-nowrap text-white underline-offset-4 hover:bg-white/10 hover:underline md:inline-flex">@accountLabel</a>
+                    <a href="@accountUrl" class="sc-btn-icone md:hidden" aria-label="@accountLabel" title="@accountLabel"><sc-icon name="circle-user" /></a>
+                    @* Home page: the quick request form just below. Elsewhere: the request route. Short label on phones. *@
+                    <a href="@(Context.Request.Path == "/" ? "#reservation" : "/demander")" class="sc-btn-primaire whitespace-nowrap transition-opacity duration-200 max-sm:px-4">
+                        <span class="sm:hidden">@L["Site_RequestJob_Short"]</span><span class="hidden sm:inline">@L["Site_RequestJob"]</span>
+                    </a>
                 }
-                else if (!onSignIn)
-                {
-                    <a href="/connexion" class="hidden min-h-11 items-center rounded-full px-3 text-[15px] font-semibold whitespace-nowrap text-white underline-offset-4 hover:bg-white/10 hover:underline sm:inline-flex">@L["Nav_SignIn"]</a>
-                    <a href="/inscription" class="sc-btn-primaire whitespace-nowrap max-sm:px-3 max-sm:text-sm">@L["Register_Submit"]</a>
-                }
-                <a href="/demander" class="hidden min-h-11 items-center rounded-full px-3 text-[15px] font-semibold whitespace-nowrap text-sur-nuit no-underline hover:bg-white/10 hover:text-white hover:no-underline 2xl:inline-flex">@L["Site_RequestJob"]</a>
                 <details class="relative 2xl:hidden" data-menu>
                     <summary class="sc-btn-icone list-none [&::-webkit-details-marker]:hidden" aria-label="@L["Public_Nav_Label"]"><sc-icon name="menu" /></summary>
                     <div class="sc-menu right-0 max-h-[80dvh] w-72 overflow-y-auto">
@@ -102,7 +105,6 @@
                         {
                             <a href="/connexion" class="sc-btn-secondaire mb-1.5 w-full"><sc-icon name="circle-user" class="size-5 text-laterite" />@L["Nav_SignIn"]</a>
                         }
-                        <a href="/demander" class="sc-btn-primaire mb-1.5 w-full">@L["Site_RequestJob"]</a>
                         @* Trades folded: seven lines would push everything else down. *@
                         <details class="group/trades">
                             <summary class="sc-menu-item cursor-pointer list-none justify-between font-semibold [&::-webkit-details-marker]:hidden">
@@ -130,7 +132,7 @@
                             <a href="/inscription" class="sc-menu-item font-semibold"><sc-icon name="circle-user" class="size-4" />@L["Register_Submit"]</a>
                         }
                         @* Phones: the theme choice lives here (no room for its button in the bar). *@
-                        <div class="mt-1 grid grid-cols-3 gap-1 sm:hidden" role="group" aria-label="@L["Site_Theme"]">
+                        <div class="mt-1 grid grid-cols-3 gap-1 md:hidden" role="group" aria-label="@L["Site_Theme"]">
                             <button type="button" class="sc-btn-secondaire min-h-11 px-2 text-sm" data-theme-set="light">@L["Shell_ThemeLight"]</button>
                             <button type="button" class="sc-btn-secondaire min-h-11 px-2 text-sm" data-theme-set="dark">@L["Shell_ThemeDark"]</button>
                             <button type="button" class="sc-btn-secondaire min-h-11 px-2 text-sm" data-theme-set="system">@L["Shell_ThemeSystem"]</button>
@@ -249,19 +251,23 @@
         </div>
     </footer>
 
-    @* ---- Phones: « Se connecter » always at hand (first visit: people looked for it), with WhatsApp (or the phone
-       when there is no WhatsApp; the number also stays in the top bar). Not on sign-in / sign-up: it hid the buttons. ---- *@
-    @if (!onSignIn)
+    @* ---- Phones: talk to SeneCare at once (« Appeler », WhatsApp) or, signed in, follow one's requests (« Mon suivi »).
+       Secondary style: the one orange action is « Demander une intervention » in the header. Number and WhatsApp link
+       come from Admin › Paramètres. Not on sign-in / sign-up: it hid the form's buttons. ---- *@
+    @if (!onSignIn && (signedIn || showContact))
     {
         <div class="fixed inset-x-0 bottom-0 z-40 grid auto-cols-fr grid-flow-col gap-2 border-t border-ligne bg-surface p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] lg:hidden">
-            <a href="@(signedIn ? "/espace" : "/connexion")" class="sc-btn-secondaire min-h-12"><sc-icon name="circle-user" class="size-5 text-laterite" />@(signedIn ? L["Nav_Space"] : L["Nav_SignIn"])</a>
-            @if (contact.HasWhatsApp)
+            @if (signedIn)
             {
-                <a href="@contact.WhatsAppUrl" class="sc-btn-primaire min-h-12" target="_blank" rel="noopener"><sc-icon name="message-circle" class="size-5" />WhatsApp</a>
+                <a href="/interventions" class="sc-btn-secondaire min-h-12"><sc-icon name="list-checks" class="size-5 text-laterite" />@L["Nav_Tracking"]</a>
             }
             else if (contact.HasPhone)
             {
-                <a href="tel:@contact.PhoneLink" class="sc-btn-primaire min-h-12"><sc-icon name="phone" class="size-5" />@L["Card_Call"]</a>
+                <a href="tel:@contact.PhoneLink" class="sc-btn-secondaire min-h-12"><sc-icon name="phone" class="size-5 text-laterite" />@L["Card_Call"]</a>
+            }
+            @if (contact.HasWhatsApp)
+            {
+                <a href="@contact.WhatsAppUrl" class="sc-btn-secondaire min-h-12" target="_blank" rel="noopener"><sc-icon name="message-circle" class="size-5 text-laterite" />WhatsApp</a>
             }
         </div>
     }

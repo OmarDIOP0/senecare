@@ -93,6 +93,15 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
 - Carte : Leaflet + OpenStreetMap (gratuit, léger).
 - Logs : Serilog. Santé : HealthChecks. Configuration par environnement + secrets
   hors du code.
+- Performances (phase du 20/11/2026) : pages compressées Brotli/gzip (`WebPerformance`, sauf écrans connectés
+  sensibles /admin, /compte, /entreprise, /invitation : BREACH) ; fichiers versionnés `?v=` en cache 1 an,
+  polices / images 7 jours ; cache mémoire `PublicCache` (coordonnées, données de l'accueil) vidé par
+  l'intercepteur EF `PublicCacheInvalidator` + jetons d'annulation ; `AccessControl`, `Settings` et
+  `GetUserProfileHandler` gardent leurs réponses pour la requête ; listes longues paginées (`Page<T>`,
+  `Ui/_Pager`, 50 par page) ; chaque ligne de log de requête donne son nombre de SQL, avertissement > 1 s et
+  SQL > 300 ms (`QueryDiagnostics`) ; tout formulaire POST part une seule fois (bouton `aria-busy`) ;
+  squelettes `.sc-skeleton` / `.sc-chargement` (hx-indicator). Pas de file d'attente ni d'API externe :
+  à ajouter (Hangfire, timeout 10 s) avec le premier fournisseur de messages.
 - Docker + docker-compose (SQL Server de développement, optionnel).
 - Déploiement : SmarterASP.NET (Windows / IIS, SQL Server ; publication à préparer). L'ancien site de test Render
   (PostgreSQL) est abandonné. `ASPNETCORE_ENVIRONMENT=Staging` → bandeau « Version de test ». Derrière un proxy :

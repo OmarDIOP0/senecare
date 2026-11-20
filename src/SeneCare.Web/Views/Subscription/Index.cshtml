@@ -166,7 +166,7 @@
                                                     {
                                                         <label class="flex min-h-14 min-w-0 cursor-pointer items-center gap-2 rounded-2xl border border-ligne bg-surface px-3 py-2 font-semibold transition-colors hover:border-charbon/25 has-checked:border-ambre has-checked:bg-ocre-clair has-checked:ring-2 has-checked:ring-ambre/50 has-focus-visible:outline-2 has-focus-visible:outline-laterite">
                                                             <input type="radio" name="channel" value="@channel" class="size-4 accent-laterite" checked="@(index == 0)" />
-                                                            <img src="@(channel == PaymentChannel.Wave ? "/images/wave-logo.png" : "/images/orange-money-logo.png")" alt="" width="32" height="32" class="size-8 rounded-lg" />
+                                                            <img src="@(channel == PaymentChannel.Wave ? "/images/wave-logo.webp" : "/images/orange-money-logo.webp")" alt="" width="32" height="32" class="size-8 rounded-lg" />
                                                             <span class="min-w-0 leading-tight">@L["Channel_" + channel]</span>
                                                         </label>
                                                     }
@@ -191,7 +191,7 @@
                                                     }
                                                 </ol>
                                                 <a href="@waveUrl" class="sc-btn min-h-12 w-full bg-[#1dc8ff] px-6 text-base text-[#04212b] hover:brightness-95 sm:w-auto sm:justify-self-start" rel="noopener" target="_blank">
-                                                    <img src="~/images/wave-logo.png" alt="" width="24" height="24" class="size-6 rounded-md" />@L["Pay_WithWave"]
+                                                    <img src="~/images/wave-logo.webp" alt="" width="24" height="24" class="size-6 rounded-md" />@L["Pay_WithWave"]
                                                 </a>
                                             </div>
                                         }
@@ -227,7 +227,7 @@
                                                     }
                                                     @if (due.OrangeMoneyUrl is { } omUrl)
                                                     {
-                                                        <a href="@omUrl" class="sc-btn-secondaire min-h-12" rel="noopener" target="_blank"><img src="~/images/orange-money-logo.png" alt="" width="24" height="24" class="size-6 rounded-md" />@L["Pay_WithOrange"]</a>
+                                                        <a href="@omUrl" class="sc-btn-secondaire min-h-12" rel="noopener" target="_blank"><img src="~/images/orange-money-logo.webp" alt="" width="24" height="24" class="size-6 rounded-md" />@L["Pay_WithOrange"]</a>
                                                     }
                                                 </p>
                                             </div>

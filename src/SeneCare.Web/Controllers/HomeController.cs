@@ -9,7 +9,7 @@ using SeneCare.Web.ViewModels;
 namespace SeneCare.Web.Controllers;
 
 [AllowAnonymous]
-public sealed class HomeController(GetPublicHomeHandler publicHome) : Controller
+public sealed class HomeController(SeneCare.Web.Infrastructure.CachedPublicHome publicHome) : Controller
 {
     /// <summary>
     /// Signed in → own space. Otherwise the public home: offers, trades, steps, figures and advice, all read from

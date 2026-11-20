@@ -12,7 +12,7 @@ namespace SeneCare.Web.Controllers;
 /// response times from the database.
 /// </summary>
 [AllowAnonymous]
-public sealed class PublicSiteController(SiteContent site, GetPublicHomeHandler publicHome, NeighborhoodCommunity community) : Controller
+public sealed class PublicSiteController(SiteContent site, CachedPublicHome publicHome, NeighborhoodCommunity community) : Controller
 {
     [HttpGet("/metiers")]
     public IActionResult Trades() => View();

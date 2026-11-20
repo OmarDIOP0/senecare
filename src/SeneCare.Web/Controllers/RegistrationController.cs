@@ -22,7 +22,7 @@ namespace SeneCare.Web.Controllers;
 [Route("/inscription")]
 public sealed class RegistrationController(
     CompleteRegistrationHandler completeRegistration,
-    SeneCare.Application.Public.GetPublicHomeHandler offers,
+    SeneCare.Web.Infrastructure.CachedPublicHome offers,
     GetUserProfileHandler getProfile,
     AddPropertyHandler addProperty,
     ReferralService referrals,

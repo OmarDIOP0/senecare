@@ -26,11 +26,14 @@ public static class DependencyInjection
     /// <summary>Registers infrastructure services: SQL Server (EF Core), messaging, hashing, seeding, health checks.</summary>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<SeneCareDbContext>(options => options
+        services.AddMemoryCache();
+        services.AddSingleton<Caching.PublicCacheInvalidator>();
+        services.AddDbContext<SeneCareDbContext>((sp, options) => options
             .UseSqlServer(
                 configuration.GetConnectionString(ConnectionStringName),
                 sql => sql.MigrationsHistoryTable("__ef_migrations_history"))
-            .UseSnakeCaseNamingConvention());
+            .UseSnakeCaseNamingConvention()
+            .AddInterceptors(sp.GetRequiredService<Caching.PublicCacheInvalidator>()));
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<SeneCareDbContext>());
 
         services.AddScoped<DatabaseSeeder>();

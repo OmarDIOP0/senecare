@@ -74,9 +74,9 @@ public sealed record Figure(string Value, string Label);
 
 public sealed record Faq(string Question, string Answer);
 
-public sealed record HouseholdRow(string Label, string OneOff, string Plan);
+public sealed record HouseholdRow(string Label, string Plan);
 
-public sealed record HouseholdExtras(string OneOffLabel, string OneOffPrice, IReadOnlyList<HouseholdRow> Rows);
+public sealed record HouseholdExtras(IReadOnlyList<HouseholdRow> Rows);
 
 public sealed record BusinessExtras(string Sites, string Parts, string Contact, string Report);
 

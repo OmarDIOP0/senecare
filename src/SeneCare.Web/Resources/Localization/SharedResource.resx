@@ -1301,7 +1301,6 @@
   <data name="Site_Pricing_Price" xml:space="preserve"><value>Prix</value></data>
   <data name="Site_Pricing_Monthly" xml:space="preserve"><value>Abonnement mensuel</value></data>
   <data name="Site_Pricing_Critical" xml:space="preserve"><value>Urgence critique (coupure, grosse fuite)</value></data>
-  <data name="Site_Pricing_DependsAvailability" xml:space="preserve"><value>Selon disponibilité</value></data>
   <data name="Site_Pricing_Visits" xml:space="preserve"><value>Visites préventives</value></data>
   <data name="Site_Pricing_Diagnostic" xml:space="preserve"><value>Diagnostic technique</value></data>
   <data name="Site_Pricing_DiagnosticYes" xml:space="preserve"><value>Tous les 3 mois</value></data>

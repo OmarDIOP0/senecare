@@ -148,14 +148,12 @@
     "sample": true,
     "_comment": "Avantages complementaires par code d'offre (HOME, ESSENTIEL, PROFESSIONNEL, PREMIUM). Les montants et les delais viennent de la base.",
     "household": {
-      "oneOffLabel": "Sans abonnement",
-      "oneOffPrice": "Déplacement + diagnostic à partir de 10 000 FCFA, travaux sur devis",
       "rows": [
-        { "label": "Main-d'œuvre des dépannages", "oneOff": "Facturée à chaque fois", "plan": "Comprise" },
-        { "label": "Visite de contrôle avant l'hivernage", "oneOff": "Non", "plan": "1 par an" },
-        { "label": "Suivi WhatsApp et rapport photo", "oneOff": "Oui", "plan": "Oui" },
-        { "label": "Carnet d'entretien du logement", "oneOff": "Non", "plan": "Oui" },
-        { "label": "Garantie sur l'intervention", "oneOff": "30 jours", "plan": "90 jours" }
+        { "label": "Main-d'œuvre des dépannages", "plan": "Comprise" },
+        { "label": "Visite de contrôle avant l'hivernage", "plan": "1 par an" },
+        { "label": "Suivi WhatsApp et rapport photo", "plan": "Oui" },
+        { "label": "Carnet d'entretien du logement", "plan": "Oui" },
+        { "label": "Garantie sur l'intervention", "plan": "90 jours" }
       ]
     },
     "business": {

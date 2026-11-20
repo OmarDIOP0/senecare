@@ -12,7 +12,7 @@
 }
 <partial name="Site/_PageHero" model='new SiteHeroModel(L["Site_Pricing_Heading"].Value, L["Site_Pricing_Text"].Value, L["Site_Nav_Pricing"].Value)' />
 
-@* ---- Households: without subscription vs Maisons & Villas ---- *@
+@* ---- Households: Maisons & Villas (no intervention without a subscription: user decision) ---- *@
 @if (home is not null)
 {
     <section id="particuliers" class="mx-auto w-full max-w-5xl scroll-mt-24 px-4 pt-14 lg:px-6" aria-labelledby="tarifs-particuliers">
@@ -21,43 +21,27 @@
         </div>
         @* Desktop / tablet: the comparison table. Phones: one card per offer below, nothing hidden sideways. *@
         <div class="mt-6 hidden overflow-x-auto rounded-lg border border-ligne bg-surface shadow-xs md:block">
-            <table class="sc-table min-w-[36rem]">
+            <table class="sc-table min-w-[28rem]">
                 <thead>
                     <tr>
-                        <th scope="col" class="w-2/5"><span class="sr-only">@L["Site_Pricing_Feature"]</span></th>
-                        @if (showExtras)
-                        {
-                            <th scope="col" class="text-sm text-charbon">@extras.Household.OneOffLabel</th>
-                        }
+                        <th scope="col" class="w-1/2"><span class="sr-only">@L["Site_Pricing_Feature"]</span></th>
                         <th scope="col" class="bg-laterite-clair text-sm text-charbon">@home.Name</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <th scope="row" class="bg-transparent text-sm font-semibold text-charbon">@L["Site_Pricing_Price"]</th>
-                        @if (showExtras)
-                        {
-                            <td>@extras.Household.OneOffPrice</td>
-                        }
                         <td class="bg-laterite-clair/40"><span class="text-lg font-bold"><sc-amount value="@home.MonthlyPrice.Amount" /></span> @L["Home_Offer_PerMonth"]<br /><span class="text-sm text-charbon-doux">@L["Home_Offer_Registration", Formatting.Fcfa(home.RegistrationFee)]</span></td>
                     </tr>
                     @if (home.OffersAnnual)
                     {
                         <tr>
                             <th scope="row" class="bg-transparent text-sm font-semibold text-charbon">@L["Site_Pricing_Yearly"]</th>
-                            @if (showExtras)
-                            {
-                                <td>—</td>
-                            }
                             <td class="bg-laterite-clair/40"><span class="font-bold"><sc-amount value="@home.AnnualPrice.Amount" /></span> @L["Register_PerYear"] <span class="sc-badge bg-ambre text-nuit">@L["Register_FreeMonths", home.AnnualFreeMonths]</span></td>
                         </tr>
                     }
                     <tr>
                         <th scope="row" class="bg-transparent text-sm font-semibold text-charbon">@L["Site_Pricing_Critical"]</th>
-                        @if (showExtras)
-                        {
-                            <td>@L["Site_Pricing_DependsAvailability"]</td>
-                        }
                         <td class="bg-laterite-clair/40">@Delay(home.CriticalDelay)</td>
                     </tr>
                     @if (showExtras)
@@ -66,7 +50,6 @@
                         {
                             <tr>
                                 <th scope="row" class="bg-transparent text-sm font-semibold text-charbon">@row.Label</th>
-                                <td>@row.OneOff</td>
                                 <td class="bg-laterite-clair/40">@row.Plan</td>
                             </tr>
                         }
@@ -97,20 +80,6 @@
                     }
                 </dl>
             </article>
-            @if (showExtras)
-            {
-                <article class="rounded-2xl border border-ligne bg-surface p-5">
-                    <h3 class="text-lg font-bold">@extras.Household.OneOffLabel</h3>
-                    <p class="mt-2 font-semibold">@extras.Household.OneOffPrice</p>
-                    <dl class="mt-3 divide-y divide-ligne text-[15px]">
-                        <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-charbon-doux">@L["Site_Pricing_Critical"]</dt><dd class="text-right font-semibold">@L["Site_Pricing_DependsAvailability"]</dd></div>
-                        @foreach (var item in extras.Household.Rows)
-                        {
-                            <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="text-charbon-doux">@item.Label</dt><dd class="text-right font-semibold">@item.OneOff</dd></div>
-                        }
-                    </dl>
-                </article>
-            }
         </div>
         <a href="/inscription" class="sc-btn-primaire mt-5 px-6">@L["Site_Households_Subscribe"]</a>
     </section>

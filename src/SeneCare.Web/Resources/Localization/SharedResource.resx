@@ -1206,7 +1206,7 @@
   <data name="Site_Footer_Program" xml:space="preserve"><value>Programme Quartiers</value></data>
   <data name="Site_Footer_Help" xml:space="preserve"><value>Aide</value></data>
   <data name="Site_Footer_Contact" xml:space="preserve"><value>Contact</value></data>
-  <data name="Home_Hero_Point1" xml:space="preserve"><value>Intervention sous 24 h, 4 h en urgence</value></data>
+  <data name="Home_Hero_Point1" xml:space="preserve"><value>Intervention rapide selon le niveau d'urgence</value></data>
   <data name="Home_Hero_Point2" xml:space="preserve"><value>Nom et numéro du technicien avant son arrivée</value></data>
   <data name="Home_Hero_Point3" xml:space="preserve"><value>Paiement par Wave, facture dans l'application</value></data>
   <data name="Home_Hero_Point4" xml:space="preserve"><value>Intervention garantie, reprise sans déplacement facturé</value></data>
@@ -1234,6 +1234,7 @@
   <data name="Site_Trade_PageTitle" xml:space="preserve"><value>{0} à Dakar et Thiès</value></data>
   <data name="Site_Trade_Heading" xml:space="preserve"><value>{0} : dépannage et entretien</value></data>
   <data name="Site_Trade_Delay" xml:space="preserve"><value>Délai d'intervention</value></data>
+  <data name="Site_Trade_DelayText" xml:space="preserve"><value>Selon la nature et le niveau d'urgence de l'anomalie</value></data>
   <data name="Site_Trade_WhatWeDo" xml:space="preserve"><value>Ce que nous faisons</value></data>
   <data name="Site_Trade_Other" xml:space="preserve"><value>Votre problème n'est pas dans la liste ?</value></data>
   <data name="Site_Trade_Describe" xml:space="preserve"><value>Décrivez-le, on vous dit si on peut intervenir.</value></data>

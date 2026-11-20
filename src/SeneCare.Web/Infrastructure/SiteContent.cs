@@ -62,7 +62,7 @@ public sealed record SampleList<T>(bool Sample, IReadOnlyList<T> Items) : ISampl
 
 public sealed record Trade(
     string Slug, ServiceDomain Domain, string Name, string Summary, string Intro, IReadOnlyList<string> Examples,
-    string Delay, string Image, bool Sample) : ISample;
+    string Image, bool Sample) : ISample;
 
 public sealed record Technician(string FirstName, string Trade, int Years, string Quote);
 

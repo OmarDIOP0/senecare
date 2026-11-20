@@ -6,6 +6,7 @@ using SeneCare.Api.Endpoints;
 using SeneCare.Application;
 using SeneCare.Infrastructure;
 using SeneCare.Infrastructure.Identity;
+using SeneCare.Infrastructure.Persistence;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -52,7 +53,17 @@ try
         app.MapOpenApi();
     }
 
-    app.UseSerilogRequestLogging();
+    // One line per request with its SQL count (N+1 pages show up); a warning above one second.
+    app.UseSerilogRequestLogging(options =>
+    {
+        options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0} ms ({SqlCommands} SQL)";
+        options.GetLevel = (context, elapsed, exception) =>
+            exception is not null || context.Response.StatusCode >= 500 ? Serilog.Events.LogEventLevel.Error
+            : elapsed > 1000 ? Serilog.Events.LogEventLevel.Warning
+            : Serilog.Events.LogEventLevel.Information;
+        options.EnrichDiagnosticContext = (diagnostics, context) =>
+            diagnostics.Set("SqlCommands", QueryDiagnostics.CountFor(context.RequestServices.GetService<SeneCareDbContext>()));
+    });
     app.UseHttpsRedirection();
     app.UseRateLimiter();
     app.UseAuthentication();

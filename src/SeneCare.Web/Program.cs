@@ -130,7 +130,17 @@ try
         app.UseHsts();
     }
 
-    app.UseSerilogRequestLogging();
+    // One line per request with its SQL count (N+1 pages show up); a warning above one second.
+    app.UseSerilogRequestLogging(options =>
+    {
+        options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0} ms ({SqlCommands} SQL)";
+        options.GetLevel = (context, elapsed, exception) =>
+            exception is not null || context.Response.StatusCode >= 500 ? Serilog.Events.LogEventLevel.Error
+            : elapsed > 1000 ? Serilog.Events.LogEventLevel.Warning
+            : Serilog.Events.LogEventLevel.Information;
+        options.EnrichDiagnosticContext = (diagnostics, context) =>
+            diagnostics.Set("SqlCommands", QueryDiagnostics.CountFor(context.RequestServices.GetService<SeneCareDbContext>()));
+    });
     app.UseHttpsRedirection();
     app.UseRequestLocalization();
     app.UseRouting();

@@ -127,7 +127,7 @@
                         <div class="flex items-center gap-3">
                             <span class="grid size-11 place-items-center rounded-xl bg-surface text-laterite [--icon-fond:var(--ambre)]"><sc-icon name="wallet" class="size-6" /></span>
                             <div>
-                                <h3 id="payer-@due.InvoiceId" class="text-lg">@(due.IsRegistration ? L["Pay_TitleFirst"] : L["Pay_TitleRenewal"])</h3>
+                                <h3 id="payer-@due.InvoiceId" class="text-lg">@(!due.IsRegistration ? L["Pay_TitleRenewal"] : sub.BillingPeriodMonths > 1 ? L["Pay_TitleFirstPeriod", sub.BillingPeriodMonths] : L["Pay_TitleFirst"])</h3>
                                 <p class="text-sm text-charbon-doux">@L["Pay_Invoice", due.Number]</p>
                             </div>
                         </div>

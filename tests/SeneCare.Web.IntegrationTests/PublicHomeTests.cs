@@ -61,22 +61,4 @@ public class PublicHomeTests(WebAppFixture app)
         Assert.Equal(HttpStatusCode.OK, home.StatusCode);
         Assert.Contains("Créer mon compte", WebUtility.HtmlDecode(await home.Content.ReadAsStringAsync()), StringComparison.Ordinal);
     }
-
-    [DatabaseFact]
-    public async Task The_welcome_screens_lead_on_to_where_the_new_customer_was_going()
-    {
-        var client = app.CreateClient();
-        var page = "/bienvenue?suite=" + Uri.EscapeDataString("/abonnement");
-
-        var welcome = WebUtility.HtmlDecode(await client.GetStringAsync(new Uri(page, UriKind.Relative)));
-        Assert.Contains("Signalez en 30 secondes", welcome, StringComparison.Ordinal);
-        Assert.Contains("name=\"suite\" value=\"/abonnement\"", welcome, StringComparison.Ordinal);
-
-        var skipped = await client.SubmitAsync(page, "/bienvenue", new Dictionary<string, string> { ["suite"] = "/abonnement" });
-        Assert.Equal("/abonnement", skipped.Location());
-
-        // Never towards another site.
-        var outside = await client.SubmitAsync("/bienvenue?suite=%2F%2Fexemple.com", "/bienvenue", new Dictionary<string, string> { ["suite"] = "//exemple.com" });
-        Assert.Equal("/", outside.Location());
-    }
 }

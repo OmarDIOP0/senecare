@@ -172,8 +172,8 @@ Parcours client :
   4 formule (mensuel / annuel « 2 mois offerts » pour les particuliers ; Essentiel / Professionnel /
   Premium, facturés au trimestre, pour les entreprises), 5 confirmation + consentements.
   En mode mot de passe, l'étape 2 demande le numéro et le mot de passe (deux fois), sans code.
-  Compte, logement et abonnement sont créés ensemble, puis les écrans de bienvenue (une seule fois, « Passer »),
-  puis `/abonnement` pour payer. Les écrans de bienvenue ne s'affichent jamais devant l'accueil public.
+  Compte, logement et abonnement sont créés ensemble, puis directement `/abonnement` pour payer (plus d'écrans
+  de bienvenue `/bienvenue` : retirés à la demande de l'utilisateur ; la visite guidée de l'espace reste).
   D'autres logements s'ajoutent ensuite depuis l'espace.
 - Paiement réel : Wave (lien marchand) et Orange Money (code marchand / numéro payé par #144#, et/ou lien),
   configurés par l'admin (`/admin/paiements`, réglages `payments.*`) ; le client choisit parmi ceux ouverts,

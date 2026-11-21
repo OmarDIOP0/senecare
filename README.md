@@ -80,7 +80,7 @@ npm run assets:build
 - Formulaires hors ligne : ajouter `data-offline="queue"` au `<form>` et son URL dans
   `PwaController.OfflinePosts` ; l'envoi est mis en file (IndexedDB) et repart au retour du réseau.
   Démo : section « Envoi hors ligne » de `/design`.
-- Onboarding `/bienvenue` (premier lancement, cookie `sc_bienvenue`) et visites guidées par rôle
+- Visites guidées par rôle
   (progression enregistrée côté serveur, `users.completed_tours`).
 
 ### Espace client (Phase 5)

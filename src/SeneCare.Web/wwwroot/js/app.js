@@ -514,42 +514,8 @@
   window.addEventListener("appinstalled", () => document.querySelectorAll("[data-install]").forEach((el) => (el.hidden = true)));
 
   // ==========================================================================
-  // Welcome screens (swipe) and guided tour (coach marks)
+  // Guided tour (coach marks)
   // ==========================================================================
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const form = document.querySelector("[data-onboarding]");
-    if (!form) return;
-    const track = form.querySelector("[data-onboarding-track]");
-    const slides = [...track.children];
-    const dots = [...form.querySelectorAll("[data-onboarding-dot]")];
-    const next = form.querySelector("[data-onboarding-next]");
-    let current = 0;
-
-    const update = (index) => {
-      current = index;
-      dots.forEach((dot, i) => (i === index ? dot.setAttribute("aria-current", "step") : dot.removeAttribute("aria-current")));
-      next.textContent = index === slides.length - 1 ? next.dataset.textStart : next.dataset.textNext;
-    };
-    const observer = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && update(slides.indexOf(e.target))),
-      { root: track, threshold: 0.6 },
-    );
-    slides.forEach((s) => observer.observe(s));
-    update(0);
-
-    const goTo = (index) => slides[index]?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", inline: "center", block: "nearest" });
-    next.addEventListener("click", (event) => {
-      if (current < slides.length - 1) {
-        event.preventDefault();
-        goTo(current + 1);
-      }
-    });
-    dots.forEach((dot, i) => dot.addEventListener("click", (event) => {
-      event.preventDefault();
-      goTo(i);
-    }));
-  });
 
   // Coach marks: a spotlight on each target (data-tour) with a short explanation.
   document.addEventListener("DOMContentLoaded", () => {

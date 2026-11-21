@@ -225,21 +225,6 @@
   <data name="Offline_Text" xml:space="preserve"><value>Cette page n'est pas encore enregistrée sur votre téléphone. Vérifiez votre réseau ou votre forfait, puis réessayez.</value></data>
   <data name="Offline_Pending" xml:space="preserve"><value>Votre demande est bien enregistrée sur votre téléphone. Elle partira automatiquement dès le retour du réseau.</value></data>
   <data name="Offline_Retry" xml:space="preserve"><value>Réessayer</value></data>
-  <data name="Onboarding_Title" xml:space="preserve"><value>Bienvenue</value></data>
-  <data name="Onboarding_Skip" xml:space="preserve"><value>Passer</value></data>
-  <data name="Onboarding_Next" xml:space="preserve"><value>Suivant</value></data>
-  <data name="Onboarding_Start" xml:space="preserve"><value>Commencer</value></data>
-  <data name="Onboarding_Slide" xml:space="preserve"><value>écran</value></data>
-  <data name="Onboarding_SlideOf" xml:space="preserve"><value>Écran {0} sur {1}</value></data>
-  <data name="Onboarding_Pagination" xml:space="preserve"><value>Écrans de présentation</value></data>
-  <data name="Onboarding_1_Title" xml:space="preserve"><value>Votre bâtiment mérite qu'on en prenne soin</value></data>
-  <data name="Onboarding_1_Text" xml:space="preserve"><value>Électricité, plomberie, étanchéité, maçonnerie : SeneCare entretient votre maison ou vos locaux avant que les petites pannes ne deviennent des gros travaux.</value></data>
-  <data name="Onboarding_2_Title" xml:space="preserve"><value>Signalez en 30 secondes, même avec une photo</value></data>
-  <data name="Onboarding_2_Text" xml:space="preserve"><value>Une fuite, une coupure, une fissure ? Prenez une photo, décrivez en deux mots. Ça marche aussi sans réseau : l'envoi part dès que la connexion revient.</value></data>
-  <data name="Onboarding_3_Title" xml:space="preserve"><value>Nos techniciens interviennent et assurent le suivi</value></data>
-  <data name="Onboarding_3_Text" xml:space="preserve"><value>Vous choisissez le créneau, suivez le technicien en route et recevez le rapport avec les photos avant et après.</value></data>
-  <data name="Onboarding_4_Title" xml:space="preserve"><value>Ensemble, on reverdit votre quartier</value></data>
-  <data name="Onboarding_4_Text" xml:space="preserve"><value>Dès 500 voisins abonnés dans un même quartier, nous plantons des arbres et embellissons les rues tous les trois mois.</value></data>
   <data name="Space_Hello" xml:space="preserve"><value>Bonjour</value></data>
   <data name="Space_HelloName" xml:space="preserve"><value>Bonjour {0}</value></data>
   <data name="Space_Client_Intro" xml:space="preserve"><value>Votre maison est entre de bonnes mains. Un souci ? Touchez « Signaler ».</value></data>
@@ -297,7 +282,6 @@
   <data name="Tour_Admin_Dashboard_Text" xml:space="preserve"><value>Demandes, délais respectés, impayés et satisfaction en un coup d'œil.</value></data>
   <data name="Tour_Admin_Dispatch_Title" xml:space="preserve"><value>File de dispatch</value></data>
   <data name="Tour_Admin_Dispatch_Text" xml:space="preserve"><value>Qualifiez l'urgence, proposez les créneaux et affectez les techniciens.</value></data>
-  <data name="Account_Replay" xml:space="preserve"><value>Revoir la présentation</value></data>
   <data name="Account_ReplayTour" xml:space="preserve"><value>Revoir la visite guidée</value></data>
   <data name="Property_Added" xml:space="preserve"><value>Logement enregistré.</value></data>
   <data name="Property_Add" xml:space="preserve"><value>Ajouter mon logement</value></data>
@@ -477,6 +461,7 @@
   <data name="Error_simulation_no_intervention" xml:space="preserve"><value>Envoyez d'abord le technicien.</value></data>
   <data name="Tab_Payments" xml:space="preserve"><value>Paiements</value></data>
   <data name="Pay_TitleFirst" xml:space="preserve"><value>À payer pour démarrer (inscription + premier mois)</value></data>
+  <data name="Pay_TitleFirstPeriod" xml:space="preserve"><value>À payer pour démarrer (inscription + {0} premiers mois)</value></data>
   <data name="Pay_TitleRenewal" xml:space="preserve"><value>Prochain mois à payer</value></data>
   <data name="Pay_Invoice" xml:space="preserve"><value>Facture {0}</value></data>
   <data name="Pay_Step1" xml:space="preserve"><value>Touchez « Payer avec Wave » (ou scannez le QR code depuis un autre téléphone).</value></data>

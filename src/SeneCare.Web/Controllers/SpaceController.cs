@@ -131,37 +131,3 @@ public sealed class SpaceController(
         }),
     });
 }
-
-/// <summary>
-/// Four illustrated welcome screens, shown once right after the account is created (then « suite », usually the
-/// payment page); replayable from the profile.
-/// </summary>
-[AllowAnonymous]
-[Route("/bienvenue")]
-public sealed class OnboardingController : Controller
-{
-    [HttpGet("")]
-    public IActionResult Index(bool rejouer = false, string? suite = null)
-    {
-        ViewData["Suite"] = Url.IsLocalUrl(suite) ? suite : null;
-        return View(rejouer);
-    }
-
-    /// <summary>« Commencer » or « Passer »: on to where the person was going.</summary>
-    [HttpPost("")]
-    public IActionResult Finish(bool rejouer = false, string? suite = null)
-    {
-        if (rejouer)
-        {
-            return LocalRedirect("/compte");
-        }
-
-        if (Url.IsLocalUrl(suite))
-        {
-            return LocalRedirect(suite);
-        }
-
-        // A visitor discovers what SeneCare does on the home page (not the sign-in form of an account they do not have).
-        return User.Identity?.IsAuthenticated == true ? LocalRedirect("/espace") : LocalRedirect("/");
-    }
-}

@@ -28,6 +28,8 @@ try
     if (builder.Environment.IsStaging() || builder.Environment.IsProduction())
     {
         builder.Configuration.AddJsonFile("appsettings.Server.json", optional: true, reloadOnChange: false);
+        // Environment variables and command line keep the last word over the file (as over appsettings.json).
+        builder.Configuration.AddEnvironmentVariables().AddCommandLine(args);
     }
 
     // preserveStaticLogger: the static bootstrap logger is never frozen, so several hosts can run
@@ -203,6 +205,12 @@ try
 catch (Exception ex) when (ex is not HostAbortedException)
 {
     Log.Fatal(ex, "SeneCare.Web terminated unexpectedly");
+    if (SeneCare.Web.Infrastructure.StartupErrorPage.IsEnabled())
+    {
+        await SeneCare.Web.Infrastructure.StartupErrorPage.RunAsync(args, ex);
+        return;
+    }
+
     throw;
 }
 finally

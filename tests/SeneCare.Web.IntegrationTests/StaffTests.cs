@@ -153,15 +153,17 @@ public sealed partial class StaffTests(WebAppFixture app)
         {
             ["Signup"] = "true", ["Phone"] = customerPhone.Formatted, ["Password"] = "Client-Yoff-2026", ["ConfirmPassword"] = "Client-Yoff-2026",
         });
-        await using (var db = app.Database.CreateContext())
-        {
-            var customer = await db.Users.SingleAsync(u => u.PhoneNumber == customerPhone);
-            customer.GrantRole(PlatformRole.Customer, DateTimeOffset.UtcNow);
-            await db.SaveChangesAsync();
-        }
+        var customerClient = app.CreatePasswordClient();
+        await customerClient.SubmitAsync("/connexion", "/connexion", new Dictionary<string, string> { ["Phone"] = customerPhone.Formatted, ["Password"] = "Client-Yoff-2026" });
+        await customerClient.SubmitAsync("/inscription", "/inscription", new Dictionary<string, string> { ["FullName"] = "Awa Ndiaye", ["Profile"] = "Household", ["AcceptsPrivacyPolicy"] = "true" });
 
         var made = await PostAsync(dispatcher, "/admin/techniciens", "/admin/techniciens", Technician(customerPhone, communeId));
         Assert.DoesNotMatch(TemporaryPassword(), WebUtility.HtmlDecode(await dispatcher.GetStringAsync(new Uri(made.Location(), UriKind.Relative))));
+        // …and a reset from the technician file is refused too (member of a customer account).
+        await PostAsync(dispatcher, made.Location(), made.Location() + "/mot-de-passe", []);
+        Assert.DoesNotMatch(TemporaryPassword(), WebUtility.HtmlDecode(await dispatcher.GetStringAsync(new Uri(made.Location(), UriKind.Relative))));
+        var customerAgain = app.CreatePasswordClient();
+        Assert.NotEqual("/compte/mot-de-passe", (await customerAgain.SubmitAsync("/connexion", "/connexion", new Dictionary<string, string> { ["Phone"] = customerPhone.Formatted, ["Password"] = "Client-Yoff-2026" })).Location());
 
         // The super-admin's own password still works.
         var admin = app.CreatePasswordClient();

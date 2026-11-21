@@ -183,7 +183,10 @@ Parcours client :
   de bienvenue `/bienvenue` : retirés à la demande de l'utilisateur ; la visite guidée de l'espace reste).
   D'autres logements s'ajoutent ensuite depuis l'espace.
 - Paiement réel : Wave (lien marchand) et Orange Money (code marchand / numéro payé par #144#, et/ou lien),
-  configurés par l'admin (`/admin/paiements`, réglages `payments.*`) ; le client choisit parmi ceux ouverts,
+  configurés par l'admin (`/admin/paiements`, réglages `payments.*`) ; changement de formule (décision utilisateur) :
+  autre formule ou mensuel ↔ annuel, choisi par le titulaire / gestionnaire sur `/abonnement`, appliqué à la
+  période suivante (`Subscription.NextPlanId`), rien de recalculé sur la période en cours ; facture de la période
+  suivante déjà émise mais ni payée ni déclarée → réémise avec la nouvelle formule ; le client choisit parmi ceux ouverts,
   puis « J'ai payé » + référence (moyen enregistré sur le paiement),
   vérification par la Finance (notification), activation et message WhatsApp / SMS au client. Factures et
   reçus PDF. Pas de bouton de simulation dans l'interface.

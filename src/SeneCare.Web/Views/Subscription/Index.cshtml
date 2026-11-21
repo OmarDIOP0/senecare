@@ -266,6 +266,57 @@
                 </div>
             }
 
+            @* ---- « Changer de formule »: from the next period on (no refund, no recalculation of the current one) ---- *@
+            @if (item.Offer is { } offer)
+            {
+                var anchor = "formule-" + sub.Id.ToString("N");
+                <details id="@anchor" class="group rounded-3xl border border-ligne bg-surface shadow-carte" open="@(offer.NextCode is not null)">
+                    <summary class="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 px-6 py-5 sm:px-8 [&::-webkit-details-marker]:hidden">
+                        <span>
+                            <span class="block font-semibold">@L["Offer_Change_Title"]</span>
+                            <span class="mt-0.5 block text-sm text-charbon-doux">@L["Offer_Change_Text", offer.StartsOn is { } starts ? Formatting.DateWithYear(starts) : "—"]</span>
+                        </span>
+                        <sc-icon name="chevron-down" class="size-5 text-charbon-doux transition-transform group-open:rotate-180" />
+                    </summary>
+                    <div class="border-t border-ligne px-6 py-5 sm:px-8">
+                        @if (offer.NextName is { } nextName)
+                        {
+                            <div class="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-ocre-clair p-4">
+                                <p class="text-[15px] font-semibold">@L["Offer_Change_Planned", nextName + (offer.NextAnnual ? " · " + L["Offer_Change_Yearly"].Value : ""), offer.StartsOn is { } on ? Formatting.DateWithYear(on) : "—"]</p>
+                                <form method="post" action="/abonnement/@sub.Id/formule/annuler">
+                                    <button type="submit" class="sc-btn-secondaire">@L["Offer_Change_Withdraw"]</button>
+                                </form>
+                            </div>
+                        }
+                        <form method="post" action="/abonnement/@sub.Id/formule" class="grid gap-4">
+                            <fieldset class="grid gap-2 sm:grid-cols-2">
+                                <legend class="sr-only">@L["Offer_Change_Title"]</legend>
+                                @foreach (var choice in offer.Choices)
+                                {
+                                    var selected = choice.Code == (offer.NextCode ?? offer.CurrentCode);
+                                    <label class="flex cursor-pointer items-start gap-3 rounded-2xl border border-ligne p-4 has-[:checked]:border-laterite has-[:checked]:bg-ocre-clair">
+                                        <input type="radio" name="plan" value="@choice.Code" checked="@selected" class="mt-1 accent-[var(--laterite)]" required />
+                                        <span>
+                                            <span class="block font-semibold">@choice.Name@(choice.Code == offer.CurrentCode ? " · " + L["Offer_Change_Current"].Value : "")</span>
+                                            <span class="block text-sm text-charbon-doux"><sc-amount value="@choice.MonthlyPrice.Amount" /> @L["Home_Offer_PerMonth"]@(choice.BillingPeriodMonths > 1 ? " · " + L["Subscription_BilledEvery", choice.BillingPeriodMonths] : "")</span>
+                                        </span>
+                                    </label>
+                                }
+                            </fieldset>
+                            @if (offer.Choices.FirstOrDefault(c => c.OffersAnnual) is { } yearly)
+                            {
+                                var annualNow = offer.NextCode is not null ? offer.NextAnnual : offer.CurrentAnnual;
+                                <label class="flex cursor-pointer items-center gap-3 text-[15px]">
+                                    <input type="checkbox" name="annual" value="true" checked="@annualNow" class="size-5 accent-[var(--laterite)]" />
+                                    <span>@L["Offer_Change_Annual", yearly.AnnualFreeMonths]</span>
+                                </label>
+                            }
+                            <div><button type="submit" class="sc-btn-primaire">@L["Offer_Change_Submit"]</button></div>
+                        </form>
+                    </div>
+                </details>
+            }
+
             @* ---- Invoices and receipts ---- *@
             <div>
                 <h3 class="sc-sous-titre">@L["Subscription_Invoices"]</h3>

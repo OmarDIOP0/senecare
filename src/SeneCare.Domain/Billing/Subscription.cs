@@ -88,6 +88,12 @@ public sealed class Subscription : AggregateRoot
 
     public IReadOnlyCollection<Guid> CoveredPropertyIds => _coveredPropertyIds.AsReadOnly();
 
+    /// <summary>Offer chosen for the next period (change of plan, or monthly ↔ annual): applied when that period is invoiced.</summary>
+    public Guid? NextPlanId { get; private set; }
+
+    /// <summary>With <see cref="NextPlanId"/>: the next period is paid for 12 months at once.</summary>
+    public bool NextAnnual { get; private set; }
+
     public Money PeriodPrice => MonthlyPrice * ChargedMonths;
 
     /// <summary>Requests can be submitted while active or within the grace period.</summary>
@@ -181,6 +187,66 @@ public sealed class Subscription : AggregateRoot
             Status = SubscriptionStatus.Active;
             Raise(new SubscriptionActivated(Id, AccountId, now));
         }
+    }
+
+    /// <summary>
+    /// The customer picks another offer (or monthly ↔ annual): it starts with the next period, nothing is refunded
+    /// or recomputed on the current one. Picking the current offer again withdraws the change.
+    /// </summary>
+    public void ScheduleChange(Plan plan, bool annual)
+    {
+        ArgumentNullException.ThrowIfNull(plan);
+        if (Status is SubscriptionStatus.PendingRegistration or SubscriptionStatus.Cancelled)
+        {
+            throw new DomainException("subscription.change_unavailable", "The offer can be changed once the subscription has started.");
+        }
+
+        if (!plan.IsActive)
+        {
+            throw new DomainException("subscription.plan_inactive", "This offer is no longer available.");
+        }
+
+        if (plan.Segment != Segment)
+        {
+            throw new DomainException("subscription.plan_segment", "This offer is not available for this type of account.");
+        }
+
+        if (annual && !plan.OffersAnnual)
+        {
+            throw new DomainException("subscription.annual_unavailable", "This offer is billed per quarter, after the diagnostic.");
+        }
+
+        if (plan.Id == PlanId && annual == IsAnnual)
+        {
+            CancelScheduledChange();
+            return;
+        }
+
+        NextPlanId = plan.Id;
+        NextAnnual = annual;
+    }
+
+    public void CancelScheduledChange()
+    {
+        NextPlanId = null;
+        NextAnnual = false;
+    }
+
+    /// <summary>The next period is about to be invoiced: the chosen offer replaces the current one (prices, period length).</summary>
+    public void ApplyScheduledChange(Plan plan)
+    {
+        ArgumentNullException.ThrowIfNull(plan);
+        if (NextPlanId != plan.Id)
+        {
+            throw new DomainException("subscription.change_mismatch", "This is not the offer chosen for the next period.");
+        }
+
+        PlanId = plan.Id;
+        MonthlyPrice = plan.MonthlyPrice;
+        BillingPeriodMonths = NextAnnual ? 12 : plan.BillingPeriodMonths;
+        FreeMonthsPerPeriod = NextAnnual ? plan.AnnualFreeMonths : 0;
+        DiagnosticRequired = plan.DiagnosticRequired;
+        CancelScheduledChange();
     }
 
     /// <summary>Daily job: Active → PastDue after due date, PastDue → Suspended after the grace period.</summary>

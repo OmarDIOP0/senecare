@@ -58,6 +58,7 @@ public static class DependencyInjection
         services.AddScoped<ClientRequestActions>();
         services.AddScoped<SubscriptionQueries>();
         services.AddScoped<PrepareInvoiceHandler>();
+        services.AddScoped<ChangeOfferHandler>();
         services.AddScoped<InvoiceDocumentQuery>();
         services.AddScoped<DeclarePaymentHandler>();
         services.AddScoped<PaymentVerificationHandler>();

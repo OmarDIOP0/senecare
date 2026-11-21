@@ -38,6 +38,38 @@ public sealed partial class OfferAndPaymentTests(WebAppFixture app)
     }
 
     [DatabaseFact]
+    public async Task A_new_offer_chosen_during_a_period_is_billed_from_the_next_one()
+    {
+        var customer = await SignUpAsync("Household", "HOME", annual: false, company: null);
+        var propertyId = await AddPlaceAsync(customer, "Villa", "Villa de Ouakam");
+        Guid subscriptionId;
+        await using (var db = app.Database.CreateContext())
+        {
+            // Monthly, started a month ago: the next month is due in three days.
+            var subscription = await db.Subscriptions.SingleAsync(s => s.CoveredPropertyIds.Contains(propertyId));
+            subscription.Activate(DateOnly.FromDateTime(DateTime.UtcNow).AddMonths(-1).AddDays(3), DateTimeOffset.UtcNow);
+            await db.SaveChangesAsync();
+            subscriptionId = subscription.Id;
+        }
+
+        var page = Normalize(await customer.GetStringAsync(new Uri("/abonnement", UriKind.Relative)));
+        Assert.Contains("Changer de formule", page, StringComparison.Ordinal);
+        Assert.Contains("8 500 FCFA", page, StringComparison.Ordinal); // this month still at the monthly price
+
+        // The monthly invoice shown above is not paid yet: it is issued again with the new offer.
+        await customer.SubmitAsync("/abonnement", $"/abonnement/{subscriptionId}/formule", new Dictionary<string, string> { ["plan"] = "HOME", ["annual"] = "true" });
+        page = Normalize(await customer.GetStringAsync(new Uri("/abonnement", UriKind.Relative)));
+        Assert.Contains("85 000 FCFA", page, StringComparison.Ordinal); // 12 months, 2 offered
+
+        await using (var db = app.Database.CreateContext())
+        {
+            var subscription = await db.Subscriptions.SingleAsync(s => s.Id == subscriptionId);
+            Assert.Equal(12, subscription.BillingPeriodMonths);
+            Assert.Null(subscription.NextPlanId);
+        }
+    }
+
+    [DatabaseFact]
     public async Task A_company_gets_its_chosen_plan_with_its_first_site()
     {
         var manager = await SignUpAsync("Business", "PROFESSIONNEL", annual: false, company: "Teranga Logistique");

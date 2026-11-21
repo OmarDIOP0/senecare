@@ -101,6 +101,25 @@ public sealed class PrepareInvoiceHandler(
 
             try
             {
+                // A new offer chosen for the next period takes effect when that period is invoiced (not once its
+                // invoice is out: then it waits for the following one).
+                if (subscription.NextPlanId is { } nextPlanId
+                    && !await db.Invoices.AnyAsync(
+                        i => i.SubscriptionId == subscription.Id && i.Period != null && i.Period.Start == due
+                            && (i.Status == InvoiceStatus.Issued || i.Status == InvoiceStatus.Overdue),
+                        cancellationToken))
+                {
+                    var next = await db.Plans.FirstOrDefaultAsync(p => p.Id == nextPlanId && p.IsActive, cancellationToken);
+                    if (next is null)
+                    {
+                        subscription.CancelScheduledChange();
+                    }
+                    else
+                    {
+                        subscription.ApplyScheduledChange(next);
+                    }
+                }
+
                 // Business plans need the validated quarterly diagnostic: until then nothing is due.
                 period = subscription.PrepareRenewal(await diagnostics.ValidatedForCurrentPeriodAsync(subscription, cancellationToken));
             }

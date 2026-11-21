@@ -656,6 +656,20 @@
   <data name="Error_account_role_not_allowed" xml:space="preserve"><value>Ce rôle n'est pas disponible pour ce compte.</value></data>
   <data name="Error_account_member_not_found" xml:space="preserve"><value>Ce membre ne fait plus partie de l'équipe.</value></data>
   <data name="Error_account_approval_business_only" xml:space="preserve"><value>La validation des demandes est réservée aux entreprises.</value></data>
+  <data name="Error_subscription_change_unavailable" xml:space="preserve"><value>La formule pourra être changée une fois l'abonnement démarré.</value></data>
+  <data name="Error_subscription_plan_unknown" xml:space="preserve"><value>Choisissez une formule dans la liste.</value></data>
+  <data name="Error_subscription_annual_unavailable" xml:space="preserve"><value>Le paiement à l'année n'est proposé que pour les formules mensuelles.</value></data>
+  <data name="Error_subscription_plan_segment" xml:space="preserve"><value>Cette formule n'est pas proposée pour ce type de compte.</value></data>
+  <data name="Offer_Change_Title" xml:space="preserve"><value>Changer de formule</value></data>
+  <data name="Offer_Change_Text" xml:space="preserve"><value>La nouvelle formule commence à la prochaine période, le {0}. Rien n'est recalculé sur la période en cours.</value></data>
+  <data name="Offer_Change_Planned" xml:space="preserve"><value>Prévu : {0} à partir du {1}.</value></data>
+  <data name="Offer_Change_Yearly" xml:space="preserve"><value>à l'année</value></data>
+  <data name="Offer_Change_Withdraw" xml:space="preserve"><value>Garder ma formule actuelle</value></data>
+  <data name="Offer_Change_Current" xml:space="preserve"><value>actuelle</value></data>
+  <data name="Offer_Change_Annual" xml:space="preserve"><value>Payer à l'année ({0} mois offerts)</value></data>
+  <data name="Offer_Change_Submit" xml:space="preserve"><value>Enregistrer pour la prochaine période</value></data>
+  <data name="Offer_Change_Saved" xml:space="preserve"><value>C'est noté : votre nouvelle formule commencera à la prochaine période.</value></data>
+  <data name="Offer_Change_Withdrawn" xml:space="preserve"><value>Vous gardez votre formule actuelle.</value></data>
   <data name="Error_subscription_plan_inactive" xml:space="preserve"><value>Cette offre n'est plus proposée.</value></data>
   <data name="Error_subscription_properties" xml:space="preserve"><value>Cette offre ne peut pas couvrir ces sites.</value></data>
   <data name="Error_request_domain_not_covered" xml:space="preserve"><value>Ce métier n'est pas couvert par votre offre.</value></data>

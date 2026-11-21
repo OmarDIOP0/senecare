@@ -521,6 +521,14 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("monthly_price");
 
+                    b.Property<bool>("NextAnnual")
+                        .HasColumnType("bit")
+                        .HasColumnName("next_annual");
+
+                    b.Property<Guid?>("NextPlanId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("next_plan_id");
+
                     b.Property<Guid>("PlanId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("plan_id");

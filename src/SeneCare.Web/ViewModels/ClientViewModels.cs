@@ -92,4 +92,5 @@ public sealed class ClientHomeModel
 }
 
 /// <summary>A subscription and, when something is due, the invoice to pay with Wave (+ its QR code) or Orange Money.</summary>
-public sealed record SubscriptionPageItem(SubscriptionSummary Subscription, SeneCare.Application.Payments.InvoiceDue? Due, string? QrSvg);
+public sealed record SubscriptionPageItem(
+    SubscriptionSummary Subscription, SeneCare.Application.Payments.InvoiceDue? Due, string? QrSvg, SeneCare.Application.Subscriptions.OfferChange? Offer = null);

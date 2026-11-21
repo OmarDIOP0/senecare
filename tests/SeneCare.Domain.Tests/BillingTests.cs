@@ -1,6 +1,8 @@
+using SeneCare.Domain.Accounts;
 using SeneCare.Domain.Billing;
 using SeneCare.Domain.Common;
 using SeneCare.Domain.Diagnostics;
+using SeneCare.Domain.Plans;
 using static SeneCare.Domain.Tests.TestData;
 
 namespace SeneCare.Domain.Tests;
@@ -112,6 +114,41 @@ public class SubscriptionTests
         subscription.Activate(Jan1, Now);
 
         Assert.Equal(new DateOnly(2026, 2, 1), subscription.PrepareRenewal(null).Start);
+    }
+
+    [Fact]
+    public void A_change_of_offer_waits_for_the_next_period_then_sets_its_price_and_length()
+    {
+        var subscription = Subscription.Create(Household(), HomePlan(), [Guid.CreateVersion7()], Now);
+        Assert.Throws<DomainException>(() => subscription.ScheduleChange(HomePlan(), annual: true)); // not started yet
+        subscription.Activate(Jan1, Now);
+
+        var plan = HomePlan();
+        subscription.ScheduleChange(plan, annual: true);
+        Assert.Equal(1, subscription.BillingPeriodMonths); // the current period is untouched
+        Assert.Equal(plan.Id, subscription.NextPlanId);
+
+        subscription.ApplyScheduledChange(plan);
+        Assert.Null(subscription.NextPlanId);
+        Assert.True(subscription.IsAnnual);
+        Assert.Equal(new DateRange(new DateOnly(2026, 2, 1), new DateOnly(2027, 1, 31)), subscription.PrepareRenewal(null));
+        Assert.Equal(Money.FromFcfa(85_000), subscription.PeriodPrice); // 12 months, 2 offered
+    }
+
+    [Fact]
+    public void Business_offers_change_between_business_plans_only_and_never_yearly()
+    {
+        var subscription = Subscription.Create(Business(), BusinessPlan(), [Guid.CreateVersion7()], Now);
+        subscription.Activate(Jan1, Now);
+
+        Assert.Throws<DomainException>(() => subscription.ScheduleChange(HomePlan(), annual: false));
+        var premium = new Plan("PREMIUM", "Premium", AccountKind.Business, Money.FromFcfa(75_000), Money.FromFcfa(3_500_000), 3, diagnosticRequired: true);
+        Assert.Throws<DomainException>(() => subscription.ScheduleChange(premium, annual: true));
+
+        subscription.ScheduleChange(premium, annual: false);
+        Assert.Equal(premium.Id, subscription.NextPlanId);
+        subscription.CancelScheduledChange();
+        Assert.Null(subscription.NextPlanId);
     }
 
     [Fact]

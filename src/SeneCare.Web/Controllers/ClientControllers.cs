@@ -219,7 +219,8 @@ public sealed class InterventionsController(
 public sealed class SubscriptionController(
     SubscriptionQueries queries,
     PrepareInvoiceHandler prepareInvoice,
-    DeclarePaymentHandler declarePayment) : Controller
+    DeclarePaymentHandler declarePayment,
+    ChangeOfferHandler changeOffer) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
@@ -242,11 +243,15 @@ public sealed class SubscriptionController(
             subscriptions = await queries.ListAsync(userId, cancellationToken);
         }
 
-        var items = subscriptions
-            .Select(s => dues.TryGetValue(s.Id, out var due)
-                ? new SubscriptionPageItem(s, due, due.WaveUrl is { } url ? QrCode.Svg(url) : null)
-                : new SubscriptionPageItem(s, null, null))
-            .ToList();
+        var items = new List<SubscriptionPageItem>();
+        foreach (var s in subscriptions)
+        {
+            // « Changer de formule »: household owner / company manager, once the subscription has started.
+            var offer = await changeOffer.OptionsAsync(userId, s.Id, cancellationToken);
+            items.Add(dues.TryGetValue(s.Id, out var due)
+                ? new SubscriptionPageItem(s, due, due.WaveUrl is { } url ? QrCode.Svg(url) : null, offer)
+                : new SubscriptionPageItem(s, null, null, offer));
+        }
 
         if (items.Count == 0 && AppNavigation.IsBusinessManager(User))
         {
@@ -254,6 +259,23 @@ public sealed class SubscriptionController(
         }
 
         return View(items);
+    }
+
+    /// <summary>Another offer (or monthly ↔ annual) from the next period on; the current one again withdraws the change.</summary>
+    [HttpPost("{id:guid}/formule")]
+    public async Task<IActionResult> ChangeOffer(Guid id, string? plan, bool annual, CancellationToken cancellationToken)
+    {
+        var result = await changeOffer.ScheduleAsync(User.GetUserId()!.Value, id, plan, annual, cancellationToken);
+        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Offer_Change_Saved"].Value : this.ErrorMessage(result.Error);
+        return Redirect("/abonnement#formule-" + id.ToString("N", System.Globalization.CultureInfo.InvariantCulture));
+    }
+
+    [HttpPost("{id:guid}/formule/annuler")]
+    public async Task<IActionResult> CancelOfferChange(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await changeOffer.CancelAsync(User.GetUserId()!.Value, id, cancellationToken);
+        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Offer_Change_Withdrawn"].Value : this.ErrorMessage(result.Error);
+        return Redirect("/abonnement");
     }
 
     /// <summary>« J'ai payé » after paying with Wave or Orange Money: a Finance admin checks and activates.</summary>

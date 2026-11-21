@@ -13,7 +13,14 @@ internal static partial class StartupErrorPage
 
     public static async Task RunAsync(string[] args, Exception exception)
     {
-        var text = "SeneCare n'a pas pu démarrer (diagnostic du site de test).\n\n" + Mask(exception.ToString());
+        // Type and message of each nested exception only: no stack trace, no file paths of the code.
+        var lines = new List<string>();
+        for (var current = exception; current is not null; current = current.InnerException)
+        {
+            lines.Add(current.GetType().FullName + ": " + current.Message);
+        }
+
+        var text = "SeneCare n'a pas pu démarrer (diagnostic du site de test).\n\n" + Mask(string.Join("\n", lines));
         TryWriteFile(text);
 
         var app = WebApplication.Create(args);
@@ -46,6 +53,6 @@ internal static partial class StartupErrorPage
         }
     }
 
-    [GeneratedRegex(@"(?i)(password|pwd|signingkey|hashkey)\s*[=:]\s*[^;""\s,}]*")]
+    [GeneratedRegex(@"(?i)(password|pwd|user ?id|uid|secret|token|api_?key|accountkey|signingkey|hashkey|key)\s*[=:]\s*(""[^""]*""|[^;\s,}]*)")]
     private static partial Regex SecretPattern();
 }

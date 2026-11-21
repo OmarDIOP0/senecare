@@ -3,7 +3,7 @@
 @inject SeneCare.Application.Users.GetUserProfileHandler Profiles
 @inject SeneCare.Application.Users.NotificationInbox Inbox
 @{
-    var nav = AppNavigation.For(User);
+    var nav = AppNavigation.For(User, Context.Request.Path);
     var active = ViewData["NavActive"] as string ?? "espace";
     var userId = User.GetUserId();
     var profile = userId is { } id ? await Profiles.HandleAsync(id, Context.RequestAborted) : null;

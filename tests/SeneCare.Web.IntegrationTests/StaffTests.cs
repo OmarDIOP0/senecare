@@ -108,7 +108,10 @@ public sealed partial class StaffTests(WebAppFixture app)
         var admin = WebUtility.HtmlDecode(await dispatcher.GetStringAsync(new Uri("/admin", UriKind.Relative)));
         Assert.Contains("href=\"/technicien\"", admin, StringComparison.Ordinal);
         Assert.Contains("Mes missions", admin, StringComparison.Ordinal);
-        Assert.Equal(HttpStatusCode.OK, (await dispatcher.GetAsync(new Uri("/technicien", UriKind.Relative))).StatusCode);
+        // On the technician pages: the technician menu, with « Administration » to go back.
+        var missions = WebUtility.HtmlDecode(await dispatcher.GetStringAsync(new Uri("/technicien", UriKind.Relative)));
+        Assert.Contains("href=\"/technicien/rapports\"", missions, StringComparison.Ordinal);
+        Assert.Contains("Administration", missions, StringComparison.Ordinal);
         var team = WebUtility.HtmlDecode(await super_.GetStringAsync(new Uri("/admin/equipe", UriKind.Relative)));
         Assert.Contains("Aussi technicien", team, StringComparison.Ordinal);
 

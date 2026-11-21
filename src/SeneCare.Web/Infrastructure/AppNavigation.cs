@@ -30,11 +30,26 @@ public static class AppNavigation
 
     /// <summary>
     /// One navigation per kind of user. Priority when someone has several roles:
-    /// admin &gt; technician &gt; business &gt; household.
+    /// admin &gt; technician &gt; business &gt; household. An admin who is also a technician gets the technician
+    /// navigation on the technician pages (missions, reports), with « Administration » to go back.
     /// </summary>
-    public static AppNav For(ClaimsPrincipal user)
+    public static AppNav For(ClaimsPrincipal user, PathString path = default)
     {
         ArgumentNullException.ThrowIfNull(user);
+
+        var technician = user.IsInRole(nameof(PlatformRole.Technician));
+        if (IsAdmin(user) && technician && path.StartsWithSegments("/technicien", StringComparison.OrdinalIgnoreCase))
+        {
+            return new AppNav(
+                [
+                    new("espace", "/technicien", "truck", "Tab_Missions"),
+                    new("rapports", "/technicien/rapports", "receipt", "Tab_Reports"),
+                    new("admin", "/admin", "building-2", "Tab_Admin"),
+                ],
+                null,
+                TourKeys.Technician,
+                ["espace", "rapports", "admin"]);
+        }
 
         if (IsAdmin(user))
         {

@@ -1463,4 +1463,29 @@
   <data name="Site_Faq_Eyebrow" xml:space="preserve"><value>Questions fréquentes</value></data>
   <data name="Site_Cta_Eyebrow" xml:space="preserve"><value>Besoin d'un technicien ?</value></data>
   <data name="Site_Pricing_Yearly" xml:space="preserve"><value>Paiement annuel</value></data>
+  <data name="Staff_Title" xml:space="preserve"><value>Équipe SeneCare</value></data>
+  <data name="Staff_Card_Text" xml:space="preserve"><value>Qui gère SeneCare, et avec quels droits.</value></data>
+  <data name="Staff_Intro" xml:space="preserve"><value>Les personnes qui gèrent SeneCare et leurs droits. Une même personne peut aussi être technicien : sa fiche (métiers, zones, horaires) se règle dans Techniciens.</value></data>
+  <data name="Staff_Add" xml:space="preserve"><value>Ajouter un membre</value></data>
+  <data name="Staff_Added" xml:space="preserve"><value>Membre ajouté.</value></data>
+  <data name="Staff_RolesSaved" xml:space="preserve"><value>Droits enregistrés : ils s'appliquent dans la minute.</value></data>
+  <data name="Staff_Removed" xml:space="preserve"><value>Retiré de l'équipe : ses sessions sont fermées.</value></data>
+  <data name="Staff_Remove" xml:space="preserve"><value>Retirer de l'équipe</value></data>
+  <data name="Staff_RemoveConfirm" xml:space="preserve"><value>Retirer {0} de l'équipe ? Ses droits d'administration sont supprimés et ses sessions fermées. S'il est technicien, il le reste.</value></data>
+  <data name="Staff_EditRoles" xml:space="preserve"><value>Modifier les droits</value></data>
+  <data name="Staff_Roles" xml:space="preserve"><value>Droits</value></data>
+  <data name="Staff_AlsoTechnician" xml:space="preserve"><value>Aussi technicien</value></data>
+  <data name="Staff_PhoneHint" xml:space="preserve"><value>Si ce numéro a déjà un compte (technicien, client), les droits s'y ajoutent : une seule connexion.</value></data>
+  <data name="Staff_TechnicianHint" xml:space="preserve"><value>Aussi technicien ? Ajoutez le même numéro dans Gestion › Techniciens : c'est le même compte, avec « Mes missions » dans son menu.</value></data>
+  <data name="Staff_Role_SuperAdmin" xml:space="preserve"><value>Tout : prix, paramètres, équipe, journal.</value></data>
+  <data name="Staff_Role_Dispatcher" xml:space="preserve"><value>Demandes, planning, techniciens, quartiers.</value></data>
+  <data name="Staff_Role_Finance" xml:space="preserve"><value>Paiements, factures, encaissements.</value></data>
+  <data name="Staff_Role_Support" xml:space="preserve"><value>Dossiers clients, mot de passe oublié.</value></data>
+  <data name="Tab_MyMissions" xml:space="preserve"><value>Mes missions</value></data>
+  <data name="Admin_TechPassword" xml:space="preserve"><value>Nouveau mot de passe provisoire</value></data>
+  <data name="Error_staff_role_required" xml:space="preserve"><value>Choisissez au moins un droit. Pour tout retirer, utilisez « Retirer de l'équipe ».</value></data>
+  <data name="Error_staff_self" xml:space="preserve"><value>Vos propres droits et votre mot de passe ne se changent pas ici (Mon compte › Mot de passe).</value></data>
+  <data name="Error_staff_last_super_admin" xml:space="preserve"><value>Il doit toujours rester au moins un Super-admin.</value></data>
+  <data name="Error_user_not_found" xml:space="preserve"><value>Personne introuvable.</value></data>
+  <data name="Error_staff_otp_mode" xml:space="preserve"><value>La connexion se fait par code : il n'y a pas de mot de passe à donner.</value></data>
 </root>

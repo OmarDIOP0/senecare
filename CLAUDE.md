@@ -29,6 +29,11 @@ Les tarifs DOIVENT être paramétrables en base par l'admin (jamais codés en du
 - TECHNICIEN : reçoit les missions, itinéraire, check-list, photos avant/après,
   signature client, rapport. (Rôle indispensable au parcours.)
 - ADMIN SENECARE : sous-rôles Super-admin, Dispatcher/Superviseur, Comptabilité, Support.
+  Admin › Équipe SeneCare (`/admin/equipe`, Super-admin) : ajouter / modifier / retirer les membres, mot de
+  passe provisoire affiché une fois. Un compte par personne, rôles cumulables : un admin peut aussi être
+  technicien (fiche dans Admin › Techniciens, lien « Mes missions » dans son menu admin). Garde-fous : jamais sur
+  soi-même, toujours au moins un Super-admin ; un changement de droits ferme les sessions de la personne (cookies
+  revérifiés chaque minute). Un nouveau technicien reçoit aussi un mot de passe provisoire (mode mot de passe).
 Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les vues.
 
 ## 3. Réalités sénégalaises (non négociables)
@@ -86,7 +91,8 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
 - Base : SQL Server (décision utilisateur, hébergement SmarterASP.NET Windows / IIS), noms en snake_case
   (`EFCore.NamingConventions`), une migration de départ `InitialSqlServer`. Durées (`TimeSpan`) stockées en ticks
   (`bigint`, le type `time` s'arrête à 24 h) ; listes d'identifiants en JSON ; numéros de demande / facture par
-  séquences SQL Server.
+  séquences SQL Server. READ_COMMITTED_SNAPSHOT activé par migration (les lectures n'attendent pas les écritures,
+  comme PostgreSQL ; si l'hébergeur refuse, le site démarre quand même).
 - Pourquoi MVC + HTMX et pas un SPA lourd : rendu serveur rapide sur réseau faible,
   peu de JS, SEO pour les pages publiques. L'API sert la future app native.
 - Temps réel : SignalR (statut d'intervention, position technicien).

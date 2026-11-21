@@ -1,0 +1,90 @@
+@model IReadOnlyList<SeneCare.Application.Admin.StaffMember>
+@using SeneCare.Application.Admin
+@using SeneCare.Domain.Users
+@using SeneCare.Infrastructure.Identity
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "gestion";
+    ViewData["Title"] = L["Staff_Title"];
+    ViewData["Wide"] = true;
+    var me = User.GetUserId();
+}
+
+<a href="/admin/gestion" class="inline-flex min-h-12 items-center font-medium">← @L["Tab_Management"]</a>
+<div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+        <h1 class="sc-titre">@L["Staff_Title"]</h1>
+        <p class="mt-1 max-w-2xl text-charbon-doux">@L["Staff_Intro"]</p>
+    </div>
+    <button type="button" class="sc-btn-primaire" data-sheet-open="nouveau-membre"><sc-icon name="plus" />@L["Staff_Add"]</button>
+</div>
+
+<partial name="Ui/_TemporaryPassword" />
+
+<ul class="mt-6 grid gap-3 lg:grid-cols-2">
+    @foreach (var m in Model)
+    {
+        var self = m.UserId == me;
+        <li class="sc-carte @(m.IsActive ? "" : "opacity-60")">
+            <div class="flex flex-wrap items-start justify-between gap-2">
+                <div class="min-w-0">
+                    <p class="text-[15px] font-semibold">@(m.Name ?? "+221 " + m.Phone)@if (self) { <span class="ml-1 font-normal text-charbon-doux">(@L["Team_You"])</span> }</p>
+                    <p class="text-sm">+221 @m.Phone</p>
+                </div>
+                @if (m.TechnicianId is { } technicianId)
+                {
+                    <a href="/admin/techniciens/@technicianId" class="sc-badge sc-tap bg-atlantique-clair text-atlantique no-underline"><sc-icon name="wrench" class="size-3.5" />@L["Staff_AlsoTechnician"]</a>
+                }
+            </div>
+            <p class="mt-2 flex flex-wrap gap-1">
+                @foreach (var role in m.AdminRoles)
+                {
+                    <span class="sc-badge @(role == PlatformRole.SuperAdmin ? "bg-ocre-clair text-ocre-texte" : "bg-sourdine text-charbon-doux")">@L["PlatformRole_" + role]</span>
+                }
+            </p>
+            @if (!self)
+            {
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <button type="button" class="sc-btn-secondaire min-h-11 text-sm" data-sheet-open="roles-@m.UserId">@L["Staff_EditRoles"]</button>
+                    <button type="button" class="sc-btn-secondaire min-h-11 text-sm" data-sheet-open="mdp-@m.UserId">@L["Admin_ResetPassword"]</button>
+                    <button type="button" class="sc-btn-danger ml-auto min-h-11 text-sm" data-sheet-open="retirer-@m.UserId">@L["Staff_Remove"]</button>
+                </div>
+                <sc-sheet id="mdp-@m.UserId" title="@L["Admin_ResetPassword"]">
+                    <form method="post" action="/admin/equipe/@m.UserId/mot-de-passe" class="grid gap-4">
+                        @Html.AntiForgeryToken()
+                        <p>@L["Admin_ResetPassword_Confirm", m.Name ?? m.Phone]</p>
+                        <button type="submit" class="sc-btn-primaire">@L["Admin_ResetPassword"]</button>
+                    </form>
+                </sc-sheet>
+                <sc-sheet id="retirer-@m.UserId" title="@L["Staff_Remove"]">
+                    <form method="post" action="/admin/equipe/@m.UserId/retirer" class="grid gap-4">
+                        @Html.AntiForgeryToken()
+                        <p>@L["Staff_RemoveConfirm", m.Name ?? m.Phone]</p>
+                        <button type="submit" class="sc-btn-danger">@L["Staff_Remove"]</button>
+                    </form>
+                </sc-sheet>
+                <sc-sheet id="roles-@m.UserId" title="@L["Staff_EditRoles"]">
+                    <form method="post" action="/admin/equipe/@m.UserId/roles" class="grid gap-4">
+                        @Html.AntiForgeryToken()
+                        <partial name="_Roles" model="m.AdminRoles" />
+                        <button type="submit" class="sc-btn-primaire">@L["Common_Save"]</button>
+                    </form>
+                </sc-sheet>
+            }
+        </li>
+    }
+</ul>
+
+<sc-sheet id="nouveau-membre" title="@L["Staff_Add"]">
+    <form method="post" action="/admin/equipe" class="grid gap-4">
+        @Html.AntiForgeryToken()
+        <partial name="Ui/_PhoneInput" model='new PhoneInputModel("phone", null, L["SignIn_PhoneLabel"], null, L["Staff_PhoneHint"])' />
+        <div>
+            <label class="sc-label" for="nom">@L["Register_NameLabel"]</label>
+            <input id="nom" name="fullName" class="sc-input" maxlength="120" />
+        </div>
+        <partial name="_Roles" model="Array.Empty<PlatformRole>()" />
+        <p class="sc-aide">@L["Staff_TechnicianHint"]</p>
+        <button type="submit" class="sc-btn-primaire">@L["Staff_Add"]</button>
+    </form>
+</sc-sheet>

@@ -73,7 +73,7 @@ public sealed class CustomersController(CustomerDirectory directory) : Controlle
 /// <summary>Technicians: trades, zones, working week, activation, certification.</summary>
 [Authorize(Policy = Policies.AdminDispatcher)]
 [Route("/admin/techniciens")]
-public sealed class TechniciansController(TechnicianManagement technicians, GeographyManagement geography) : Controller
+public sealed class TechniciansController(TechnicianManagement technicians, GeographyManagement geography, StaffManagement staff) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
@@ -88,7 +88,36 @@ public sealed class TechniciansController(TechnicianManagement technicians, Geog
     {
         var result = await technicians.CreateAsync(Me, Form(phone, fullName, skills, communes, days, start, end), cancellationToken);
         TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Admin_TechCreated"].Value : this.ErrorMessage(result.Error);
-        return result.IsSuccess ? RedirectToAction(nameof(Edit), new { id = result.Value }) : RedirectToAction(nameof(Index));
+        if (!result.IsSuccess)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Sign-in is by phone + password: a new technician gets a temporary one to change at the first sign-in
+        // (an existing account, e.g. an admin who becomes technician, keeps its own).
+        if (await staff.TechnicianPasswordAsync(Me, result.Value, onlyIfNone: true, cancellationToken) is { IsSuccess: true } password)
+        {
+            TemporaryPasswordPanel.Remember(TempData, password.Value);
+        }
+
+        return RedirectToAction(nameof(Edit), new { id = result.Value });
+    }
+
+    /// <summary>« Nouveau mot de passe provisoire » for a technician (forgotten, lost phone).</summary>
+    [HttpPost("{id:guid}/mot-de-passe")]
+    public async Task<IActionResult> ResetPassword(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await staff.TechnicianPasswordAsync(Me, id, onlyIfNone: false, cancellationToken);
+        if (result.IsSuccess)
+        {
+            TemporaryPasswordPanel.Remember(TempData, result.Value);
+        }
+        else
+        {
+            TempData["flash.toast"] = this.ErrorMessage(result.Error);
+        }
+
+        return RedirectToAction(nameof(Edit), new { id });
     }
 
     [HttpGet("{id:guid}")]

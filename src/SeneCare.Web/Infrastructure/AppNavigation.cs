@@ -53,6 +53,12 @@ public static class AppNavigation
             }
 
             items.Add(new("gestion", "/admin/gestion", "building-2", "Tab_Management"));
+            // One account, several roles: an admin who is also a technician reaches their missions from here.
+            if (user.IsInRole(nameof(PlatformRole.Technician)))
+            {
+                items.Add(new("missions", "/technicien", "wrench", "Tab_MyMissions"));
+            }
+
             return new AppNav(items, null, TourKeys.Admin, [.. items.Take(3).Select(i => i.Key)]);
         }
 

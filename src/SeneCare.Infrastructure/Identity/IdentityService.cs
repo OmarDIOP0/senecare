@@ -95,6 +95,20 @@ internal sealed class IdentityService(UserManager<ApplicationUser> userManager, 
         return null;
     }
 
+    public async Task EndSessionsAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        if (await userManager.FindByIdAsync(userId.ToString()) is { } user)
+        {
+            // New security stamp: cookies issued before are refused at their next check (every minute).
+            await userManager.UpdateSecurityStampAsync(user);
+        }
+
+        var now = DateTimeOffset.UtcNow;
+        await db.RefreshTokens
+            .Where(t => t.UserId == userId && t.RevokedAt == null)
+            .ExecuteUpdateAsync(s => s.SetProperty(t => t.RevokedAt, now), cancellationToken);
+    }
+
     public async Task EnsureIdentityUserAsync(User user, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(user);

@@ -116,6 +116,9 @@ public interface IIdentityService
 
     /// <summary>Replaces the password (and unlocks the account). Null when done, otherwise an error code.</summary>
     Task<string?> SetPasswordAsync(Guid userId, string password, bool mustChange, CancellationToken cancellationToken = default);
+
+    /// <summary>Ends every session of the person (web cookies at their next check, app refresh tokens now).</summary>
+    Task EndSessionsAsync(Guid userId, CancellationToken cancellationToken = default);
 }
 
 public enum PasswordCheck

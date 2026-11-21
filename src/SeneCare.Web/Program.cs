@@ -51,6 +51,9 @@ try
         options.LogoutPath = "/deconnexion";
         options.AccessDeniedPath = "/acces-refuse";
     });
+    // Rights live in the sign-in cookie: checked against the database every minute (default 30), so a role given
+    // or removed in Admin › Équipe applies within a minute, and a session ended by an admin stops at once.
+    builder.Services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.FromMinutes(1));
     builder.Services.AddAuthorization(options => options.AddSeneCarePolicies());
     builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, RegistrationRedirectHandler>();
     builder.Services.AddSeneCareRateLimits(builder.Configuration);

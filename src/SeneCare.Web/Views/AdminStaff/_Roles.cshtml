@@ -1,0 +1,13 @@
+@model IReadOnlyList<SeneCare.Domain.Users.PlatformRole>
+@using SeneCare.Application.Admin
+@* The four admin roles, each with what it opens. At least one is required (removing everything is « Retirer »). *@
+<fieldset class="grid gap-2">
+    <legend class="sc-label">@L["Staff_Roles"]</legend>
+    @foreach (var role in StaffManagement.AdminRoles)
+    {
+        <label class="flex min-h-12 cursor-pointer items-start gap-3 rounded-xl border border-ligne bg-surface p-3 has-checked:border-ambre has-checked:bg-ocre-clair">
+            <input type="checkbox" name="roles" value="@role" class="mt-1 size-4 accent-laterite" checked="@Model.Contains(role)" />
+            <span><span class="block font-semibold">@L["PlatformRole_" + role]</span><span class="block text-sm text-charbon-doux">@L["Staff_Role_" + role]</span></span>
+        </label>
+    }
+</fieldset>

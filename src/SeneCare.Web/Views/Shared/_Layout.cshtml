@@ -24,7 +24,6 @@
 </head>
 @* Room for the phone action bar (its exact height, home indicator included) so nothing ends hidden under it. *@
 <body class="flex min-h-dvh flex-col @(onSignIn || !(signedIn || showContact) ? "" : "pb-[calc(3.5625rem_+_max(0.5rem,env(safe-area-inset-bottom)))] lg:pb-0")">
-<partial name="Ui/_TestBanner" />
     <a href="#contenu" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-surface focus:px-3 focus:py-2 focus:text-charbon">@L["Layout_SkipToContent"]</a>
 
     @* ---- Thin contact bar ---- *@
@@ -98,12 +97,14 @@
                         <span class="sm:hidden">@L["Site_RequestJob_Short"]</span><span class="hidden sm:inline">@L["Site_RequestJob"]</span>
                     </a>
                 }
-                <details class="relative 2xl:hidden" data-menu>
+                @* ☰ only while the menu does not fit in the bar: from 1280 px, trades and pages are all visible. *@
+                <details class="relative xl:hidden" data-menu>
                     <summary class="sc-btn-icone list-none [&::-webkit-details-marker]:hidden" aria-label="@L["Public_Nav_Label"]"><sc-icon name="menu" /></summary>
                     <div class="sc-menu right-0 max-h-[80dvh] w-72 overflow-y-auto">
                         @if (!signedIn)
                         {
-                            <a href="/connexion" class="sc-btn-secondaire mb-1.5 w-full"><sc-icon name="circle-user" class="size-5 text-laterite" />@L["Nav_SignIn"]</a>
+                            @* Phones only: from 768 px « Se connecter » is already in the bar. *@
+                            <a href="/connexion" class="sc-btn-secondaire mb-1.5 w-full md:hidden"><sc-icon name="circle-user" class="size-5 text-laterite" />@L["Nav_SignIn"]</a>
                         }
                         @* Trades folded: seven lines would push everything else down. *@
                         <details class="group/trades">

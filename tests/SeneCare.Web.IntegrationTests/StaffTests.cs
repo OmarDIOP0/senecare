@@ -124,6 +124,51 @@ public sealed partial class StaffTests(WebAppFixture app)
         Assert.Equal("/compte/mot-de-passe", signedIn.Location());
     }
 
+    [DatabaseFact]
+    public async Task A_dispatcher_cannot_give_a_password_to_a_technician_who_is_also_an_admin()
+    {
+        // A super-admin who is also a technician.
+        var (_, adminPhone) = await PasswordStaffWithPhoneAsync(PlatformRole.SuperAdmin);
+        var dispatcher = await PasswordStaffAsync(PlatformRole.Dispatcher);
+        Guid communeId, technicianId;
+        await using (var db = app.Database.CreateContext())
+        {
+            communeId = await db.Neighborhoods.Where(n => n.Name == "Almadies").Select(n => n.CommuneId).SingleAsync();
+        }
+
+        await PostAsync(dispatcher, "/admin/techniciens", "/admin/techniciens", Technician(adminPhone, communeId));
+        await using (var db = app.Database.CreateContext())
+        {
+            var userId = await db.Users.Where(u => u.PhoneNumber == adminPhone).Select(u => u.Id).SingleAsync();
+            technicianId = await db.Technicians.Where(t => t.UserId == userId).Select(t => t.Id).SingleAsync();
+        }
+
+        await PostAsync(dispatcher, $"/admin/techniciens/{technicianId}", $"/admin/techniciens/{technicianId}/mot-de-passe", []);
+        var file = WebUtility.HtmlDecode(await dispatcher.GetStringAsync(new Uri($"/admin/techniciens/{technicianId}", UriKind.Relative)));
+        Assert.DoesNotMatch(TemporaryPassword(), file);
+
+        // Neither at creation: a customer's number made technician keeps the customer's own sign-in.
+        var customerPhone = TestData.NewPhone();
+        await app.CreatePasswordClient().SubmitAsync("/inscription", "/connexion", new Dictionary<string, string>
+        {
+            ["Signup"] = "true", ["Phone"] = customerPhone.Formatted, ["Password"] = "Client-Yoff-2026", ["ConfirmPassword"] = "Client-Yoff-2026",
+        });
+        await using (var db = app.Database.CreateContext())
+        {
+            var customer = await db.Users.SingleAsync(u => u.PhoneNumber == customerPhone);
+            customer.GrantRole(PlatformRole.Customer, DateTimeOffset.UtcNow);
+            await db.SaveChangesAsync();
+        }
+
+        var made = await PostAsync(dispatcher, "/admin/techniciens", "/admin/techniciens", Technician(customerPhone, communeId));
+        Assert.DoesNotMatch(TemporaryPassword(), WebUtility.HtmlDecode(await dispatcher.GetStringAsync(new Uri(made.Location(), UriKind.Relative))));
+
+        // The super-admin's own password still works.
+        var admin = app.CreatePasswordClient();
+        var signedIn = await admin.SubmitAsync("/connexion", "/connexion", new Dictionary<string, string> { ["Phone"] = adminPhone.Formatted, ["Password"] = "Teranga-Admin-2026" });
+        Assert.NotEqual("/compte/mot-de-passe", signedIn.Location());
+    }
+
     private static List<KeyValuePair<string, string>> Technician(PhoneNumber phone, Guid communeId) =>
     [
         new("phone", phone.Formatted), new("fullName", "Cheikh Mbaye"), new("skills", "Plumbing"),

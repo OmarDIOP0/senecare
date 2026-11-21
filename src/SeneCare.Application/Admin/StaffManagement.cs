@@ -186,6 +186,21 @@ public sealed class StaffManagement(IApplicationDbContext db, IIdentityService i
             return Result<StaffAdded>.Success(new StaffAdded(id, string.Empty, null, null));
         }
 
+        // The technicians screen is open to dispatchers. An account that is more than a technician (an admin,
+        // possibly super-admin, or a customer) must not get a password from there, or a dispatcher could take it
+        // over: at creation it simply keeps its own; a reset needs a super-admin.
+        var hasOtherRoles = await db.Users.AnyAsync(u => u.Id == id && u.Roles.Any(r => r.Role != PlatformRole.Technician), cancellationToken);
+        if (hasOtherRoles && onlyIfNone)
+        {
+            return Result<StaffAdded>.Success(new StaffAdded(id, string.Empty, null, null));
+        }
+
+        var callerIsSuperAdmin = await db.Users.AnyAsync(u => u.Id == adminId && u.Roles.Any(r => r.Role == PlatformRole.SuperAdmin), cancellationToken);
+        if (hasOtherRoles && !callerIsSuperAdmin)
+        {
+            return Result<StaffAdded>.Failure("staff.forbidden");
+        }
+
         return await ResetPasswordAsync(adminId, id, cancellationToken);
     }
 

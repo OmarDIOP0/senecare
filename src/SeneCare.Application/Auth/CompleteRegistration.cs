@@ -34,7 +34,7 @@ public sealed record CompleteRegistrationCommand(
 /// Last sign-up step: name, « Ma maison » / « Mon entreprise », explicit consent (law 2008-12).
 /// Invited employees already belong to an account and skip the profile choice.
 /// </summary>
-public sealed class CompleteRegistrationHandler(IApplicationDbContext db, TimeProvider clock)
+public sealed class CompleteRegistrationHandler(IApplicationDbContext db, Users.Notifier notifier, TimeProvider clock)
 {
     public async Task<Result<Guid>> HandleAsync(CompleteRegistrationCommand command, CancellationToken cancellationToken = default)
     {
@@ -55,6 +55,7 @@ public sealed class CompleteRegistrationHandler(IApplicationDbContext db, TimePr
             return Result<Guid>.Failure("user.not_found");
         }
 
+        CustomerAccount? created = null;
         var account = await db.CustomerAccounts.FirstOrDefaultAsync(a => a.Members.Any(m => m.UserId == user.Id), cancellationToken);
         if (account is null && !user.IsStaff)
         {
@@ -85,6 +86,7 @@ public sealed class CompleteRegistrationHandler(IApplicationDbContext db, TimePr
             }
 
             db.CustomerAccounts.Add(account);
+            created = account;
         }
 
         var now = clock.GetUtcNow();
@@ -110,6 +112,14 @@ public sealed class CompleteRegistrationHandler(IApplicationDbContext db, TimePr
         if (account is not null)
         {
             user.GrantRole(PlatformRole.Customer, now);
+        }
+
+        // SENECARE learns of each new customer (super-admins, support).
+        if (created is not null)
+        {
+            await notifier.ToRolesAsync(
+                [PlatformRole.SuperAdmin, PlatformRole.Support], Users.NotificationTemplates.AccountCreated,
+                new { name = created.DisplayName, kind = created.Kind.ToString(), url = $"/admin/clients/{created.Id}" }, user.Id, cancellationToken);
         }
 
         await db.SaveChangesAsync(cancellationToken);

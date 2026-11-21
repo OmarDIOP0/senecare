@@ -30,12 +30,16 @@ public static class DependencyInjection
         services.AddSingleton<Caching.PublicCacheSignals>();
         services.AddSingleton<Caching.PublicCacheInvalidator>();
         services.AddSingleton<QueryDiagnostics>();
+        services.AddScoped<NotificationInterceptor>();
         services.AddDbContext<SeneCareDbContext>((sp, options) => options
             .UseSqlServer(
                 configuration.GetConnectionString(ConnectionStringName),
                 sql => sql.MigrationsHistoryTable("__ef_migrations_history"))
             .UseSnakeCaseNamingConvention()
-            .AddInterceptors(sp.GetRequiredService<Caching.PublicCacheInvalidator>(), sp.GetRequiredService<QueryDiagnostics>()));
+            .AddInterceptors(
+                sp.GetRequiredService<Caching.PublicCacheInvalidator>(),
+                sp.GetRequiredService<QueryDiagnostics>(),
+                sp.GetRequiredService<NotificationInterceptor>()));
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<SeneCareDbContext>());
 
         services.AddScoped<DatabaseSeeder>();

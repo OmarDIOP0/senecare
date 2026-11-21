@@ -35,6 +35,13 @@ Les tarifs DOIVENT être paramétrables en base par l'admin (jamais codés en du
   soi-même, toujours au moins un Super-admin ; un changement de droits ferme les sessions de la personne (cookies
   revérifiés chaque minute). Un nouveau technicien reçoit aussi un mot de passe provisoire (mode mot de passe).
 Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les vues.
+Notifications (cloche + WhatsApp/SMS aux moments clés) : `RequestNotifications` décide qui reçoit quoi, appelé avant
+chaque enregistrement par `NotificationInterceptor` (événements de domaine, nouvelles missions, diagnostics) — jamais
+la personne qui agit. Client (titulaire, gestionnaires, déclarant) : créneaux proposés*, technicien assigné, en route*,
+sur place, terminé*, annulée ; gestionnaires / resp. de site : demande d'employé à approuver, rapport de diagnostic.
+Technicien : nouvelle mission*, diagnostic, validation + note, contestation, annulation. Dispatcher + Super-admin :
+nouvelle demande, créneau choisi, contestation, annulation par le client. Super-admin + Support : nouveau client.
+Finance + Super-admin : paiement déclaré ; client : paiement validé* / refusé*. (* = aussi par WhatsApp / SMS.)
 
 ## 3. Réalités sénégalaises (non négociables)
 - Connexion : 3G/4G instable, forfaits data chers, Android d'entrée de gamme.

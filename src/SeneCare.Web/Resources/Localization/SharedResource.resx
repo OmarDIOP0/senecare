@@ -1036,7 +1036,7 @@
   <data name="PlatformRole_Support" xml:space="preserve"><value>Support</value></data>
   <data name="PlatformRole_Technician" xml:space="preserve"><value>Technicien</value></data>
   <data name="Notif_Empty_Title" xml:space="preserve"><value>Aucune notification</value></data>
-  <data name="Notif_Empty_Text" xml:space="preserve"><value>Les rendez-vous, arrivées du technicien et factures s'afficheront ici.</value></data>
+  <data name="Notif_Empty_Text" xml:space="preserve"><value>Demandes, rendez-vous, techniciens et paiements : tout ce qui vous concerne s'affichera ici.</value></data>
   <data name="Start_Title" xml:space="preserve"><value>Pour bien démarrer</value></data>
   <data name="Start_AddHome" xml:space="preserve"><value>Ajouter votre logement</value></data>
   <data name="Start_Activate" xml:space="preserve"><value>Activer l'abonnement</value></data>
@@ -1320,6 +1320,38 @@
   <data name="Site_Legal_SeePrivacy" xml:space="preserve"><value>Pour vos données personnelles, voir la</value></data>
   <data name="Tab_Subscription" xml:space="preserve"><value>Abonnement</value></data>
   <data name="Notif_Unread" xml:space="preserve"><value>Non lue</value></data>
+  <data name="Notif_account_created_Title" xml:space="preserve"><value>Nouveau client</value></data>
+  <data name="Notif_account_created_Text" xml:space="preserve"><value>{6} ({9}) vient de créer son compte.</value></data>
+  <data name="Notif_request_new_Title" xml:space="preserve"><value>Nouvelle demande à analyser</value></data>
+  <data name="Notif_request_new_Text" xml:space="preserve"><value>Demande {4} · {5}.</value></data>
+  <data name="Notif_request_awaiting_approval_Title" xml:space="preserve"><value>Demande à approuver</value></data>
+  <data name="Notif_request_awaiting_approval_Text" xml:space="preserve"><value>Demande {4} · {5}, signalée par un employé : approuvez-la ou refusez-la.</value></data>
+  <data name="Notif_request_slots_proposed_Title" xml:space="preserve"><value>Choisissez votre créneau</value></data>
+  <data name="Notif_request_slots_proposed_Text" xml:space="preserve"><value>Demande {4} · {5} : des créneaux vous sont proposés.</value></data>
+  <data name="Notif_request_slot_chosen_Title" xml:space="preserve"><value>Créneau choisi par le client</value></data>
+  <data name="Notif_request_slot_chosen_Text" xml:space="preserve"><value>Demande {4} · {5} : assignez un technicien.</value></data>
+  <data name="Notif_request_technician_assigned_Title" xml:space="preserve"><value>Technicien assigné</value></data>
+  <data name="Notif_request_technician_assigned_Text" xml:space="preserve"><value>Demande {4} · {5} : {6} interviendra {7}.</value></data>
+  <data name="Notif_request_on_the_way_Title" xml:space="preserve"><value>Technicien en route</value></data>
+  <data name="Notif_request_on_the_way_Text" xml:space="preserve"><value>Demande {4} · {5} : {6} est en route.</value></data>
+  <data name="Notif_request_on_site_Title" xml:space="preserve"><value>Technicien sur place</value></data>
+  <data name="Notif_request_on_site_Text" xml:space="preserve"><value>Demande {4} · {5} : {6} est arrivé.</value></data>
+  <data name="Notif_request_completed_Title" xml:space="preserve"><value>Intervention terminée</value></data>
+  <data name="Notif_request_completed_Text" xml:space="preserve"><value>Demande {4} · {5} : validez l'intervention et donnez votre avis.</value></data>
+  <data name="Notif_request_validated_Title" xml:space="preserve"><value>Intervention validée</value></data>
+  <data name="Notif_request_validated_Text" xml:space="preserve"><value>Demande {4} · {5} : le client a validé ({8}/5).</value></data>
+  <data name="Notif_request_disputed_Title" xml:space="preserve"><value>Intervention contestée</value></data>
+  <data name="Notif_request_disputed_Text" xml:space="preserve"><value>Demande {4} · {5} : le client conteste l'intervention.</value></data>
+  <data name="Notif_request_reopened_Title" xml:space="preserve"><value>Demande reprise par SeneCare</value></data>
+  <data name="Notif_request_reopened_Text" xml:space="preserve"><value>Demande {4} · {5} : nous revenons vers vous pour la suite.</value></data>
+  <data name="Notif_request_cancelled_Title" xml:space="preserve"><value>Demande annulée</value></data>
+  <data name="Notif_request_cancelled_Text" xml:space="preserve"><value>Demande {4} · {5} annulée.</value></data>
+  <data name="Notif_mission_assigned_Title" xml:space="preserve"><value>Nouvelle mission</value></data>
+  <data name="Notif_mission_assigned_Text" xml:space="preserve"><value>Demande {4} · {5}, prévue {7}.</value></data>
+  <data name="Notif_diagnostic_assigned_Title" xml:space="preserve"><value>Diagnostic à réaliser</value></data>
+  <data name="Notif_diagnostic_assigned_Text" xml:space="preserve"><value>{6}, prévu {7}.</value></data>
+  <data name="Notif_diagnostic_validated_Title" xml:space="preserve"><value>Rapport de diagnostic disponible</value></data>
+  <data name="Notif_diagnostic_validated_Text" xml:space="preserve"><value>Le diagnostic trimestriel de vos locaux est validé : consultez le rapport.</value></data>
   <data name="Notif_payment_declared_Title" xml:space="preserve"><value>Paiement à vérifier</value></data>
   <data name="Notif_payment_declared_Text" xml:space="preserve"><value>Facture {0} · {1} par {3}. Vérifiez la réception sur ce compte marchand.</value></data>
   <data name="Notif_payment_verified_Title" xml:space="preserve"><value>Paiement reçu, abonnement actif</value></data>

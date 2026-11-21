@@ -46,11 +46,16 @@ public sealed class AdminDispatchTests(WebAppFixture app)
         }
 
         Assert.Equal(RequestStatus.AppointmentProposed, await StatusAsync(requestId));
+        Assert.Equal(1, await NotifiedAsync(requestId, "request.slots_proposed")); // the household owner
 
         // The customer picks the second slot in the app.
         var chosen = new DateTimeOffset(tomorrow.AddHours(15), TimeSpan.Zero).ToString("O", CultureInfo.InvariantCulture);
         await customer.SubmitAsync($"/interventions/{requestId}", $"/interventions/{requestId}/creneau", new Dictionary<string, string> { ["slot"] = chosen });
         Assert.Equal(RequestStatus.AppointmentConfirmed, await StatusAsync(requestId));
+        Assert.True(await NotifiedAsync(requestId, "request.slot_chosen") > 0); // dispatchers, not the customer
+        var bell = WebUtility.HtmlDecode(await dispatcher.GetStringAsync(new Uri("/notifications", UriKind.Relative)));
+        Assert.Contains("Créneau choisi par le client", bell, StringComparison.Ordinal);
+        Assert.Contains($"/admin/dispatch/{requestId}", bell, StringComparison.Ordinal);
 
         var detail = WebUtility.HtmlDecode(await dispatcher.GetStringAsync(new Uri(page, UriKind.Relative)));
         Assert.Contains(technicianName, detail, StringComparison.Ordinal); // suggested: has the trade
@@ -62,10 +67,34 @@ public sealed class AdminDispatchTests(WebAppFixture app)
             Assert.True(await db.Interventions.AnyAsync(i => i.RequestId == requestId && i.LeadTechnicianId == technicianId));
         }
 
+        // The technician gets the mission, the customer learns who comes and when.
+        Assert.Equal(1, await NotifiedAsync(requestId, "mission.assigned"));
+        Assert.Equal(1, await NotifiedAsync(requestId, "request.technician_assigned"));
+
         var calendar = WebUtility.HtmlDecode(await dispatcher.GetStringAsync(new Uri($"/admin/dispatch/calendrier?semaine={tomorrow:yyyy-MM-dd}", UriKind.Relative)));
         Assert.Contains($"/admin/dispatch/{requestId}", calendar, StringComparison.Ordinal);
         Assert.Contains(technicianName, calendar, StringComparison.Ordinal);
         Assert.Equal(HttpStatusCode.OK, (await dispatcher.GetAsync(new Uri("/admin/dispatch/carte", UriKind.Relative))).StatusCode);
+    }
+
+    [DatabaseFact]
+    public async Task Support_hears_of_each_new_customer_account()
+    {
+        var support = await StaffAsync(PlatformRole.Support);
+        var name = "Khady Diop " + Guid.NewGuid().ToString("N")[..6];
+        var customer = app.CreateClient();
+        await customer.SignInAsync(app.Messages, TestData.NewPhone());
+        await customer.SubmitAsync("/inscription", "/inscription", new Dictionary<string, string>
+        {
+            ["FullName"] = name,
+            ["Profile"] = "Household",
+            ["AcceptsPrivacyPolicy"] = "true",
+        });
+
+        var bell = WebUtility.HtmlDecode(await support.GetStringAsync(new Uri("/notifications", UriKind.Relative)));
+        Assert.Contains("Nouveau client", bell, StringComparison.Ordinal);
+        Assert.Contains($"{name} (Maison)", bell, StringComparison.Ordinal);
+        Assert.Contains("/admin/clients/", bell, StringComparison.Ordinal);
     }
 
     [DatabaseFact]
@@ -252,6 +281,14 @@ public sealed class AdminDispatchTests(WebAppFixture app)
         }, [("photos", "facade.png", Png)]);
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
         return Guid.Parse(response.Location().Split('/')[^1]);
+    }
+
+    /// <summary>How many people were notified with <paramref name="template"/> about this request.</summary>
+    private async Task<int> NotifiedAsync(Guid requestId, string template)
+    {
+        await using var db = app.Database.CreateContext();
+        var number = await db.ServiceRequests.Where(r => r.Id == requestId).Select(r => r.Number).FirstAsync();
+        return await db.Notifications.CountAsync(n => n.TemplateKey == template && n.PayloadJson.Contains("\"" + number + "\""));
     }
 
     private async Task<RequestStatus> StatusAsync(Guid requestId)

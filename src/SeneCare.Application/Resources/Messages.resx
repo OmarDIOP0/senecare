@@ -18,6 +18,10 @@
   <data name="Checklist_Security" xml:space="preserve"><value>Vérifier l'alimentation des caméras|Contrôler l'enregistreur et le stockage|Régler les angles et la vision de nuit|Montrer l'accès à distance au client</value></data>
   <data name="Checklist_Outdoor" xml:space="preserve"><value>Repérer les travaux avec le client|Tailler, désherber ou planter|Vérifier l'arrosage|Évacuer les déchets verts</value></data>
   <!-- Automatic intervention report (customer, PDF). -->
+  <data name="Request_SlotsProposed" xml:space="preserve"><value>SeneCare : des créneaux sont proposés pour votre demande {0}. Choisissez celui qui vous convient dans l'application.</value></data>
+  <data name="Request_OnTheWay" xml:space="preserve"><value>SeneCare : votre technicien {1} est en route pour la demande {0}.</value></data>
+  <data name="Request_Completed" xml:space="preserve"><value>SeneCare : l'intervention {0} est terminée. Validez-la et donnez votre avis dans l'application.</value></data>
+  <data name="Mission_Assigned" xml:space="preserve"><value>SeneCare : nouvelle mission {0}, prévue {1}. Détails dans l'application.</value></data>
   <data name="Report_Done" xml:space="preserve"><value>Étapes réalisées : {0}.</value></data>
   <data name="Report_Parts" xml:space="preserve"><value>Pièces utilisées : {0}.</value></data>
   <data name="Report_Duration" xml:space="preserve"><value>Durée sur place : {0} min.</value></data>

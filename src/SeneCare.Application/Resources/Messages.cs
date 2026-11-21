@@ -21,11 +21,23 @@ public static class Messages
 
     public static string PaymentRejected(string invoice, string reason, Language language) => Format("Payment_Rejected", language, invoice, reason);
 
+    public static string RequestSlotsProposed(string number, Language language) => Format("Request_SlotsProposed", language, number);
+
+    public static string RequestOnTheWay(string number, string technician, Language language) => Format("Request_OnTheWay", language, number, technician);
+
+    public static string RequestCompleted(string number, Language language) => Format("Request_Completed", language, number);
+
+    public static string MissionAssigned(string number, DateTimeOffset start, Language language) => Format("Mission_Assigned", language, number, When(start, language));
+
     public static string ReportDone(string steps, Language language) => Format("Report_Done", language, steps);
 
     public static string ReportParts(string parts, Language language) => Format("Report_Parts", language, parts);
 
     public static string ReportDuration(int minutes, Language language) => Format("Report_Duration", language, minutes);
+
+    /// <summary>« lun. 12 oct. à 9h30 », Dakar time (UTC+0, no daylight saving).</summary>
+    private static string When(DateTimeOffset at, Language language) =>
+        at.ToUniversalTime().ToString(language == Language.English ? "ddd d MMM 'at' H':'mm" : "'le' ddd d MMM 'à' H'h'mm", CultureFor(language));
 
     private static string Format(string key, Language language, params object[] args)
     {

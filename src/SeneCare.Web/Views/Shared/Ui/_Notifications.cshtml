@@ -2,18 +2,37 @@
 @using System.Text.Json
 @using SeneCare.Application.Users
 @{
-    // Per template: icon, tint and where the notification leads.
-    (string Icon, string Tint, string Url) Look(string template) => template switch
+    // Per template: icon and tint; where it leads comes with the notification (« url », per recipient).
+    (string Icon, string Tint) Look(string template) => template switch
     {
-        NotificationTemplates.PaymentDeclared => ("wallet", "bg-soleil-clair text-soleil", "/admin/paiements"),
-        NotificationTemplates.PaymentVerified => ("circle-check", "bg-baobab-clair text-baobab", "/abonnement"),
-        NotificationTemplates.PaymentRejected => ("triangle-alert", "bg-rouge-clair text-rouge", "/abonnement"),
-        _ => ("bell", "bg-sourdine text-charbon-doux", "#"),
+        NotificationTemplates.PaymentDeclared => ("wallet", "bg-soleil-clair text-soleil"),
+        NotificationTemplates.PaymentVerified => ("circle-check", "bg-baobab-clair text-baobab"),
+        NotificationTemplates.PaymentRejected or NotificationTemplates.RequestDisputed => ("triangle-alert", "bg-rouge-clair text-rouge"),
+        NotificationTemplates.RequestCancelled => ("ban", "bg-rouge-clair text-rouge"),
+        NotificationTemplates.AccountCreated => ("circle-user", "bg-atlantique-clair text-atlantique"),
+        NotificationTemplates.RequestSlotsProposed or NotificationTemplates.RequestSlotChosen => ("calendar-check", "bg-soleil-clair text-soleil"),
+        NotificationTemplates.RequestOnTheWay or NotificationTemplates.RequestOnSite or NotificationTemplates.RequestTechnicianAssigned
+            or NotificationTemplates.MissionAssigned => ("wrench", "bg-atlantique-clair text-atlantique"),
+        NotificationTemplates.RequestCompleted or NotificationTemplates.RequestValidated or NotificationTemplates.DiagnosticValidated
+            => ("circle-check", "bg-baobab-clair text-baobab"),
+        NotificationTemplates.DiagnosticAssigned => ("clipboard-list", "bg-atlantique-clair text-atlantique"),
+        _ => ("bell", "bg-sourdine text-charbon-doux"),
     };
-    string Value(JsonElement payload, string name) =>
-        payload.ValueKind == JsonValueKind.Object && payload.TryGetProperty(name, out var v)
-            ? v.ValueKind == JsonValueKind.Number ? Formatting.Fcfa(SeneCare.Domain.Common.Money.FromFcfa(v.GetInt64())) : v.ToString()
-            : string.Empty;
+    // Older payment notifications carry no link.
+    string Fallback(string template) => template switch
+    {
+        NotificationTemplates.PaymentDeclared => "/admin/paiements",
+        NotificationTemplates.PaymentVerified or NotificationTemplates.PaymentRejected => "/abonnement",
+        _ => "#",
+    };
+    string Raw(JsonElement payload, string name) =>
+        payload.ValueKind == JsonValueKind.Object && payload.TryGetProperty(name, out var v) && v.ValueKind != JsonValueKind.Null ? v.ToString() : string.Empty;
+    string Amount(JsonElement payload) =>
+        payload.ValueKind == JsonValueKind.Object && payload.TryGetProperty("amount", out var v) && v.ValueKind == JsonValueKind.Number
+            ? Formatting.Fcfa(SeneCare.Domain.Common.Money.FromFcfa(v.GetInt64())) : string.Empty;
+    string When(JsonElement payload) =>
+        payload.ValueKind == JsonValueKind.Object && payload.TryGetProperty("date", out var v) && v.ValueKind == JsonValueKind.String && v.TryGetDateTimeOffset(out var at)
+            ? Formatting.ShortDateTime(at) : string.Empty;
 }
 <div class="flex items-center justify-between border-b border-ligne px-4 py-3">
     <p class="font-semibold">@L["Shell_Notifications"]</p>
@@ -35,11 +54,19 @@ else
             var look = Look(n.TemplateKey);
             using var doc = JsonDocument.Parse(string.IsNullOrWhiteSpace(n.PayloadJson) ? "{}" : n.PayloadJson);
             var payload = doc.RootElement;
+            var url = Raw(payload, "url");
             var title = L[key + "_Title"];
-            var channel = Value(payload, "channel");
-            var text = L[key + "_Text", Value(payload, "invoice"), Value(payload, "amount"), Value(payload, "reason"), channel.Length == 0 ? "Wave" : L["Channel_" + channel].Value];
+            var channel = Raw(payload, "channel");
+            var domain = Raw(payload, "domain");
+            var kind = Raw(payload, "kind");
+            // {0} invoice · {1} amount · {2} reason · {3} payment channel · {4} request number · {5} trade · {6} name ·
+            // {7} date · {8} score · {9} account kind.
+            var text = L[key + "_Text",
+                Raw(payload, "invoice"), Amount(payload), Raw(payload, "reason"), channel.Length == 0 ? "Wave" : L["Channel_" + channel].Value,
+                Raw(payload, "number"), domain.Length == 0 ? string.Empty : L["Domain_" + domain].Value, Raw(payload, "name"),
+                When(payload), Raw(payload, "score"), kind.Length == 0 ? string.Empty : L["Kind_" + kind].Value];
             <li class="border-b border-ligne last:border-b-0">
-                <a href="@look.Url" class="flex gap-3 px-4 py-3 text-charbon no-underline hover:bg-sourdine hover:no-underline @(n.IsUnread ? "bg-laterite-clair/40" : "")">
+                <a href="@(url.StartsWith('/') ? url : Fallback(n.TemplateKey))" class="flex gap-3 px-4 py-3 text-charbon no-underline hover:bg-sourdine hover:no-underline @(n.IsUnread ? "bg-laterite-clair/40" : "")">
                     <span class="grid size-10 shrink-0 place-items-center rounded-full @look.Tint"><sc-icon name="@look.Icon" class="size-5" /></span>
                     <span class="min-w-0 flex-1">
                         <span class="flex items-start justify-between gap-2">

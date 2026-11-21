@@ -30,6 +30,7 @@ public static class DependencyInjection
         services.AddScoped<Public.GetPublicHomeHandler>();
         services.AddScoped<Public.GetContactHandler>();
         services.AddScoped<Users.Notifier>();
+        services.AddScoped<Requests.RequestNotifications>();
         services.AddScoped<Admin.ReviewModeration>();
         services.AddScoped<RequestOtpHandler>();
         services.AddScoped<VerifyOtpHandler>();

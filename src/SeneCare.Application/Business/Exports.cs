@@ -45,7 +45,8 @@ public sealed record RequestExportRow(
     DateTimeOffset? SlaDeadline,
     DateTimeOffset? RespondedAt,
     DateTimeOffset? CompletedAt,
-    string Description)
+    string Description,
+    DateTimeOffset? AppointmentAt)
 {
     /// <summary>True/false once measurable (reached, or deadline passed); null without SLA or still in time.</summary>
     public bool? SlaRespected(DateTimeOffset now) => SlaDeadline is not { } deadline
@@ -78,7 +79,9 @@ public sealed class BusinessExports(IApplicationDbContext db, BusinessAccess acc
                 orderby r.CreatedAt
                 select new RequestExportRow(
                     r.Number, r.CreatedAt, p.Name, r.Domain, r.Urgency, r.Status, u.FullName,
-                    r.SlaDeadline, r.RespondedAt, r.CompletedAt, r.Description))
+                    r.SlaDeadline, r.RespondedAt, r.CompletedAt, r.Description,
+                    // The confirmed appointment (latest one when the request was rescheduled).
+                    r.Appointments.Where(a => a.Status == AppointmentStatus.Confirmed).Max(a => (DateTimeOffset?)a.ChosenSlot!.Start)))
             .AsNoTracking()
             .Take(MaxRows)
             .ToListAsync(cancellationToken);

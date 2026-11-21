@@ -26,7 +26,7 @@
 <div class="mt-2 flex flex-wrap items-start justify-between gap-3">
     <div>
         <p class="font-medium text-charbon-doux">@L["Domain_" + item.Domain] · @item.Number · @item.PlanName</p>
-        <h1 class="sc-titre">@item.Title</h1>
+        <h1 class="sc-titre [overflow-wrap:anywhere]">@item.Title</h1>
         <p class="mt-2 flex flex-wrap gap-2"><sc-urgency value="@item.Urgency" /><sc-status value="@status" />
             @if (item.SlaDeadline is { } deadline)
             {
@@ -47,7 +47,7 @@
     <div class="grid min-w-0 content-start gap-6 lg:col-span-2">
         <section class="sc-carte" aria-labelledby="demande-titre">
             <h2 id="demande-titre" class="sc-sous-titre">@L["Tech_Request"]</h2>
-            <p class="mt-2 whitespace-pre-line">@Model.Description</p>
+            <p class="mt-2 whitespace-pre-line [overflow-wrap:anywhere]">@Model.Description</p>
             @if (Model.PhotoIds.Count > 0)
             {
                 <div class="mt-3 flex gap-2 overflow-x-auto">

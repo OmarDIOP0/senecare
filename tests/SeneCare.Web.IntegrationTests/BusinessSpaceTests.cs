@@ -177,7 +177,7 @@ public sealed class BusinessSpaceTests(WebAppFixture app)
         var bytes = await csv.Content.ReadAsByteArrayAsync();
         Assert.Equal(Encoding.UTF8.GetPreamble(), bytes[..3]);
         var text = Encoding.UTF8.GetString(bytes[3..]);
-        Assert.StartsWith("N°;Date;Site;Métier;Urgence;Statut", text, StringComparison.Ordinal);
+        Assert.StartsWith("N°;Date;Site;Métier;Urgence;Rendez-vous;Statut", text, StringComparison.Ordinal);
         Assert.Contains("Porte de l'entrepôt bloquée", text, StringComparison.Ordinal);
         Assert.Contains("'=HYPERLINK", text, StringComparison.Ordinal); // never run as a formula
 

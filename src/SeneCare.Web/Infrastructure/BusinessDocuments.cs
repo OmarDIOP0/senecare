@@ -67,13 +67,14 @@ public static class BusinessDocuments
             accountName,
             $"{Formatting.ShortDate(since)} – {Formatting.ShortDate(until.AddDays(-1))}",
             summary,
-            [l["Export_Col_Number"], l["Export_Col_Date"], l["Export_Col_Site"], l["Export_Col_Domain"], l["Export_Col_Urgency"], l["Export_Col_Status"], l["Export_Col_Sla"]],
+            [l["Export_Col_Number"], l["Export_Col_Date"], l["Export_Col_Site"], l["Export_Col_Domain"], l["Export_Col_Urgency"], l["Export_Col_Appointment"], l["Export_Col_Status"], l["Export_Col_Sla"]],
             [.. rows.Select(r => (IReadOnlyList<string>)[
                 r.Number,
                 Formatting.ShortDate(r.CreatedAt),
                 r.Site,
                 l["Domain_" + r.Domain],
                 l["Urgency_" + r.Urgency],
+                r.AppointmentAt is { } at ? Formatting.ShortDateTime(at) : "—",
                 l["Status_" + r.Status],
                 Sla(r.SlaRespected(now), l)])],
             l["Pdf_Footer", Formatting.ShortDate(now)]);
@@ -85,11 +86,11 @@ public static class BusinessDocuments
         ArgumentNullException.ThrowIfNull(l);
         var csv = new Csv();
         csv.Row(l["Export_Col_Number"], l["Export_Col_Date"], l["Export_Col_Site"], l["Export_Col_Domain"], l["Export_Col_Urgency"],
-            l["Export_Col_Status"], l["Export_Col_ReportedBy"], l["Export_Col_SlaDeadline"], l["Export_Col_Responded"], l["Export_Col_Completed"],
+            l["Export_Col_Appointment"], l["Export_Col_Status"], l["Export_Col_ReportedBy"], l["Export_Col_SlaDeadline"], l["Export_Col_Responded"], l["Export_Col_Completed"],
             l["Export_Col_Sla"], l["Export_Col_Description"]);
         foreach (var r in rows)
         {
-            csv.Row(r.Number, Date(r.CreatedAt), r.Site, l["Domain_" + r.Domain], l["Urgency_" + r.Urgency], l["Status_" + r.Status],
+            csv.Row(r.Number, Date(r.CreatedAt), r.Site, l["Domain_" + r.Domain], l["Urgency_" + r.Urgency], Date(r.AppointmentAt), l["Status_" + r.Status],
                 r.ReportedBy ?? string.Empty, Date(r.SlaDeadline), Date(r.RespondedAt), Date(r.CompletedAt), Sla(r.SlaRespected(now), l), r.Description);
         }
 

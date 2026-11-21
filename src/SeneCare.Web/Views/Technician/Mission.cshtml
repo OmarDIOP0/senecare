@@ -17,10 +17,7 @@
     var units = new[] { "pièce", "m", "kg", "L", "sac" };
 }
 @section Scripts {
-    @if (Model.Status == RequestStatus.OnTheWay)
-    {
-        <script src="~/lib/signalr/signalr.min.js" asp-append-version="true" defer></script>
-    }
+    @* SignalR comes with the signed-in layout. *@
     <script src="~/js/technician.js" asp-append-version="true" defer></script>
 }
 
@@ -89,7 +86,7 @@
 
 <section class="mt-6" aria-labelledby="demande-titre">
     <h2 id="demande-titre" class="sc-sous-titre">@L["Tech_Request"]</h2>
-    <p class="mt-2 whitespace-pre-line">@Model.Description</p>
+    <p class="mt-2 whitespace-pre-line [overflow-wrap:anywhere]">@Model.Description</p>
     @if (Model.RequestPhotoIds.Count > 0)
     {
         <div class="mt-3 flex gap-2 overflow-x-auto">

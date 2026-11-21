@@ -632,6 +632,7 @@
   <data name="Export_Col_Status" xml:space="preserve"><value>Statut</value></data>
   <data name="Export_Col_ReportedBy" xml:space="preserve"><value>Signalé par</value></data>
   <data name="Export_Col_SlaDeadline" xml:space="preserve"><value>Délai max</value></data>
+  <data name="Export_Col_Appointment" xml:space="preserve"><value>Rendez-vous</value></data>
   <data name="Export_Col_Responded" xml:space="preserve"><value>Arrivée technicien</value></data>
   <data name="Export_Col_Completed" xml:space="preserve"><value>Terminée</value></data>
   <data name="Export_Col_Sla" xml:space="preserve"><value>Délai respecté</value></data>

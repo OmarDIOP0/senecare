@@ -77,6 +77,8 @@ try
 
     builder.Services.AddSeneCareLocalization();
     builder.Services.AddSignalR();
+    // New notifications pushed to the open pages of their people (bell, message, refresh).
+    builder.Services.AddScoped<SeneCare.Application.Abstractions.ILiveNotifications, SeneCare.Web.Hubs.LiveNotifications>();
     // Public site texts (Content/site-content.json): sample blocks only shown in development.
     builder.Services.AddScoped<SeneCare.Web.Infrastructure.SiteContact>();
     builder.Services.AddScoped<SeneCare.Web.Infrastructure.CachedPublicHome>();
@@ -194,6 +196,7 @@ try
     app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains(SeneCare.Infrastructure.DependencyInjection.ReadinessTag) });
 
     app.MapHub<SeneCare.Web.Hubs.TrackingHub>(SeneCare.Web.Hubs.TrackingHub.Path);
+    app.MapHub<SeneCare.Web.Hubs.LiveHub>(SeneCare.Web.Hubs.LiveHub.Path);
     app.MapControllerRoute(
             name: "areas",
             pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}")

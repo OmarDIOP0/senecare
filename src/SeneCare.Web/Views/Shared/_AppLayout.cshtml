@@ -36,6 +36,12 @@
     <partial name="Ui/_TabBar" model="shell" />
     <partial name="Ui/_CommandPalette" model="shell" />
     <partial name="Ui/_Toasts" />
+    @* Live: new notifications arrive at once (bell, message, refresh of the page concerned). Cached for a year. *@
+    @if (userId is not null)
+    {
+        <script src="~/lib/signalr/signalr.min.js" asp-append-version="true" defer></script>
+        <script src="~/js/live.js" asp-append-version="true" defer data-hub="@SeneCare.Web.Hubs.LiveHub.Path"></script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

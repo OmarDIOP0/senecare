@@ -109,7 +109,11 @@ Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les v
   squelettes `.sc-skeleton` / `.sc-chargement` (hx-indicator). Pas de file d'attente ni d'API externe :
   à ajouter (Hangfire, timeout 10 s) avec le premier fournisseur de messages.
 - Docker + docker-compose (SQL Server de développement, optionnel).
-- Déploiement : SmarterASP.NET (Windows / IIS, SQL Server ; publication à préparer). L'ancien site de test Render
+- Déploiement : SmarterASP.NET (Windows / IIS, SQL Server), site de test https://omardiop-001-site1.ftempurl.com,
+  publié par Web Deploy depuis Visual Studio (profil `SmarterASP.pubxml`, hors git) : **win-x86 autonome** (le pool
+  tourne en 32 bits : win-x64 → erreur 500.32 ; .NET 10 embarqué). Secrets dans `appsettings.Server.json` à côté de
+  l'application (hors git, lu seulement en Staging / Production ; les variables d'environnement priment). Échec de
+  démarrage en Staging → cause affichée dans la page (`StartupErrorPage`). L'ancien site de test Render
   (PostgreSQL) est abandonné. `ASPNETCORE_ENVIRONMENT=Staging` → bandeau « Version de test ». Derrière un proxy :
   en-têtes X-Forwarded-* pris en compte, port lu dans `$PORT` si présent, clés Data Protection en base
   (table `data_protection_keys`).

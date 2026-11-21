@@ -196,9 +196,10 @@ public sealed class Subscription : AggregateRoot
     public void ScheduleChange(Plan plan, bool annual)
     {
         ArgumentNullException.ThrowIfNull(plan);
-        if (Status is SubscriptionStatus.PendingRegistration or SubscriptionStatus.Cancelled)
+        // Up to date only: an unpaid period is settled first, at the price it was invoiced.
+        if (Status != SubscriptionStatus.Active)
         {
-            throw new DomainException("subscription.change_unavailable", "The offer can be changed once the subscription has started.");
+            throw new DomainException("subscription.change_unavailable", "The offer can be changed while the subscription is active and up to date.");
         }
 
         if (!plan.IsActive)

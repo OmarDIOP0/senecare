@@ -656,7 +656,7 @@
   <data name="Error_account_role_not_allowed" xml:space="preserve"><value>Ce rôle n'est pas disponible pour ce compte.</value></data>
   <data name="Error_account_member_not_found" xml:space="preserve"><value>Ce membre ne fait plus partie de l'équipe.</value></data>
   <data name="Error_account_approval_business_only" xml:space="preserve"><value>La validation des demandes est réservée aux entreprises.</value></data>
-  <data name="Error_subscription_change_unavailable" xml:space="preserve"><value>La formule pourra être changée une fois l'abonnement démarré.</value></data>
+  <data name="Error_subscription_change_unavailable" xml:space="preserve"><value>La formule pourra être changée quand l'abonnement sera actif et à jour de ses paiements.</value></data>
   <data name="Error_subscription_plan_unknown" xml:space="preserve"><value>Choisissez une formule dans la liste.</value></data>
   <data name="Error_subscription_annual_unavailable" xml:space="preserve"><value>Le paiement à l'année n'est proposé que pour les formules mensuelles.</value></data>
   <data name="Error_subscription_plan_segment" xml:space="preserve"><value>Cette formule n'est pas proposée pour ce type de compte.</value></data>

@@ -26,13 +26,13 @@ public sealed record OfferChange(
 /// household owner or the company manager. It starts with the next period: nothing is refunded or recomputed
 /// on the current one, and companies keep their quarterly diagnostic before that invoice.
 /// </summary>
-public sealed class ChangeOfferHandler(IApplicationDbContext db, AccessControl access)
+public sealed class ChangeOfferHandler(IApplicationDbContext db, AccessControl access, TimeProvider clock)
 {
-    /// <summary>Null when the user may not change this subscription (not owner / manager, not started, cancelled).</summary>
+    /// <summary>Null when the user may not change this subscription (not owner / manager, not active and up to date).</summary>
     public async Task<OfferChange?> OptionsAsync(Guid userId, Guid subscriptionId, CancellationToken cancellationToken = default)
     {
         var subscription = await AllowedAsync(userId, subscriptionId, cancellationToken);
-        if (subscription is null || subscription.Status is SubscriptionStatus.PendingRegistration or SubscriptionStatus.Cancelled)
+        if (subscription is null || subscription.Status != SubscriptionStatus.Active)
         {
             return null;
         }
@@ -80,9 +80,11 @@ public sealed class ChangeOfferHandler(IApplicationDbContext db, AccessControl a
             return Result<Guid>.Failure(ex.Code);
         }
 
-        // The next period's invoice is already out but nothing is paid nor declared on it: it is issued again with
-        // the new offer. Once a payment is declared, the change waits for the following period.
-        if (await OpenRenewalAsync(subscription, cancellationToken) is { } open && !await HasPaymentAsync(open, cancellationToken))
+        // The next period's invoice is already out, its period has not started and nothing is paid nor declared on
+        // it: it is issued again with the new offer. Otherwise (declared, or the period already running) the change
+        // waits for the following period: a period in use is always billed at the offer it was invoiced with.
+        if (await OpenRenewalAsync(subscription, cancellationToken) is { } open && Reissuable(open)
+            && !await HasPaymentAsync(open, cancellationToken))
         {
             open.Cancel();
         }
@@ -116,9 +118,12 @@ public sealed class ChangeOfferHandler(IApplicationDbContext db, AccessControl a
         invoice.AmountPaid > Money.Zero
         || await db.Payments.AnyAsync(p => p.InvoiceId == invoice.Id && p.Status == PaymentStatus.Pending, cancellationToken);
 
-    /// <summary>The next period's invoice is out and paid or declared: a change now starts with the period after it.</summary>
+    private bool Reissuable(Invoice invoice) =>
+        invoice.Status == InvoiceStatus.Issued && invoice.Period is { } period && period.Start > DakarCalendar.Today(clock);
+
+    /// <summary>The next period's invoice is out and can no longer change: a change now starts with the period after it.</summary>
     private async Task<bool> LockedRenewalAsync(Subscription subscription, CancellationToken cancellationToken) =>
-        await OpenRenewalAsync(subscription, cancellationToken) is { } open && await HasPaymentAsync(open, cancellationToken);
+        await OpenRenewalAsync(subscription, cancellationToken) is { } open && (!Reissuable(open) || await HasPaymentAsync(open, cancellationToken));
 
     /// <summary>Money decisions: the household owner or a company manager (« Gestionnaire »), never a site manager or an employee.</summary>
     private async Task<Subscription?> AllowedAsync(Guid userId, Guid subscriptionId, CancellationToken cancellationToken)

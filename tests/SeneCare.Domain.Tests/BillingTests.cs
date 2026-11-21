@@ -136,6 +136,17 @@ public class SubscriptionTests
     }
 
     [Fact]
+    public void A_late_subscription_settles_its_invoice_before_changing_offer()
+    {
+        var subscription = Subscription.Create(Household(), HomePlan(), [Guid.CreateVersion7()], Now);
+        subscription.Activate(Jan1, Now); // due 2026-02-01
+        subscription.ApplyPaymentDeadlines(new DateOnly(2026, 2, 3), graceDays: 7, Now);
+
+        Assert.Equal(SubscriptionStatus.PastDue, subscription.Status);
+        Assert.Throws<DomainException>(() => subscription.ScheduleChange(HomePlan(), annual: true));
+    }
+
+    [Fact]
     public void Business_offers_change_between_business_plans_only_and_never_yearly()
     {
         var subscription = Subscription.Create(Business(), BusinessPlan(), [Guid.CreateVersion7()], Now);

@@ -40,6 +40,7 @@ public sealed class RequestNotifications(IApplicationDbContext db, Notifier noti
     private static readonly PlatformRole[] Dispatch = [PlatformRole.Dispatcher, PlatformRole.SuperAdmin];
     private static readonly AccountRole[] Approvers = [AccountRole.Owner, AccountRole.Manager, AccountRole.SiteManager];
     private static readonly AccountRole[] Holders = [AccountRole.Owner, AccountRole.Manager];
+    private static readonly AccountRole[] AllRoles = [AccountRole.Owner, AccountRole.Manager, AccountRole.SiteManager, AccountRole.Reporter];
 
     public async Task HandleAsync(NotificationChanges changes, CancellationToken cancellationToken = default)
     {
@@ -83,7 +84,7 @@ public sealed class RequestNotifications(IApplicationDbContext db, Notifier noti
     {
         if (request.Status == RequestStatus.AwaitingApproval)
         {
-            var approvers = await notifier.AccountMembersAsync(request.AccountId, Approvers, cancellationToken);
+            var approvers = await notifier.AccountMembersForPropertyAsync(request.AccountId, request.PropertyId, Approvers, cancellationToken);
             await notifier.ToUsersAsync(
                 approvers, T.RequestAwaitingApproval, Payload(request, "/entreprise/demandes"), message: null, request.ReportedByUserId, cancellationToken);
         }
@@ -186,10 +187,16 @@ public sealed class RequestNotifications(IApplicationDbContext db, Notifier noti
     private Task ToDispatchAsync(ServiceRequest request, string template, Guid? actor, CancellationToken cancellationToken) =>
         notifier.ToRolesAsync(Dispatch, template, Payload(request, $"/admin/dispatch/{request.Id}"), actor, cancellationToken);
 
-    /// <summary>Household owner or company managers, and the employee who reported it.</summary>
+    /// <summary>Household owner or company managers, and the employee who reported it while still a member who may see the building.</summary>
     private async Task ToCustomerAsync(ServiceRequest request, string template, object payload, string? message, Guid? actor, CancellationToken cancellationToken)
     {
-        var people = (await notifier.AccountMembersAsync(request.AccountId, Holders, cancellationToken)).Append(request.ReportedByUserId);
+        var people = (await notifier.AccountMembersAsync(request.AccountId, Holders, cancellationToken)).ToList();
+        var members = await notifier.AccountMembersForPropertyAsync(request.AccountId, request.PropertyId, AllRoles, cancellationToken);
+        if (members.Contains(request.ReportedByUserId))
+        {
+            people.Add(request.ReportedByUserId);
+        }
+
         await notifier.ToUsersAsync(people, template, payload, message, actor, cancellationToken);
     }
 
@@ -212,7 +219,7 @@ public sealed class RequestNotifications(IApplicationDbContext db, Notifier noti
 
     private async Task<bool> IsCustomerAsync(ServiceRequest request, Guid? actor, CancellationToken cancellationToken) =>
         actor is { } userId && (userId == request.ReportedByUserId
-            || (await notifier.AccountMembersAsync(request.AccountId, [AccountRole.Owner, AccountRole.Manager, AccountRole.SiteManager, AccountRole.Reporter], cancellationToken)).Contains(userId));
+            || (await notifier.AccountMembersAsync(request.AccountId, AllRoles, cancellationToken)).Contains(userId));
 
     private async Task<(Guid UserId, string? Name)?> LeadTechnicianAsync(Guid requestId, CancellationToken cancellationToken)
     {

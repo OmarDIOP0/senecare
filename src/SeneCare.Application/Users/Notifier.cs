@@ -103,6 +103,17 @@ public sealed partial class Notifier(IApplicationDbContext db, IWhatsAppSender w
         return account is null ? [] : [.. account.Members.Where(m => roles.Contains(m.Role)).Select(m => m.UserId)];
     }
 
+    /// <summary>
+    /// Members of a customer account holding one of <paramref name="roles"/> who may see this building: full-access
+    /// roles, or site managers / reporters whose scope includes it. Former members are never included.
+    /// </summary>
+    public async Task<IReadOnlyList<Guid>> AccountMembersForPropertyAsync(
+        Guid accountId, Guid propertyId, IReadOnlyCollection<AccountRole> roles, CancellationToken cancellationToken = default)
+    {
+        var account = await db.CustomerAccounts.AsNoTracking().FirstOrDefaultAsync(a => a.Id == accountId, cancellationToken);
+        return account is null ? [] : [.. account.Members.Where(m => roles.Contains(m.Role) && m.CanAccess(propertyId)).Select(m => m.UserId)];
+    }
+
     /// <summary>Given people (active, not anonymised): in the app, and by message when <paramref name="message"/> is given.</summary>
     public async Task ToUsersAsync(
         IEnumerable<Guid> userIds, string template, object payload, string? message, Guid? exceptUserId, CancellationToken cancellationToken = default)

@@ -6,8 +6,6 @@
     ViewData["Title"] = L["Offer_Title"];
     ViewData["Wide"] = true;
     var siteCount = ViewData["SiteCount"] as int? ?? 0;
-    var urgencies = new[] { Urgency.Critical, Urgency.High, Urgency.Normal };
-    string Hours(TimeSpan t) => t.TotalHours < 48 ? L["Sla_Hours", (int)t.TotalHours] : L["Sla_Days", (int)t.TotalDays];
     var recommended = Model.Count > 1 ? Model[Model.Count / 2].Code : null;
 }
 
@@ -32,15 +30,9 @@
             <p class="mt-2"><sc-amount value="@offer.MonthlyPrice.Amount" class="text-2xl font-semibold text-laterite" /> <span class="text-charbon-doux">@L["Offer_PerMonth"]</span></p>
             <p class="sc-texte-doux">@L["Offer_Billing", offer.BillingPeriodMonths]</p>
 
-            <h3 class="mt-4 text-sm font-semibold">@L["Offer_Delays"]</h3>
+            @* No delay promised (specification: « selon le niveau d'urgence »); the delays stay in the admin. *@
+            <h3 class="mt-4 text-sm font-semibold">@L["Offer_Included"]</h3>
             <dl class="mt-1 grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 text-sm">
-                @foreach (var urgency in urgencies)
-                {
-                    if (offer.DelayFor(urgency) is { } delay)
-                    {
-                        <dt class="text-charbon-doux">@L["Urgency_" + urgency]</dt><dd class="text-right font-medium">@Hours(delay)</dd>
-                    }
-                }
                 <dt class="text-charbon-doux">@L["Offer_Visits"]</dt><dd class="text-right font-medium">@(offer.IncludedVisitsPerPeriod is { } v ? L["Offer_VisitsCount", v] : L["Offer_VisitsUnlimited"])</dd>
             </dl>
             <ul class="mt-3 grid gap-1 text-sm">

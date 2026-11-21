@@ -45,10 +45,6 @@
     }
 </div>
 
-@if (d.SlaDeadline is { } deadline && s.IsOpen && s.Status is RequestStatus.Submitted or RequestStatus.UnderReview or RequestStatus.AppointmentProposed or RequestStatus.AppointmentConfirmed)
-{
-    <p class="mt-3 flex items-center gap-2 text-sm"><sc-icon name="clock" class="size-4 text-charbon-doux" />@L["Request_Sla", Formatting.ShortDateTime(deadline)]</p>
-}
 
 @* ---- What the customer must do now ---- *@
 @if (d.CanChooseSlot)

@@ -4,7 +4,6 @@
 @{
     var isManager = Model.Role == AccountRole.Manager;
     string Day(DateOnly d) => Formatting.ShortDate(new DateTimeOffset(d.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero));
-    string Hours(TimeSpan t) => t.TotalHours < 48 ? L["Sla_Hours", (int)t.TotalHours] : L["Sla_Days", (int)t.TotalDays];
     var today = DateOnly.FromDateTime(DateTime.UtcNow);
     var hasData = Model.RequestCount > 0;
     // A KPI is shown only when it means something: never a « 0 » or « — » row on an empty account.
@@ -157,10 +156,6 @@
             {
                 <p class="mt-2 text-[15px] font-medium">@sub.Plan.Name</p>
                 <dl class="mt-2 grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 text-sm">
-                    @foreach (var sla in sub.Plan.Sla)
-                    {
-                        <dt class="text-charbon-doux">@L["Urgency_" + sla.Urgency]</dt><dd class="text-right tabular-nums">@Hours(sla.MaxDelay)</dd>
-                    }
                     <dt class="text-charbon-doux">@L["Offer_Visits"]</dt><dd class="text-right">@(sub.Plan.IncludedVisitsPerPeriod is { } visits ? L["Offer_VisitsCount", visits] : L["Offer_VisitsUnlimited"])</dd>
                     @if (sub.NextDueDate is { } due && isManager)
                     {

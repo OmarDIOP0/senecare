@@ -1489,4 +1489,6 @@
   <data name="Error_user_not_found" xml:space="preserve"><value>Personne introuvable.</value></data>
   <data name="Error_staff_otp_mode" xml:space="preserve"><value>La connexion se fait par code : il n'y a pas de mot de passe à donner.</value></data>
   <data name="Error_staff_forbidden" xml:space="preserve"><value>Ce compte n'est pas seulement technicien (admin ou client) : seul un Super-admin peut lui donner un mot de passe provisoire.</value></data>
+  <data name="Offer_Included" xml:space="preserve"><value>Compris dans la formule</value></data>
+  <data name="Tab_Admin" xml:space="preserve"><value>Administration</value></data>
 </root>

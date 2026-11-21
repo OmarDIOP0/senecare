@@ -57,7 +57,8 @@ public sealed class BusinessSpaceTests(WebAppFixture app)
 
         var home = Normalize(await company.Manager.GetStringAsync(new Uri("/espace", UriKind.Relative)));
         Assert.Contains("Premium", home, StringComparison.Ordinal);
-        Assert.Contains("< 2 h", home, StringComparison.Ordinal); // critical delay comes from the plan
+        // No delay promised to the customer (specification: « selon le niveau d'urgence »).
+        Assert.DoesNotContain("< 2 h", home, StringComparison.Ordinal);
         Assert.Contains("Prochain :", home, StringComparison.Ordinal);
     }
 

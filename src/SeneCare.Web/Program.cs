@@ -22,6 +22,13 @@ Log.Logger = new LoggerConfiguration()
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+    // Secrets of the hosted site (SmarterASP: connection string, keys, first admin) in appsettings.Server.json, next
+    // to the app: never in git (.gitignore), published with Web Deploy, which rewrites web.config at each update.
+    // Read on the server only (Staging, Production): never in development or in the tests.
+    if (builder.Environment.IsStaging() || builder.Environment.IsProduction())
+    {
+        builder.Configuration.AddJsonFile("appsettings.Server.json", optional: true, reloadOnChange: false);
+    }
 
     // preserveStaticLogger: the static bootstrap logger is never frozen, so several hosts can run
     // in one process (integration tests). The app logs through ILogger<T> only.

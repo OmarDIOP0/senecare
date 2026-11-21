@@ -490,6 +490,8 @@ node_modules/
 appsettings.*.local.json
 # Local secrets copy of appsettings.Example.json
 appsettings.Local.json
+# Secrets of the hosted site (connection string, keys): only on the developer PC and the server
+appsettings.Server.json
 
 # Uploaded files (local storage)
 App_Data/

@@ -47,6 +47,9 @@ try
 
     // Authentication: phone + OTP, then a long-lived cookie (no SMS at every visit on mobile data).
     builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();
+    // IIS (SmarterASP): a Windows / Basic login done by IIS (site protected by the host, credentials kept by the
+    // browser) must never count as a SeneCare sign-in: only our cookie does (else « signed in » without a user id).
+    builder.Services.Configure<Microsoft.AspNetCore.Builder.IISServerOptions>(options => options.AutomaticAuthentication = false);
     builder.Services.AddSeneCareIdentity().AddSignInManager();
     builder.Services.ConfigureApplicationCookie(options =>
     {

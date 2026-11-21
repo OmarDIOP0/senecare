@@ -11,6 +11,12 @@
     <p class="mt-4 text-sm">@L["Error_Reference"] : <code>@Model.RequestId</code></p>
 }
 
+@if (Model.Detail is { } detail)
+{
+    @* Test site only (Staging): technical cause, secrets masked. Not translated on purpose. *@
+    <pre class="mt-4 overflow-x-auto rounded-xl border border-ligne bg-sourdine p-4 text-xs whitespace-pre-wrap">@detail</pre>
+}
+
 <p class="mt-6">
     <a class="underline text-atlantique" asp-controller="Home" asp-action="Index">@L["Error_BackHome"]</a>
 </p>

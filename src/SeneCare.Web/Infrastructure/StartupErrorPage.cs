@@ -13,14 +13,7 @@ internal static partial class StartupErrorPage
 
     public static async Task RunAsync(string[] args, Exception exception)
     {
-        // Type and message of each nested exception only: no stack trace, no file paths of the code.
-        var lines = new List<string>();
-        for (var current = exception; current is not null; current = current.InnerException)
-        {
-            lines.Add(current.GetType().FullName + ": " + current.Message);
-        }
-
-        var text = "SeneCare n'a pas pu démarrer (diagnostic du site de test).\n\n" + Mask(string.Join("\n", lines));
+        var text = "SeneCare n'a pas pu démarrer (diagnostic du site de test).\n\n" + Describe(exception);
         TryWriteFile(text);
 
         var app = WebApplication.Create(args);
@@ -31,6 +24,29 @@ internal static partial class StartupErrorPage
             return context.Response.WriteAsync(text);
         });
         await app.RunAsync();
+    }
+
+    /// <summary>
+    /// Type and message of each nested exception, plus the first frame of our own code: no full stack trace,
+    /// secrets masked. Also used by the error page of the test site (shared hosting: no readable log).
+    /// </summary>
+    public static string Describe(Exception exception)
+    {
+        ArgumentNullException.ThrowIfNull(exception);
+        var lines = new List<string>();
+        for (var current = exception; current is not null; current = current.InnerException)
+        {
+            lines.Add(current.GetType().FullName + ": " + current.Message);
+        }
+
+        var where = exception.StackTrace?.Split('\n').Select(line => line.Trim())
+            .FirstOrDefault(line => line.Contains("SeneCare.", StringComparison.Ordinal));
+        if (where is not null)
+        {
+            lines.Add(where.Split(" in ", 2)[0]);
+        }
+
+        return Mask(string.Join("\n", lines));
     }
 
     private static string Mask(string text) => SecretPattern().Replace(text, "$1=***");

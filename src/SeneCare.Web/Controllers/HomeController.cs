@@ -55,6 +55,13 @@ public sealed class HomeController(SeneCare.Web.Infrastructure.CachedPublicHome 
     public IActionResult AccessDenied() => View();
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error() =>
-        View(new ErrorViewModel(Activity.Current?.Id ?? HttpContext.TraceIdentifier));
+    public IActionResult Error()
+    {
+        // Test site on shared hosting (no readable log): the cause is shown, secrets masked. Never in Production.
+        var error = HttpContext.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>()?.Error;
+        var detail = error is not null && HttpContext.RequestServices.GetRequiredService<IWebHostEnvironment>().IsStaging()
+            ? SeneCare.Web.Infrastructure.StartupErrorPage.Describe(error)
+            : null;
+        return View(new ErrorViewModel(Activity.Current?.Id ?? HttpContext.TraceIdentifier, detail));
+    }
 }

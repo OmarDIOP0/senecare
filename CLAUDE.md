@@ -120,7 +120,7 @@ Finance + Super-admin : paiement déclaré ; client : paiement validé* / refus�
   publié par Web Deploy depuis Visual Studio (profil `SmarterASP.pubxml`, hors git) : **win-x86 autonome** (le pool
   tourne en 32 bits : win-x64 → erreur 500.32 ; .NET 10 embarqué). Secrets dans `appsettings.Server.json` à côté de
   l'application (hors git, lu seulement en Staging / Production ; les variables d'environnement priment). Échec de
-  démarrage en Staging → cause affichée dans la page (`StartupErrorPage`). L'ancien site de test Render
+  démarrage en Staging → cause affichée dans la page (`StartupErrorPage`). En ligne en **Production** depuis le 23/11/2026 sur https://senecare.net (domaine SmarterASP, www inclus, SSL Let's Encrypt) : pas de fournisseur de messages → `Sms:Provider` / `WhatsApp:Provider` = `None` (rien n'est envoyé ni journalisé, la cloche reste ; « Console » est refusé en Production ; `Auth:Mode = Otp` exige un vrai fournisseur). L'ancien site de test Render
   (PostgreSQL) est abandonné. `ASPNETCORE_ENVIRONMENT=Staging` (plus de bandeau « Version de test », retiré à la demande de l'utilisateur). Derrière un proxy :
   en-têtes X-Forwarded-* pris en compte, port lu dans `$PORT` si présent, clés Data Protection en base
   (table `data_protection_keys`).

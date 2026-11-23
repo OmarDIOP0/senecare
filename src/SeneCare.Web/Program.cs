@@ -119,6 +119,14 @@ try
         throw new InvalidOperationException("Otp:SkipVerification and Otp:ShowCodeOnPage are refused in Production.");
     }
 
+    // Sign-in by code needs a real message provider: with « None » nobody could ever sign in.
+    if (app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<SeneCare.Application.Auth.AuthOptions>>().Value.UsesOtp
+        && string.Equals(app.Configuration["Sms:Provider"], "None", StringComparison.OrdinalIgnoreCase)
+        && string.Equals(app.Configuration["WhatsApp:Provider"], "None", StringComparison.OrdinalIgnoreCase))
+    {
+        throw new InvalidOperationException("Auth:Mode = Otp needs an SMS or WhatsApp provider (Sms:Provider / WhatsApp:Provider are « None »).");
+    }
+
     await app.Services.InitializeDatabaseAsync(app.Configuration);
 
     // First: the real scheme (https) and client IP from the proxy, before HTTPS redirection and rate limits.

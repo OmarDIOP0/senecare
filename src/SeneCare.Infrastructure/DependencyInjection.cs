@@ -127,11 +127,13 @@ public static class DependencyInjection
         services.AddSingleton<ISmsSender>(sp => sms.Provider switch
         {
             "Console" => ActivatorUtilities.CreateInstance<ConsoleSmsSender>(sp),
+            "None" => ActivatorUtilities.CreateInstance<NoMessageSender>(sp),
             _ => throw new InvalidOperationException($"Unknown SMS provider « {sms.Provider} »."),
         });
         services.AddSingleton<IWhatsAppSender>(sp => whatsApp.Provider switch
         {
             "Console" => ActivatorUtilities.CreateInstance<ConsoleWhatsAppSender>(sp),
+            "None" => ActivatorUtilities.CreateInstance<NoMessageSender>(sp),
             _ => throw new InvalidOperationException($"Unknown WhatsApp provider « {whatsApp.Provider} »."),
         });
     }

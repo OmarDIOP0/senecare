@@ -10,7 +10,10 @@ public sealed class MessagingOptions
     public const string SmsSection = "Sms";
     public const string WhatsAppSection = "WhatsApp";
 
-    /// <summary>« Console » (development: message written to the logs) or a real provider (Phase 11).</summary>
+    /// <summary>
+    /// « Console » (development: message written to the logs), « None » (production without a provider yet: nothing
+    /// is sent, the in-app notification remains) or a real provider (Phase 11).
+    /// </summary>
     public string Provider { get; set; } = "Console";
 }
 
@@ -56,6 +59,22 @@ internal sealed partial class ConsoleWhatsAppSender : IWhatsAppSender
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "[WhatsApp → {Phone}] {Message}")]
     private static partial void LogMessage(ILogger logger, string phone, string message);
+}
+
+/// <summary>
+/// Production before a message provider is chosen (user decision: password sign-in, no SMS / WhatsApp costs): the
+/// message is not sent and never written anywhere (no phone number, no content in the logs).
+/// </summary>
+internal sealed partial class NoMessageSender(ILogger<NoMessageSender> logger) : ISmsSender, IWhatsAppSender
+{
+    public Task SendAsync(PhoneNumber to, string message, CancellationToken cancellationToken = default)
+    {
+        LogSkipped(logger);
+        return Task.CompletedTask;
+    }
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Message not sent: no SMS / WhatsApp provider configured")]
+    private static partial void LogSkipped(ILogger logger);
 }
 
 internal static class ConsoleGuard

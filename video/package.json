@@ -1,0 +1,21 @@
+{
+  "name": "senecare-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "capture:ep": "node scripts/capture.mjs",
+    "render:ep": "node scripts/render.mjs",
+    "studio": "remotion studio src/index.ts"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.546",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.546"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.31",
+    "playwright": "1.63.0",
+    "typescript": "5.9.3"
+  }
+}

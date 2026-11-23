@@ -1,0 +1,7 @@
+# Regenerated: npm install, npm run capture:ep -- XX, npm run render:ep -- XX
+node_modules/
+out/
+public/ep*/screens/
+public/ep*/screens.json
+public/ep*/vo/
+public/music/

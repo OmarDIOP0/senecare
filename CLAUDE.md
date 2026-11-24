@@ -161,8 +161,8 @@ Tokens (Styles/app.css, noms conservés, aucune couleur en dur dans les vues) :
 Site public (`_Layout`, `PublicSiteController`, `Views/PublicSite`, contenus `Content/site-content.json`) :
 - Hiérarchie des actions (décision utilisateur) : le visiteur a une panne et veut un technicien. Une seule action
   orange visible à la fois : « Demander une intervention » dans l'en-tête (« Réserver » sous 640 px), vers le
-  formulaire rapide `#reservation` sur l'accueil, `/demander` ailleurs ; il s'efface dès qu'un bouton orange de la
-  page elle-même (`main .sc-btn-primaire`) est à l'écran : l'action de la page prime. Contenus des métiers =
+  formulaire rapide `#reservation` sur l'accueil, `/demander` ailleurs ; il reste toujours visible (décision utilisateur du
+  25/11/2026 : ne plus l'effacer quand un bouton orange de la page est à l'écran). Contenus des métiers =
   cahier des charges §4 (résumés, exemples), sans prix ni délai écrits dans le contenu. Une intervention exige un abonnement actif (pas d'intervention ponctuelle).
 - Bandeau de contact : téléphone partout, WhatsApp seulement à partir de 1024 px. En-tête bleu Atlantique :
   « Se connecter » discret (lien texte, icône profil sous 768 px), « Créer mon compte » dans ☰ et sur la page de

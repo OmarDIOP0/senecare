@@ -56,6 +56,15 @@ public static class DependencyInjection
         services.AddSingleton<IPdfRenderer, QuestPdfRenderer>();
         services.AddSingleton<ILivePositions, MemoryLivePositions>();
 
+        // Orange Money (Sonatel): merchant QR code / Max it link, payment confirmation (10 s per call).
+        services.Configure<Payments.OrangeMoneyOptions>(configuration.GetSection(Payments.OrangeMoneyOptions.SectionName));
+        services.AddSingleton<Payments.OrangeMoneyTokenCache>();
+        services.AddHttpClient<SeneCare.Application.Payments.IOrangeMoneyGateway, Payments.OrangeMoneyGateway>((sp, client) =>
+        {
+            client.BaseAddress = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<Payments.OrangeMoneyOptions>>().Value.BaseUrl;
+            client.Timeout = TimeSpan.FromSeconds(10);
+        });
+
         AddMessaging(services, configuration);
 
         services.AddHealthChecks()

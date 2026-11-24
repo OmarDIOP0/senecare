@@ -131,55 +131,108 @@ public sealed partial class WavePaymentTests(WebAppFixture app)
     }
 
     [DatabaseFact]
-    public async Task Customer_can_pay_with_orange_money_instead_of_wave()
+    public async Task Customer_pays_with_orange_money_and_the_subscription_starts_once_orange_confirms()
     {
-        // Finance opens Orange Money: a merchant code and a link; bad values are refused.
-        var finance = await StaffAsync(PlatformRole.Finance);
-        await finance.SubmitAsync("/admin/paiements", "/admin/paiements/orange-money", new Dictionary<string, string> { ["code"] = "abc", ["link"] = "" });
-        await finance.SubmitAsync("/admin/paiements", "/admin/paiements/orange-money", new Dictionary<string, string> { ["code"] = "", ["link"] = "http://om.exemple.sn/payer" });
-        await using (var db = app.Database.CreateContext())
+        app.OrangeMoney.Configured = true;
+        try
         {
-            Assert.False(await db.AppSettings.AnyAsync(s => s.Key == SettingKeys.OrangeMoneyCode && s.Value == "abc"));
-            Assert.False(await db.AppSettings.AnyAsync(s => s.Key == SettingKeys.OrangeMoneyLink && s.Value.StartsWith("http:")));
+            await SetWaveLinkAsync(WaveLink);
+            var customer = await HouseholdAsync();
+            var propertyId = await AddHomeAsync(customer);
+
+            // Both ways to pay; Orange Money has no reference to type, only its button.
+            var page = WebUtility.HtmlDecode(await customer.GetStringAsync(new Uri("/abonnement", UriKind.Relative)));
+            Assert.Contains("name=\"channel\" value=\"OrangeMoney\"", page, StringComparison.Ordinal);
+            var invoiceId = Guid.Parse(InvoiceAction().Match(page).Groups[1].Value);
+            Assert.Contains($"formaction=\"/abonnement/factures/{invoiceId}/orange-money\"", page, StringComparison.Ordinal);
+
+            // Orange Money cannot be « declared » any more (confirmed by its API only).
+            await customer.SubmitAsync("/abonnement", $"/abonnement/factures/{invoiceId}/paiement", new Dictionary<string, string> { ["channel"] = "OrangeMoney", ["reference"] = "X" });
+            await using (var db = app.Database.CreateContext())
+            {
+                Assert.False(await db.Payments.AnyAsync(p => p.InvoiceId == invoiceId));
+            }
+
+            var started = await customer.SubmitAsync("/abonnement", $"/abonnement/factures/{invoiceId}/orange-money", new Dictionary<string, string>());
+            Assert.StartsWith("/abonnement/orange-money/", started.Location(), StringComparison.Ordinal);
+            var paymentId = Guid.Parse(started.Location().Split('/')[^1]);
+            var reference = paymentId.ToString("N");
+            Assert.Contains(app.OrangeMoney.Requests, r => r.Reference == reference && r.Amount.Amount == 18_500);
+
+            var pay = WebUtility.HtmlDecode(await customer.GetStringAsync(new Uri(started.Location(), UriKind.Relative)));
+            Assert.Contains("https://sugu.orange-sonatel.com/mp/test-maxit", pay, StringComparison.Ordinal);
+            Assert.Contains("data:image/png;base64,", pay, StringComparison.Ordinal);
+
+            var orange = app.CreateClient();
+            // Not Orange Money (wrong key): refused, nothing changes.
+            Assert.Equal(HttpStatusCode.Unauthorized, (await NotifyAsync(orange, reference, "Basic wrong")).StatusCode);
+            // The right key but Orange has no payment yet: received, still pending (the body is never trusted).
+            Assert.Equal(HttpStatusCode.Accepted, (await NotifyAsync(orange, reference, "Basic " + FakeOrangeMoneyGateway.CallbackKey)).StatusCode);
+            await using (var db = app.Database.CreateContext())
+            {
+                Assert.Equal(PaymentStatus.Pending, (await db.Payments.SingleAsync(p => p.Id == paymentId)).Status);
+            }
+
+            // Paid in Max it: Orange confirms → invoice paid, subscription active; a second notification changes nothing.
+            app.OrangeMoney.Report(reference, 18_500);
+            Assert.Equal(HttpStatusCode.Accepted, (await NotifyAsync(orange, reference, "Basic " + FakeOrangeMoneyGateway.CallbackKey)).StatusCode);
+            Assert.Equal(HttpStatusCode.Accepted, (await NotifyAsync(orange, reference, "Basic " + FakeOrangeMoneyGateway.CallbackKey)).StatusCode);
+            await using (var db = app.Database.CreateContext())
+            {
+                var payment = await db.Payments.SingleAsync(p => p.Id == paymentId);
+                Assert.Equal(PaymentStatus.Succeeded, payment.Status);
+                Assert.StartsWith("MP", payment.ProviderReference, StringComparison.Ordinal);
+                var invoice = await db.Invoices.SingleAsync(i => i.Id == invoiceId);
+                Assert.Equal(InvoiceStatus.Paid, invoice.Status);
+                Assert.Equal(18_500, invoice.AmountPaid.Amount);
+                Assert.Equal(SubscriptionStatus.Active, (await db.Subscriptions.SingleAsync(s => s.CoveredPropertyIds.Contains(propertyId))).Status);
+                Assert.Equal(1, await db.AuditLogs.CountAsync(l => l.Action == "payment.orange_money_confirmed" && l.EntityId == paymentId.ToString()));
+            }
+
+            // The payment page sends the customer back to a running subscription.
+            Assert.Equal("/abonnement", (await customer.GetAsync(new Uri(started.Location(), UriKind.Relative))).Location());
         }
-
-        Assert.Equal(HttpStatusCode.Redirect, (await finance.SubmitAsync("/admin/paiements", "/admin/paiements/orange-money", new Dictionary<string, string>
+        finally
         {
-            ["code"] = "  445  566 ", ["link"] = "https://om.exemple.sn/payer?montant={montant}",
-        })).StatusCode);
-        await SetWaveLinkAsync(WaveLink);
-
-        // The customer sees both ways to pay and chooses Orange Money.
-        var customer = await HouseholdAsync();
-        await AddHomeAsync(customer);
-        var page = WebUtility.HtmlDecode(await customer.GetStringAsync(new Uri("/abonnement", UriKind.Relative)));
-        Assert.Contains("name=\"channel\" value=\"Wave\"", page, StringComparison.Ordinal);
-        Assert.Contains("name=\"channel\" value=\"OrangeMoney\"", page, StringComparison.Ordinal);
-        Assert.Contains("445 566", page, StringComparison.Ordinal);
-        Assert.Contains("tel:%23144%23", page, StringComparison.Ordinal);
-        Assert.Contains("https://om.exemple.sn/payer?montant=18500", page, StringComparison.Ordinal);
-        var invoiceId = Guid.Parse(InvoiceAction().Match(page).Groups[1].Value);
-
-        // Cash and transfers are recorded by Finance only: a customer cannot declare them.
-        await customer.SubmitAsync("/abonnement", $"/abonnement/factures/{invoiceId}/paiement", new Dictionary<string, string> { ["channel"] = "Cash" });
-        await using (var db = app.Database.CreateContext())
-        {
-            Assert.False(await db.Payments.AnyAsync(p => p.InvoiceId == invoiceId));
+            app.OrangeMoney.Configured = false;
         }
+    }
 
-        await customer.SubmitAsync("/abonnement", $"/abonnement/factures/{invoiceId}/paiement", new Dictionary<string, string>
+    [DatabaseFact]
+    public async Task An_orange_money_payment_of_another_amount_is_never_credited()
+    {
+        app.OrangeMoney.Configured = true;
+        try
         {
-            ["channel"] = "OrangeMoney", ["reference"] = "MP261120.1234.A56789",
-        });
-        await using (var db = app.Database.CreateContext())
-        {
-            Assert.Equal(PaymentChannel.OrangeMoney, (await db.Payments.SingleAsync(p => p.InvoiceId == invoiceId)).Channel);
+            var customer = await HouseholdAsync();
+            await AddHomeAsync(customer);
+            var page = WebUtility.HtmlDecode(await customer.GetStringAsync(new Uri("/abonnement", UriKind.Relative)));
+            var invoiceId = OrangeAction().Match(page).Groups[1].Value;
+            var started = await customer.SubmitAsync("/abonnement", $"/abonnement/factures/{invoiceId}/orange-money", new Dictionary<string, string>());
+            var paymentId = Guid.Parse(started.Location().Split('/')[^1]);
+
+            app.OrangeMoney.Report(paymentId.ToString("N"), 100);
+            // « Vérifier mon paiement » asks Orange: wrong amount → still waiting, Finance warned.
+            await customer.SubmitAsync(started.Location(), $"/abonnement/orange-money/{paymentId}/verifier", new Dictionary<string, string>());
+            await using var db = app.Database.CreateContext();
+            Assert.Equal(PaymentStatus.Pending, (await db.Payments.SingleAsync(p => p.Id == paymentId)).Status);
+            Assert.Equal(InvoiceStatus.Issued, (await db.Invoices.SingleAsync(i => i.Id == Guid.Parse(invoiceId))).Status);
+            Assert.True(await db.Notifications.AnyAsync(n => n.TemplateKey == "payment.mismatch"));
         }
+        finally
+        {
+            app.OrangeMoney.Configured = false;
+        }
+    }
 
-        // Finance sees which merchant account to check.
-        var admin = WebUtility.HtmlDecode(await finance.GetStringAsync(new Uri("/admin/paiements", UriKind.Relative)));
-        Assert.Contains("MP261120.1234.A56789", admin, StringComparison.Ordinal);
-        Assert.Contains("<dd class=\"font-semibold\">Orange Money</dd>", admin, StringComparison.Ordinal);
+    private static Task<HttpResponseMessage> NotifyAsync(HttpClient client, string reference, string authorization)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, new Uri("/paiements/orange-money/notification", UriKind.Relative))
+        {
+            Content = new StringContent($$"""{"reference":"{{reference}}","status":"SUCCESS","type":"MERCHANT_PAYMENT"}""", System.Text.Encoding.UTF8, "application/json"),
+        };
+        request.Headers.TryAddWithoutValidation("Authorization", authorization);
+        return client.SendAsync(request);
     }
 
     private async Task SetWaveLinkAsync(string link)
@@ -246,4 +299,7 @@ public sealed partial class WavePaymentTests(WebAppFixture app)
 
     [GeneratedRegex("/abonnement/factures/([0-9a-f-]{36})/paiement")]
     private static partial Regex InvoiceAction();
+
+    [GeneratedRegex("/abonnement/factures/([0-9a-f-]{36})/orange-money")]
+    private static partial Regex OrangeAction();
 }

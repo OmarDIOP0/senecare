@@ -19,6 +19,15 @@ public static class NotificationTemplates
     public const string PaymentVerified = "payment.verified";
     public const string PaymentRejected = "payment.rejected";
 
+    /// <summary>Finance (information): a payment confirmed by Orange Money's API, already credited.</summary>
+    public const string PaymentReceived = "payment.received";
+
+    /// <summary>Finance: an invoice paid twice (refund or carry over).</summary>
+    public const string PaymentDuplicate = "payment.duplicate";
+
+    /// <summary>Finance: a mobile money payment whose amount or merchant does not match, not credited.</summary>
+    public const string PaymentMismatch = "payment.mismatch";
+
     /// <summary>Super-admins and support: a new customer finished signing up.</summary>
     public const string AccountCreated = "account.created";
 

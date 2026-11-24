@@ -182,8 +182,14 @@ Parcours client :
   Compte, logement et abonnement sont créés ensemble, puis directement `/abonnement` pour payer (plus d'écrans
   de bienvenue `/bienvenue` : retirés à la demande de l'utilisateur ; la visite guidée de l'espace reste).
   D'autres logements s'ajoutent ensuite depuis l'espace.
-- Paiement réel : Wave (lien marchand) et Orange Money (code marchand / numéro payé par #144#, et/ou lien),
-  configurés par l'admin (`/admin/paiements`, réglages `payments.*`) ; changement de formule (décision utilisateur) :
+- Paiement réel : Wave (lien marchand, réglé dans `/admin/paiements`, « J'ai payé » + référence vérifiés par la
+  Finance) et Orange Money par l'API Sonatel (décision du 24/11/2026, remplace le code marchand manuel) :
+  `OrangeMoneyPayments` + `IOrangeMoneyGateway` (`OrangeMoney:*` dans user-secrets / appsettings.Server.json,
+  Sandbox puis Live) → QR code (ordinateur) ou lien Max it (téléphone), page `/abonnement/orange-money/{id}` ;
+  notification `POST /paiements/orange-money/notification` (clé partagée « Basic », jamais crue seule) → le paiement
+  n'est crédité qu'après lecture de l'état chez Orange (SUCCESS, montant, code marchand), une seule fois, puis
+  activation automatique + Finance informée ; « Vérifier mon paiement » en secours ; adresse de notification
+  enregistrée chez Orange depuis Admin › Paiements ; changement de formule (décision utilisateur) :
   autre formule ou mensuel ↔ annuel, choisi par le titulaire / gestionnaire sur `/abonnement`, appliqué à la
   période suivante (`Subscription.NextPlanId`), rien de recalculé sur la période en cours ; facture de la période
   suivante déjà émise mais ni payée ni déclarée → réémise avec la nouvelle formule ; le client choisit parmi ceux ouverts,

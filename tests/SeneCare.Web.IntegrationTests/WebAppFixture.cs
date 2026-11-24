@@ -21,6 +21,9 @@ public sealed class WebAppFixture : IAsyncLifetime
 
     public CapturingMessageSender Messages { get; } = new();
 
+    /// <summary>Orange Money API stand-in (off unless a test turns it on).</summary>
+    public FakeOrangeMoneyGateway OrangeMoney { get; } = new();
+
     public async Task InitializeAsync()
     {
         await Database.InitializeAsync();
@@ -41,6 +44,7 @@ public sealed class WebAppFixture : IAsyncLifetime
             {
                 services.AddSingleton<ISmsSender>(Messages);
                 services.AddSingleton<IWhatsAppSender>(Messages);
+                services.AddSingleton<SeneCare.Application.Payments.IOrangeMoneyGateway>(OrangeMoney);
             });
         });
     }

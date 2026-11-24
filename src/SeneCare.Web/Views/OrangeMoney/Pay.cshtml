@@ -1,0 +1,86 @@
+@model SeneCare.Application.Payments.OrangeMoneyStart?
+@using SeneCare.Application.Payments
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "abonnement";
+    ViewData["Title"] = L["Om_Title"];
+    var paymentId = (Guid)ViewData["PaymentId"]!;
+    var state = (OrangeMoneyState)ViewData["State"]!;
+    var checkout = Model?.Checkout;
+}
+@section Scripts {
+    <script src="~/js/orange-money.js" asp-append-version="true" defer></script>
+}
+
+<p class="sc-eyebrow">@L["Om_Eyebrow"]</p>
+<h1 class="sc-titre mt-2">@L["Om_Title"]</h1>
+@if (Model is not null)
+{
+    <p class="mt-2 text-charbon-doux">@L["Pay_Invoice", Model.InvoiceNumber] · <span class="font-semibold text-charbon"><sc-amount value="@Model.Amount.Amount" /></span></p>
+}
+
+<div class="mt-6 overflow-hidden rounded-3xl border border-ligne bg-surface shadow-carte"
+     data-om-payment data-state-url="/abonnement/orange-money/@paymentId/etat" data-paid-url="/abonnement" data-until="@(checkout?.ExpiresAt.AddMinutes(10).ToUnixTimeMilliseconds())">
+    <div class="flex items-center gap-3 border-b border-ligne bg-[#ff7900]/10 px-6 py-4">
+        <img src="~/images/orange-money-logo.webp" alt="Orange Money" width="44" height="44" class="size-11 rounded-xl" />
+        <p class="flex items-center gap-2 font-semibold" role="status" aria-live="polite" data-om-status>
+            @if (state == OrangeMoneyState.Failed)
+            {
+                <sc-icon name="triangle-alert" class="size-5 text-rouge" />@L["Om_State_Failed"]
+            }
+            else
+            {
+                <sc-icon name="hourglass" class="size-5 text-ocre-texte motion-safe:animate-pulse" />@L["Om_Waiting"]
+            }
+        </p>
+    </div>
+
+    <div class="grid gap-6 p-6 sm:p-8 md:grid-cols-[1fr_auto]">
+        @if (checkout is not null && state == OrangeMoneyState.Pending)
+        {
+            <div class="grid content-start gap-5">
+                <ol class="grid gap-3">
+                    @foreach (var (index, text) in new[] { L["Om_Step1"].Value, L["Om_Step2"].Value, L["Om_Step3"].Value }.Index())
+                    {
+                        <li class="flex items-start gap-3">
+                            <span class="grid size-8 shrink-0 place-items-center rounded-full bg-[#ff7900]/15 font-mono text-sm font-bold text-charbon">@(index + 1)</span>
+                            <span class="pt-1 text-[15px]">@text</span>
+                        </li>
+                    }
+                </ol>
+                @* Phones: straight into Max it (or the Orange Money app). *@
+                <div class="grid gap-3 md:hidden">
+                    @if (checkout.MaxItLink is { } maxit)
+                    {
+                        <a href="@maxit" class="sc-btn min-h-12 w-full bg-[#ff7900] text-base text-[#1a1a1a] hover:brightness-95" rel="noopener">@L["Om_OpenMaxIt"]</a>
+                    }
+                    @if (checkout.OrangeMoneyLink is { } om && om != checkout.MaxItLink)
+                    {
+                        <a href="@om" class="sc-btn-secondaire min-h-12 w-full" rel="noopener">@L["Om_OpenOrangeMoney"]</a>
+                    }
+                </div>
+                <p class="flex items-center gap-1.5 text-sm text-charbon-doux"><sc-icon name="clock" class="size-4" />@L["Om_ValidUntil", Formatting.Time(checkout.ExpiresAt)]</p>
+            </div>
+            @if (checkout.QrCodePng is { } qr)
+            {
+                @* Computers: scan with the phone. *@
+                <figure class="hidden w-52 self-start rounded-2xl border border-ligne bg-white p-3 md:block">
+                    <img src="data:image/png;base64,@qr" alt="@L["Om_QrAlt"]" width="200" height="200" class="h-auto w-full" />
+                    <figcaption class="mt-2 text-center text-xs font-semibold text-charbon-doux">@L["Om_Scan"]</figcaption>
+                </figure>
+            }
+        }
+        else if (state == OrangeMoneyState.Pending)
+        {
+            <p class="text-[15px] text-charbon-doux">@L["Om_Expired"]</p>
+        }
+
+        <div class="flex flex-wrap gap-3 md:col-span-2">
+            <form method="post" action="/abonnement/orange-money/@paymentId/verifier">
+                <button type="submit" class="sc-btn-secondaire min-h-12"><sc-icon name="check" class="size-4" />@L["Om_Check"]</button>
+            </form>
+            <a href="/abonnement" class="sc-btn-discret min-h-12">@L["Om_Back"]</a>
+        </div>
+    </div>
+</div>
+<p class="mt-4 text-sm text-charbon-doux">@L["Om_Notice"]</p>

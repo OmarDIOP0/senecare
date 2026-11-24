@@ -62,6 +62,8 @@ public static class DependencyInjection
         services.AddScoped<InvoiceDocumentQuery>();
         services.AddScoped<DeclarePaymentHandler>();
         services.AddScoped<PaymentVerificationHandler>();
+        services.AddScoped<PaymentSettlement>();
+        services.AddScoped<OrangeMoneyPayments>();
 
         services.AddScoped<BusinessAccess>();
         services.AddScoped<PlanCatalog>();

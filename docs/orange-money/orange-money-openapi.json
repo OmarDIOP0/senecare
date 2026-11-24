@@ -1,0 +1,2639 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "💰 Orange Money API",
+    "description": "Orange Money API allows to process a variety of mobile money operations such as cash in,\ncash out, merchant payment, transfer and more.\n\n# Errors\n\nThe APIs use the standard HTTP status codes to indicate the success or failure of an API call.\nError bodies follow [RFC 7807 (`application/problem+json`)](https://datatracker.ietf.org/doc/html/rfc7807):\n\n```json\n{\n  \"type\": \"https://developers.orange-sonatel.com/documentation/errors/bad-request\",\n  \"title\": \"Bad Request\",\n  \"instance\": \"/api/eWallet/v1/payments\",\n  \"status\": \"400\",\n  \"code\": \"2000\",\n  \"detail\": \"Customer account does not exist\"\n}\n```\n\nField-level validation problems are additionally itemised in the `violations` array.\n\n# 🔐 Authentication\n\nOur APIs use the **OAuth 2.0 client credentials** grant. Every call other than the token endpoint\nrequires an `Authorization: Bearer {access_token}` header. Tokens are unique to your application,\nmust be stored securely, and expire — read `expires_in` from the token response and refresh\nproactively rather than waiting for a `401`.\n\n```bash\ncurl -X POST https://api.orange-sonatel.com/oauth/v1/token \\\n  -H 'Content-Type: application/x-www-form-urlencoded' \\\n  -d client_id={your_client_id} \\\n  -d client_secret={your_secret} \\\n  -d grant_type=client_credentials\n```\n\n# 🔑 Sensitive data\n\nSensitive fields such as `pincode` must be **RSA-encrypted with our public key** before being sent.\nRetrieve the key from `GET /api/account/v1/publicKeys`, encrypt the PIN, then Base64-encode the\nresult (a 2048-bit key yields a 344-character Base64 string — hence the\n`minLength`/`maxLength` of `344` on every `encryptedPinCode` field).\n\nFor test purposes you can use an online tool such as\n[online rsa encryption decryption](https://www.devglan.com/online-tools/rsa-encryption-decryption)\nto encrypt the PIN code with the public key before sending it.\n\nThe key has no validity period by default, but it **can be revoked at any time**. A revoked or\ninvalid key produces error code `4003` — fetch a fresh key and retry.\n\n# ⏱️ Rate limiting\n\nIn the **sandbox** environment you can make `60 requests` per minute. Exceeding the quota returns\n`429 Too Many Requests`; back off and retry.\n\n# 🔗 Base URL\n\nAll URLs referenced in this documentation have one of the following bases:\n\n- __Sandbox:__ https://api.sandbox.orange-sonatel.com\n- __Live:__ https://api.orange-sonatel.com\n\nAll APIs are served over HTTPS. To ensure data privacy, unencrypted HTTP is not supported.\n\n# 📚 Error codes\n\n| Category | HTTP status code | Error code | Error message |\n| :--- | :---: | :---: | :--- |\n| __Business error__ | 400 | 2000 | Customer account does not exist |\n| | | 2001 | Customer msisdn is invalid |\n| | | 2010 | Your PIN should be changed |\n| | | 2011 | Invalid PIN code, 2 remaining tentatives left |\n| | | 2012 | Invalid PIN code, 1 remaining tentative left |\n| | | 2013 | Invalid PIN code, your account is blocked |\n| | | 2020 | Balance insufficient |\n| | | 2021 | Balance insufficient for payer |\n| | | 2022 | Balance insufficient for payee |\n| | | 2023 | Balance maximal |\n| | | 2024 | Balance maximal for payer |\n| | | 2025 | Balance maximal for payee |\n| | | 2030 | Balance maximal for payee <sup>(1)</sup> |\n| | | 2031 | Balance insufficient for payer <sup>(1)</sup> |\n| | | 2040 | Balance insufficient for payee <sup>(1)</sup> |\n| | | 2041 | Transaction not allowed |\n| | | 2042 | Transaction not allowed for payer |\n| | | 2043 | Transaction not allowed for payee |\n| | | 2050 | OTP transaction failed |\n| | | 2051 | OTP transaction not found |\n| | | 2052 | OTP is expired, already used, or invalid |\n| | | 4003 | Failed to decrypt received message. Invalid/revoked public key was used for encryption — please retrieve a new public key |\n| | | 4004 | Invalid QR code, it's expired |\n| | | 4099 | Bad request, please check passed parameters |\n| __Bad parameter__ | 400 | 20 | Invalid input parameter value |\n| | | 21 | Missing body |\n| | | 22 | Invalid body |\n| | | 23 | Missing body field |\n| | | 24 | Invalid body field |\n| | | 25 | Missing header |\n| | | 26 | Invalid header value |\n| | | 27 | Missing query-string parameter |\n| | | 28 | Invalid query-string parameter value |\n| __Authentication__ | 401 | 10 | Full authentication is required to access this resource |\n| __Forbidden__ | 403 | 11 | Access forbidden |\n| __Resource not found__ | 404 | 60 | Resource not found |\n| __Too many requests__ | 429 | 9 | Rate limit exceeded, please retry later |\n| __Internal server error__ | 500 | 50 | Internal server error |\n| | | 51 | Due to some technical problems, your request is in a pending state (**_please do not retry_**) |\n| | | 1 | Your request cannot be processed at this time, please try again later |\n| __Bad gateway__ | 502 | 2 | Your request cannot be processed at this time, please try again later |\n| __Service unavailable__ | 503 | 5 | Your request cannot be processed at this time, please try again later |\n\n\n\n---\n\n**NB:** For **pending** transactions it is recommended to poll\n`GET /api/eWallet/v1/transactions/{transactionId}/status`. A final status is available within 24\nhours at the latest.\n\n# 🧭 Tutorial: how to test the APIs\n\nAfter receiving your account credentials (`client_id` / `client_secret`):\n\n1. Retrieve an access token from `POST /oauth/v1/token`.\n2. *(Sandbox)* Provision test MSISDNs via `GET /api/assignments/v1/partner/sim-cards`.\n3. *(Where required)* Fetch the public key and\n   [encrypt](https://www.devglan.com/online-tools/rsa-encryption-decryption) the PIN code with it.\n4. Send the request. Example for a cash in:\n\n```json\n{\n  \"partner\": {\n    \"idType\": \"MSISDN\",\n    \"id\": \"781234567\",\n    \"encryptedPinCode\": \"{{ENCRYPTED_PINCODE}}\"\n  },\n  \"customer\": {\n    \"idType\": \"MSISDN\",\n    \"id\": \"771234567\"\n  },\n  \"amount\": {\n    \"value\": 1,\n    \"unit\": \"XOF\"\n  },\n  \"reference\": \"733966e4-988b-4ce6-b1e4-d0ad95e8a98\",\n  \"receiveNotification\": true,\n  \"metadata\": {\n    \"senderFirstName\": \"Mr\",\n    \"senderLastName\": \"API\"\n  }\n}\n```\n\n5. For asynchronous operations, expose a callback endpoint — see the section below.\n\n# 🔔 Callbacks (Webhooks)\n\nSome operations are **asynchronous**: the API acknowledges your request immediately, and the\nfinal outcome is pushed to your server later as an HTTP `POST` — a *callback*.\n\n| Operation | How you declare the callback URL | Payload schema |\n| :--- | :--- | :--- |\n| `POST /api/eWallet/v1/bulkcashins` | `X-Callback-Url` request header (**required**) | `NotificationBulkCashin` |\n| `POST /api/eWallet/v4/qrcode`      | `X-Callback-Url` request header (optional — falls back to the merchant callback registered via `POST /api/notification/v1/merchantcallback`) | `Notification` |\n| Merchant / retailer payments       | `POST /api/notification/v1/merchantcallback` (persistent registration) | `Notification` |\n\nYour endpoint **must be publicly reachable over HTTPS**. Plain HTTP callback URLs are rejected, and\nwe validate TLS certificates — a self-signed or expired certificate fails delivery.\n\n---\n\n\n",
+    "contact": {
+      "name": "Orange Money — Partner Integration Team",
+      "email": "partenaires.orangemoney@orange-sonatel.com",
+      "url": "https://developers.orange-sonatel.com"
+    },
+    "license": {
+      "name": "Orange SN 2.0",
+      "url": "https://www.orange.sn/licenses/LICENSE-2.0.html"
+    },
+    "version": "v1.1.0",
+    "termsOfService": "https://www.orange.sn/licenses/LICENSE-2.0.html"
+  },
+  "servers": [
+    {
+      "url": "https://api.sandbox.orange-sonatel.com",
+      "description": "Sandbox — test data only, rate limited to 60 requests/minute"
+    },
+    {
+      "url": "https://api.orange-sonatel.com",
+      "description": "Live — production, moves real money"
+    }
+  ],
+  "security": [
+    {
+      "Authorization": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Obtain the OAuth 2.0 access token required by every other operation."
+    },
+    {
+      "name": "General Public Key",
+      "description": "Retrieve the RSA public key used to encrypt sensitive data such as PIN codes."
+    },
+    {
+      "name": "Mobile Money Account",
+      "description": "Read customer/retailer profiles and balances, and change PIN codes."
+    },
+    {
+      "name": "Cash In",
+      "description": "Credit a customer wallet from a retailer wallet, individually or in bulk."
+    },
+    {
+      "name": "Merchant Payment",
+      "description": "Generate QR codes and collect merchant payments."
+    },
+    {
+      "name": "Transaction Search",
+      "description": "Search the transaction history and poll transaction status."
+    },
+    {
+      "name": "Webhooks",
+      "description": "Register and inspect the callback URLs used to notify you of asynchronous events."
+    },
+    {
+      "name": "Sim Assignment (sandbox only)",
+      "description": "Provision test MSISDNs. Available in the sandbox environment only."
+    }
+  ],
+  "paths": {
+    "/oauth/v1/token": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Generate Access Token using Client Credentials",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "client_id",
+                  "client_secret",
+                  "grant_type"
+                ],
+                "properties": {
+                  "client_id": {
+                    "type": "string",
+                    "description": "The client identifier"
+                  },
+                  "client_secret": {
+                    "type": "string",
+                    "description": "The client secret"
+                  },
+                  "grant_type": {
+                    "type": "string",
+                    "description": "Must be 'client_credentials'",
+                    "enum": [
+                      "client_credentials"
+                    ]
+                  }
+                }
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "client_id": "{your_client_id}",
+                    "client_secret": "{your_secret}",
+                    "grant_type": "client_credentials"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful token generation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenResponse"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+                      "token_type": "bearer",
+                      "expires_in": 3600,
+                      "scope": "apimanagement email profile"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        },
+        "security": [],
+        "operationId": "generateAccessToken",
+        "description": "Exchange your `client_id` / `client_secret` for a short-lived bearer token using the OAuth 2.0 **client credentials** grant.\n\nCache the token and reuse it until `expires_in` elapses — requesting a new token on every call will burn through your rate limit."
+      }
+    },
+    "/api/assignments/v1/partner/sim-cards": {
+      "get": {
+        "tags": [
+          "Sim Assignment (sandbox only)"
+        ],
+        "summary": "Get test numbers",
+        "description": "**Sandbox only.** Generate a new assignment or list the MSISDNs already assigned to your partner account. Specify how many MSISDNs you need per type (`MERCHANT`, `CUSTOMER`, `RETAILER`).\n\nThe response includes the test PIN code for each SIM.",
+        "operationId": "getPartnerSimCards",
+        "parameters": [
+          {
+            "name": "nbCustomers",
+            "in": "query",
+            "description": "Number of msisdns, of type CUSTOMER (max=2)",
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "default": 1,
+              "minimum": 0,
+              "maximum": 2
+            },
+            "required": false
+          },
+          {
+            "name": "nbMerchants",
+            "in": "query",
+            "description": "Number of msisdns, of type MERCHANT (max=1)",
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "default": 0,
+              "minimum": 0,
+              "maximum": 1
+            },
+            "required": false
+          },
+          {
+            "name": "nbRetailers",
+            "in": "query",
+            "description": "Number of msisdns, of type RETAILER (max=1)",
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "default": 0,
+              "minimum": 0,
+              "maximum": 1
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The MSISDNs assigned to your partner account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SimCards"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/notification/v1/merchantcallback": {
+      "get": {
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "List merchant callbacks",
+        "description": "Retrieve the callback URLs currently registered for your merchant/retailer codes.\n\nThe `apiKey` is **never** returned — it is write-only.",
+        "operationId": "getMerchantCallbacks",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "description": "merchant code",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number of the list of callback records to retrieve",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Number of callback records to retrieve",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The registered callbacks.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MerchantCallBack"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "Register a merchant callback",
+        "description": "Register the HTTPS endpoint that receives payment notifications for a merchant or retailer code. This is the persistent alternative to passing `X-Callback-Url` on each request.\n\nThe `apiKey` you supply here is what we send back to you in the `Authorization: Basic …` header of every callback, so you can recognise us.",
+        "operationId": "setMerchantCallback",
+        "requestBody": {
+          "description": "The callback to register.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MerchantCallBack"
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "code": "123456",
+                    "name": "My Shop",
+                    "callbackUrl": "https://myserver.com/om/callback",
+                    "apiKey": "a-long-random-shared-secret"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "The callback was registered.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantCallBack"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/eWallet/v1/account": {
+      "get": {
+        "tags": [
+          "Mobile Money Account"
+        ],
+        "summary": "Get user profile by MSISDN",
+        "description": "Retrieve a customer or retailer profile — including balance, grade, and barring/suspension state — from an MSISDN.",
+        "operationId": "getUserProfileByMsisdn",
+        "parameters": [
+          {
+            "name": "msisdn",
+            "in": "query",
+            "description": "Msisdn",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "customer type",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "customer",
+                "retailer"
+              ]
+            }
+          },
+          {
+            "name": "walletType",
+            "in": "query",
+            "description": "wallet type",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "bonus",
+                "international",
+                "principal",
+                "salaire"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user profile.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfile"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Mobile Money Account"
+        ],
+        "summary": "Change PIN code",
+        "description": "Change the PIN code of an account.\n\nBoth the current and the new PIN must be RSA-encrypted with the public key from `GET /api/account/v1/publicKeys` and Base64-encoded before being sent.",
+        "operationId": "changePinCode",
+        "parameters": [
+          {
+            "name": "msisdn",
+            "in": "query",
+            "description": "Msisdn",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "customer type",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "customer",
+                "retailer"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePinCode"
+              }
+            }
+          },
+          "required": true,
+          "description": "The current and new PIN codes, both encrypted."
+        },
+        "responses": {
+          "200": {
+            "description": "The PIN code was changed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/eWallet/v1/account/customer/balance": {
+      "post": {
+        "tags": [
+          "Mobile Money Account"
+        ],
+        "summary": "Get Customer Balance",
+        "description": "Retrieve the balance of a customer's account.\n\n`POST` is used rather than `GET` because the customer's encrypted PIN code must be supplied in the body.",
+        "operationId": "getCustomerBalance",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "idType": "MSISDN",
+                    "id": "771234567",
+                    "encryptedPinCode": "hHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5RoRwQ0NFzpNHnf7zh3dDv0PMC1zbRwAISs1AqSFaH/scLdduec7prrm379V/okZH1Bwvole4c4s0/YR37jdV+UaEcENDRc6TR53+84d3Q79DzAtc20cACErNQKkhWh/7HC3XbnnO6a65t+/Vf6JGR9QcL6JXuHOLNP2Ed+43VflGhHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5Rg==",
+                    "wallet": "principal"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The account balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Money"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/eWallet/v1/account/retailer/balance": {
+      "post": {
+        "tags": [
+          "Mobile Money Account"
+        ],
+        "summary": "Get Retailer Balance",
+        "description": "Retrieve the balance of a retailer's account.\n\n`POST` is used rather than `GET` because the retailer's encrypted PIN code must be supplied in the body.",
+        "operationId": "getRetailerBalance",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "idType": "MSISDN",
+                    "id": "771234567",
+                    "encryptedPinCode": "hHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5RoRwQ0NFzpNHnf7zh3dDv0PMC1zbRwAISs1AqSFaH/scLdduec7prrm379V/okZH1Bwvole4c4s0/YR37jdV+UaEcENDRc6TR53+84d3Q79DzAtc20cACErNQKkhWh/7HC3XbnnO6a65t+/Vf6JGR9QcL6JXuHOLNP2Ed+43VflGhHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5Rg==",
+                    "wallet": "principal"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The account balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Money"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/eWallet/v1/accounts": {
+      "get": {
+        "tags": [
+          "Mobile Money Account"
+        ],
+        "summary": "Search user profiles by criteria",
+        "description": "Search for user profiles by criteria (`msisdn`, `firstName`, `lastName`).\n\nOperation-specific business errors are returned.",
+        "operationId": "searchUserProfiles",
+        "parameters": [
+          {
+            "name": "msisdn",
+            "in": "query",
+            "description": "Msisdn",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "firstName",
+            "in": "query",
+            "description": "The first name",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastName",
+            "in": "query",
+            "description": "The last name",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Customer type",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "customer",
+                "retailer"
+              ]
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Comma-separated list of profile attributes to return. Omit for all attributes.",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            },
+            "example": "firstName,lastName,balance"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching user profiles.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserProfile"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/eWallet/v1/bulkcashins": {
+      "post": {
+        "tags": [
+          "Cash In"
+        ],
+        "summary": "Bulk cash in",
+        "description": "Credit specific amounts to several customer accounts in a single request.\n\nThe operation is **asynchronous**: the response carries a `bulkId` and a `PENDING` status as soon as the batch is accepted. When processing finishes, a callback is `POST`ed to the URL you supplied in `X-Callback-Url` \n\nUse `GET /api/eWallet/v1/transactions?bulkId={bulkId}` to inspect the individual transactions of a batch.",
+        "operationId": "bulkCashIn",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XCallbackUrlRequired"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TransactionRequest"
+                }
+              }
+            }
+          },
+          "required": true,
+          "description": "The transactions to execute in this batch."
+        },
+        "callbacks": {
+          "Bulk cash in completed": {
+            "{$request.header.X-Callback-Url}": {
+              "post": {
+                "summary": "Bulk cash in completed",
+                "operationId": "onBulkCashInCompleted",
+                "description": "Sent to your `X-Callback-Url` once the batch has finished processing.\n\n`reference` carries the `bulkId` returned by the original request — join on it to reconcile the batch, then call `GET /api/eWallet/v1/transactions?bulkId={bulkId}` for per-transaction outcomes.### ⭐ Best practices\n\n1. **Always return early.** Push long-running work to a background job and return `2xx`\n   immediately — a slow endpoint is indistinguishable from a failing one.\n2. **Favour idempotent processing.** Deduplicate on the idempotency key so a redelivery is a no-op.\n3. **Default to `HTTPS` endpoints.** Only HTTPS URLs are accepted, and certificates are validated.\n\n### ♻️ Delivery semantics\n\nCallbacks are delivered **at least once** and may arrive **out of order**. Deduplicate on the\nidempotency key, and reconcile against\n`GET /api/eWallet/v1/transactions/{transactionId}/status` before overwriting stored state.\n\n`2xx` marks the event delivered (`202` with an empty body is recommended), `4xx` is a permanent\nrejection with **no retry**, and `5xx`/timeouts are retried with exponential backoff.\n",
+                "parameters": [
+                ],
+                "requestBody": {
+                  "required": true,
+                  "description": "Event payload. Read the **raw** bytes before parsing — `X-Sonatel-Signature` is computed over them.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/NotificationBulkCashin"
+                      },
+                      "examples": {
+                        "Example 1": {
+                          "value": {
+                            "type": "BULK_CASHIN",
+                            "reference": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+                            "status": "SUCCESS",
+                            "description": "bulk cashin processing finished",
+                            "date": "2023-10-27T10:00:00Z",
+                            "metadata": {
+                              "batch": "payroll-2023-10"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "202": {
+                    "description": "Accepted. Return this (with an empty body) once the event is safely queued. Any `2xx` marks the event as delivered."
+                  },
+                  "400": {
+                    "description": "Permanent rejection — the event will **not** be retried. Never return a `4xx` for a transient failure."
+                  },
+                  "500": {
+                    "description": "Transient failure — the event is retried with exponential backoff."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The batch was accepted for processing.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/eWallet/v1/cashins": {
+      "post": {
+        "tags": [
+          "Cash In"
+        ],
+        "summary": "Cash in",
+        "description": "Perform a cash in: a customer hands cash to a retailer, and the retailer transfers the equivalent electronic money from their wallet to the customer's wallet.\n\nSet `reference` to your own idempotency/reconciliation key. If the response status is `PENDING`, poll `GET /api/eWallet/v1/transactions/{transactionId}/status` — a final status is available within 24 hours at the latest.",
+        "operationId": "cashIn",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionRequest"
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "partner": {
+                      "idType": "MSISDN",
+                      "id": "781234567",
+                      "encryptedPinCode": "hHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5RoRwQ0NFzpNHnf7zh3dDv0PMC1zbRwAISs1AqSFaH/scLdduec7prrm379V/okZH1Bwvole4c4s0/YR37jdV+UaEcENDRc6TR53+84d3Q79DzAtc20cACErNQKkhWh/7HC3XbnnO6a65t+/Vf6JGR9QcL6JXuHOLNP2Ed+43VflGhHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5Rg=="
+                    },
+                    "customer": {
+                      "idType": "MSISDN",
+                      "id": "771234567"
+                    },
+                    "amount": {
+                      "value": 1,
+                      "unit": "XOF"
+                    },
+                    "reference": "733966e4-988b-4ce6-b1e4-d0ad95e8a98",
+                    "receiveNotification": true,
+                    "metadata": {
+                      "senderFirstName": "Mr",
+                      "senderLastName": "API"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The cash in was processed. Check `status` — a `PENDING` result must be polled via the transaction status endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/account/v1/publicKeys": {
+      "get": {
+        "tags": [
+          "General Public Key"
+        ],
+        "summary": "Get the general public key",
+        "description": "Retrieve the general RSA public key used to encrypt sensitive data such as PIN codes.\n\nThe key has no validity period by default, but it can be revoked at any time. A revoked or invalid key produces error code `4003` — fetch a fresh key and retry. Cache the key, but be ready to refetch on `4003`.",
+        "operationId": "getPublicKey",
+        "responses": {
+          "200": {
+            "description": "The current public key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicKey"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/eWallet/v4/qrcode": {
+      "post": {
+        "tags": [
+          "Merchant Payment"
+        ],
+        "summary": "Generate QR code",
+        "description": "Generate a secure Orange Money QR code (and the matching deep links) for a merchant payment.\n\nThe payment itself is **asynchronous**: once the customer completes it, a callback is `POST`ed to `X-Callback-Url` — or, if that header is omitted, to the URL registered for the merchant via `POST /api/notification/v1/merchantcallback`. See the **Callbacks** chapter for headers, signature verification and retry semantics.\n\nOperation-specific business errors are returned. An expired QR code yields error code `4004`.",
+        "operationId": "generateQrCode",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XApiKey"
+          },
+          {
+            "$ref": "#/components/parameters/XCallbackUrlOptional"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MerchantBody"
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "code": "123456",
+                    "name": "Merchant Name",
+                    "amount": {
+                      "value": 1500,
+                      "unit": "XOF"
+                    },
+                    "validity": 900,
+                    "callbackSuccessUrl": "https://my-success-url.com",
+                    "callbackCancelUrl": "https://my-cancel-url.com",
+                    "metadata": {},
+                    "reference": "st8b15309a-1906-49b7-b36d-519ff78178b1",
+                    "restrictions": {
+                      "isSingleUse": false,
+                      "payerMsisdn": "771234567"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "callbacks": {
+          "Merchant payment completed": {
+            "{$request.header.X-Callback-Url}": {
+              "post": {
+                "summary": "Merchant payment completed",
+                "operationId": "onMerchantPaymentCompleted",
+                "description": "Sent to your `X-Callback-Url` (or to the merchant callback registered via `POST /api/notification/v1/merchantcallback`) once the customer's payment reaches a final state.\n\n`reference` echoes your own reference and `transactionId` is the Orange Money identifier — either can be used to reconcile. Only act on `status: SUCCESS`.\n\n### ⭐ Best practices\n\n1. **Always return early.** Push long-running work to a background job and return `2xx`\n   immediately — a slow endpoint is indistinguishable from a failing one.\n2. **Favour idempotent processing.** Deduplicate on the idempotency key so a redelivery is a no-op.\n3. **Default to `HTTPS` endpoints.** Only HTTPS URLs are accepted, and certificates are validated.\n\n### ♻️ Delivery semantics\n\nCallbacks are delivered **at least once** and may arrive **out of order**. Deduplicate on the\nidempotency key, and reconcile against\n`GET /api/eWallet/v1/transactions/{transactionId}/status` before overwriting stored state.\n\n`2xx` marks the event delivered (`202` with an empty body is recommended), `4xx` is a permanent\nrejection with **no retry**, and `5xx`/timeouts are retried with exponential backoff.\n",
+                "parameters": [
+                ],
+                "requestBody": {
+                  "required": true,
+                  "description": "Event payload. Read the **raw** bytes before parsing",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Notification"
+                      },
+                      "examples": {
+                        "Example 1": {
+                          "value": {
+                            "amount": {
+                              "value": 2,
+                              "unit": "XOF"
+                            },
+                            "partner": {
+                              "idType": "CODE",
+                              "id": "12345"
+                            },
+                            "customer": {
+                              "idType": "MSISDN",
+                              "id": "786258731"
+                            },
+                            "reference": "eaed4551-8f07-497d-afb4-ded49d9e92d6",
+                            "type": "MERCHANT_PAYMENT",
+                            "channel": "API",
+                            "transactionId": "MP220928.1029.C58502",
+                            "paymentMethod": "QRCODE",
+                            "status": "SUCCESS"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "202": {
+                    "description": "Accepted. Return this (with an empty body) once the event is safely queued. Any `2xx` marks the event as delivered."
+                  },
+                  "400": {
+                    "description": "Permanent rejection — the event will **not** be retried. Never return a `4xx` for a transient failure."
+                  },
+                  "500": {
+                    "description": "Transient failure — the event is retried with exponential backoff."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The QR code was generated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Qr"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/eWallet/v1/transactions": {
+      "get": {
+        "tags": [
+          "Transaction Search"
+        ],
+        "summary": "Search transactions",
+        "description": "Retrieve the transaction history, filtered by date range, status, type, reference, transaction id or `bulkId`.\n\nResults are paginated — use `page` and `size`.",
+        "operationId": "getTransactions",
+        "parameters": [
+          {
+            "name": "bulkId",
+            "in": "query",
+            "description": "Return only the transactions belonging to this bulk cash-in batch.",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "fromDateTime",
+            "in": "query",
+            "description": "Requested start date and time",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Requested page number (default is 0, min is 0)",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          {
+            "name": "reference",
+            "in": "query",
+            "description": "Your own external transaction reference.",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Requested number of resources to be provided in response requested by client (default is 20, max is 500 )",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1,
+              "maximum": 500,
+              "default": 20
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Transaction status",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACCEPTED",
+                "CANCELLED",
+                "FAILED",
+                "INITIATED",
+                "PENDING",
+                "PRE_INITIATED",
+                "REJECTED",
+                "SUCCESS"
+              ]
+            }
+          },
+          {
+            "name": "toDateTime",
+            "in": "query",
+            "description": "Requested end date and time",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "transactionId",
+            "in": "query",
+            "description": "Orange Money transaction identifier.",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Transaction type",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CASHIN",
+                "MERCHANT_PAYMENT",
+                "WEB_PAYMENT"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching transactions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/eWallet/v1/transactions/{transactionId}/status": {
+      "get": {
+        "tags": [
+          "Transaction Search"
+        ],
+        "summary": "Get transaction status",
+        "description": "Retrieve the current status of a transaction.\n\nThis is the authoritative source of truth: use it to poll `PENDING` transactions and to reconcile out-of-order callbacks. A final status is available within 24 hours at the latest.",
+        "operationId": "getTransactionStatus",
+        "parameters": [
+          {
+            "name": "transactionId",
+            "in": "path",
+            "description": "Transaction ID",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "maxLength": 20,
+              "minLength": 20,
+              "type": "string"
+            },
+            "example": "MP220928.1029.C58502"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The transaction status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/State"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SimCards": {
+        "title": "SimCardRef",
+        "required": [
+          "msisdn"
+        ],
+        "type": "object",
+        "properties": {
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "grade": {
+            "type": "string",
+            "enum": [
+              "FULL",
+              "LITE"
+            ]
+          },
+          "msisdn": {
+            "type": "string",
+            "example": "771234567"
+          },
+          "pinCode": {
+            "type": "string",
+            "example": "1234"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "MERCHANT",
+              "RETAILER",
+              "CUSTOMER",
+              "HYBRID"
+            ]
+          }
+        },
+        "description": "A sandbox test SIM assigned to your partner account."
+      },
+      "BulkResponse": {
+        "title": "BulkResponse",
+        "required": [
+          "bulkId",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "bulkId": {
+            "type": "string",
+            "description": "bulk id",
+            "format": "uuid"
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable outcome."
+          },
+          "status": {
+            "type": "string",
+            "description": "bulk status",
+            "enum": [
+              "PENDING",
+              "REJECTED",
+              "TERMINATED"
+            ]
+          }
+        },
+        "description": "Acknowledgement of a bulk cash-in batch."
+      },
+      "ChangePinCode": {
+        "title": "ChangePinCode",
+        "required": [
+          "encryptedNewPinCode",
+          "encryptedPinCode"
+        ],
+        "type": "object",
+        "properties": {
+          "encryptedNewPinCode": {
+            "maxLength": 344,
+            "minLength": 344,
+            "type": "string",
+            "description": "Base64 of the **new** PIN code, RSA-encrypted with the public key from `GET /api/account/v1/publicKeys`. A 2048-bit key always yields exactly 344 Base64 characters.",
+            "example": "RvlVN+53hP00i3O4V6IvHNRHRqJ/1e+3ua7pznlu1y0c+x9aIalAzUoIAEfbXAvMQ79Dd4fz/p1Hk85FQ0NwhEb5VTfud4T9NItzuFeiLxzUR0aif9Xvt7mu6c55btctHPsfWiGpQM1KCABH21wLzEO/Q3eH8/6dR5PORUNDcIRG+VU37neE/TSLc7hXoi8c1EdGon/V77e5runOeW7XLRz7H1ohqUDNSggAR9tcC8xDv0N3h/P+nUeTzkVDQ3CERvlVN+53hP00i3O4V6IvHNRHRqJ/1e+3ua7pznlu1y0c+x9aIalAzUoIAEfbXAvMQ79Dd4fz/p1Hk85FQ0NwhA==",
+            "format": "byte"
+          },
+          "encryptedPinCode": {
+            "maxLength": 344,
+            "minLength": 344,
+            "type": "string",
+            "description": "Base64 of the PIN code, RSA-encrypted with the public key from `GET /api/account/v1/publicKeys`. A 2048-bit key always yields exactly 344 Base64 characters.",
+            "example": "hHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5RoRwQ0NFzpNHnf7zh3dDv0PMC1zbRwAISs1AqSFaH/scLdduec7prrm379V/okZH1Bwvole4c4s0/YR37jdV+UaEcENDRc6TR53+84d3Q79DzAtc20cACErNQKkhWh/7HC3XbnnO6a65t+/Vf6JGR9QcL6JXuHOLNP2Ed+43VflGhHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5Rg==",
+            "format": "byte"
+          }
+        }
+      },
+      "Customer": {
+        "title": "Customer",
+        "required": [
+          "id",
+          "idType"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^(\\d{9})$",
+            "type": "string",
+            "description": "party id such as msisdn value",
+            "example": "771234567"
+          },
+          "idType": {
+            "type": "string",
+            "description": "party id type",
+            "example": "MSISDN",
+            "enum": [
+              "CODE",
+              "MSISDN"
+            ]
+          },
+          "walletType": {
+            "type": "string",
+            "description": "Wallet Type",
+            "example": "PRINCIPAL",
+            "enum": [
+              "INTERNATIONAL",
+              "PRINCIPAL"
+            ]
+          }
+        }
+      },
+      "Error": {
+        "title": "Error",
+        "description": "RFC 7807 problem detail. Returned as `application/problem+json`.",
+        "type": "object",
+        "required": [
+          "detail",
+          "instance",
+          "status",
+          "title",
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri",
+            "description": "URI identifying the problem type.",
+            "example": "https://developers.orange-sonatel.com/documentation/errors/bad-request"
+          },
+          "title": {
+            "type": "string",
+            "description": "Short, human-readable summary of the problem type.",
+            "example": "Bad Request"
+          },
+          "status": {
+            "type": "string",
+            "description": "HTTP status code, as a string.",
+            "example": "400"
+          },
+          "code": {
+            "type": "string",
+            "description": "Orange Money business error code — see the **Error codes** table in the API description.",
+            "example": "2000"
+          },
+          "detail": {
+            "type": "string",
+            "description": "Human-readable explanation of this occurrence.",
+            "example": "Customer account does not exist"
+          },
+          "instance": {
+            "type": "string",
+            "description": "URI of the request that produced the error.",
+            "example": "/api/eWallet/v1/payments"
+          },
+          "violations": {
+            "type": "array",
+            "description": "Field-level validation failures, when applicable.",
+            "items": {
+              "$ref": "#/components/schemas/Violation"
+            }
+          }
+        }
+      },
+      "AccessTokenResponse": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "The access token"
+          },
+          "token_type": {
+            "type": "string",
+            "description": "The type of the token (e.g., bearer)",
+            "example": "bearer"
+          },
+          "expires_in": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The remaining lifetime of the access token in seconds",
+            "example": 3600
+          },
+          "scope": {
+            "type": "string",
+            "nullable": true,
+            "description": "The granted scopes"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "A short error code"
+          },
+          "error_description": {
+            "type": "string",
+            "nullable": true,
+            "description": "A human-readable description of the error"
+          }
+        }
+      },
+      "FullCustomer": {
+        "title": "FullCustomer",
+        "required": [
+          "firstName",
+          "id",
+          "idType",
+          "lastName"
+        ],
+        "type": "object",
+        "properties": {
+          "encryptedPinCode": {
+            "maxLength": 344,
+            "minLength": 344,
+            "type": "string",
+            "description": "Base64 of the PIN code, RSA-encrypted with the public key from `GET /api/account/v1/publicKeys`. A 2048-bit key always yields exactly 344 Base64 characters.",
+            "example": "hHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5RoRwQ0NFzpNHnf7zh3dDv0PMC1zbRwAISs1AqSFaH/scLdduec7prrm379V/okZH1Bwvole4c4s0/YR37jdV+UaEcENDRc6TR53+84d3Q79DzAtc20cACErNQKkhWh/7HC3XbnnO6a65t+/Vf6JGR9QcL6JXuHOLNP2Ed+43VflGhHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5Rg==",
+            "format": "byte"
+          },
+          "firstName": {
+            "maxLength": 50,
+            "minLength": 2,
+            "type": "string",
+            "description": "customer firstName"
+          },
+          "id": {
+            "pattern": "^(\\d{9})$",
+            "type": "string",
+            "description": "party id such as msisdn value",
+            "example": "771234567"
+          },
+          "idType": {
+            "type": "string",
+            "description": "party id type",
+            "example": "MSISDN",
+            "enum": [
+              "CODE",
+              "MSISDN"
+            ]
+          },
+          "lastName": {
+            "maxLength": 50,
+            "minLength": 2,
+            "type": "string",
+            "description": "customer lastName"
+          },
+          "walletType": {
+            "type": "string",
+            "description": "Wallet Type",
+            "example": "PRINCIPAL",
+            "enum": [
+              "INTERNATIONAL",
+              "PRINCIPAL"
+            ]
+          }
+        }
+      },
+      "FullPartner": {
+        "title": "FullPartner",
+        "required": [
+          "encryptedPinCode",
+          "id",
+          "idType"
+        ],
+        "type": "object",
+        "properties": {
+          "encryptedPinCode": {
+            "maxLength": 344,
+            "minLength": 344,
+            "type": "string",
+            "description": "Base64 of the PIN code, RSA-encrypted with the public key from `GET /api/account/v1/publicKeys`. A 2048-bit key always yields exactly 344 Base64 characters.",
+            "example": "hHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5RoRwQ0NFzpNHnf7zh3dDv0PMC1zbRwAISs1AqSFaH/scLdduec7prrm379V/okZH1Bwvole4c4s0/YR37jdV+UaEcENDRc6TR53+84d3Q79DzAtc20cACErNQKkhWh/7HC3XbnnO6a65t+/Vf6JGR9QcL6JXuHOLNP2Ed+43VflGhHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5Rg==",
+            "format": "byte"
+          },
+          "id": {
+            "pattern": "^(\\d{9})$",
+            "type": "string",
+            "description": "party id such as msisdn value",
+            "example": "771234567"
+          },
+          "idType": {
+            "type": "string",
+            "description": "party id type",
+            "example": "MSISDN",
+            "enum": [
+              "CODE",
+              "MSISDN"
+            ]
+          },
+          "walletType": {
+            "type": "string",
+            "description": "Wallet Type",
+            "example": "PRINCIPAL",
+            "enum": [
+              "INTERNATIONAL",
+              "PRINCIPAL"
+            ]
+          }
+        }
+      },
+      "MerchantBody": {
+        "title": "MerchantBody",
+        "required": [
+          "code",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "$ref": "#/components/schemas/MoneyReq"
+          },
+          "callbackCancelUrl": {
+            "type": "string",
+            "description": "Partner url to call in case of cancelled payment",
+            "example": "https://my-cancel-url.com"
+          },
+          "callbackSuccessUrl": {
+            "type": "string",
+            "description": "Partner url to call in case of successful payment",
+            "example": "https://my-success-url.com"
+          },
+          "code": {
+            "type": "string",
+            "example": "123456",
+            "description": "merchant code",
+            "pattern": "^\\d{6}$"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Set of key-value pairs (max 10) that you can attach to the object. Useful for storing additional information in a structured format.",
+            "maxProperties": 10,
+            "additionalProperties": {
+              "type": "string"
+            },
+            "example": {
+              "senderFirstName": "Mr",
+              "senderLastName": "API"
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "name of the merchant"
+          },
+          "validity": {
+            "type": "integer",
+            "description": "qr validity (seconds), the max accepted is 86400 seconds",
+            "format": "int64",
+            "example": 15
+          },"restrictions":{"$ref":"#/components/schemas/Restriction"},
+"reference":{"type":"string","description":"Partner custom reference, can be used to search for transactions"}
+        }
+      },
+      "Restriction": {"type":"object","properties":{"isSingleUse":{"type":"boolean","description":"if the qr only accept single payment","example":false},"payerMsisdn":{"pattern":"^\\d{9,12}$","type":"string","description":"the unique user's msisdn from whom the payment is accepted","example":"771234567"}},"description":"restrictions to be checked before to process to the payment"},
+      "Money": {
+        "title": "Money",
+        "required": [
+          "unit",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "description": "amount currency, supported currencies are [XOF]",
+            "enum": [
+              "XOF"
+            ]
+          },
+          "value": {
+            "minimum": 1,
+            "exclusiveMinimum": false,
+            "type": "number",
+            "description": "a positive number (>= 1 XOF ) representing the amount.",
+            "format": "float",
+            "example": 1500
+          }
+        }
+      },
+      "MoneyReq": {
+        "title": "MoneyReq",
+        "required": [
+          "unit",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "description": "amount currency, supported currencies are [XOF]",
+            "enum": [
+              "XOF"
+            ]
+          },
+          "value": {
+            "minimum": 1,
+            "exclusiveMinimum": false,
+            "type": "number",
+            "description": "a positive number (>= 1 XOF ) representing the amount.",
+            "format": "float",
+            "example": 1500
+          }
+        }
+      },
+      "Partner": {
+        "title": "Partner",
+        "required": [
+          "encryptedPinCode",
+          "id",
+          "idType"
+        ],
+        "type": "object",
+        "properties": {
+          "encryptedPinCode": {
+            "maxLength": 344,
+            "minLength": 344,
+            "type": "string",
+            "description": "Base64 of the PIN code, RSA-encrypted with the public key from `GET /api/account/v1/publicKeys`. A 2048-bit key always yields exactly 344 Base64 characters.",
+            "example": "hHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5RoRwQ0NFzpNHnf7zh3dDv0PMC1zbRwAISs1AqSFaH/scLdduec7prrm379V/okZH1Bwvole4c4s0/YR37jdV+UaEcENDRc6TR53+84d3Q79DzAtc20cACErNQKkhWh/7HC3XbnnO6a65t+/Vf6JGR9QcL6JXuHOLNP2Ed+43VflGhHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5Rg==",
+            "format": "byte"
+          },
+          "id": {
+            "pattern": "^(\\d{9})$",
+            "type": "string",
+            "description": "party id such as msisdn value",
+            "example": "771234567"
+          },
+          "idType": {
+            "type": "string",
+            "description": "party id type",
+            "example": "MSISDN",
+            "enum": [
+              "CODE",
+              "MSISDN"
+            ]
+          },
+          "walletType": {
+            "type": "string",
+            "description": "Wallet Type",
+            "example": "PRINCIPAL",
+            "enum": [
+              "INTERNATIONAL",
+              "PRINCIPAL"
+            ]
+          }
+        }
+      },
+      "PublicKey": {
+        "title": "PublicKey",
+        "required": [
+          "key",
+          "keyId",
+          "keySize",
+          "keyType"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "the general public key, used for encryption",
+            "example": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A[...]IDAQAB"
+          },
+          "keyId": {
+            "type": "string",
+            "description": "Id of the Key",
+            "example": "5f2b1c9a"
+          },
+          "keySize": {
+            "type": "integer",
+            "description": "Size of the key (2048)",
+            "format": "int32",
+            "example": 2048
+          },
+          "keyType": {
+            "type": "string",
+            "description": "Type of the key",
+            "enum": [
+              "RSA"
+            ],
+            "example": "RSA"
+          }
+        }
+      },
+      "Qr": {
+        "title": "Qr",
+        "type": "object",
+        "properties": {
+          "deepLink": {
+            "type": "string",
+            "description": "Max it deeplink",
+            "example": "https://sugu.orange-sonatel.com/mp/123456789"
+          },
+          "deepLinks": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "description": "Max IT deeplink",
+              "example": "{\"MAXIT\":\"https://sugu.orange-sonatel.com/mp/123456789\",\"OM\":\"https://sugu.orange-sonatel.com/mp/123456789\"}"
+            },
+            "description": "Max IT App deeplink",
+            "example": {
+              "MAXIT": "https://sugu.orange-sonatel.com/mp/123456789",
+              "OM": "https://sugu.orange-sonatel.com/mp/123456789"
+            }
+          },
+          "qrCode": {
+            "type": "string",
+            "description": "qr code content (encoded as base64)",
+            "example": "iVBORw0KGgoAA[...]=="
+          },
+          "validity": {
+            "type": "integer",
+            "description": "qr code validity (seconds)",
+            "format": "int64",
+            "example": 15
+          },
+          "metadata": {
+            "type": "object",
+            "description": "transaction related properties",
+            "additionalProperties": {
+              "type": "string",
+              "example": "{\"scope\":\"online-payment\",\"initiator\":\"Samba Ndiaye\"}"
+            },
+            "example": {
+              "scope": "online-payment",
+              "initiator": "Samba Ndiaye"
+            }
+          },
+          "shortLink": {
+            "type": "string",
+            "description": "Shortened URL pointing at the payment page.",
+            "example": "https://s.orange-sonatel.com/aBc123"
+          },
+          "qrId": {
+            "type": "string",
+            "description": "qr id",
+            "example": "dFhuPYHJi4BCoCx64L2s"
+          },
+          "validFor": {
+            "$ref": "#/components/schemas/ValidFor"
+          }
+        }
+      },
+      "ValidFor": {
+        "type": "object",
+        "properties": {
+          "startDateTime": {
+            "type": "string",
+            "description": "start datetime",
+            "format": "date-time",
+            "example": "2024-11-21T09:18:02.276Z"
+          },
+          "endDateTime": {
+            "type": "string",
+            "description": "End datetime",
+            "format": "date-time",
+            "example": "2024-11-21T09:18:22.276Z"
+          }
+        },
+        "description": "validity period"
+      },
+      "MerchantCallBack": {
+        "title": "MerchantCallBack",
+        "description": "A callback endpoint registered against a merchant or retailer code.",
+        "type": "object",
+        "required": [
+          "callbackUrl",
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^\\d{6}$",
+            "description": "Merchant code, or merchant (partner) number.",
+            "example": "123456"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the merchant.",
+            "example": "My Shop"
+          },
+          "callbackUrl": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://",
+            "description": "HTTPS URL that will receive payment notifications.\n\nCallback endpoints are exposed to the internet, so for safety only `HTTPS` URLs are accepted and the TLS certificate is validated — self-signed, expired or hostname-mismatched certificates cause delivery to fail.",
+            "example": "https://myserver.com/om/callback"
+          },
+          "apiKey": {
+            "type": "string",
+            "writeOnly": true,
+            "description": "Shared secret used to authenticate the callback. We send it back to you verbatim in the `Authorization: Basic {apiKey}` header of every callback.\n\nWrite-only: it is never returned by `GET /api/notification/v1/merchantcallback`. Compare it in constant time, and still verify `X-Sonatel-Signature`.",
+            "example": "a-long-random-shared-secret"
+          }
+        }
+      },
+      "Notification": {
+        "title": "Notification",
+        "type": "object",
+        "required": [
+          "amount",
+          "partner",
+          "customer",
+          "type",
+          "channel",
+          "paymentMethod",
+          "status",
+          "transactionId"
+        ],
+        "properties": {
+          "amount": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "integer",
+                "example": 2
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "XOF"
+                ]
+              }
+            },
+            "description": "Amount of the payment."
+          },
+          "partner": {
+            "type": "object",
+            "properties": {
+              "idType": {
+                "type": "string",
+                "example": "CODE"
+              },
+              "id": {
+                "type": "string",
+                "example": "12345"
+              }
+            },
+            "description": "The merchant that was paid."
+          },
+          "customer": {
+            "type": "object",
+            "properties": {
+              "idType": {
+                "type": "string",
+                "example": "MSISDN"
+              },
+              "id": {
+                "type": "string",
+                "example": "786258731"
+              }
+            },
+            "description": "The customer that paid."
+          },
+          "reference": {
+            "type": "string",
+            "example": "eaed4551-8f07-497d-afb4-ded49d9e92d6",
+            "description": "Your own external reference, echoed back."
+          },
+          "type": {
+            "type": "string",
+            "example": "MERCHANT_PAYMENT",
+            "description": "Transaction type.",
+            "enum": [
+              "CASHIN",
+              "MERCHANT_PAYMENT",
+              "WEB_PAYMENT"
+            ]
+          },
+          "channel": {
+            "type": "string",
+            "example": "API",
+            "description": "Channel the transaction came through."
+          },
+          "transactionId": {
+            "type": "string",
+            "example": "MP220928.1029.C58502",
+            "description": "Orange Money transaction identifier — use it with `GET /api/eWallet/v1/transactions/{transactionId}/status`."
+          },
+          "paymentMethod": {
+            "type": "string",
+            "example": "QRCODE",
+            "description": "How the customer paid."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "FAILED"
+            ],
+            "description": "Final status of the payment. Only act on `SUCCESS`."
+          }
+        },
+        "description": "Payload `POST`ed to your callback URL when a merchant payment reaches a final state. Delivered at least once — deduplicate on `X-Sonatel-Idempotency-Key`."
+      },
+      "NotificationBulkCashin": {
+        "type": "object",
+        "required": [
+          "type",
+          "status",
+          "reference"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "BULK_CASHIN",
+            "description": "Event type."
+          },
+          "reference": {
+            "type": "string",
+            "format": "uuid",
+            "example": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+            "description": "The `bulkId` returned by `POST /api/eWallet/v1/bulkcashins`."
+          },
+          "status": {
+            "type": "string",
+            "example": "SUCCESS",
+            "description": "Final status of the batch."
+          },
+          "description": {
+            "type": "string",
+            "example": "bulk cashin processing finished",
+            "description": "Human-readable outcome."
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-10-27T10:00:00Z",
+            "description": "When the batch finished processing."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Set of key-value pairs (max 10) that you can attach to the object. Useful for storing additional information in a structured format.",
+            "maxProperties": 10,
+            "additionalProperties": {
+              "type": "string"
+            },
+            "example": {
+              "senderFirstName": "Mr",
+              "senderLastName": "API"
+            }
+          }
+        },
+        "title": "NotificationBulkCashin",
+        "description": "Payload `POST`ed to your `X-Callback-Url` when a bulk cash-in batch finishes processing."
+      },
+      "State": {
+        "title": "State",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACCEPTED",
+              "CANCELLED",
+              "FAILED",
+              "INITIATED",
+              "PENDING",
+              "PRE_INITIATED",
+              "REJECTED",
+              "SUCCESS"
+            ],
+            "description": "Transaction status."
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "description": "Current status of a transaction."
+      },
+      "Transaction": {
+        "title": "Transaction",
+        "required": [
+          "amount",
+          "customer",
+          "partner"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "description": "transaction amount",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              }
+            ]
+          },
+          "channel": {
+            "type": "string",
+            "description": "transaction channel"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "The date and time when the transaction occurred",
+            "format": "date-time"
+          },
+          "customer": {
+            "description": "customer related party information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FullCustomer"
+              }
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Set of key-value pairs (max 10) that you can attach to the object. Useful for storing additional information in a structured format.",
+            "maxProperties": 10,
+            "additionalProperties": {
+              "type": "string"
+            },
+            "example": {
+              "senderFirstName": "Mr",
+              "senderLastName": "API"
+            }
+          },
+          "partner": {
+            "description": "partner related party information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FullPartner"
+              }
+            ]
+          },
+          "receiveNotification": {
+            "type": "boolean",
+            "description": "either to receive or not sms notification, default value is false",
+            "example": false
+          },
+          "reference": {
+            "maxLength": 50,
+            "minLength": 0,
+            "type": "string",
+            "description": "external transaction reference used to reference the transaction in the calling party's system.",
+            "example": "0e3efaa9-2734-49c8-b43d-3884a62b8274"
+          },
+          "requestDate": {
+            "type": "string",
+            "description": "The date and time when the transaction is created at client side",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "description": "transaction status",
+            "enum": [
+              "ACCEPTED",
+              "CANCELLED",
+              "FAILED",
+              "INITIATED",
+              "PENDING",
+              "PRE_INITIATED",
+              "REJECTED",
+              "SUCCESS"
+            ]
+          },
+          "statusReason": {
+            "type": "string",
+            "description": "transaction status reason"
+          },
+          "transactionId": {
+            "maxLength": 50,
+            "minLength": 0,
+            "type": "string",
+            "description": "unique transaction id generated at server side"
+          },
+          "type": {
+            "type": "string",
+            "description": "transaction type",
+            "enum": [
+              "CASHIN",
+              "MERCHANT_PAYMENT",
+              "WEB_PAYMENT"
+            ]
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "The date and time when the transaction was last updated",
+            "format": "date-time"
+          }
+        }
+      },
+      "TransactionRequest": {
+        "title": "TransactionRequest",
+        "required": [
+          "amount",
+          "customer",
+          "partner"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "description": "transaction amount",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              }
+            ]
+          },
+          "customer": {
+            "description": "customer related party information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
+              }
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Set of key-value pairs (max 10) that you can attach to the object. Useful for storing additional information in a structured format.",
+            "maxProperties": 10,
+            "additionalProperties": {
+              "type": "string"
+            },
+            "example": {
+              "senderFirstName": "Mr",
+              "senderLastName": "API"
+            }
+          },
+          "partner": {
+            "description": "partner related party information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Partner"
+              }
+            ]
+          },
+          "receiveNotification": {
+            "type": "boolean",
+            "description": "either to receive or not sms notification, default value is false",
+            "example": false
+          },
+          "reference": {
+            "maxLength": 50,
+            "minLength": 0,
+            "type": "string",
+            "description": "external transaction reference used to reference the transaction in the calling party's system.",
+            "example": "0e3efaa9-2734-49c8-b43d-3884a62b8274"
+          },
+          "requestDate": {
+            "type": "string",
+            "description": "The date and time when the transaction is created at client side",
+            "format": "date-time"
+          }
+        }
+      },
+      "TransactionResponse": {
+        "title": "TransactionResponse",
+        "required": [
+          "status",
+          "transactionId"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Human-readable outcome."
+          },
+          "reference": {
+            "type": "string",
+            "description": "Transaction reference",
+            "example": "123456789"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "Request Id generated at server side",
+            "example": "1234.5678.91023"
+          },
+          "status": {
+            "type": "string",
+            "description": "Transaction status",
+            "example": "SUCCESS",
+            "enum": [
+              "ACCEPTED",
+              "CANCELLED",
+              "FAILED",
+              "INITIATED",
+              "PENDING",
+              "PRE_INITIATED",
+              "REJECTED",
+              "SUCCESS"
+            ]
+          },
+          "transactionId": {
+            "type": "string",
+            "description": "Unique transaction id generated at server side",
+            "example": "CI220928.1029.C58502"
+          }
+        }
+      },
+      "User": {
+        "title": "User",
+        "required": [
+          "encryptedPinCode",
+          "id",
+          "idType"
+        ],
+        "type": "object",
+        "properties": {
+          "encryptedPinCode": {
+            "maxLength": 344,
+            "minLength": 344,
+            "type": "string",
+            "description": "Base64 of the PIN code, RSA-encrypted with the public key from `GET /api/account/v1/publicKeys`. A 2048-bit key always yields exactly 344 Base64 characters.",
+            "example": "hHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5RoRwQ0NFzpNHnf7zh3dDv0PMC1zbRwAISs1AqSFaH/scLdduec7prrm379V/okZH1Bwvole4c4s0/YR37jdV+UaEcENDRc6TR53+84d3Q79DzAtc20cACErNQKkhWh/7HC3XbnnO6a65t+/Vf6JGR9QcL6JXuHOLNP2Ed+43VflGhHBDQ0XOk0ed/vOHd0O/Q8wLXNtHAAhKzUCpIVof+xwt1255zumuubfv1X+iRkfUHC+iV7hzizT9hHfuN1X5Rg==",
+            "format": "byte"
+          },
+          "id": {
+            "pattern": "^(\\d{9})$",
+            "type": "string",
+            "description": "party id such as msisdn value",
+            "example": "771234567"
+          },
+          "idType": {
+            "type": "string",
+            "description": "party id type",
+            "example": "MSISDN",
+            "enum": [
+              "CODE",
+              "MSISDN"
+            ]
+          },
+          "wallet": {
+            "type": "string",
+            "description": "Wallet type. Values are lowercase, matching the `walletType` query parameter of `GET /api/eWallet/v1/account`.",
+            "example": "principal",
+            "enum": [
+              "principal",
+              "salaire"
+            ]
+          }
+        }
+      },
+      "UserProfile": {
+        "title": "UserProfile",
+        "type": "object",
+        "properties": {
+          "balance": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "barred": {
+            "type": "string",
+            "description": "Current state of the user with respect to barring. Allowed values are. \n - Sender: Barred as sender \n - Receiver: Barred as receiver \n - Both: Barred as both sender and receiver \n - No: Not barred",
+            "example": "Sender"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First Name of the user",
+            "example": "Samba"
+          },
+          "frozenBalance": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "grade": {
+            "type": "string",
+            "description": "Account grade of the user (N/A for retailer/merchant)\n\n⚠️ To confirm: `SimCards.grade` uses uppercase `FULL`/`LITE` for the same concept.",
+            "example": "Full",
+            "enum": [
+              "Full",
+              "Lite"
+            ]
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last Name of the user",
+            "example": "Ndiaye"
+          },
+          "msisdn": {
+            "type": "string",
+            "description": "Msisdn of the user",
+            "example": "771234567"
+          },
+          "suspended": {
+            "type": "string",
+            "description": "Current State of the user with respect to suspension. Allowed values are \n - Yes : User is suspended \n - No : User is active",
+            "example": "Yes"
+          },
+          "type": {
+            "type": "string",
+            "description": "User type. Allowed values are. \n - customer : a subscriber client \n - retailer: retailer/merchant client",
+            "example": "customer",
+            "enum": [
+              "customer",
+              "retailer"
+            ]
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID of the user"
+          }
+        }
+      },
+      "Violation": {
+        "title": "Violation",
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "Path of the offending field.",
+            "example": "amount.value"
+          },
+          "message": {
+            "type": "string",
+            "description": "Why the field was rejected.",
+            "example": "must be greater than or equal to 1"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "/oauth/v1/token",
+            "scopes": {}
+          }
+        },
+        "description": "OAuth 2.0 client credentials. Obtain a token from `POST /oauth/v1/token` and send it as `Authorization: Bearer {access_token}` on every other request."
+      }
+    },
+    "parameters": {
+      "XCallbackUrlRequired": {
+        "name": "X-Callback-Url",
+        "in": "header",
+        "required": true,
+        "description": "HTTPS URL that will receive the callback once the operation completes. Must be publicly reachable. Plain HTTP is rejected and TLS certificates are validated.",
+        "schema": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "example": "https://myserver.com/send/callback/here"
+      },
+      "XCallbackUrlOptional": {
+        "name": "X-Callback-Url",
+        "in": "header",
+        "required": false,
+        "description": "HTTPS URL that will receive the payment notification. If omitted, the callback registered for the merchant via `POST /api/notification/v1/merchantcallback` is used instead. Plain HTTP is rejected and TLS certificates are validated.",
+        "schema": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "example": "https://myserver.com/send/callback/here"
+      },
+      "XApiKey": {
+        "name": "X-Api-Key",
+        "in": "header",
+        "required": false,
+        "description": "Optional merchant API key, when your contract provisions one.",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request — the payload or parameters failed validation.\n\nSupported error codes:\n- `20` — Invalid input parameter value\n- `21` — Missing body\n- `22` — Invalid body\n- `23` — Missing body field\n- `24` — Invalid body field\n- `25` — Missing header\n- `26` — Invalid header value\n- `27` — Missing query-string parameter\n- `28` — Invalid query-string parameter value\n\nBusiness errors (`2xxx`, `4xxx`) are also returned with this status — see the **Error codes** table in the API description.",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized — the access token is missing, malformed or expired.\n\nSupported error codes:\n- `10` — Full authentication is required to access this resource",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Forbidden — the token is valid but your application is not allowed to call this operation.\n\nSupported error codes:\n- `11` — Access forbidden",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Not found — the requested resource does not exist.\n\nSupported error codes:\n- `60` — Resource not found",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "MethodNotAllowed": {
+        "description": "Method not allowed for this resource.\n\nSupported error codes:\n- `61` — Bad method used",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "TooManyRequests": {
+        "description": "Too many requests — the rate limit was exceeded (sandbox: 60 requests/minute). Back off and retry.\n\nSupported error codes:\n- `9` — Too Many Requests",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal server error.\n\nSupported error codes:\n- `50` — Internal server error\n- `51` — Due to some technical problems, your request is in a pending state — poll `GET /api/eWallet/v1/transactions/{transactionId}/status` for the final outcome\n- `1` — Your request cannot be processed at this time, please try again later",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+}

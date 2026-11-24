@@ -198,49 +198,36 @@
 
                                         @if (channels.Contains(PaymentChannel.OrangeMoney))
                                         {
-                                            var omSteps = new List<string>
-                                            {
-                                                due.OrangeMoneyCode is not null ? L["Pay_Om_Step1"].Value : L["Pay_Om_Step1_Link"].Value,
-                                            };
-                                            if (due.OrangeMoneyCode is { } omCode)
-                                            {
-                                                omSteps.Add(L["Pay_Om_Step2", Formatting.Fcfa(due.Amount), omCode].Value);
-                                            }
-
-                                            omSteps.Add(L["Pay_Om_Step3"].Value);
-                                            omSteps.Add(L["Pay_Step3"].Value);
-                                            <div class="@Panel(PaymentChannel.OrangeMoney) gap-6">
+                                            @* Orange Money API: QR code / Max it link, confirmed by Orange itself (no reference to type). *@
+                                            <div class="@Panel(PaymentChannel.OrangeMoney) gap-5">
                                                 <ol class="grid gap-3">
-                                                    @foreach (var (index, text) in omSteps.Index())
+                                                    @foreach (var (index, text) in new[] { L["Om_Pay_Step1"].Value, L["Om_Pay_Step2"].Value }.Index())
                                                     {
                                                         <li class="flex items-start gap-3">
-                                                            <span class="grid size-8 shrink-0 place-items-center rounded-full bg-sourdine font-mono text-sm font-bold text-charbon">@(index + 1)</span>
+                                                            <span class="grid size-8 shrink-0 place-items-center rounded-full bg-[#ff7900]/15 font-mono text-sm font-bold text-charbon">@(index + 1)</span>
                                                             <span class="pt-1 text-[15px]">@text</span>
                                                         </li>
                                                     }
                                                 </ol>
-                                                <p class="flex flex-wrap gap-3">
-                                                    @if (due.OrangeMoneyCode is not null)
-                                                    {
-                                                        @* Opens the phone's Orange Money menu (useless on a computer: hidden there). *@
-                                                        <a href="tel:%23144%23" class="sc-btn-secondaire min-h-12 md:hidden"><sc-icon name="phone" class="size-5 text-laterite" />@L["Pay_DialOrange"]</a>
-                                                    }
-                                                    @if (due.OrangeMoneyUrl is { } omUrl)
-                                                    {
-                                                        <a href="@omUrl" class="sc-btn-secondaire min-h-12" rel="noopener" target="_blank"><img src="~/images/orange-money-logo.webp" alt="" width="24" height="24" class="size-6 rounded-md" />@L["Pay_WithOrange"]</a>
-                                                    }
-                                                </p>
+                                                <button type="submit" formaction="/abonnement/factures/@due.InvoiceId/orange-money" formnovalidate
+                                                        class="sc-btn min-h-12 w-full bg-[#ff7900] px-6 text-base text-[#1a1a1a] hover:brightness-95 sm:w-auto sm:justify-self-start">
+                                                    <img src="~/images/orange-money-logo.webp" alt="" width="24" height="24" class="size-6 rounded-md" />@L["Pay_WithOrange"]
+                                                </button>
                                             </div>
                                         }
 
-                                        <div class="grid gap-3 rounded-2xl border border-dashed border-ligne p-4 sm:grid-cols-[1fr_auto] sm:items-end">
-                                            <div>
-                                                <label class="sc-label-mono" for="ref-@due.InvoiceId">@L["Pay_Reference"]</label>
-                                                <input id="ref-@due.InvoiceId" name="reference" class="sc-input" autocomplete="off" maxlength="100" placeholder="@L["Pay_Reference_Placeholder"]" aria-describedby="ref-aide-@due.InvoiceId" />
+                                        @if (due.WaveUrl is not null)
+                                        {
+                                            @* « J'ai payé »: Wave only (checked by Finance). *@
+                                            <div class="@Panel(PaymentChannel.Wave) gap-3 rounded-2xl border border-dashed border-ligne p-4 sm:grid-cols-[1fr_auto] sm:items-end">
+                                                <div>
+                                                    <label class="sc-label-mono" for="ref-@due.InvoiceId">@L["Pay_Reference"]</label>
+                                                    <input id="ref-@due.InvoiceId" name="reference" class="sc-input" autocomplete="off" maxlength="100" placeholder="@L["Pay_Reference_Placeholder"]" aria-describedby="ref-aide-@due.InvoiceId" />
+                                                </div>
+                                                <button type="submit" class="sc-btn-primaire min-h-12"><sc-icon name="check" class="size-4" />@L["Pay_Declare"]</button>
+                                                <p id="ref-aide-@due.InvoiceId" class="sc-aide sm:col-span-2">@L["Pay_Reference_Hint"]</p>
                                             </div>
-                                            <button type="submit" class="sc-btn-primaire min-h-12"><sc-icon name="check" class="size-4" />@L["Pay_Declare"]</button>
-                                            <p id="ref-aide-@due.InvoiceId" class="sc-aide sm:col-span-2">@L["Pay_Reference_Hint"]</p>
-                                        </div>
+                                        }
                                     </form>
                                 }
                                 else

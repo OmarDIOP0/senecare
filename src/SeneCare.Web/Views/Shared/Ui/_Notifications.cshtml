@@ -6,7 +6,8 @@
     (string Icon, string Tint) Look(string template) => template switch
     {
         NotificationTemplates.PaymentDeclared => ("wallet", "bg-soleil-clair text-soleil"),
-        NotificationTemplates.PaymentVerified => ("circle-check", "bg-baobab-clair text-baobab"),
+        NotificationTemplates.PaymentVerified or NotificationTemplates.PaymentReceived => ("circle-check", "bg-baobab-clair text-baobab"),
+        NotificationTemplates.PaymentDuplicate or NotificationTemplates.PaymentMismatch => ("triangle-alert", "bg-rouge-clair text-rouge"),
         NotificationTemplates.PaymentRejected or NotificationTemplates.RequestDisputed => ("triangle-alert", "bg-rouge-clair text-rouge"),
         NotificationTemplates.RequestCancelled => ("ban", "bg-rouge-clair text-rouge"),
         NotificationTemplates.AccountCreated => ("circle-user", "bg-atlantique-clair text-atlantique"),
@@ -21,7 +22,8 @@
     // Older payment notifications carry no link.
     string Fallback(string template) => template switch
     {
-        NotificationTemplates.PaymentDeclared => "/admin/paiements",
+        NotificationTemplates.PaymentDeclared or NotificationTemplates.PaymentReceived or NotificationTemplates.PaymentDuplicate
+            or NotificationTemplates.PaymentMismatch => "/admin/paiements",
         NotificationTemplates.PaymentVerified or NotificationTemplates.PaymentRejected => "/abonnement",
         _ => "#",
     };

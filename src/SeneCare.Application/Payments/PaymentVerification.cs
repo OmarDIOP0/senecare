@@ -28,7 +28,7 @@ public sealed record PendingPayment(
 /// invoice and activate / extend the subscription) or reject with a reason. Every decision is audited.
 /// </summary>
 public sealed class PaymentVerificationHandler(
-    IApplicationDbContext db, Settings settings, DiagnosticPlanner diagnostics, NeighborhoodMembership neighborhoods, Users.Notifier notifier, TimeProvider clock)
+    IApplicationDbContext db, Settings settings, PaymentSettlement settlement, Users.Notifier notifier, TimeProvider clock)
 {
     public async Task<IReadOnlyList<PendingPayment>> PendingAsync(CancellationToken cancellationToken = default)
     {
@@ -61,7 +61,7 @@ public sealed class PaymentVerificationHandler(
         try
         {
             payment.Verify(adminUserId, now);
-            await SettleAsync(invoice, payment, now, cancellationToken);
+            await settlement.SettleAsync(invoice, payment, now, cancellationToken);
         }
         catch (DomainException ex)
         {
@@ -69,7 +69,7 @@ public sealed class PaymentVerificationHandler(
         }
 
         Audit(adminUserId, "payment.verify", payment, ipAddress, $"{invoice.Number} · {payment.Amount.Amount.ToString(CultureInfo.InvariantCulture)} XOF · {payment.CustomerReference}", now);
-        await NotifyPaidAsync(invoice, payment, cancellationToken);
+        await settlement.NotifyPaidAsync(invoice, payment, cancellationToken);
         await db.SaveChangesAsync(cancellationToken);
         return Result<Guid>.Success(payment.Id);
     }
@@ -148,7 +148,7 @@ public sealed class PaymentVerificationHandler(
         {
             payment = Payment.RecordManual(invoice.Id, invoice.Total - invoice.AmountPaid, channel, adminUserId, note, now);
             db.Payments.Add(payment);
-            await SettleAsync(invoice, payment, now, cancellationToken);
+            await settlement.SettleAsync(invoice, payment, now, cancellationToken);
         }
         catch (DomainException ex)
         {
@@ -156,40 +156,10 @@ public sealed class PaymentVerificationHandler(
         }
 
         Audit(adminUserId, "payment.record_manual", payment, ipAddress, $"{invoice.Number} · {channel} · {note}", now);
-        await NotifyPaidAsync(invoice, payment, cancellationToken);
+        await settlement.NotifyPaidAsync(invoice, payment, cancellationToken);
         await db.SaveChangesAsync(cancellationToken);
         return Result<Guid>.Success(payment.Id);
     }
-
-    /// <summary>Credits the invoice; once paid, starts or extends the subscription and plans its diagnostic.</summary>
-    private async Task SettleAsync(Invoice invoice, Payment payment, DateTimeOffset now, CancellationToken cancellationToken)
-    {
-        invoice.ApplyPayment(payment.Id, payment.Amount, now);
-        if (invoice.Status == InvoiceStatus.Paid && invoice.SubscriptionId is { } subscriptionId)
-        {
-            var subscription = await db.Subscriptions.FirstAsync(s => s.Id == subscriptionId, cancellationToken);
-            if (subscription.Status == SubscriptionStatus.PendingRegistration)
-            {
-                subscription.Activate(DakarCalendar.Today(clock), now);
-            }
-            else if (invoice.Period is { } period)
-            {
-                subscription.RecordPeriodPaid(period, now);
-            }
-
-            await diagnostics.EnsurePlannedAsync(subscription, cancellationToken);
-            await neighborhoods.RefreshForPropertiesAsync([.. subscription.CoveredPropertyIds], cancellationToken);
-        }
-    }
-
-    /// <summary>The customer learns that the money arrived and the subscription is running.</summary>
-    private Task NotifyPaidAsync(Invoice invoice, Payment payment, CancellationToken cancellationToken) =>
-        notifier.ToAccountAsync(
-            invoice.AccountId,
-            Users.NotificationTemplates.PaymentVerified,
-            new { invoice = invoice.Number, amount = payment.Amount.Amount },
-            invoice.Status == InvoiceStatus.Paid ? Resources.Messages.PaymentVerified(invoice.Number, Language.French) : null,
-            cancellationToken);
 
     public Task<string> WaveLinkAsync(CancellationToken cancellationToken = default) =>
         settings.StringAsync(SettingKeys.WaveLink, cancellationToken);
@@ -217,46 +187,6 @@ public sealed class PaymentVerificationHandler(
         db.AuditLogs.Add(new AuditLog(adminUserId, "settings.wave_link", nameof(AppSetting), SettingKeys.WaveLink, false, ipAddress, value, now));
         await db.SaveChangesAsync(cancellationToken);
         return Result<string>.Success(value);
-    }
-
-    public async Task<(string Code, string Link)> OrangeMoneyAsync(CancellationToken cancellationToken = default) =>
-        (await settings.StringAsync(SettingKeys.OrangeMoneyCode, cancellationToken), await settings.StringAsync(SettingKeys.OrangeMoneyLink, cancellationToken));
-
-    /// <summary>
-    /// Orange Money: merchant code / number and/or payment link (settings, never in code). Either may be empty;
-    /// both empty hide Orange Money from customers.
-    /// </summary>
-    public async Task<Result<string>> SetOrangeMoneyAsync(Guid adminUserId, string? code, string? link, string? ipAddress, CancellationToken cancellationToken = default)
-    {
-        var codeValue = string.Join(' ', (code ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries));
-        var linkValue = link?.Trim() ?? string.Empty;
-        if (codeValue.Length > 0 && !OrangeMoney.IsValidCode(codeValue))
-        {
-            return Result<string>.Failure("payment.orange_code_invalid");
-        }
-
-        if (linkValue.Length > 0 && !OrangeMoney.IsValidLink(linkValue))
-        {
-            return Result<string>.Failure("payment.orange_link_invalid");
-        }
-
-        var now = clock.GetUtcNow();
-        foreach (var (key, value) in new[] { (SettingKeys.OrangeMoneyCode, codeValue), (SettingKeys.OrangeMoneyLink, linkValue) })
-        {
-            var setting = await db.AppSettings.FirstOrDefaultAsync(s => s.Key == key, cancellationToken);
-            if (setting is null)
-            {
-                db.AppSettings.Add(new AppSetting(key, value, now));
-            }
-            else
-            {
-                setting.Change(value, now);
-            }
-        }
-
-        db.AuditLogs.Add(new AuditLog(adminUserId, "settings.orange_money", nameof(AppSetting), SettingKeys.OrangeMoneyCode, false, ipAddress, $"{codeValue} | {linkValue}", now));
-        await db.SaveChangesAsync(cancellationToken);
-        return Result<string>.Success(codeValue);
     }
 
     private void Audit(Guid adminUserId, string action, Payment payment, string? ipAddress, string? details, DateTimeOffset now) =>

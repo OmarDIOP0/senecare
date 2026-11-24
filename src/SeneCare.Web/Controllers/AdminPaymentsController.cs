@@ -8,20 +8,28 @@ using SeneCare.Web.Infrastructure;
 namespace SeneCare.Web.Controllers;
 
 /// <summary>
-/// Finance: Wave and Orange Money payments declared by customers (verify → invoice paid + subscription active,
-/// or reject), and their merchant settings. Every decision goes to the audit log.
+/// Finance: Wave payments declared by customers (verify → invoice paid + subscription active, or reject), the Wave
+/// merchant link, and the state of the Orange Money API (confirmed by Orange itself). Every decision is audited.
 /// </summary>
 [Authorize(Policy = Policies.AdminFinance)]
 [Route("/admin/paiements")]
-public sealed class AdminPaymentsController(PaymentVerificationHandler payments) : Controller
+public sealed class AdminPaymentsController(
+    PaymentVerificationHandler payments,
+    IOrangeMoneyGateway orangeMoney,
+    Microsoft.Extensions.Options.IOptions<SeneCare.Infrastructure.Payments.OrangeMoneyOptions> orangeMoneyOptions) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken, int page = 1)
     {
         ViewData["WaveLink"] = await payments.WaveLinkAsync(cancellationToken);
-        var (orangeCode, orangeLink) = await payments.OrangeMoneyAsync(cancellationToken);
-        ViewData["OrangeMoneyCode"] = orangeCode;
-        ViewData["OrangeMoneyLink"] = orangeLink;
+        ViewData["OrangeMoney"] = new OrangeMoneyStatus(
+            orangeMoney.IsConfigured,
+            orangeMoneyOptions.Value.IsLive,
+            orangeMoney.MerchantCode,
+            Uri.TryCreate(orangeMoneyOptions.Value.PublicBaseUrl, UriKind.Absolute, out var site) && site.Scheme == Uri.UriSchemeHttps
+                ? new Uri(site, SeneCare.Infrastructure.Payments.OrangeMoneyOptions.CallbackPath).ToString()
+                : null,
+            !string.IsNullOrWhiteSpace(orangeMoneyOptions.Value.CallbackApiKey));
         ViewData["Unpaid"] = await payments.UnpaidAsync(page, cancellationToken);
         return View(await payments.PendingAsync(cancellationToken));
     }
@@ -59,13 +67,25 @@ public sealed class AdminPaymentsController(PaymentVerificationHandler payments)
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost("orange-money")]
-    public async Task<IActionResult> SetOrangeMoney(string? code, string? link, CancellationToken cancellationToken)
+    /// <summary>Gives Orange Money our notification address and shared key (to do once per merchant code).</summary>
+    [HttpPost("orange-money/notification")]
+    public async Task<IActionResult> RegisterOrangeMoneyCallback(CancellationToken cancellationToken)
     {
-        var result = await payments.SetOrangeMoneyAsync(User.GetUserId()!.Value, code, link, ClientIp, cancellationToken);
-        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["AdminPay_OrangeSaved"].Value : this.ErrorMessage(result.Error);
+        try
+        {
+            await orangeMoney.RegisterCallbackAsync(cancellationToken);
+            TempData["flash.toast"] = this.Localizer()["AdminPay_OmRegistered"].Value;
+        }
+        catch (OrangeMoneyException)
+        {
+            TempData["flash.toast"] = this.Localizer()["AdminPay_OmRegisterFailed"].Value;
+        }
+
         return RedirectToAction(nameof(Index));
     }
 
     private string? ClientIp => HttpContext.Connection.RemoteIpAddress?.ToString();
 }
+
+/// <summary>Orange Money API as configured on the server (secrets never shown).</summary>
+public sealed record OrangeMoneyStatus(bool Configured, bool Live, string? MerchantCode, string? CallbackUrl, bool HasCallbackKey);

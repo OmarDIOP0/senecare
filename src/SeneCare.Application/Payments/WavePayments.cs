@@ -18,12 +18,14 @@ public sealed record InvoiceDue(
     DateRange? Period,
     string? WaveUrl,
     PaymentDeclarationState? Declaration,
-    string? OrangeMoneyUrl = null,
-    string? OrangeMoneyCode = null)
+    bool OrangeMoneyApi = false)
 {
-    /// <summary>Mobile money ways to pay that the admin opened (Wave, Orange Money), in display order.</summary>
+    /// <summary>
+    /// Mobile money ways to pay, in display order: Wave when its merchant link is set, Orange Money when its API is
+    /// configured (user decision of 24/11/2026: the API replaces the manual merchant code).
+    /// </summary>
     public IReadOnlyList<PaymentChannel> Channels =>
-        [.. new[] { (PaymentChannel.Wave, WaveUrl is not null), (PaymentChannel.OrangeMoney, OrangeMoneyUrl is not null || OrangeMoneyCode is not null) }
+        [.. new[] { (PaymentChannel.Wave, WaveUrl is not null), (PaymentChannel.OrangeMoney, OrangeMoneyApi) }
             .Where(c => c.Item2).Select(c => c.Item1)];
 }
 
@@ -47,26 +49,6 @@ public static class WaveLink
 }
 
 /// <summary>
-/// Orange Money: a merchant code / number (paid from #144# or the app) and/or a payment link set by the admin.
-/// « {montant} » in the link is replaced by the amount to pay.
-/// </summary>
-public static class OrangeMoney
-{
-    public static bool IsValidLink(string? link) =>
-        Uri.TryCreate(link?.Replace(WaveLink.AmountPlaceholder, "1", StringComparison.Ordinal), UriKind.Absolute, out var uri)
-        && uri.Scheme == Uri.UriSchemeHttps;
-
-    /// <summary>Digits (spaces allowed between groups), 4 to 20 characters: a merchant code or a phone number.</summary>
-    public static bool IsValidCode(string? code) =>
-        code is { Length: >= 4 and <= 20 } && code.All(c => char.IsAsciiDigit(c) || c == ' ');
-
-    public static string? LinkFor(string? link, Money amount) =>
-        string.IsNullOrWhiteSpace(link) || !IsValidLink(link)
-            ? null
-            : link.Replace(WaveLink.AmountPlaceholder, amount.Amount.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal);
-}
-
-/// <summary>
 /// What the customer has to pay now, as an issued invoice: registration fee + first period for a new
 /// subscription, or the next period within 7 days of the due date. The invoice number is the reference
 /// to write in the Wave note.
@@ -77,6 +59,7 @@ public sealed class PrepareInvoiceHandler(
     IDocumentNumberGenerator numbers,
     Settings settings,
     DiagnosticPlanner diagnostics,
+    IOrangeMoneyGateway orangeMoney,
     TimeProvider clock)
 {
     public const int RenewalWindowDays = 7;
@@ -145,13 +128,9 @@ public sealed class PrepareInvoiceHandler(
             .FirstOrDefaultAsync(cancellationToken);
 
         var waveLink = await settings.StringAsync(SettingKeys.WaveLink, cancellationToken);
-        var orangeLink = await settings.StringAsync(SettingKeys.OrangeMoneyLink, cancellationToken);
-        var orangeCode = (await settings.StringAsync(SettingKeys.OrangeMoneyCode, cancellationToken)).Trim();
         return new InvoiceDue(
             subscription.Id, invoice.Id, invoice.Number, invoice.Balance, isRegistration, period,
-            WaveLink.For(waveLink, invoice.Balance), declaration,
-            OrangeMoney.LinkFor(orangeLink, invoice.Balance),
-            OrangeMoney.IsValidCode(orangeCode) ? orangeCode : null);
+            WaveLink.For(waveLink, invoice.Balance), declaration, orangeMoney.IsConfigured);
     }
 
     private async Task<Invoice> CreateInvoiceAsync(Subscription subscription, DateRange? period, DateOnly today, CancellationToken cancellationToken)
@@ -183,14 +162,14 @@ public sealed class PrepareInvoiceHandler(
     }
 }
 
-/// <summary>« J'ai payé »: the customer declares a Wave or Orange Money payment; a Finance admin will check it.</summary>
+/// <summary>« J'ai payé »: the customer declares a Wave payment; a Finance admin will check it.</summary>
 public sealed class DeclarePaymentHandler(IApplicationDbContext db, AccessControl access, Users.Notifier notifier, TimeProvider clock)
 {
     public async Task<Result<Guid>> HandleAsync(
         Guid userId, Guid invoiceId, string? customerReference, PaymentChannel channel = PaymentChannel.Wave, CancellationToken cancellationToken = default)
     {
-        // Only the mobile money ways a customer pays by themselves; cash and transfers are recorded by Finance.
-        if (channel is not (PaymentChannel.Wave or PaymentChannel.OrangeMoney))
+        // Wave only: Orange Money is confirmed by its API (no declaration), cash and transfers are recorded by Finance.
+        if (channel is not PaymentChannel.Wave)
         {
             return Result<Guid>.Failure("payment.channel_invalid");
         }

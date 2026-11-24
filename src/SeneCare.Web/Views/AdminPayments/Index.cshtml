@@ -4,9 +4,7 @@
     ViewData["NavActive"] = "paiements";
     ViewData["Title"] = L["AdminPay_Title"];
     var waveLink = ViewData["WaveLink"] as string;
-    var orangeCode = ViewData["OrangeMoneyCode"] as string;
-    var orangeLink = ViewData["OrangeMoneyLink"] as string;
-    var orangeOpen = !string.IsNullOrWhiteSpace(orangeCode) || !string.IsNullOrWhiteSpace(orangeLink);
+    var om = (SeneCare.Web.Controllers.OrangeMoneyStatus)ViewData["OrangeMoney"]!;
     var unpaid = ViewData["Unpaid"] as SeneCare.Application.Common.Page<SeneCare.Application.Payments.UnpaidInvoice>
         ?? new SeneCare.Application.Common.Page<SeneCare.Application.Payments.UnpaidInvoice>([], 1, false);
 }
@@ -53,7 +51,7 @@
                         <p class="text-sm text-charbon-doux">@L["AdminPay_OrangeText"]</p>
                     </div>
                 </div>
-                @if (orangeOpen)
+                @if (om.Configured)
                 {
                     <span class="sc-badge bg-baobab-clair text-baobab"><span class="size-1.5 rounded-full bg-baobab"></span>@L["AdminPay_Active"]</span>
                 }
@@ -62,15 +60,32 @@
                     <span class="sc-badge bg-soleil-clair text-soleil"><span class="size-1.5 rounded-full bg-soleil"></span>@L["AdminPay_NotSet"]</span>
                 }
             </div>
-            <form method="post" asp-action="SetOrangeMoney" class="grid gap-3 p-6">
-                <label class="sc-label-mono" for="om-code">@L["AdminPay_OrangeCodeLabel"]</label>
-                <input id="om-code" name="code" inputmode="numeric" maxlength="20" class="sc-input font-mono" value="@orangeCode" aria-describedby="om-code-aide" />
-                <p id="om-code-aide" class="sc-aide">@L["AdminPay_OrangeCodeHint"]</p>
-                <label class="sc-label-mono mt-2" for="om-link">@L["AdminPay_OrangeLinkLabel"]</label>
-                <input id="om-link" name="link" type="url" inputmode="url" class="sc-input font-mono text-sm" value="@orangeLink" placeholder="https://…" aria-describedby="om-link-aide" />
-                <p id="om-link-aide" class="sc-aide">@L["AdminPay_OrangeLinkHint"]</p>
-                <button type="submit" class="sc-btn-primaire justify-self-start">@L["AdminPay_OrangeSave"]</button>
-            </form>
+            @* Orange Money API (Sonatel): keys and merchant code on the server only (appsettings.Server.json). *@
+            <div class="grid gap-3 p-6 text-[15px]">
+                <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2">
+                    <dt class="text-charbon-doux">@L["AdminPay_OmMode"]</dt>
+                    <dd class="font-semibold">@(om.Configured ? (om.Live ? L["AdminPay_OmLive"] : L["AdminPay_OmSandbox"]) : L["AdminPay_NotSet"])</dd>
+                    <dt class="text-charbon-doux">@L["AdminPay_OmMerchant"]</dt>
+                    <dd class="font-mono">@(om.MerchantCode ?? "—")</dd>
+                    <dt class="text-charbon-doux">@L["AdminPay_OmCallback"]</dt>
+                    <dd class="font-mono text-sm break-all">@(om.CallbackUrl ?? "—")</dd>
+                </dl>
+                @if (!om.Configured)
+                {
+                    <p class="sc-aide">@L["AdminPay_OmHowTo"]</p>
+                }
+                else if (om.CallbackUrl is not null && om.HasCallbackKey)
+                {
+                    <form method="post" asp-action="RegisterOrangeMoneyCallback">
+                        <button type="submit" class="sc-btn-secondaire">@L["AdminPay_OmRegister"]</button>
+                    </form>
+                    <p class="sc-aide">@L["AdminPay_OmRegisterHint"]</p>
+                }
+                else
+                {
+                    <p class="sc-aide">@L["AdminPay_OmCallbackMissing"]</p>
+                }
+            </div>
         </div>
     </div>
     <ul class="mt-4 grid gap-3 lg:grid-cols-2">

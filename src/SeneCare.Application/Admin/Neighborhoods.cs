@@ -85,7 +85,7 @@ public sealed class NeighborhoodPrograms(IApplicationDbContext db, NeighborhoodM
             .OrderByDescending(r => r.Status)
             .ThenByDescending(r => (double)r.Members / Math.Max(1, r.Threshold))
             .ThenBy(r => r.Neighborhood, StringComparer.CurrentCulture)
-            .Take(200)];
+            ];
     }
 
     public async Task<(ProgramRow Program, IReadOnlyList<OperationRow> Operations)?> DetailAsync(Guid neighborhoodId, CancellationToken cancellationToken = default)

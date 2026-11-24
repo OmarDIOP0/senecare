@@ -76,10 +76,10 @@ public sealed class CustomersController(CustomerDirectory directory) : Controlle
 public sealed class TechniciansController(TechnicianManagement technicians, GeographyManagement geography, StaffManagement staff) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(CancellationToken cancellationToken, int page = 1)
     {
         ViewData["Communes"] = await geography.CommunesAsync(null, cancellationToken);
-        return View(await technicians.ListAsync(cancellationToken));
+        return View(this.Paged(SeneCare.Application.Common.Paging.Of(await technicians.ListAsync(cancellationToken), page)));
     }
 
     [HttpPost("")]
@@ -193,13 +193,13 @@ public sealed class PlansController(PlanManagement plans) : Controller
 public sealed class GeographyController(GeographyManagement geography, ZoneManagement zones) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index(string? q, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(string? q, CancellationToken cancellationToken, int page = 1)
     {
         ViewData["Query"] = q;
         return View(new SeneCare.Web.ViewModels.ZonesPage(
             await zones.RegionsAsync(cancellationToken),
             await zones.DepartmentsAsync(cancellationToken),
-            await zones.CommunesAsync(q, cancellationToken)));
+            this.Paged(await zones.CommunesAsync(q, page, cancellationToken))));
     }
 
     [HttpPost("regions/{id:guid}/couverture")]
@@ -228,11 +228,11 @@ public sealed class GeographyController(GeographyManagement geography, ZoneManag
 
     /// <summary>« Prévenez-moi » requests (phone numbers: each reading is audited).</summary>
     [HttpGet("attente")]
-    public async Task<IActionResult> Waitlist(Guid? region, CancellationToken cancellationToken)
+    public async Task<IActionResult> Waitlist(Guid? region, CancellationToken cancellationToken, int page = 1)
     {
         ViewData["Regions"] = await zones.RegionsAsync(cancellationToken);
         ViewData["Region"] = region;
-        return View(await zones.WaitlistAsync(User.GetUserId()!.Value, region, cancellationToken));
+        return View(this.Paged(await zones.WaitlistAsync(User.GetUserId()!.Value, region, page, cancellationToken)));
     }
 
     [HttpPost("attente/{id:guid}/supprimer")]
@@ -290,10 +290,10 @@ public sealed class SettingsController(SettingsManagement settings) : Controller
 public sealed class NeighborhoodProgramsController(NeighborhoodPrograms programs) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index(bool tous, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(bool tous, CancellationToken cancellationToken, int page = 1)
     {
         ViewData["All"] = tous;
-        return View(await programs.ListAsync(!tous, cancellationToken));
+        return View(this.Paged(SeneCare.Application.Common.Paging.Of(await programs.ListAsync(!tous, cancellationToken), page)));
     }
 
     [HttpPost("recompter")]
@@ -374,7 +374,8 @@ public sealed class AdviceController(AdviceManagement advice) : Controller
 public sealed class ReviewsController(ReviewModeration reviews) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken) => View(await reviews.ListAsync(cancellationToken));
+    public async Task<IActionResult> Index(CancellationToken cancellationToken, int page = 1) =>
+        View(this.Paged(await reviews.ListAsync(page, cancellationToken)));
 
     [HttpPost("{id:guid}/visibilite")]
     public async Task<IActionResult> Visibility(Guid id, bool hidden, CancellationToken cancellationToken)

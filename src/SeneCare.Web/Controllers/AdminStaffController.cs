@@ -17,8 +17,8 @@ namespace SeneCare.Web.Controllers;
 public sealed class AdminStaffController(StaffManagement staff) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken) =>
-        View(await staff.ListAsync(cancellationToken));
+    public async Task<IActionResult> Index(CancellationToken cancellationToken, int page = 1) =>
+        View(this.Paged(SeneCare.Application.Common.Paging.Of(await staff.ListAsync(cancellationToken), page)));
 
     [HttpPost("")]
     public async Task<IActionResult> Add(string? phone, string? fullName, List<PlatformRole> roles, CancellationToken cancellationToken)

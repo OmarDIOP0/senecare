@@ -1,0 +1,5 @@
+@* « Précédent / Suivant » of the list set by Controller.Paged(...), when it has more than one page. *@
+@if (ViewData[SeneCare.Web.Infrastructure.PagingExtensions.Key] is PagerModel pager)
+{
+    <partial name="Ui/_Pager" model="pager" />
+}

@@ -1,4 +1,4 @@
-@model List<SeneCare.Application.Admin.DispatchItem>
+@model IReadOnlyList<SeneCare.Application.Admin.DispatchItem>
 @using SeneCare.Application.Admin
 @{
     Layout = "_AppLayout";
@@ -60,3 +60,5 @@ else
         </table>
     </div>
 }
+
+<partial name="Ui/_PagerSlot" />

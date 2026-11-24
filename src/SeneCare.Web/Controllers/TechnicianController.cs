@@ -41,8 +41,8 @@ public sealed class TechnicianController(
     }
 
     [HttpGet("rapports")]
-    public async Task<IActionResult> History(CancellationToken cancellationToken) =>
-        View(await missions.HistoryAsync(User.GetUserId()!.Value, cancellationToken));
+    public async Task<IActionResult> History(CancellationToken cancellationToken, int page = 1) =>
+        View(this.Paged(SeneCare.Application.Common.Paging.Of(await missions.HistoryAsync(User.GetUserId()!.Value, cancellationToken), page)));
 
     [HttpGet("missions/{id:guid}")]
     [OfflinePage]

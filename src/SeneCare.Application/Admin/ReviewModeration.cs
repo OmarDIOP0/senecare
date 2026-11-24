@@ -16,7 +16,7 @@ public sealed record ReviewRow(Guid RequestId, string Number, string? Author, st
 /// </summary>
 public sealed class ReviewModeration(IApplicationDbContext db, TimeProvider clock)
 {
-    public async Task<IReadOnlyList<ReviewRow>> ListAsync(CancellationToken cancellationToken = default) =>
+    public async Task<Page<ReviewRow>> ListAsync(int page = 1, CancellationToken cancellationToken = default) =>
         await (
                 from r in db.ServiceRequests.AsNoTracking()
                 where r.Rating != null && r.Rating.PublicationConsent && r.Rating.Comment != null
@@ -27,8 +27,7 @@ public sealed class ReviewModeration(IApplicationDbContext db, TimeProvider cloc
                 join c in db.Communes on n.CommuneId equals c.Id
                 orderby r.Rating!.GivenAt descending
                 select new ReviewRow(r.Id, r.Number, u.FullName, c.Name, r.Rating!.Score, r.Rating!.Comment!, r.Rating!.GivenAt, r.Rating!.IsHidden))
-            .Take(200)
-            .ToListAsync(cancellationToken);
+            .ToPageAsync(page, cancellationToken);
 
     public async Task<Result<Guid>> SetHiddenAsync(Guid adminId, Guid requestId, bool hidden, CancellationToken cancellationToken = default)
     {

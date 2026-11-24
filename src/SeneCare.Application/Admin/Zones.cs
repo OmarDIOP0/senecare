@@ -16,6 +16,9 @@ public sealed record ZoneCommune(Guid Id, string Name, string Department, string
 
 public sealed record WaitlistEntry(Guid Id, DateTimeOffset At, string? Name, string Phone, string Region, string Place);
 
+/// <summary>A waitlist row as read from the database (before formatting).</summary>
+public sealed record WaitlistEntryRow(Guid Id, DateTimeOffset CreatedAt, string? FullName, Domain.Users.PhoneNumber PhoneNumber, string Region, string? Commune, string Locality);
+
 /// <summary>
 /// Zones SENECARE covers (super-admin): open / close regions and communes, add communes the reference data lacks, and
 /// read the « Prévenez-moi » requests of each zone. Every change is audited; reading the list (phone numbers) too.
@@ -46,7 +49,7 @@ public sealed class ZoneManagement(IApplicationDbContext db, Settings settings, 
             .ToListAsync(cancellationToken);
 
     /// <summary>Communes matching <paramref name="query"/> (commune, department or region), with their coverage.</summary>
-    public async Task<IReadOnlyList<ZoneCommune>> CommunesAsync(string? query, CancellationToken cancellationToken = default)
+    public async Task<Page<ZoneCommune>> CommunesAsync(string? query, int page, CancellationToken cancellationToken = default)
     {
         var term = Slug.From(query ?? string.Empty);
         return await (
@@ -57,8 +60,7 @@ public sealed class ZoneManagement(IApplicationDbContext db, Settings settings, 
                 orderby r.Name, d.Name, c.Name
                 select new ZoneCommune(c.Id, c.Name, d.Name, r.Name, c.IsServed, r.IsServed, db.Neighborhoods.Count(n => n.CommuneId == c.Id)))
             .AsNoTracking()
-            .Take(600)
-            .ToListAsync(cancellationToken);
+            .ToPageAsync(page, cancellationToken);
     }
 
     public async Task<Result<Guid>> SetRegionServedAsync(Guid adminId, Guid regionId, bool served, CancellationToken cancellationToken = default)
@@ -129,7 +131,7 @@ public sealed class ZoneManagement(IApplicationDbContext db, Settings settings, 
     }
 
     /// <summary>« Prévenez-moi » requests, newest first (phone numbers: the reading is logged as sensitive).</summary>
-    public async Task<IReadOnlyList<WaitlistEntry>> WaitlistAsync(Guid adminId, Guid? regionId, CancellationToken cancellationToken = default)
+    public async Task<Page<WaitlistEntry>> WaitlistAsync(Guid adminId, Guid? regionId, int page, CancellationToken cancellationToken = default)
     {
         var rows = await (
                 from w in db.CoverageRequests
@@ -138,15 +140,14 @@ public sealed class ZoneManagement(IApplicationDbContext db, Settings settings, 
                 from c in communes.DefaultIfEmpty()
                 where regionId == null || w.RegionId == regionId
                 orderby w.CreatedAt descending
-                select new { w.Id, w.CreatedAt, w.FullName, w.PhoneNumber, Region = r.Name, Commune = c == null ? null : c.Name, w.Locality })
+                select new WaitlistEntryRow(w.Id, w.CreatedAt, w.FullName, w.PhoneNumber, r.Name, c == null ? null : c.Name, w.Locality))
             .AsNoTracking()
-            .Take(500)
-            .ToListAsync(cancellationToken);
-        Audit(adminId, "coverage.waitlist_read", nameof(CoverageRequest), regionId, $"{rows.Count} rows", true);
+            .ToPageAsync(page, cancellationToken);
+        Audit(adminId, "coverage.waitlist_read", nameof(CoverageRequest), regionId, $"page {rows.Number}, {rows.Count} rows", true);
         await db.SaveChangesAsync(cancellationToken);
-        return [.. rows.Select(r => new WaitlistEntry(
+        return rows.Map<WaitlistEntryRow, WaitlistEntry>([.. rows.Items.Select(r => new WaitlistEntry(
             r.Id, r.CreatedAt, r.FullName, r.PhoneNumber.Formatted, r.Region,
-            string.Join(" · ", new[] { r.Commune, r.Locality }.Where(s => !string.IsNullOrWhiteSpace(s)))))];
+            string.Join(" · ", new[] { r.Commune, r.Locality }.Where(s => !string.IsNullOrWhiteSpace(s)))))]);
     }
 
     /// <summary>Handled (person told, or no longer wanted): the request and its number are erased.</summary>

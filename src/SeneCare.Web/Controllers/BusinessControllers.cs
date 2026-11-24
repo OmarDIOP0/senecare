@@ -76,10 +76,10 @@ public sealed class BusinessDiagnosticsController(
     IWebHostEnvironment environment) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(CancellationToken cancellationToken, int page = 1)
     {
         ViewData["CanSimulate"] = environment.IsDevelopment();
-        return View(await queries.ListAsync(User.GetUserId()!.Value, cancellationToken));
+        return View(this.Paged(SeneCare.Application.Common.Paging.Of(await queries.ListAsync(User.GetUserId()!.Value, cancellationToken), page)));
     }
 
     [HttpGet("{id:guid}")]

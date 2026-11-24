@@ -34,12 +34,13 @@ public sealed class DispatchController(
     TimeProvider clock) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index(DispatchStage? etape, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(DispatchStage? etape, CancellationToken cancellationToken, int page = 1)
     {
         var queue = await queries.QueueAsync(cancellationToken);
         ViewData["Stage"] = etape;
         ViewData["Counts"] = queue.GroupBy(i => i.Stage).ToDictionary(g => g.Key, g => g.Count());
-        return View(etape is { } stage ? [.. queue.Where(i => i.Stage == stage)] : queue.Where(i => i.Stage != DispatchStage.InProgress).ToList());
+        IReadOnlyList<DispatchItem> shown = etape is { } stage ? [.. queue.Where(i => i.Stage == stage)] : [.. queue.Where(i => i.Stage != DispatchStage.InProgress)];
+        return View(this.Paged(SeneCare.Application.Common.Paging.Of(shown, page)));
     }
 
     [HttpGet("calendrier")]
@@ -103,10 +104,10 @@ public sealed class DispatchController(
     // ---- Quarterly diagnostics ----
 
     [HttpGet("diagnostics")]
-    public async Task<IActionResult> Diagnostics(CancellationToken cancellationToken)
+    public async Task<IActionResult> Diagnostics(CancellationToken cancellationToken, int page = 1)
     {
         ViewData["Technicians"] = await queries.TechniciansAsync(cancellationToken);
-        return View(await diagnostics.ListAsync(cancellationToken));
+        return View(this.Paged(SeneCare.Application.Common.Paging.Of(await diagnostics.ListAsync(cancellationToken), page)));
     }
 
     [HttpGet("diagnostics/{id:guid}")]

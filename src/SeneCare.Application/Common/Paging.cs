@@ -26,6 +26,17 @@ public static class Paging
         return new Page<T>([.. rows.Take(size)], number, rows.Count > size);
     }
 
+    /// <summary>
+    /// A page of a list already read and ordered in memory: for lists bounded by nature (active dispatch queue, a
+    /// company's sites, the SENECARE team) whose order is computed after reading.
+    /// </summary>
+    public static Page<T> Of<T>(IReadOnlyList<T> all, int page, int size = Size)
+    {
+        ArgumentNullException.ThrowIfNull(all);
+        var number = Clamp(page);
+        return new Page<T>([.. all.Skip((number - 1) * size).Take(size)], number, all.Count > number * size);
+    }
+
     public static Page<TOut> Map<TIn, TOut>(this Page<TIn> page, IReadOnlyList<TOut> items)
     {
         ArgumentNullException.ThrowIfNull(page);

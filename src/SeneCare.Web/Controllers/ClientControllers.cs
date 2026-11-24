@@ -22,8 +22,8 @@ namespace SeneCare.Web.Controllers;
 public sealed class PropertiesController(PropertyQueries queries, AddPropertyHandler addProperty) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken) =>
-        View(await queries.ListAsync(User.GetUserId()!.Value, cancellationToken));
+    public async Task<IActionResult> Index(CancellationToken cancellationToken, int page = 1) =>
+        View(this.Paged(SeneCare.Application.Common.Paging.Of(await queries.ListAsync(User.GetUserId()!.Value, cancellationToken), page)));
 
     [HttpGet("nouveau")]
     public IActionResult Create() =>
@@ -243,6 +243,14 @@ public sealed class SubscriptionController(
             subscriptions = await queries.ListAsync(userId, cancellationToken);
         }
 
+        // Invoices 50 at a time (« page » in the address), newest first.
+        var invoicePage = SeneCare.Application.Common.Paging.Clamp(int.TryParse(Request.Query["page"], out var p) ? p : 1);
+        if (subscriptions.Any(s => s.Invoices.Count > invoicePage * SeneCare.Application.Common.Paging.Size) || invoicePage > 1)
+        {
+            this.Paged(SeneCare.Application.Common.Paging.Of(subscriptions.SelectMany(s => s.Invoices).ToList(), invoicePage));
+        }
+
+        subscriptions = [.. subscriptions.Select(s => s with { Invoices = SeneCare.Application.Common.Paging.Of(s.Invoices, invoicePage).Items })];
         var items = new List<SubscriptionPageItem>();
         foreach (var s in subscriptions)
         {

@@ -81,6 +81,8 @@
     }
 </ul>
 
+<partial name="Ui/_PagerSlot" />
+
 @foreach (var member in Model.Members.Where(m => m.UserId != Model.CurrentUserId))
 {
     <sc-sheet id="membre-@member.UserId" title="@(member.FullName ?? member.Phone)">

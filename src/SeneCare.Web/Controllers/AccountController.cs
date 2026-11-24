@@ -133,7 +133,8 @@ public sealed class TeamController(GetTeamHandler getTeam, InviteMemberHandler i
         return new TeamViewModel
         {
             AccountName = team?.AccountName ?? string.Empty,
-            Members = team?.Members ?? [],
+            // 50 members per page (« page » in the address): the table, the phone cards and the edit forms follow it.
+            Members = this.Paged(SeneCare.Application.Common.Paging.Of(team?.Members ?? [], int.TryParse(Request.Query["page"], out var page) ? page : 1)),
             Invite = invite,
             Sites = team?.Sites ?? [],
             RequiresApproval = team?.RequiresApproval ?? false,

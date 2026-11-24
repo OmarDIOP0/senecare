@@ -14,7 +14,9 @@ Domaines d'intervention : Électricité, Plomberie, Étanchéité, Maçonnerie, 
 Sécurité (caméras), Espaces extérieurs.
 
 Offres (montants en FCFA, entiers, sans décimales) :
-- Maisons & Villas : inscription 10 000, abonnement 8 500 / mois.
+- Maisons : inscription 10 000, abonnement 8 500 / mois (formule `HOME`).
+- Villas (décision du 25/11/2026) : formule `VILLA`, 25 000 / mois par défaut, inscription réglable ; appliquée quand le
+  logement est une villa (`AddPropertyHandler`), l'étape 4 de l'inscription affiche la formule du type coché.
 - Entreprises : inscription 75 000, puis
   ESSENTIEL 1 500 000 / mois, PROFESSIONNEL 2 500 000 / mois, PREMIUM 3 500 000 / mois.
   Diagnostic technique obligatoire tous les 3 mois AVANT l'encaissement de la nouvelle période.

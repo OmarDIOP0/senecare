@@ -3,7 +3,9 @@
 @{
     ViewData["Title"] = L["Site_Households_Title"];
     ViewData["FullWidth"] = true;
-    var plan = Model.Plans.FirstOrDefault(p => p.Segment == AccountKind.Household);
+    // « À partir de » the cheapest household offer; the others (villas…) are listed under it.
+    var homes = Model.Plans.Where(p => p.Segment == AccountKind.Household).OrderBy(p => p.MonthlyPrice.Amount).ToList();
+    var plan = homes.FirstOrDefault();
     var extras = Site.Plans.Household;
 }
 <partial name="Site/_PageHero" model='new SiteHeroModel(L["Site_Households_Heading"].Value, L["Site_Households_Text"].Value, L["Public_Nav_Households"].Value, ActionLabel: L["Site_RequestJob"].Value, ActionUrl: "/demander")' />
@@ -45,6 +47,10 @@
                 <p class="text-sm text-charbon-doux">@L["Home_Offer_From"]</p>
                 <p class="mt-1 text-3xl font-bold text-atlantique"><sc-amount value="@plan.MonthlyPrice.Amount" /> <span class="text-base font-normal text-charbon-doux">@L["Home_Offer_PerMonth"]</span></p>
                 <p class="mt-1 text-sm text-charbon-doux">@L["Home_Offer_Registration", Formatting.Fcfa(plan.RegistrationFee)]</p>
+                @foreach (var other in homes.Skip(1))
+                {
+                    <p class="mt-3 border-t border-ligne pt-3 text-[15px]"><span class="font-semibold">@other.Name</span> : <sc-amount value="@other.MonthlyPrice.Amount" /> @L["Home_Offer_PerMonth"]</p>
+                }
                 <a href="/inscription" class="sc-btn-primaire mt-5 w-full">@L["Site_Households_Subscribe"]</a>
                 <a href="/tarifs" class="sc-lien mt-3 block text-center text-sm">@L["Site_ComparePrices"]</a>
             </div>

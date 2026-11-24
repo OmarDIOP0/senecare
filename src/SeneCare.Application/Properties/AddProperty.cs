@@ -27,6 +27,9 @@ public sealed class AddPropertyHandler(IApplicationDbContext db, AccessControl a
 {
     public const string HouseholdPlanCode = "HOME";
 
+    /// <summary>Offer of the homes declared as a villa (user decision of 25/11/2026), when it is active.</summary>
+    public const string VillaPlanCode = "VILLA";
+
     public async Task<Result<Guid>> HandleAsync(AddPropertyCommand command, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(command);
@@ -80,8 +83,9 @@ public sealed class AddPropertyHandler(IApplicationDbContext db, AccessControl a
 
         if (account.Kind == AccountKind.Household)
         {
-            // The offer and rhythm (monthly / yearly) chosen at sign-up, « Maisons & Villas » monthly otherwise.
-            var code = account.ChosenPlanCode ?? HouseholdPlanCode;
+            // The offer follows the kind of home (a villa has its own offer); the rhythm (monthly / yearly) chosen
+            // at sign-up is kept.
+            var code = command.Kind == PropertyKind.Villa ? VillaPlanCode : HouseholdPlanCode;
             var plan = await db.Plans.FirstOrDefaultAsync(p => p.Code == code && p.IsActive && p.Segment == AccountKind.Household, cancellationToken)
                 ?? await db.Plans.FirstAsync(p => p.Code == HouseholdPlanCode, cancellationToken);
             db.Subscriptions.Add(Subscription.Create(account, plan, [property.Id], clock.GetUtcNow(), account.PrefersAnnual && plan.OffersAnnual));

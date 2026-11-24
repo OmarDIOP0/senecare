@@ -38,6 +38,11 @@ public sealed partial class DatabaseSeeder(SeneCareDbContext db, TimeProvider cl
         home.SetServiceLevel(priority: 1, includedVisitsPerPeriod: null);
         yield return home;
 
+        // Villas (user decision of 25/11/2026): their own offer, applied when the home is a villa; prices edited by admins.
+        var villa = new Plan("VILLA", "Villas", AccountKind.Household, Money.FromFcfa(10_000), Money.FromFcfa(25_000), 1, diagnosticRequired: false);
+        villa.SetServiceLevel(priority: 1, includedVisitsPerPeriod: null);
+        yield return villa;
+
         // Default service levels (data, edited by admins): higher offers answer faster and visit more.
         var business = new (string Code, string Name, long Monthly, int Priority, int Visits, int CriticalHours, int HighHours, int NormalHours)[]
         {

@@ -154,27 +154,49 @@
                         }
                     </label>
                 </div>
-                @foreach (var plan in homePlans)
+                @* One card: its offer follows the kind of home chosen at step 3 (a villa has its own offer, applied by the
+                   server whatever is ticked); « Villa » ticked shows the villa prices, any other kind the house ones. *@
+                @{
+                    var housePlan = homePlans.FirstOrDefault(p => p.Code == SeneCare.Application.Properties.AddPropertyHandler.HouseholdPlanCode) ?? homePlans.FirstOrDefault();
+                    var villaPlan = homePlans.FirstOrDefault(p => p.Code == SeneCare.Application.Properties.AddPropertyHandler.VillaPlanCode);
+                }
+                @if (housePlan is not null)
                 {
                     <label class="sc-choix flex-col items-stretch gap-3 p-5">
                         <span class="flex items-start justify-between gap-3">
                             <span>
-                                <span class="block text-lg font-bold">@plan.Name</span>
+                                <span class="block text-lg font-bold @(villaPlan is null ? "" : "[form:has(input[value=Villa]:checked)_&]:hidden")">@housePlan.Name</span>
+                                @if (villaPlan is not null)
+                                {
+                                    <span class="hidden text-lg font-bold [form:has(input[value=Villa]:checked)_&]:block">@villaPlan.Name</span>
+                                }
                                 <span class="text-sm text-charbon-doux">@L["Register_HomePlanText"]</span>
                             </span>
-                            <input type="radio" name="PlanCode" value="@plan.Code" checked="@(selectedPlan == plan.Code)" data-plan-household />
+                            <input type="radio" name="PlanCode" value="@housePlan.Code" checked="@(selectedPlan == housePlan.Code || selectedPlan == villaPlan?.Code)" data-plan-household />
                         </span>
-                        <span class="flex flex-wrap items-baseline gap-x-2 [form:has(input[name=Annual][value=true]:checked)_&]:hidden">
-                            <span class="font-display text-2xl"><sc-amount value="@plan.MonthlyPrice.Amount" /></span><span class="text-sm text-charbon-doux">@L["Home_Offer_PerMonth"]</span>
-                        </span>
-                        @if (plan.OffersAnnual)
+                        @foreach (var (plan, isVilla) in new[] { (housePlan, false), (villaPlan, true) })
                         {
-                            <span class="hidden flex-wrap items-baseline gap-x-2 [form:has(input[name=Annual][value=true]:checked)_&]:flex">
-                                <span class="font-display text-2xl"><sc-amount value="@plan.AnnualPrice.Amount" /></span><span class="text-sm text-charbon-doux">@L["Register_PerYear"]</span>
-                                <span class="text-sm text-charbon-pale line-through"><sc-amount value="@(plan.MonthlyPrice.Amount * 12)" /></span>
+                            if (plan is null)
+                            {
+                                continue;
+                            }
+
+                            // Only one offer shows at a time (class names written out in full for Tailwind).
+                            var shown = villaPlan is null ? "grid" : isVilla ? "hidden [form:has(input[value=Villa]:checked)_&]:grid" : "grid [form:has(input[value=Villa]:checked)_&]:hidden";
+                            <span class="@shown gap-1">
+                                <span class="flex flex-wrap items-baseline gap-x-2 [form:has(input[name=Annual][value=true]:checked)_&]:hidden">
+                                    <span class="font-display text-2xl"><sc-amount value="@plan.MonthlyPrice.Amount" /></span><span class="text-sm text-charbon-doux">@L["Home_Offer_PerMonth"]</span>
+                                </span>
+                                @if (plan.OffersAnnual)
+                                {
+                                    <span class="hidden flex-wrap items-baseline gap-x-2 [form:has(input[name=Annual][value=true]:checked)_&]:flex">
+                                        <span class="font-display text-2xl"><sc-amount value="@plan.AnnualPrice.Amount" /></span><span class="text-sm text-charbon-doux">@L["Register_PerYear"]</span>
+                                        <span class="text-sm text-charbon-pale line-through"><sc-amount value="@(plan.MonthlyPrice.Amount * 12)" /></span>
+                                    </span>
+                                }
+                                <span class="text-sm text-charbon-doux">@L["Home_Offer_Registration", Formatting.Fcfa(plan.RegistrationFee)]</span>
                             </span>
                         }
-                        <span class="text-sm text-charbon-doux">@L["Home_Offer_Registration", Formatting.Fcfa(plan.RegistrationFee)]</span>
                     </label>
                 }
             </div>

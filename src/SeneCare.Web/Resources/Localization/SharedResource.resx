@@ -486,7 +486,7 @@
   <data name="Pay_AskOnWhatsApp" xml:space="preserve"><value>Payer avec l'aide de SeneCare sur WhatsApp</value></data>
   <data name="Payment_Declared" xml:space="preserve"><value>Paiement signalé. Nous le vérifions.</value></data>
   <data name="AdminPay_Title" xml:space="preserve"><value>Paiements à vérifier</value></data>
-  <data name="AdminPay_Intro" xml:space="preserve"><value>Comparez chaque déclaration avec l'historique du compte marchand (Wave ou Orange Money) avant de valider. Valider marque la facture payée et active l'abonnement.</value></data>
+  <data name="AdminPay_Intro" xml:space="preserve"><value>Vérifiez chaque paiement Wave déclaré dans l'historique du compte marchand, puis validez.</value></data>
   <data name="AdminPay_Pending" xml:space="preserve"><value>En attente ({0})</value></data>
   <data name="AdminPay_None" xml:space="preserve"><value>Aucun paiement en attente de vérification.</value></data>
   <data name="AdminPay_DeclaredOn" xml:space="preserve"><value>signalé le {0}</value></data>
@@ -501,7 +501,7 @@
   <data name="AdminPay_Verified" xml:space="preserve"><value>Paiement validé, abonnement à jour.</value></data>
   <data name="AdminPay_Rejected" xml:space="preserve"><value>Paiement refusé. Le client est informé du motif.</value></data>
   <data name="AdminPay_LinkTitle" xml:space="preserve"><value>Lien de paiement Wave</value></data>
-  <data name="AdminPay_LinkHint" xml:space="preserve"><value>Lien marchand Wave (https://pay.wave.com/…). Mettez {montant} à l'endroit du montant pour le pré-remplir. Laissez vide pour masquer le paiement Wave.</value></data>
+  <data name="AdminPay_LinkHint" xml:space="preserve"><value>Mettez {montant} pour pré-remplir le montant. Vide : Wave n'est pas proposé.</value></data>
   <data name="AdminPay_LinkLabel" xml:space="preserve"><value>Lien Wave</value></data>
   <data name="AdminPay_LinkSave" xml:space="preserve"><value>Enregistrer le lien</value></data>
   <data name="AdminPay_LinkSaved" xml:space="preserve"><value>Lien Wave enregistré.</value></data>
@@ -1476,8 +1476,8 @@
   <data name="Pay_PendingNotice" xml:space="preserve"><value>Cette page affichera « Actif » dès la vérification.</value></data>
   <data name="AdminPay_Eyebrow" xml:space="preserve"><value>Encaissements</value></data>
   <data name="AdminPay_Methods" xml:space="preserve"><value>Moyens de paiement</value></data>
-  <data name="AdminPay_WaveText" xml:space="preserve"><value>Lien marchand : le client paie, puis déclare son paiement ici.</value></data>
-  <data name="AdminPay_OrangeText" xml:space="preserve"><value>Paiement par l'API Orange Money : QR code ou lien Max it, confirmé automatiquement par Orange.</value></data>
+  <data name="AdminPay_WaveText" xml:space="preserve"><value>Lien marchand</value></data>
+  <data name="AdminPay_OrangeText" xml:space="preserve"><value>API Sonatel</value></data>
   <data name="AdminPay_OrangeCodeLabel" xml:space="preserve"><value>Code marchand ou numéro Orange Money</value></data>
   <data name="AdminPay_OrangeCodeHint" xml:space="preserve"><value>Chiffres uniquement, affichés au client avec le montant. Laissez vide si vous n'utilisez que le lien.</value></data>
   <data name="AdminPay_OrangeLinkLabel" xml:space="preserve"><value>Lien de paiement Orange Money (facultatif)</value></data>
@@ -1544,13 +1544,13 @@
   <data name="Om_Pay_Step1" xml:space="preserve"><value>Touchez « Payer avec Orange Money » : Max it s'ouvre avec le montant (ou un QR code sur ordinateur).</value></data>
   <data name="Om_Pay_Step2" xml:space="preserve"><value>Validez avec votre code secret : votre abonnement s'active dès la confirmation d'Orange Money.</value></data>
   <data name="AdminPay_OmMode" xml:space="preserve"><value>Mode</value></data>
-  <data name="AdminPay_OmLive" xml:space="preserve"><value>Réel (production)</value></data>
-  <data name="AdminPay_OmSandbox" xml:space="preserve"><value>Test (sandbox) : proposé seulement à l'équipe SeneCare, pas aux clients</value></data>
+  <data name="AdminPay_OmLive" xml:space="preserve"><value>Réel</value></data>
+  <data name="AdminPay_OmSandbox" xml:space="preserve"><value>Test, équipe seulement</value></data>
   <data name="AdminPay_OmMerchant" xml:space="preserve"><value>Code marchand</value></data>
-  <data name="AdminPay_OmCallback" xml:space="preserve"><value>Adresse de notification</value></data>
-  <data name="AdminPay_OmHowTo" xml:space="preserve"><value>Paiement par l'API Orange Money : les clés, le code marchand et la clé de notification se règlent sur le serveur (OrangeMoney dans appsettings.Server.json), jamais ici.</value></data>
-  <data name="AdminPay_OmRegister" xml:space="preserve"><value>Enregistrer l'adresse de notification chez Orange</value></data>
-  <data name="AdminPay_OmRegisterHint" xml:space="preserve"><value>À faire une fois (et après un changement de clé) : Orange Money prévient alors SeneCare de chaque paiement.</value></data>
+  <data name="AdminPay_OmCallback" xml:space="preserve"><value>Notification</value></data>
+  <data name="AdminPay_OmHowTo" xml:space="preserve"><value>Clés et code marchand : section OrangeMoney de appsettings.Server.json, sur le serveur.</value></data>
+  <data name="AdminPay_OmRegister" xml:space="preserve"><value>Enregistrer la notification chez Orange</value></data>
+  <data name="AdminPay_OmRegisterHint" xml:space="preserve"><value>Une fois, puis après chaque changement de clé.</value></data>
   <data name="AdminPay_OmCallbackMissing" xml:space="preserve"><value>Adresse du site (OrangeMoney:PublicBaseUrl, en https) ou clé de notification (OrangeMoney:CallbackApiKey) manquante sur le serveur.</value></data>
   <data name="AdminPay_OmRegistered" xml:space="preserve"><value>Adresse de notification enregistrée chez Orange Money.</value></data>
   <data name="AdminPay_OmRegisterFailed" xml:space="preserve"><value>Orange Money n'a pas accepté l'enregistrement. Vérifiez les réglages du serveur et réessayez.</value></data>

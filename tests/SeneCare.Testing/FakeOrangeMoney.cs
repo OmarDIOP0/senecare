@@ -17,6 +17,9 @@ public sealed class FakeOrangeMoneyGateway : IOrangeMoneyGateway
 
     public bool IsConfigured => Configured;
 
+    /// <summary>Live by default; a test sets false to check the Sandbox rule (staff only).</summary>
+    public bool IsLive { get; set; } = true;
+
     public string? MerchantCode => "123456";
 
     public ConcurrentQueue<OrangeMoneyCheckoutRequest> Requests { get; } = new();

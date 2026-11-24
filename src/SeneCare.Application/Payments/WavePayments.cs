@@ -59,7 +59,7 @@ public sealed class PrepareInvoiceHandler(
     IDocumentNumberGenerator numbers,
     Settings settings,
     DiagnosticPlanner diagnostics,
-    IOrangeMoneyGateway orangeMoney,
+    OrangeMoneyPayments orangeMoney,
     TimeProvider clock)
 {
     public const int RenewalWindowDays = 7;
@@ -130,7 +130,7 @@ public sealed class PrepareInvoiceHandler(
         var waveLink = await settings.StringAsync(SettingKeys.WaveLink, cancellationToken);
         return new InvoiceDue(
             subscription.Id, invoice.Id, invoice.Number, invoice.Balance, isRegistration, period,
-            WaveLink.For(waveLink, invoice.Balance), declaration, orangeMoney.IsConfigured);
+            WaveLink.For(waveLink, invoice.Balance), declaration, await orangeMoney.IsOfferedToAsync(userId, cancellationToken));
     }
 
     private async Task<Invoice> CreateInvoiceAsync(Subscription subscription, DateRange? period, DateOnly today, CancellationToken cancellationToken)

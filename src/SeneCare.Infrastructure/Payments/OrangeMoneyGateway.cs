@@ -89,6 +89,8 @@ public sealed class OrangeMoneyGateway(HttpClient http, IOptions<OrangeMoneyOpti
     public bool IsConfigured =>
         !string.IsNullOrWhiteSpace(_options.ClientId) && !string.IsNullOrWhiteSpace(_options.ClientSecret) && !string.IsNullOrWhiteSpace(_options.MerchantCode);
 
+    public bool IsLive => _options.IsLive;
+
     public string? MerchantCode => string.IsNullOrWhiteSpace(_options.MerchantCode) ? null : _options.MerchantCode.Trim();
 
     public async Task<OrangeMoneyCheckout> CreateCheckoutAsync(OrangeMoneyCheckoutRequest request, CancellationToken cancellationToken = default)

@@ -1545,7 +1545,7 @@
   <data name="Om_Pay_Step2" xml:space="preserve"><value>Validez avec votre code secret : votre abonnement s'active dès la confirmation d'Orange Money.</value></data>
   <data name="AdminPay_OmMode" xml:space="preserve"><value>Mode</value></data>
   <data name="AdminPay_OmLive" xml:space="preserve"><value>Réel (production)</value></data>
-  <data name="AdminPay_OmSandbox" xml:space="preserve"><value>Test (sandbox)</value></data>
+  <data name="AdminPay_OmSandbox" xml:space="preserve"><value>Test (sandbox) : proposé seulement à l'équipe SeneCare, pas aux clients</value></data>
   <data name="AdminPay_OmMerchant" xml:space="preserve"><value>Code marchand</value></data>
   <data name="AdminPay_OmCallback" xml:space="preserve"><value>Adresse de notification</value></data>
   <data name="AdminPay_OmHowTo" xml:space="preserve"><value>Paiement par l'API Orange Money : les clés, le code marchand et la clé de notification se règlent sur le serveur (OrangeMoney dans appsettings.Server.json), jamais ici.</value></data>

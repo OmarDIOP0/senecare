@@ -140,6 +140,12 @@ public sealed partial class WavePaymentTests(WebAppFixture app)
             var customer = await HouseholdAsync();
             var propertyId = await AddHomeAsync(customer);
 
+            // Sandbox (test keys, no real money): customers are not offered Orange Money.
+            app.OrangeMoney.IsLive = false;
+            var sandbox = WebUtility.HtmlDecode(await customer.GetStringAsync(new Uri("/abonnement", UriKind.Relative)));
+            Assert.DoesNotContain("value=\"OrangeMoney\"", sandbox, StringComparison.Ordinal);
+            app.OrangeMoney.IsLive = true;
+
             // Both ways to pay; Orange Money has no reference to type, only its button.
             var page = WebUtility.HtmlDecode(await customer.GetStringAsync(new Uri("/abonnement", UriKind.Relative)));
             Assert.Contains("name=\"channel\" value=\"OrangeMoney\"", page, StringComparison.Ordinal);

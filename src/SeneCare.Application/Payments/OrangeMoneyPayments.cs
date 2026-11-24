@@ -33,6 +33,9 @@ public interface IOrangeMoneyGateway
     /// <summary>Credentials and merchant code are set (OrangeMoney:* settings, never in code).</summary>
     bool IsConfigured { get; }
 
+    /// <summary>Production (real money); false in Sandbox, where only SENECARE staff are offered Orange Money (tests).</summary>
+    bool IsLive { get; }
+
     string? MerchantCode { get; }
 
     Task<OrangeMoneyCheckout> CreateCheckoutAsync(OrangeMoneyCheckoutRequest request, CancellationToken cancellationToken = default);
@@ -78,10 +81,18 @@ public sealed partial class OrangeMoneyPayments(
 
     public bool IsAvailable => gateway.IsConfigured;
 
+    /// <summary>
+    /// Orange Money is offered to this person: configured, and live — in Sandbox (test keys, no real money) only SENECARE
+    /// staff see it, so customers are never sent to a test payment.
+    /// </summary>
+    public async Task<bool> IsOfferedToAsync(Guid userId, CancellationToken cancellationToken = default) =>
+        gateway.IsConfigured
+        && (gateway.IsLive || await db.Users.AnyAsync(u => u.Id == userId && u.Roles.Any(r => r.Role != Domain.Users.PlatformRole.Customer), cancellationToken));
+
     /// <summary>A new Orange Money payment for what the invoice still owes, with its QR code and links.</summary>
     public async Task<Result<OrangeMoneyStart>> StartAsync(Guid userId, Guid invoiceId, CancellationToken cancellationToken = default)
     {
-        if (!gateway.IsConfigured)
+        if (!await IsOfferedToAsync(userId, cancellationToken))
         {
             return Result<OrangeMoneyStart>.Failure("payment.channel_invalid");
         }

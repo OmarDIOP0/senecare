@@ -218,6 +218,12 @@ public sealed partial class WavePaymentTests(WebAppFixture app)
             Assert.Equal(PaymentStatus.Pending, (await db.Payments.SingleAsync(p => p.Id == paymentId)).Status);
             Assert.Equal(InvoiceStatus.Issued, (await db.Invoices.SingleAsync(i => i.Id == Guid.Parse(invoiceId))).Status);
             Assert.True(await db.Notifications.AnyAsync(n => n.TemplateKey == "payment.mismatch"));
+
+            // The right amount but no merchant code in Orange's answer: still never credited (fail closed).
+            app.OrangeMoney.Report(paymentId.ToString("N"), 18_500, merchant: null);
+            await customer.SubmitAsync(started.Location(), $"/abonnement/orange-money/{paymentId}/verifier", new Dictionary<string, string>());
+            await using var after = app.Database.CreateContext();
+            Assert.Equal(PaymentStatus.Pending, (await after.Payments.SingleAsync(p => p.Id == paymentId)).Status);
         }
         finally
         {

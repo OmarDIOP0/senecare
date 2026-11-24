@@ -46,6 +46,6 @@ public sealed class FakeOrangeMoneyGateway : IOrangeMoneyGateway
     public bool IsTrustedCallback(string? authorizationHeader) => authorizationHeader == "Basic " + CallbackKey;
 
     /// <summary>The customer paid (or not) in Max it: what Orange Money will report for this reference.</summary>
-    public void Report(string reference, long amount, string status = "SUCCESS", string merchant = "123456") =>
+    public void Report(string reference, long amount, string status = "SUCCESS", string? merchant = "123456") =>
         _transactions[reference] = new OrangeMoneyTransaction("MP" + Guid.NewGuid().ToString("N")[..18], reference, status, amount, "XOF", merchant, "MERCHANT_PAYMENT");
 }

@@ -280,7 +280,7 @@ public sealed class OrangeMoneyGateway(HttpClient http, IOptions<OrangeMoneyOpti
             Text(t, "reference") ?? string.Empty,
             Text(t, "status") ?? string.Empty,
             value,
-            Text(amount, "unit") ?? "XOF",
+            Text(amount, "unit"),
             merchant,
             Text(t, "type"));
     }

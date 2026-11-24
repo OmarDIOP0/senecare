@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -16,7 +17,7 @@ public sealed record OrangeMoneyCheckoutRequest(string Reference, Money Amount, 
 public sealed record OrangeMoneyCheckout(string? QrCodePng, string? MaxItLink, string? OrangeMoneyLink, string? ShortLink, DateTimeOffset ExpiresAt);
 
 /// <summary>A merchant payment as Orange Money reports it (the authoritative state, never the callback body).</summary>
-public sealed record OrangeMoneyTransaction(string TransactionId, string Reference, string Status, long Amount, string Currency, string? MerchantCode, string? Type)
+public sealed record OrangeMoneyTransaction(string TransactionId, string Reference, string Status, long Amount, string? Currency, string? MerchantCode, string? Type)
 {
     public bool IsSuccess => Status == "SUCCESS";
 
@@ -70,6 +71,11 @@ public sealed partial class OrangeMoneyPayments(
     TimeProvider clock,
     ILogger<OrangeMoneyPayments> logger)
 {
+    // One confirmation at a time per payment (callbacks come at least once, sometimes together): the state is read
+    // again inside the lock, so a payment is credited once. The site runs as one process (IIS, SmarterASP); several
+    // instances would need a database concurrency token on payments instead.
+    private static readonly ConcurrentDictionary<Guid, SemaphoreSlim> Locks = new();
+
     public bool IsAvailable => gateway.IsConfigured;
 
     /// <summary>A new Orange Money payment for what the invoice still owes, with its QR code and links.</summary>
@@ -162,6 +168,20 @@ public sealed partial class OrangeMoneyPayments(
             return OrangeMoneyState.Failed;
         }
 
+        var gate = Locks.GetOrAdd(paymentId, _ => new SemaphoreSlim(1, 1));
+        await gate.WaitAsync(cancellationToken);
+        try
+        {
+            return await ConfirmLockedAsync(paymentId, reference, cancellationToken);
+        }
+        finally
+        {
+            gate.Release();
+        }
+    }
+
+    private async Task<OrangeMoneyState> ConfirmLockedAsync(Guid paymentId, string reference, CancellationToken cancellationToken)
+    {
         var payment = await db.Payments.FirstOrDefaultAsync(p => p.Id == paymentId && p.Channel == PaymentChannel.OrangeMoney, cancellationToken);
         if (payment is null || payment.Status != PaymentStatus.Pending)
         {
@@ -187,9 +207,11 @@ public sealed partial class OrangeMoneyPayments(
             return OrangeMoneyState.Pending;
         }
 
+        // Fail closed: our merchant code, the exact amount in XOF, a merchant payment — anything missing or different
+        // is never credited automatically.
         var expectedMerchant = gateway.MerchantCode;
-        if (transaction.Amount != payment.Amount.Amount || transaction.Currency != "XOF"
-            || (expectedMerchant is not null && transaction.MerchantCode is not null && transaction.MerchantCode != expectedMerchant))
+        if (transaction.Amount != payment.Amount.Amount || transaction.Currency != "XOF" || transaction.Type != "MERCHANT_PAYMENT"
+            || expectedMerchant is null || transaction.MerchantCode != expectedMerchant)
         {
             // Never credited automatically: Finance looks at it.
             LogMismatch(logger, reference, transaction.Amount, payment.Amount.Amount);

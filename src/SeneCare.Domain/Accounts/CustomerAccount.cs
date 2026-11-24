@@ -100,7 +100,19 @@ public sealed class CustomerAccount : AggregateRoot
     /// <summary>Monthly plans: pay the year at once (with the free months).</summary>
     public bool PrefersAnnual { get; private set; }
 
+    /// <summary>
+    /// Suspended by SENECARE (reversible, user decision of 25/11/2026): nobody of the account signs in any more, data
+    /// and invoices are kept, the account leaves the customer list until it is reactivated.
+    /// </summary>
+    public DateTimeOffset? SuspendedAt { get; private set; }
+
+    public bool IsSuspended => SuspendedAt is not null;
+
     public IReadOnlyCollection<AccountMember> Members => _members.AsReadOnly();
+
+    public void Suspend(DateTimeOffset now) => SuspendedAt ??= now;
+
+    public void Reactivate() => SuspendedAt = null;
 
     public void ChooseOffer(string? planCode, bool annual)
     {

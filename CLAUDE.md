@@ -36,6 +36,10 @@ Les tarifs DOIVENT être paramétrables en base par l'admin (jamais codés en du
   technicien (fiche dans Admin › Techniciens, lien « Mes missions » dans son menu admin). Garde-fous : jamais sur
   soi-même, toujours au moins un Super-admin ; un changement de droits ferme les sessions de la personne (cookies
   revérifiés chaque minute). Un nouveau technicien reçoit aussi un mot de passe provisoire (mode mot de passe).
+Suspension d'un client (décision du 25/11/2026, Super-admin / Support, fiche Admin › Clients) : réversible
+  (`CustomerSuspension`, `CustomerAccount.SuspendedAt`) ; ses membres ne se connectent plus (sessions fermées), sauf
+  s'ils sont aussi équipe SeneCare ou membres d'un autre compte actif ; rien n'est effacé ; le compte quitte la liste
+  (filtre « Clients archivés ») ; « Réactiver le client » rend l'accès. Journalisé.
 Autorisation par policies ASP.NET Core, jamais par if/else dispersés dans les vues.
 Notifications (cloche + WhatsApp/SMS aux moments clés) : `RequestNotifications` décide qui reçoit quoi, appelé avant
 chaque enregistrement par `NotificationInterceptor` (événements de domaine, nouvelles missions, diagnostics) — jamais

@@ -25,11 +25,37 @@ public sealed class ManagementController : Controller
 public sealed class CustomersController(CustomerDirectory directory) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index(string? q, AccountKind? type, CancellationToken cancellationToken, int page = 1)
+    public async Task<IActionResult> Index(string? q, AccountKind? type, bool archives, CancellationToken cancellationToken, int page = 1)
     {
         ViewData["Query"] = q;
         ViewData["Type"] = type;
-        return View(await directory.SearchAsync(q, type, page, cancellationToken));
+        ViewData["Archived"] = archives;
+        return View(await directory.SearchAsync(q, type, page, archives, cancellationToken));
+    }
+
+    /// <summary>Suspend (reversible): nobody of the account signs in any more; data and invoices are kept.</summary>
+    [HttpPost("{id:guid}/suspendre")]
+    [Authorize(Policy = Policies.AccountSupport)]
+    public async Task<IActionResult> Suspend(Guid id, bool confirm, [FromServices] CustomerSuspension suspension, CancellationToken cancellationToken)
+    {
+        if (!confirm)
+        {
+            TempData["flash.toast"] = this.Localizer()["Error_suspend_confirm"].Value;
+            return LocalRedirect($"/admin/clients/{id}");
+        }
+
+        var result = await suspension.SuspendAsync(User.GetUserId()!.Value, id, cancellationToken);
+        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Admin_Suspended"].Value : this.ErrorMessage(result.Error);
+        return LocalRedirect($"/admin/clients/{id}");
+    }
+
+    [HttpPost("{id:guid}/reactiver")]
+    [Authorize(Policy = Policies.AccountSupport)]
+    public async Task<IActionResult> Reactivate(Guid id, [FromServices] CustomerSuspension suspension, CancellationToken cancellationToken)
+    {
+        var result = await suspension.ReactivateAsync(User.GetUserId()!.Value, id, cancellationToken);
+        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Admin_Reactivated"].Value : this.ErrorMessage(result.Error);
+        return LocalRedirect($"/admin/clients/{id}");
     }
 
     [HttpGet("{id:guid}")]

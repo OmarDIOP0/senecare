@@ -6,10 +6,17 @@
     ViewData["Title"] = L["Admin_Customers"];
     ViewData["Wide"] = true;
     var type = ViewData["Type"] as AccountKind?;
+    var archived = ViewData["Archived"] as bool? ?? false;
 }
 
 <a href="/admin/gestion" class="inline-flex min-h-12 items-center font-medium">← @L["Tab_Management"]</a>
-<h1 class="sc-titre">@L["Admin_Customers"]</h1>
+<div class="flex flex-wrap items-end justify-between gap-3">
+    <h1 class="sc-titre">@(archived ? L["Admin_Archived"] : L["Admin_Customers"])</h1>
+    @* Suspended accounts leave the list; this switch shows them (and back). *@
+    <a href="@(archived ? "/admin/clients" : "/admin/clients?archives=true")" class="sc-btn-secondaire">
+        <sc-icon name="@(archived ? "users" : "history")" class="size-4" />@(archived ? L["Admin_Customers"] : L["Admin_Archived"])
+    </a>
+</div>
 
 <form method="get" class="mt-4 flex flex-wrap items-end gap-2" role="search">
     <div class="min-w-64 flex-1">
@@ -24,6 +31,10 @@
             <option value="Business" selected="@(type == AccountKind.Business)">@L["Register_ProfileBusiness"]</option>
         </select>
     </div>
+    @if (archived)
+    {
+        <input type="hidden" name="archives" value="true" />
+    }
     <button type="submit" class="sc-btn-secondaire"><sc-icon name="search" />@L["Admin_Search"]</button>
 </form>
 
@@ -45,7 +56,16 @@
                     <td class="px-3 py-2"><a href="/admin/clients/@c.AccountId" class="font-medium">@c.Name</a><span class="block text-xs">@(c.Kind == AccountKind.Business ? L["Register_ProfileBusiness"] : L["Register_ProfileHousehold"])</span></td>
                     <td class="px-3 py-2">@(c.ContactName ?? "—")<span class="block text-xs">+221 @c.ContactPhone</span></td>
                     <td class="px-3 py-2">@c.Sites</td>
-                    <td class="px-3 py-2">@(c.Status is { } s ? L["SubscriptionStatus_" + s] : "—")</td>
+                    <td class="px-3 py-2">
+                        @if (c.SuspendedAt is { } suspendedAt)
+                        {
+                            <span class="sc-badge bg-rouge-clair text-rouge">@L["Admin_SuspendedSince", Formatting.ShortDate(suspendedAt)]</span>
+                        }
+                        else
+                        {
+                            @(c.Status is { } s ? L["SubscriptionStatus_" + s] : "—")
+                        }
+                    </td>
                     <td class="px-3 py-2">@Formatting.ShortDate(c.CreatedAt)</td>
                 </tr>
             }

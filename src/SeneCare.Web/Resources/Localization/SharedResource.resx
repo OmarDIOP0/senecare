@@ -1600,4 +1600,16 @@
   <data name="Error_coverage_locality" xml:space="preserve"><value>Indiquez votre ville ou votre quartier.</value></data>
   <data name="Error_coverage_too_many" xml:space="preserve"><value>Cette demande est déjà enregistrée.</value></data>
   <data name="Zones_ChooseRegion" xml:space="preserve"><value>Choisissez votre région</value></data>
+  <data name="Admin_Archived" xml:space="preserve"><value>Clients archivés</value></data>
+  <data name="Admin_Suspend" xml:space="preserve"><value>Suspendre le client</value></data>
+  <data name="Admin_Suspend_Text" xml:space="preserve"><value>{0} ne pourra plus se connecter ni faire de demande. Ses logements, demandes et factures sont gardés. Vous pourrez le réactiver à tout moment.</value></data>
+  <data name="Admin_Suspend_Confirm" xml:space="preserve"><value>Je confirme la suspension</value></data>
+  <data name="Admin_Suspended" xml:space="preserve"><value>Client suspendu. Il ne peut plus se connecter.</value></data>
+  <data name="Admin_SuspendedSince" xml:space="preserve"><value>Suspendu le {0}</value></data>
+  <data name="Admin_SuspendedBanner" xml:space="preserve"><value>Compte suspendu depuis le {0} : personne de ce compte ne peut se connecter.</value></data>
+  <data name="Admin_Reactivate" xml:space="preserve"><value>Réactiver le client</value></data>
+  <data name="Admin_Reactivated" xml:space="preserve"><value>Client réactivé. Il peut de nouveau se connecter.</value></data>
+  <data name="Error_suspend_confirm" xml:space="preserve"><value>Cochez la confirmation pour suspendre.</value></data>
+  <data name="Error_account_suspend_self" xml:space="preserve"><value>Vous ne pouvez pas suspendre votre propre compte client.</value></data>
+  <data name="Error_account_not_found" xml:space="preserve"><value>Compte introuvable.</value></data>
 </root>

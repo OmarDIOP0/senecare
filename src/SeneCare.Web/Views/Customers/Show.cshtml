@@ -10,7 +10,37 @@
 }
 
 <a href="/admin/clients" class="inline-flex min-h-12 items-center font-medium">← @L["Admin_Customers"]</a>
-<h1 class="sc-titre">@s.Name</h1>
+<div class="flex flex-wrap items-start justify-between gap-3">
+    <h1 class="sc-titre">@s.Name</h1>
+    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Support"))
+    {
+        @if (s.SuspendedAt is null)
+        {
+            <button type="button" class="sc-btn-secondaire text-rouge" data-sheet-open="suspendre">
+                <sc-icon name="ban" class="size-4" />@L["Admin_Suspend"]
+            </button>
+            <sc-sheet id="suspendre" title="@L["Admin_Suspend"]">
+                <form method="post" action="/admin/clients/@s.AccountId/suspendre" class="grid gap-3">
+                    @Html.AntiForgeryToken()
+                    <p>@L["Admin_Suspend_Text", s.Name]</p>
+                    <label class="sc-choix"><input type="checkbox" name="confirm" value="true" required />@L["Admin_Suspend_Confirm"]</label>
+                    <button type="submit" class="sc-btn bg-rouge text-sur-accent">@L["Admin_Suspend"]</button>
+                </form>
+            </sc-sheet>
+        }
+        else
+        {
+            <form method="post" action="/admin/clients/@s.AccountId/reactiver">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="sc-btn-primaire">@L["Admin_Reactivate"]</button>
+            </form>
+        }
+    }
+</div>
+@if (s.SuspendedAt is { } suspendedAt)
+{
+    <p class="mt-3 rounded-2xl border border-rouge/40 bg-rouge-clair px-4 py-3 text-rouge" role="status">@L["Admin_SuspendedBanner", Formatting.ShortDate(suspendedAt)]</p>
+}
 <p class="mt-1">@(s.Kind == AccountKind.Business ? L["Register_ProfileBusiness"] : L["Register_ProfileHousehold"]) · @L["Admin_Since"] @Formatting.ShortDate(s.CreatedAt)@(Model.Ninea is { } ninea ? " · NINEA " + ninea : "")</p>
 <p class="mt-1">@L["Admin_RequestsCount", Model.Requests, Model.OpenRequests]</p>
 

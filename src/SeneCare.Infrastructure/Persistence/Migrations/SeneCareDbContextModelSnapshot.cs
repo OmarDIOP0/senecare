@@ -293,6 +293,10 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("requires_request_approval");
 
+                    b.Property<DateTimeOffset?>("SuspendedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("suspended_at");
+
                     b.HasKey("Id")
                         .HasName("pk_customer_accounts");
 

@@ -16,7 +16,7 @@ namespace SeneCare.Application.Admin;
 
 // ===================================================================== Customers
 
-public sealed record CustomerRow(Guid AccountId, AccountKind Kind, string Name, string? ContactName, string ContactPhone, int Sites, SubscriptionStatus? Status, DateTimeOffset CreatedAt);
+public sealed record CustomerRow(Guid AccountId, AccountKind Kind, string Name, string? ContactName, string ContactPhone, int Sites, SubscriptionStatus? Status, DateTimeOffset CreatedAt, DateTimeOffset? SuspendedAt = null);
 
 public sealed record CustomerMember(Guid UserId, string? Name, string Phone, AccountRole Role);
 
@@ -39,9 +39,10 @@ public sealed record CustomerFile(
 /// <summary>Households and companies, searchable by name or phone (support, finance).</summary>
 public sealed class CustomerDirectory(IApplicationDbContext db, TimeProvider clock)
 {
-    public async Task<Page<CustomerRow>> SearchAsync(string? query, AccountKind? kind, int page, CancellationToken cancellationToken = default)
+    /// <param name="suspended">« Archivés »: only suspended accounts; otherwise they are left out.</param>
+    public async Task<Page<CustomerRow>> SearchAsync(string? query, AccountKind? kind, int page, bool suspended = false, CancellationToken cancellationToken = default)
     {
-        var accounts = db.CustomerAccounts.AsNoTracking();
+        var accounts = db.CustomerAccounts.AsNoTracking().Where(a => (a.SuspendedAt != null) == suspended);
         if (kind is { } k)
         {
             accounts = accounts.Where(a => a.Kind == k);
@@ -132,7 +133,7 @@ public sealed class CustomerDirectory(IApplicationDbContext db, TimeProvider clo
             var contact = contacts[a.Members.OrderBy(m => m.Role).First().UserId];
             return new CustomerRow(
                 a.Id, a.Kind, a.DisplayName, contact.FullName, contact.PhoneNumber.Formatted, sites.GetValueOrDefault(a.Id),
-                statuses.LastOrDefault(s => s.AccountId == a.Id)?.Status, a.CreatedAt);
+                statuses.LastOrDefault(s => s.AccountId == a.Id)?.Status, a.CreatedAt, a.SuspendedAt);
         })];
     }
 }

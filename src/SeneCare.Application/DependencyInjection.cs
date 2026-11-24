@@ -90,6 +90,7 @@ public static class DependencyInjection
         services.AddScoped<DispatchActions>();
         services.AddScoped<DiagnosticSupervision>();
         services.AddScoped<CustomerDirectory>();
+        services.AddScoped<CustomerSuspension>();
         services.AddScoped<TechnicianManagement>();
         services.AddScoped<PlanManagement>();
         services.AddScoped<GeographyManagement>();

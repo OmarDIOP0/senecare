@@ -1,0 +1,66 @@
+@model IReadOnlyList<SeneCare.Application.Admin.WaitlistEntry>
+@{
+    Layout = "_AppLayout";
+    ViewData["NavActive"] = "gestion";
+    ViewData["Title"] = L["Zones_Waitlist"];
+    ViewData["Wide"] = true;
+    var regions = ViewData["Regions"] as IReadOnlyList<SeneCare.Application.Admin.ZoneRegion> ?? [];
+    var selected = ViewData["Region"] as Guid?;
+}
+
+<a href="/admin/referentiel" class="inline-flex min-h-12 items-center font-medium">← @L["Admin_Geography"]</a>
+<h1 class="sc-titre">@L["Zones_Waitlist"]</h1>
+<p class="mt-1 text-charbon-doux">@L["Zones_WaitlistIntro"]</p>
+
+<form method="get" class="mt-4 flex flex-wrap items-end gap-2">
+    <div class="min-w-56">
+        <label class="sc-label" for="region">@L["Admin_Region"]</label>
+        <select id="region" name="region" class="sc-input">
+            <option value="">@L["Zones_AllRegions"]</option>
+            @foreach (var r in regions)
+            {
+                <option value="@r.Id" selected="@(r.Id == selected)">@r.Name (@r.Waiting)</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="sc-btn-secondaire">@L["Admin_Search"]</button>
+</form>
+
+@if (Model.Count == 0)
+{
+    <p class="mt-6 rounded-2xl bg-sourdine px-4 py-3 text-charbon-doux">@L["Zones_WaitlistEmpty"]</p>
+}
+else
+{
+    <div class="mt-4 overflow-x-auto rounded-lg border border-ligne bg-surface">
+        <table class="sc-table min-w-[44rem]">
+            <thead>
+                <tr>
+                    <th scope="col" class="px-3 py-2">@L["Zones_Date"]</th>
+                    <th scope="col" class="px-3 py-2">@L["Admin_Region"]</th>
+                    <th scope="col" class="px-3 py-2">@L["Zones_Place"]</th>
+                    <th scope="col" class="px-3 py-2">@L["Zones_Person"]</th>
+                    <th scope="col" class="px-3 py-2"><span class="sr-only">@L["Zones_Delete"]</span></th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-ligne">
+                @foreach (var w in Model)
+                {
+                    <tr>
+                        <td class="px-3 py-2 whitespace-nowrap">@Formatting.ShortDate(w.At)</td>
+                        <td class="px-3 py-2">@w.Region</td>
+                        <td class="px-3 py-2">@w.Place</td>
+                        <td class="px-3 py-2">@(w.Name ?? "—")<span class="block font-mono text-sm">@w.Phone</span></td>
+                        <td class="px-3 py-2 text-right">
+                            <form method="post" action="/admin/referentiel/attente/@w.Id/supprimer">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="region" value="@selected" />
+                                <button type="submit" class="sc-btn-discret text-rouge">@L["Zones_Delete"]</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

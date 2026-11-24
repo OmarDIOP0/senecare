@@ -39,6 +39,8 @@ public interface IApplicationDbContext
 
     DbSet<Neighborhood> Neighborhoods { get; }
 
+    DbSet<CoverageRequest> CoverageRequests { get; }
+
     DbSet<Subscription> Subscriptions { get; }
 
     DbSet<Invoice> Invoices { get; }

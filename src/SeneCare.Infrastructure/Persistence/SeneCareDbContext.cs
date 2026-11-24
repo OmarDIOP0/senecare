@@ -50,6 +50,8 @@ public sealed class SeneCareDbContext(DbContextOptions<SeneCareDbContext> option
 
     public DbSet<Neighborhood> Neighborhoods => Set<Neighborhood>();
 
+    public DbSet<CoverageRequest> CoverageRequests => Set<CoverageRequest>();
+
     public DbSet<Plan> Plans => Set<Plan>();
 
     public DbSet<Subscription> Subscriptions => Set<Subscription>();

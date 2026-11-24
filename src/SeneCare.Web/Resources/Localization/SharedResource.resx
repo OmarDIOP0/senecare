@@ -859,7 +859,7 @@
   <data name="Admin_Plans" xml:space="preserve"><value>Offres et tarifs</value></data>
   <data name="Admin_Plans_Text" xml:space="preserve"><value>Prix, délais d'intervention, visites, métiers couverts.</value></data>
   <data name="Admin_Plans_Intro" xml:space="preserve"><value>Les abonnements en cours gardent leur prix. Les nouveaux abonnements et les nouvelles demandes utilisent ces valeurs. Chaque modification est journalisée.</value></data>
-  <data name="Admin_Geography" xml:space="preserve"><value>Référentiel géographique</value></data>
+  <data name="Admin_Geography" xml:space="preserve"><value>Zones et référentiel</value></data>
   <data name="Admin_Geography_Text" xml:space="preserve"><value>Régions, départements, communes et quartiers.</value></data>
   <data name="Admin_Settings" xml:space="preserve"><value>Paramètres</value></data>
   <data name="Admin_Settings_Text" xml:space="preserve"><value>Délai de grâce, garantie, seuil des quartiers…</value></data>
@@ -1561,4 +1561,43 @@
   <data name="Notif_payment_duplicate_Text" xml:space="preserve"><value>Facture {0} · {1} reçu en plus par {3} : à rembourser ou à reporter.</value></data>
   <data name="Notif_payment_mismatch_Title" xml:space="preserve"><value>Paiement à contrôler</value></data>
   <data name="Notif_payment_mismatch_Text" xml:space="preserve"><value>Paiement {3} de {1} (transaction {2}) : montant ou marchand inattendu, non crédité.</value></data>
+  <data name="Zones_Intro" xml:space="preserve"><value>Ouvrez les régions et les communes où SeneCare intervient. Ailleurs, les clients ne peuvent pas ajouter de logement : ils laissent leur numéro pour être prévenus.</value></data>
+  <data name="Zones_Waitlist" xml:space="preserve"><value>Liste d'attente</value></data>
+  <data name="Zones_Regions" xml:space="preserve"><value>Régions</value></data>
+  <data name="Zones_CommunesOpen" xml:space="preserve"><value>{0} / {1} communes ouvertes</value></data>
+  <data name="Zones_WaitingCount" xml:space="preserve"><value>{0} en attente</value></data>
+  <data name="Zones_CloseRegion" xml:space="preserve"><value>Fermer {0}</value></data>
+  <data name="Zones_OpenRegion" xml:space="preserve"><value>Ouvrir {0}</value></data>
+  <data name="Zones_Open" xml:space="preserve"><value>Ouverte</value></data>
+  <data name="Zones_ClosedLabel" xml:space="preserve"><value>Fermée</value></data>
+  <data name="Zones_NewCommune" xml:space="preserve"><value>Nouvelle commune</value></data>
+  <data name="Zones_Coverage" xml:space="preserve"><value>Couverture</value></data>
+  <data name="Zones_RegionClosed" xml:space="preserve"><value>Région fermée</value></data>
+  <data name="Zones_Opened" xml:space="preserve"><value>Zone ouverte : les clients peuvent y ajouter un logement.</value></data>
+  <data name="Zones_Closed" xml:space="preserve"><value>Zone fermée : plus de nouveau logement ici (les clients déjà inscrits ne sont pas touchés).</value></data>
+  <data name="Zones_WaitlistDeleted" xml:space="preserve"><value>Demande supprimée.</value></data>
+  <data name="Zones_WaitlistIntro" xml:space="preserve"><value>Les personnes à prévenir quand SeneCare ouvrira leur zone. Supprimez une demande une fois la personne prévenue.</value></data>
+  <data name="Zones_AllRegions" xml:space="preserve"><value>Toutes les régions</value></data>
+  <data name="Zones_WaitlistEmpty" xml:space="preserve"><value>Personne en attente pour l'instant.</value></data>
+  <data name="Zones_Date" xml:space="preserve"><value>Date</value></data>
+  <data name="Zones_Place" xml:space="preserve"><value>Lieu</value></data>
+  <data name="Zones_Person" xml:space="preserve"><value>Personne</value></data>
+  <data name="Zones_Delete" xml:space="preserve"><value>Supprimer</value></data>
+  <data name="Zones_Public_Eyebrow" xml:space="preserve"><value>Bientôt chez vous</value></data>
+  <data name="Zones_Public_Title" xml:space="preserve"><value>SeneCare n'intervient pas encore dans votre zone</value></data>
+  <data name="Zones_Public_Text" xml:space="preserve"><value>Laissez votre numéro : nous vous prévenons dès que nos techniciens arrivent près de chez vous.</value></data>
+  <data name="Zones_Locality" xml:space="preserve"><value>Votre ville ou votre quartier</value></data>
+  <data name="Zones_Locality_Placeholder" xml:space="preserve"><value>Ex. : Kolda, quartier Sikilo</value></data>
+  <data name="Zones_Name" xml:space="preserve"><value>Votre nom (facultatif)</value></data>
+  <data name="Zones_Consent" xml:space="preserve"><value>Votre numéro sert uniquement à vous prévenir de l'arrivée de SeneCare dans votre zone ; il est effacé ensuite.</value></data>
+  <data name="Zones_Join" xml:space="preserve"><value>Prévenez-moi</value></data>
+  <data name="Zones_Joined" xml:space="preserve"><value>C'est noté : nous vous prévenons dès que SeneCare arrive dans votre zone.</value></data>
+  <data name="Zones_NotListed" xml:space="preserve"><value>Votre ville n'est pas dans la liste ? Prévenez-moi quand SeneCare y arrive</value></data>
+  <data name="Zones_NotCovered" xml:space="preserve"><value>pas encore couvert</value></data>
+  <data name="Zones_Notify" xml:space="preserve"><value>Prévenez-moi</value></data>
+  <data name="Error_place_not_served" xml:space="preserve"><value>SeneCare n'intervient pas encore dans cette zone. Laissez votre numéro pour être prévenu.</value></data>
+  <data name="Error_coverage_region" xml:space="preserve"><value>Choisissez votre région.</value></data>
+  <data name="Error_coverage_locality" xml:space="preserve"><value>Indiquez votre ville ou votre quartier.</value></data>
+  <data name="Error_coverage_too_many" xml:space="preserve"><value>Cette demande est déjà enregistrée.</value></data>
+  <data name="Zones_ChooseRegion" xml:space="preserve"><value>Choisissez votre région</value></data>
 </root>

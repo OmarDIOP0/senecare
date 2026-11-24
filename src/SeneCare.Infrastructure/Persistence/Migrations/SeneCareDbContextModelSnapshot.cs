@@ -900,6 +900,10 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("department_id");
 
+                    b.Property<bool>("IsServed")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_served");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(120)
@@ -920,6 +924,53 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_communes_department_id_slug");
 
                     b.ToTable("communes", (string)null);
+                });
+
+            modelBuilder.Entity("SeneCare.Domain.Locations.CoverageRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("CommuneId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("commune_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("FullName")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)")
+                        .HasColumnName("full_name");
+
+                    b.Property<string>("Locality")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)")
+                        .HasColumnName("locality");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)")
+                        .HasColumnName("phone_number");
+
+                    b.Property<Guid>("RegionId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("region_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_coverage_requests");
+
+                    b.HasIndex("CommuneId")
+                        .HasDatabaseName("ix_coverage_requests_commune_id");
+
+                    b.HasIndex("RegionId", "CreatedAt")
+                        .HasDatabaseName("ix_coverage_requests_region_id_created_at");
+
+                    b.ToTable("coverage_requests", (string)null);
                 });
 
             modelBuilder.Entity("SeneCare.Domain.Locations.Department", b =>
@@ -1006,6 +1057,10 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
+
+                    b.Property<bool>("IsServed")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_served");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -2284,6 +2339,22 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_communes_departments_department_id");
+                });
+
+            modelBuilder.Entity("SeneCare.Domain.Locations.CoverageRequest", b =>
+                {
+                    b.HasOne("SeneCare.Domain.Locations.Commune", null)
+                        .WithMany()
+                        .HasForeignKey("CommuneId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_coverage_requests_communes_commune_id");
+
+                    b.HasOne("SeneCare.Domain.Locations.Region", null)
+                        .WithMany()
+                        .HasForeignKey("RegionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_coverage_requests_regions_region_id");
                 });
 
             modelBuilder.Entity("SeneCare.Domain.Locations.Department", b =>

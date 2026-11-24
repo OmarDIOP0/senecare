@@ -38,6 +38,11 @@ public sealed class Region : Place
         : base(id, name, slug)
     {
     }
+
+    /// <summary>SENECARE works in this region (set by admins). A zone is open when its region and its commune are.</summary>
+    public bool IsServed { get; private set; } = true;
+
+    public void SetServed(bool served) => IsServed = served;
 }
 
 public sealed class Department : Place
@@ -62,6 +67,11 @@ public sealed class Commune : Place
         : base(id, name, slug) => DepartmentId = departmentId;
 
     public Guid DepartmentId { get; private set; }
+
+    /// <summary>Open inside an open region (admins can close one commune of a covered region).</summary>
+    public bool IsServed { get; private set; } = true;
+
+    public void SetServed(bool served) => IsServed = served;
 }
 
 public sealed class Neighborhood : Place

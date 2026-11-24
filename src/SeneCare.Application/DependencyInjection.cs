@@ -48,6 +48,8 @@ public static class DependencyInjection
         services.AddScoped<NotificationInbox>();
         services.AddScoped<SearchNeighborhoodsHandler>();
         services.AddScoped<ListCommunesHandler>();
+        services.AddScoped<Coverage>();
+        services.AddScoped<WaitlistHandler>();
         services.AddScoped<SuggestNeighborhoodHandler>();
         services.AddScoped<TourProgressHandler>();
 
@@ -91,6 +93,7 @@ public static class DependencyInjection
         services.AddScoped<TechnicianManagement>();
         services.AddScoped<PlanManagement>();
         services.AddScoped<GeographyManagement>();
+        services.AddScoped<ZoneManagement>();
         services.AddScoped<SettingsManagement>();
         services.AddScoped<NeighborhoodMembership>();
         services.AddScoped<NeighborhoodPrograms>();

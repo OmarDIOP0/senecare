@@ -7,7 +7,8 @@ using SeneCare.Domain.Locations;
 namespace SeneCare.Application.Locations;
 
 /// <summary>« Almadies » · Ngor, Dakar</summary>
-public sealed record NeighborhoodOption(Guid Id, string Name, string Commune, string Department, string Region)
+/// <param name="Served">In a zone SENECARE covers; otherwise shown with « Prévenez-moi » and not selectable.</param>
+public sealed record NeighborhoodOption(Guid Id, string Name, string Commune, string Department, string Region, bool Served = true, Guid CommuneId = default)
 {
     public string Context => Commune == Name ? $"{Department}, {Region}" : $"{Commune}, {Department}";
 }
@@ -34,8 +35,8 @@ public sealed class SearchNeighborhoodsHandler(IApplicationDbContext db)
                 join d in db.Departments on c.DepartmentId equals d.Id
                 join r in db.Regions on d.RegionId equals r.Id
                 where n.Slug.Contains(query) || c.Slug.Contains(query)
-                orderby n.Slug.StartsWith(query) descending, n.Name
-                select new NeighborhoodOption(n.Id, n.Name, c.Name, d.Name, r.Name))
+                orderby (c.IsServed && r.IsServed) descending, n.Slug.StartsWith(query) descending, n.Name
+                select new NeighborhoodOption(n.Id, n.Name, c.Name, d.Name, r.Name, c.IsServed && r.IsServed, c.Id))
             .AsNoTracking()
             .Take(MaxResults)
             .ToListAsync(cancellationToken);
@@ -46,13 +47,15 @@ public sealed class SearchNeighborhoodsHandler(IApplicationDbContext db)
 /// <summary>« Ngor » · Dakar: a commune to attach a new neighborhood to.</summary>
 public sealed record CommuneOption(Guid Id, string Name, string Department);
 
-/// <summary>All communes, by department then name (113 in the reference data): the « add my neighborhood » list.</summary>
+/// <summary>Communes of the covered zones, by department then name: the « add my neighborhood » list.</summary>
 public sealed class ListCommunesHandler(IApplicationDbContext db)
 {
     public async Task<IReadOnlyList<CommuneOption>> HandleAsync(CancellationToken cancellationToken = default) =>
         await (
                 from c in db.Communes
                 join d in db.Departments on c.DepartmentId equals d.Id
+                join r in db.Regions on d.RegionId equals r.Id
+                where c.IsServed && r.IsServed
                 orderby d.Name, c.Name
                 select new CommuneOption(c.Id, c.Name, d.Name))
             .AsNoTracking()
@@ -65,7 +68,7 @@ public sealed record SuggestNeighborhoodCommand(Guid UserId, Guid CommuneId, str
 /// « Ajouter mon quartier » when the search finds nothing. Same name in the same commune: the existing one is
 /// returned. A few per person and per day, so the reference data cannot be flooded.
 /// </summary>
-public sealed class SuggestNeighborhoodHandler(IApplicationDbContext db, TimeProvider clock)
+public sealed class SuggestNeighborhoodHandler(IApplicationDbContext db, Coverage coverage, TimeProvider clock)
 {
     public const int MaxPerUserPerDay = 5;
 
@@ -83,6 +86,11 @@ public sealed class SuggestNeighborhoodHandler(IApplicationDbContext db, TimePro
         if (commune is null)
         {
             return Result<NeighborhoodOption>.Failure("place.commune");
+        }
+
+        if (!await coverage.IsCommuneServedAsync(command.CommuneId, cancellationToken))
+        {
+            return Result<NeighborhoodOption>.Failure("place.not_served");
         }
 
         var slug = Slug.From(command.Name ?? string.Empty);

@@ -23,7 +23,7 @@ public sealed record AddPropertyCommand(
 /// « Ajouter mon logement » / « Ajouter un site ». For a household, each home gets its own « Maisons &amp; Villas »
 /// subscription, created pending until the registration fee and first month are paid (Phase 6).
 /// </summary>
-public sealed class AddPropertyHandler(IApplicationDbContext db, AccessControl access, MediaUploader uploader, TimeProvider clock)
+public sealed class AddPropertyHandler(IApplicationDbContext db, AccessControl access, MediaUploader uploader, Locations.Coverage coverage, TimeProvider clock)
 {
     public const string HouseholdPlanCode = "HOME";
 
@@ -40,6 +40,12 @@ public sealed class AddPropertyHandler(IApplicationDbContext db, AccessControl a
         if (command.NeighborhoodId is not { } neighborhoodId || !await db.Neighborhoods.AnyAsync(n => n.Id == neighborhoodId, cancellationToken))
         {
             return Result<Guid>.Failure("address.neighborhood");
+        }
+
+        // A new home only in a zone SENECARE covers (the form offers « Prévenez-moi » elsewhere).
+        if (!await coverage.IsServedAsync(neighborhoodId, cancellationToken))
+        {
+            return Result<Guid>.Failure("place.not_served");
         }
 
         if (command.Photos.Count > Property.MaxPhotos)

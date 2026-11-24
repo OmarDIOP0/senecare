@@ -1,40 +1,125 @@
-@model IReadOnlyList<SeneCare.Application.Admin.CommuneRow>
+@model SeneCare.Web.ViewModels.ZonesPage
 @{
     Layout = "_AppLayout";
     ViewData["NavActive"] = "gestion";
     ViewData["Title"] = L["Admin_Geography"];
     ViewData["Wide"] = true;
+    var query = ViewData["Query"] as string;
+    var waiting = Model.Regions.Sum(r => r.Waiting);
 }
 
 <a href="/admin/gestion" class="inline-flex min-h-12 items-center font-medium">← @L["Tab_Management"]</a>
-<h1 class="sc-titre">@L["Admin_Geography"]</h1>
+<div class="flex flex-wrap items-end justify-between gap-3">
+    <div>
+        <h1 class="sc-titre">@L["Admin_Geography"]</h1>
+        <p class="mt-1 text-charbon-doux">@L["Zones_Intro"]</p>
+    </div>
+    <a href="/admin/referentiel/attente" class="sc-btn-secondaire"><sc-icon name="users" class="size-4" />@L["Zones_Waitlist"] (@waiting)</a>
+</div>
 
-<form method="get" class="mt-4 flex flex-wrap items-end gap-2" role="search">
+@* ---- Regions: open / closed (a zone is open when its region and its commune are) ---- *@
+<section class="mt-8" aria-labelledby="regions-titre">
+    <h2 id="regions-titre" class="sc-sous-titre">@L["Zones_Regions"]</h2>
+    <ul class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        @foreach (var r in Model.Regions)
+        {
+            <li class="flex items-center justify-between gap-3 rounded-2xl border border-ligne bg-surface px-4 py-3 shadow-carte">
+                <div class="min-w-0">
+                    <p class="flex items-center gap-2 font-semibold">
+                        <span class="size-2.5 shrink-0 rounded-full @(r.Served ? "bg-baobab" : "bg-charbon-pale")" aria-hidden="true"></span>@r.Name
+                    </p>
+                    <p class="text-sm text-charbon-doux">
+                        @L["Zones_CommunesOpen", r.ServedCommunes, r.Communes]
+                        @if (r.Waiting > 0)
+                        {
+                            <a href="/admin/referentiel/attente?region=@r.Id" class="ml-1 font-semibold text-laterite">· @L["Zones_WaitingCount", r.Waiting]</a>
+                        }
+                    </p>
+                </div>
+                <form method="post" action="/admin/referentiel/regions/@r.Id/couverture">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="served" value="@(r.Served ? "false" : "true")" />
+                    <button type="submit" class="@(r.Served ? "sc-badge bg-baobab-clair text-baobab" : "sc-badge bg-sourdine text-charbon-doux") min-h-11 cursor-pointer px-4"
+                            aria-label="@L[r.Served ? "Zones_CloseRegion" : "Zones_OpenRegion", r.Name]">
+                        @L[r.Served ? "Zones_Open" : "Zones_ClosedLabel"]
+                    </button>
+                </form>
+            </li>
+        }
+    </ul>
+</section>
+
+@* ---- Add a commune missing from the reference data ---- *@
+<form method="post" action="/admin/referentiel/communes" class="sc-carte mt-8 grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+    @Html.AntiForgeryToken()
+    <div>
+        <label class="sc-label" for="departement">@L["Admin_Department"]</label>
+        <select id="departement" name="departmentId" class="sc-input" required>
+            <option value="">@L["Picker_AddChoose"]</option>
+            @foreach (var group in Model.Departments.GroupBy(d => d.Region))
+            {
+                <optgroup label="@group.Key">
+                    @foreach (var d in group)
+                    {
+                        <option value="@d.Id">@d.Name</option>
+                    }
+                </optgroup>
+            }
+        </select>
+    </div>
+    <div>
+        <label class="sc-label" for="commune">@L["Zones_NewCommune"]</label>
+        <input id="commune" name="name" class="sc-input" required maxlength="120" />
+    </div>
+    <button type="submit" class="sc-btn-primaire"><sc-icon name="plus" />@L["Admin_Add"]</button>
+</form>
+
+@* ---- Communes ---- *@
+<form method="get" class="mt-8 flex flex-wrap items-end gap-2" role="search">
     <div class="min-w-64 flex-1">
         <label class="sc-label" for="q">@L["Admin_Search"]</label>
-        <input id="q" name="q" type="search" class="sc-input" value="@ViewData["Query"]" placeholder="@L["Admin_Geo_Placeholder"]" />
+        <input id="q" name="q" type="search" class="sc-input" value="@query" placeholder="@L["Admin_Geo_Placeholder"]" />
     </div>
     <button type="submit" class="sc-btn-secondaire"><sc-icon name="search" />@L["Admin_Search"]</button>
 </form>
 
 <div class="mt-4 overflow-x-auto rounded-lg border border-ligne bg-surface">
-    <table class="sc-table min-w-[36rem]">
+    <table class="sc-table min-w-[40rem]">
         <thead>
             <tr>
                 <th scope="col" class="px-3 py-2">@L["Admin_Commune"]</th>
                 <th scope="col" class="px-3 py-2">@L["Admin_Department"]</th>
                 <th scope="col" class="px-3 py-2">@L["Admin_Region"]</th>
                 <th scope="col" class="px-3 py-2">@L["Admin_NeighborhoodsCount"]</th>
+                <th scope="col" class="px-3 py-2">@L["Zones_Coverage"]</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-ligne">
-            @foreach (var c in Model)
+            @foreach (var c in Model.Communes)
             {
                 <tr>
                     <td class="px-3 py-2"><a href="/admin/referentiel/@c.Id" class="font-medium">@c.Name</a></td>
                     <td class="px-3 py-2">@c.Department</td>
                     <td class="px-3 py-2">@c.Region</td>
                     <td class="px-3 py-2">@c.Neighborhoods</td>
+                    <td class="px-3 py-2">
+                        @if (!c.RegionServed)
+                        {
+                            <span class="text-sm text-charbon-doux">@L["Zones_RegionClosed"]</span>
+                        }
+                        else
+                        {
+                            <form method="post" action="/admin/referentiel/@c.Id/couverture">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="served" value="@(c.Served ? "false" : "true")" />
+                                <input type="hidden" name="q" value="@query" />
+                                <button type="submit" class="@(c.Served ? "sc-badge bg-baobab-clair text-baobab" : "sc-badge bg-sourdine text-charbon-doux") min-h-10 cursor-pointer px-3"
+                                        aria-label="@L[c.Served ? "Zones_CloseRegion" : "Zones_OpenRegion", c.Name]">
+                                    @L[c.Served ? "Zones_Open" : "Zones_ClosedLabel"]
+                                </button>
+                            </form>
+                        }
+                    </td>
                 </tr>
             }
         </tbody>

@@ -184,16 +184,63 @@ public sealed class PlansController(PlanManagement plans) : Controller
     }
 }
 
-/// <summary>Geographic reference data (super-admin): communes and their neighborhoods.</summary>
+/// <summary>
+/// Geographic reference data and covered zones (super-admin): open / close regions and communes, add communes and
+/// neighborhoods, and the « Prévenez-moi » requests from places not covered yet.
+/// </summary>
 [Authorize(Policy = Policies.SuperAdmin)]
 [Route("/admin/referentiel")]
-public sealed class GeographyController(GeographyManagement geography) : Controller
+public sealed class GeographyController(GeographyManagement geography, ZoneManagement zones) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(string? q, CancellationToken cancellationToken)
     {
         ViewData["Query"] = q;
-        return View(await geography.CommunesAsync(q, cancellationToken));
+        return View(new SeneCare.Web.ViewModels.ZonesPage(
+            await zones.RegionsAsync(cancellationToken),
+            await zones.DepartmentsAsync(cancellationToken),
+            await zones.CommunesAsync(q, cancellationToken)));
+    }
+
+    [HttpPost("regions/{id:guid}/couverture")]
+    public async Task<IActionResult> RegionCoverage(Guid id, bool served, CancellationToken cancellationToken)
+    {
+        var result = await zones.SetRegionServedAsync(User.GetUserId()!.Value, id, served, cancellationToken);
+        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()[served ? "Zones_Opened" : "Zones_Closed"].Value : this.ErrorMessage(result.Error);
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost("{id:guid}/couverture")]
+    public async Task<IActionResult> CommuneCoverage(Guid id, bool served, string? q, CancellationToken cancellationToken)
+    {
+        var result = await zones.SetCommuneServedAsync(User.GetUserId()!.Value, id, served, cancellationToken);
+        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()[served ? "Zones_Opened" : "Zones_Closed"].Value : this.ErrorMessage(result.Error);
+        return RedirectToAction(nameof(Index), new { q });
+    }
+
+    [HttpPost("communes")]
+    public async Task<IActionResult> AddCommune(Guid departmentId, string? name, CancellationToken cancellationToken)
+    {
+        var result = await zones.AddCommuneAsync(User.GetUserId()!.Value, departmentId, name, cancellationToken);
+        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Admin_Saved"].Value : this.ErrorMessage(result.Error);
+        return result.IsSuccess ? RedirectToAction(nameof(Commune), new { id = result.Value }) : RedirectToAction(nameof(Index));
+    }
+
+    /// <summary>« Prévenez-moi » requests (phone numbers: each reading is audited).</summary>
+    [HttpGet("attente")]
+    public async Task<IActionResult> Waitlist(Guid? region, CancellationToken cancellationToken)
+    {
+        ViewData["Regions"] = await zones.RegionsAsync(cancellationToken);
+        ViewData["Region"] = region;
+        return View(await zones.WaitlistAsync(User.GetUserId()!.Value, region, cancellationToken));
+    }
+
+    [HttpPost("attente/{id:guid}/supprimer")]
+    public async Task<IActionResult> DeleteWaitlist(Guid id, Guid? region, CancellationToken cancellationToken)
+    {
+        var result = await zones.DeleteWaitlistAsync(User.GetUserId()!.Value, id, cancellationToken);
+        TempData["flash.toast"] = result.IsSuccess ? this.Localizer()["Zones_WaitlistDeleted"].Value : this.ErrorMessage(result.Error);
+        return RedirectToAction(nameof(Waitlist), new { region });
     }
 
     [HttpGet("{id:guid}")]

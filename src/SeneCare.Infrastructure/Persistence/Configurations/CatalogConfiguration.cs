@@ -56,6 +56,20 @@ internal sealed class NeighborhoodConfiguration : IEntityTypeConfiguration<Neigh
     }
 }
 
+/// <summary>« Prévenez-moi » requests from places SENECARE does not cover yet.</summary>
+internal sealed class CoverageRequestConfiguration : IEntityTypeConfiguration<CoverageRequest>
+{
+    public void Configure(EntityTypeBuilder<CoverageRequest> builder)
+    {
+        builder.ToTable("coverage_requests");
+        builder.Property(c => c.Locality).HasMaxLength(CoverageRequest.LocalityMaxLength);
+        builder.Property(c => c.FullName).HasMaxLength(CoverageRequest.NameMaxLength);
+        builder.HasOne<Region>().WithMany().HasForeignKey(c => c.RegionId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<Commune>().WithMany().HasForeignKey(c => c.CommuneId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasIndex(c => new { c.RegionId, c.CreatedAt });
+    }
+}
+
 internal sealed class PlanConfiguration : IEntityTypeConfiguration<Plan>
 {
     public void Configure(EntityTypeBuilder<Plan> builder)

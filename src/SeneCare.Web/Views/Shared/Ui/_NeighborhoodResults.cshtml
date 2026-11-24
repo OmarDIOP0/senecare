@@ -29,9 +29,23 @@
                 <sc-icon name="plus" class="size-4" />@L["Picker_AddButton", typed]
             </button>
         </div>
+        @* A town SENECARE does not cover yet is not in the list: the person leaves a number instead. *@
+        <p class="text-sm"><a href="/zones/attente" class="sc-lien font-semibold">@L["Zones_NotListed"]</a></p>
     </li>
 }
-@foreach (var option in Model)
+@foreach (var option in Model.Where(o => !o.Served))
+{
+    @* Outside the covered zones: shown, not selectable, with « Prévenez-moi ». *@
+    <li class="flex items-center gap-3 px-3 py-2 text-charbon-doux">
+        <sc-icon name="map-pin" class="size-5 text-charbon-pale" />
+        <span class="min-w-0 flex-1">
+            <span class="font-medium">@option.Name</span>
+            <span class="block text-sm">@option.Context · @L["Zones_NotCovered"]</span>
+        </span>
+        <a href="/zones/attente?commune=@option.CommuneId" class="sc-lien text-sm font-semibold whitespace-nowrap">@L["Zones_Notify"]</a>
+    </li>
+}
+@foreach (var option in Model.Where(o => o.Served))
 {
     <li role="option" aria-selected="false">
         <button type="button" data-pick="@field" data-pick-id="@option.Id" data-pick-label="@option.Name (@option.Commune)"

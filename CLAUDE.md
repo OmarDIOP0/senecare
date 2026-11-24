@@ -65,6 +65,11 @@ Finance + Super-admin : paiement déclaré ; client : paiement validé* / refus�
   (référentiel en base, seed avec Dakar, Thiès, Rufisque, Pikine, Guédiawaye,
   Mbour, Saint-Louis, Touba, Kaolack, Ziguinchor…) + point GPS sur carte.
   Le champ « point de repère » n'est plus demandé dans les formulaires (décision utilisateur), la colonne reste en base.
+  Zones couvertes (décision du 24/11/2026) : l'admin ouvre / ferme régions et communes et ajoute des communes
+  (`/admin/referentiel`, `ZoneManagement`) ; zone ouverte = région ET commune ouvertes (`Coverage`) ; ailleurs le
+  quartier s'affiche « pas encore couvert », aucun nouveau logement (refusé aussi côté serveur) et « Prévenez-moi »
+  (`/zones/attente`, `CoverageRequest` : numéro gardé pour ça seulement, lecture journalisée, effacé une fois traité).
+  Liste officielle complète des communes (post-2013) encore à fournir : seuls les chefs-lieux sont en base hors Dakar.
 - Communication : WhatsApp est le canal n°1, puis SMS, puis push PWA, puis email.
   Boutons « Appeler » et « WhatsApp » visibles sur chaque intervention.
 - Langues : Français par défaut, Wolof prévu dès le départ (fichiers de ressources,

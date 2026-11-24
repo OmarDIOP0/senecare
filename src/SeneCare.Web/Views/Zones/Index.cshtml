@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = L["Zones_Public_Title"];
+    var regions = ViewData["Regions"] as IReadOnlyList<SeneCare.Application.Locations.WaitlistRegion> ?? [];
+    var commune = ViewData["Commune"] as SeneCare.Application.Locations.WaitlistCommune;
+}
+
+<p class="sc-eyebrow">@L["Zones_Public_Eyebrow"]</p>
+<h1 class="sc-titre mt-2">@L["Zones_Public_Title"]</h1>
+<p class="mt-3 text-[17px] text-charbon-doux">@L["Zones_Public_Text"]</p>
+
+@if (TempData["flash.error"] is string error)
+{
+    <p class="mt-4 flex items-start gap-2 rounded-2xl bg-rouge-clair px-4 py-3 text-sm text-rouge" role="alert"><sc-icon name="triangle-alert" class="mt-0.5 size-4" />@error</p>
+}
+
+<form method="post" action="/zones/attente" class="sc-carte mt-6 grid gap-5">
+    @Html.AntiForgeryToken()
+    @if (commune is not null)
+    {
+        <input type="hidden" name="communeId" value="@commune.Id" />
+        <input type="hidden" name="regionId" value="@commune.RegionId" />
+        <p class="flex items-center gap-2 font-semibold"><sc-icon name="map-pin" class="size-5 text-laterite" />@commune.Name · @commune.Department</p>
+    }
+    else
+    {
+        <div>
+            <label class="sc-label" for="regionId">@L["Admin_Region"]</label>
+            <select id="regionId" name="regionId" class="sc-input" required>
+                <option value="">@L["Zones_ChooseRegion"]</option>
+                @foreach (var r in regions)
+                {
+                    <option value="@r.Id">@r.Name</option>
+                }
+            </select>
+        </div>
+        <div>
+            <label class="sc-label" for="locality">@L["Zones_Locality"]</label>
+            <input id="locality" name="locality" class="sc-input" required maxlength="120" placeholder="@L["Zones_Locality_Placeholder"]" />
+        </div>
+    }
+    <partial name="Ui/_PhoneInput" model='new PhoneInputModel("phone", null, L["SignIn_PhoneLabel"].Value)' />
+    <div>
+        <label class="sc-label" for="fullName">@L["Zones_Name"]</label>
+        <input id="fullName" name="fullName" class="sc-input" maxlength="120" autocomplete="name" />
+    </div>
+    <p class="sc-aide">@L["Zones_Consent"]</p>
+    <button type="submit" class="sc-btn-primaire min-h-12 justify-self-start"><sc-icon name="bell" class="size-5" />@L["Zones_Join"]</button>
+</form>

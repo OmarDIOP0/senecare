@@ -16,17 +16,11 @@
     var percent = Math.Min(100, 100 * Model.Members / Math.Max(1, Model.Threshold));
     var steps = new[] { "Community_Step1", "Community_Step2", "Community_Step3" };
 }
-@section Head {
-    @* WhatsApp / Facebook preview of the shared link. *@
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="SENECARE" />
-    <meta property="og:title" content="@ViewData["Title"]" />
-    <meta property="og:description" content="@summary" />
-    <meta property="og:url" content="@url" />
-    <meta property="og:image" content="@image" />
-    <meta property="og:locale" content="fr_SN" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="canonical" href="@url" />
+@{
+    // WhatsApp / Facebook preview of the shared link (tags written by Site/_Seo).
+    ViewData["Description"] = summary;
+    ViewData["OgImage"] = image;
+    ViewData["Canonical"] = $"/quartier/{Model.CommuneSlug}/{Model.Slug}";
 }
 
 @* ---- Banner: the neighbourhood, its gauge, how to help ---- *@

@@ -1,7 +1,11 @@
 @model SeneCare.Application.Public.PublicHome
 @using SeneCare.Domain.Common
+@inject PublicUrls Urls
 @{
     ViewData["Title"] = L["Home_Title"];
+    ViewData["SeoTitle"] = L["Seo_Home_Title"].Value;
+    ViewData["Description"] = L["Seo_Home_Description"].Value;
+    ViewData["Canonical"] = "/";
     ViewData["FullWidth"] = true;
     ViewData["PhotoCredits"] = true;
     var steps = new[] { ("Home_Step1_Title", "Home_Step1_Text", "circle-user"), ("Home_Step2_Title", "Home_Step2_Text", "camera"), ("Home_Step3_Title", "Home_Step3_Text", "wrench") };
@@ -14,6 +18,10 @@
             new SeneCare.Application.Public.PublicAdvice(L["Space_Advice_PreRain_Title"].Value, L["Space_Advice_PreRain_Text"].Value, ServiceDomain.Waterproofing),
             new SeneCare.Application.Public.PublicAdvice(L["Space_Advice_Rain_Title"].Value, L["Space_Advice_Rain_Text"].Value, ServiceDomain.Plumbing),
         ];
+}
+
+@section Head {
+    @StructuredData.Business(await SiteContact.GetAsync(), Urls.Origin(Context.Request), L["Seo_Home_Description"].Value)
 }
 
 @* ---- Hero: what we do, where; quick request; a technician at work ---- *@

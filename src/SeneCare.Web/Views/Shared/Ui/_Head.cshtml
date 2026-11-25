@@ -16,8 +16,14 @@
 <meta name="theme-color" content="#f6f3ec" />
 @* Phone fields (data-phone): 9 digits starting with one of these, checked while typing. *@
 <meta name="sc-phone" content="@string.Join(",", SeneCare.Domain.Users.PhoneNumber.MobilePrefixes)" data-error="@L["Error_phone_invalid"]" />
-<meta name="description" content="@L["App_Promise"]" />
-<title>@ViewData["Title"] · @L["App_Name"]</title>
+@* SEO: each public page gives its own description (ViewData["Description"]) and may give a full title (SeoTitle);
+   signed-in spaces, sign-in / sign-up and utility pages say « noindex » (ViewData["NoIndex"]). *@
+<meta name="description" content="@(ViewData["Description"] as string ?? L["Seo_Default_Description"].Value)" />
+@if (ViewData["NoIndex"] is true)
+{
+    <meta name="robots" content="noindex, nofollow" />
+}
+<title>@(ViewData["SeoTitle"] as string ?? $"{ViewData["Title"]} · {L["App_Name"]}")</title>
 <link rel="manifest" href="/manifest.webmanifest" />
 <link rel="icon" href="~/img/icons/favicon.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="~/img/icons/apple-touch-icon.png" />

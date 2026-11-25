@@ -81,6 +81,9 @@ try
     builder.Services.AddScoped<SeneCare.Application.Abstractions.ILiveNotifications, SeneCare.Web.Hubs.LiveNotifications>();
     // Public site texts (Content/site-content.json): sample blocks only shown in development.
     builder.Services.AddScoped<SeneCare.Web.Infrastructure.SiteContact>();
+    // SEO: canonical address of the public pages (Seo:BaseUrl), robots.txt, sitemap.xml, share previews.
+    builder.Services.Configure<SeneCare.Web.Infrastructure.SeoOptions>(builder.Configuration.GetSection("Seo"));
+    builder.Services.AddSingleton<SeneCare.Web.Infrastructure.PublicUrls>();
     builder.Services.AddScoped<SeneCare.Web.Infrastructure.CachedPublicHome>();
     builder.Services.AddSingleton(SeneCare.Web.Infrastructure.SiteContent.Load(
         builder.Environment.ContentRootPath, builder.Environment.WebRootPath ?? string.Empty, builder.Environment.IsDevelopment()));

@@ -1,5 +1,6 @@
 @{
     ViewData["Title"] = L["Zones_Public_Title"];
+    ViewData["NoIndex"] = true;
     var regions = ViewData["Regions"] as IReadOnlyList<SeneCare.Application.Locations.WaitlistRegion> ?? [];
     var commune = ViewData["Commune"] as SeneCare.Application.Locations.WaitlistCommune;
 }

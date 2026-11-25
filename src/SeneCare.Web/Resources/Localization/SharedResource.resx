@@ -1613,4 +1613,8 @@
   <data name="Error_account_suspend_self" xml:space="preserve"><value>Vous ne pouvez pas suspendre votre propre compte client.</value></data>
   <data name="Error_account_not_found" xml:space="preserve"><value>Compte introuvable.</value></data>
   <data name="Error_account_suspended" xml:space="preserve"><value>Ce compte est suspendu. Contactez le service client.</value></data>
+  <data name="Seo_Home_Title" xml:space="preserve"><value>SeneCare · Entretien et dépannage de votre maison au Sénégal</value></data>
+  <data name="Seo_Home_Description" xml:space="preserve"><value>Plomberie, électricité, étanchéité, maçonnerie, menuiserie, caméras et espaces extérieurs : vous signalez la panne depuis votre téléphone, un technicien SeneCare intervient. Abonnement pour maisons, villas et entreprises au Sénégal.</value></data>
+  <data name="Seo_Default_Description" xml:space="preserve"><value>SeneCare : maintenance et dépannage des maisons, villas et entreprises au Sénégal. Vous signalez, nous intervenons, votre patrimoine est préservé.</value></data>
+  <data name="Seo_ImageAlt" xml:space="preserve"><value>Un technicien SeneCare en intervention</value></data>
 </root>

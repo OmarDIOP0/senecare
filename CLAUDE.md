@@ -178,6 +178,11 @@ Site public (`_Layout`, `PublicSiteController`, `Views/PublicSite`, contenus `Co
 - Accueil : hero + formulaire rapide (`/demander`), métiers avec photo, « Comment ça marche, en 3 étapes », techniciens, exemple
   d'intervention, avis, chiffres, conseils, FAQ, appel final. Pages métiers, particuliers, entreprises,
   quartiers, tarifs (mensuel / annuel), FAQ, mentions, CGU.
+- SEO (25/11/2026) : chaque page publique donne sa description (`ViewData["Description"]`, titre complet possible
+  `SeoTitle`) ; `Site/_Seo` écrit l'adresse canonique (`Seo:BaseUrl` = https://senecare.net, `PublicUrls`) et l'aperçu
+  WhatsApp / Facebook (Open Graph, image `images/partage.jpg` 1200×630) ; JSON-LD `StructuredData` (entreprise locale
+  sur l'accueil depuis les coordonnées d'Admin › Paramètres, FAQ) ; `/robots.txt` et `/sitemap.xml` (`SeoController`) ;
+  `noindex` sur l'espace connecté, la connexion / l'inscription et les pages utilitaires (`ViewData["NoIndex"]`).
 - Coordonnées de SeneCare (téléphone, WhatsApp, e-mail, adresse, horaires, zones, réseaux) : réglées dans
   Admin › Paramètres (`SettingKeys.Contact`), jamais dans le code ; un champ vide n'est pas affiché.
 - Blocs `"sample": true` = contenus d'exemple, visibles en développement (étiquette « Exemple »), masqués en

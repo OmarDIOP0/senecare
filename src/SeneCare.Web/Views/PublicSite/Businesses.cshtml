@@ -2,6 +2,7 @@
 @using SeneCare.Domain.Accounts
 @{
     ViewData["Title"] = L["Site_Business_Title"];
+    ViewData["Description"] = L["Site_Business_Text"].Value;
     ViewData["FullWidth"] = true;
     var plans = Model.Plans.Where(p => p.Segment == AccountKind.Business).ToList();
 }

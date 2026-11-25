@@ -1,6 +1,13 @@
 @{
     ViewData["Title"] = L["Site_Faq"];
+    ViewData["Description"] = L["Site_Faq_Text"].Value;
     ViewData["FullWidth"] = true;
+}
+@section Head {
+    @if (Site.Visible(Site.Faq))
+    {
+        @StructuredData.Faq(Site.Faq.Items.Select(i => (i.Question, i.Answer)))
+    }
 }
 <partial name="Site/_PageHero" model='new SiteHeroModel(L["Site_Faq"].Value, L["Site_Faq_Text"].Value, L["Site_Faq"].Value)' />
 

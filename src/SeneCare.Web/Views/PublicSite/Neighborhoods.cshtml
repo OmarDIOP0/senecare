@@ -2,6 +2,7 @@
 @using SeneCare.Domain.Neighborhoods
 @{
     ViewData["Title"] = L["Site_Hoods_Title"];
+    ViewData["Description"] = L["Site_Hoods_Text"].Value;
     ViewData["FullWidth"] = true;
     var ranking = (IReadOnlyList<SeneCare.Application.Neighborhoods.RankingRow>)ViewData["Ranking"]!;
 }

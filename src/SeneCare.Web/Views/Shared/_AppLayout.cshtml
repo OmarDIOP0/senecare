@@ -16,6 +16,8 @@
     // Technicians work outside: stronger contrast and bigger targets everywhere in their app.
     var terrain = nav.TourKey == SeneCare.Application.Users.TourKeys.Technician ? "sc-terrain" : string.Empty;
     var width = ViewData["Wide"] is true ? "max-w-[1200px]" : "max-w-3xl";
+    // Signed-in spaces: never in search results.
+    ViewData["NoIndex"] = true;
 }
 <!DOCTYPE html>
 <html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">

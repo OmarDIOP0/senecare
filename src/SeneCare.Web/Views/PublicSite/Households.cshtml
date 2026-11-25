@@ -2,6 +2,7 @@
 @using SeneCare.Domain.Accounts
 @{
     ViewData["Title"] = L["Site_Households_Title"];
+    ViewData["Description"] = L["Site_Households_Text"].Value;
     ViewData["FullWidth"] = true;
     // « À partir de » the cheapest household offer; the others (villas…) are listed under it.
     var homes = Model.Plans.Where(p => p.Segment == AccountKind.Household).OrderBy(p => p.MonthlyPrice.Amount).ToList();

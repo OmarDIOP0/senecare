@@ -1,0 +1,29 @@
+@* Public pages: canonical address, WhatsApp / Facebook previews, and the structured data search engines read.
+   A page sets ViewData["Description"] (text of the preview), optionally ViewData["OgImage"] (absolute) and
+   ViewData["Canonical"] (path); pages that must not be indexed set ViewData["NoIndex"]. *@
+@inject PublicUrls Urls
+@{
+    var request = Context.Request;
+    var canonical = Urls.Absolute(request, ViewData["Canonical"] as string ?? request.Path.Value ?? "/");
+    var title = ViewData["SeoTitle"] as string ?? $"{ViewData["Title"]} · {L["App_Name"]}";
+    var description = ViewData["Description"] as string ?? L["Seo_Default_Description"].Value;
+    var image = ViewData["OgImage"] as string ?? Urls.Absolute(request, "/images/partage.jpg");
+}
+@if (ViewData["NoIndex"] is not true)
+{
+    <link rel="canonical" href="@canonical" />
+}
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="SeneCare" />
+<meta property="og:locale" content="fr_SN" />
+<meta property="og:title" content="@title" />
+<meta property="og:description" content="@description" />
+<meta property="og:url" content="@canonical" />
+<meta property="og:image" content="@image" />
+@if (ViewData["OgImage"] is null)
+{
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="@L["Seo_ImageAlt"]" />
+}
+<meta name="twitter:card" content="summary_large_image" />

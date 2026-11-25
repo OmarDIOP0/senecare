@@ -2,6 +2,7 @@
 @{
     var home = (SeneCare.Application.Public.PublicHome)ViewData["Home"]!;
     ViewData["Title"] = L["Site_Trade_PageTitle", Model.Name];
+    ViewData["Description"] = Model.Summary;
     ViewData["FullWidth"] = true;
     ViewData["PhotoCredits"] = true;
     // Reviews about this trade: published ones, else the sample ones (development only).

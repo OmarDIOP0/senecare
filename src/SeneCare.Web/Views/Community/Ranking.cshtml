@@ -5,9 +5,8 @@
     ViewData["FullWidth"] = true;
     ViewData["Title"] = L["Community_Ranking"];
 }
-@section Head {
-    <meta property="og:title" content="@L["Community_Ranking"]" />
-    <meta property="og:description" content="@L["Community_Ranking_Intro"]" />
+@{
+    ViewData["Description"] = L["Community_Ranking_Intro"].Value;
 }
 
 <section class="mx-auto w-full max-w-4xl px-4 pt-10 lg:px-6 lg:pt-14">

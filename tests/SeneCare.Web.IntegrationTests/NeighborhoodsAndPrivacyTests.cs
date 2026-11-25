@@ -296,7 +296,7 @@ public sealed class NeighborhoodsAndPrivacyTests(WebAppFixture app)
 
         var response = await client.SubmitMultipartAsync("/logements/nouveau", "/logements/nouveau", new Dictionary<string, string>
         {
-            ["Kind"] = "Villa",
+            ["Kind"] = "House",
             ["Name"] = name,
             ["Landmark"] = "Près de la mosquée",
             ["NeighborhoodId"] = neighborhoodId.Value.ToString(),

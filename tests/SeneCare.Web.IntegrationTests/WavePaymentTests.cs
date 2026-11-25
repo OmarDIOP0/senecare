@@ -300,7 +300,7 @@ public sealed partial class WavePaymentTests(WebAppFixture app)
 
         var response = await client.SubmitMultipartAsync("/logements/nouveau", "/logements/nouveau", new Dictionary<string, string>
         {
-            ["Kind"] = "Villa",
+            ["Kind"] = "House",
             ["Name"] = "Villa des Almadies",
             ["Landmark"] = "Derrière la mosquée, portail vert",
             ["NeighborhoodId"] = neighborhoodId.ToString(),

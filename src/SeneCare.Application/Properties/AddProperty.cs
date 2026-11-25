@@ -20,7 +20,7 @@ public sealed record AddPropertyCommand(
     IReadOnlyList<UploadedFile> Photos);
 
 /// <summary>
-/// « Ajouter mon logement » / « Ajouter un site ». For a household, each home gets its own « Maisons &amp; Villas »
+/// « Ajouter mon logement » / « Ajouter un site ». For a household, each home gets its own « Maisons » (or « Villas »)
 /// subscription, created pending until the registration fee and first month are paid (Phase 6).
 /// </summary>
 public sealed class AddPropertyHandler(IApplicationDbContext db, AccessControl access, MediaUploader uploader, Locations.Coverage coverage, TimeProvider clock)

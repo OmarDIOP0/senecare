@@ -22,7 +22,7 @@ public sealed partial class OfferAndPaymentTests(WebAppFixture app)
     public async Task A_yearly_home_plan_chosen_at_sign_up_is_billed_twelve_months_minus_two()
     {
         var customer = await SignUpAsync("Household", "HOME", annual: true, company: null);
-        var propertyId = await AddPlaceAsync(customer, "Villa", "Villa de Ngor");
+        var propertyId = await AddPlaceAsync(customer, "House", "Villa de Ngor");
 
         await using (var db = app.Database.CreateContext())
         {
@@ -41,7 +41,7 @@ public sealed partial class OfferAndPaymentTests(WebAppFixture app)
     public async Task A_new_offer_chosen_during_a_period_is_billed_from_the_next_one()
     {
         var customer = await SignUpAsync("Household", "HOME", annual: false, company: null);
-        var propertyId = await AddPlaceAsync(customer, "Villa", "Villa de Ouakam");
+        var propertyId = await AddPlaceAsync(customer, "House", "Villa de Ouakam");
         Guid subscriptionId;
         await using (var db = app.Database.CreateContext())
         {
@@ -157,7 +157,7 @@ public sealed partial class OfferAndPaymentTests(WebAppFixture app)
         await finance.SubmitAsync("/admin/paiements", "/admin/paiements/lien-wave", new Dictionary<string, string> { ["link"] = "https://pay.wave.com/m/M_sn_test/c/sn/?amount={montant}" });
 
         var customer = await SignUpAsync("Household", "HOME", annual: false, company: null);
-        await AddPlaceAsync(customer, "Villa", "Villa des Almadies");
+        await AddPlaceAsync(customer, "House", "Villa des Almadies");
         var page = await customer.GetStringAsync(new Uri("/abonnement", UriKind.Relative));
         var invoiceId = InvoiceAction().Match(page).Groups[1].Value;
         await customer.SubmitAsync("/abonnement", $"/abonnement/factures/{invoiceId}/paiement", new Dictionary<string, string> { ["reference"] = "T_WAVE_77" });

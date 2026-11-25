@@ -1612,4 +1612,5 @@
   <data name="Error_suspend_confirm" xml:space="preserve"><value>Cochez la confirmation pour suspendre.</value></data>
   <data name="Error_account_suspend_self" xml:space="preserve"><value>Vous ne pouvez pas suspendre votre propre compte client.</value></data>
   <data name="Error_account_not_found" xml:space="preserve"><value>Compte introuvable.</value></data>
+  <data name="Error_account_suspended" xml:space="preserve"><value>Ce compte est suspendu. Contactez le service client.</value></data>
 </root>

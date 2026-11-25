@@ -120,7 +120,7 @@ public sealed class ZonesTests(WebAppFixture app)
     private static async Task<HttpResponseMessage> AddHomeAsync(HttpClient client, Guid neighborhoodId) =>
         await client.SubmitMultipartAsync("/logements/nouveau", "/logements/nouveau", new Dictionary<string, string>
         {
-            ["Kind"] = "Villa",
+            ["Kind"] = "House",
             ["Name"] = "Maison de Kolda",
             ["NeighborhoodId"] = neighborhoodId.ToString(),
             ["Latitude"] = "12.8833",

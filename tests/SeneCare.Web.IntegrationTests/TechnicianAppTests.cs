@@ -224,7 +224,7 @@ public sealed class TechnicianAppTests(WebAppFixture app)
             ["Profile"] = "Household",
             ["AcceptsPrivacyPolicy"] = "true",
         });
-        var propertyId = await AddPropertyAsync(client, "Villa", "Villa des Almadies");
+        var propertyId = await AddPropertyAsync(client, "House", "Villa des Almadies");
         await using (var db = app.Database.CreateContext())
         {
             var subscription = await db.Subscriptions.SingleAsync(s => s.CoveredPropertyIds.Contains(propertyId));

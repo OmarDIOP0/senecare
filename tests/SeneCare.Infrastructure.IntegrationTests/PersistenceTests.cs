@@ -25,17 +25,18 @@ public class SeedTests(DatabaseFixture fixture)
         Assert.True(await db.Neighborhoods.AnyAsync(n => n.Name == "Almadies"));
         Assert.Equal(await db.Neighborhoods.CountAsync(), await db.NeighborhoodPrograms.CountAsync());
 
-        var plans = await db.Plans.OrderBy(p => p.Priority).ToListAsync();
-        Assert.Equal(["HOME", "ESSENTIEL", "PROFESSIONNEL", "PREMIUM"], plans.Select(p => p.Code));
+        var plans = await db.Plans.OrderBy(p => p.Priority).ThenBy(p => p.Code).ToListAsync();
+        Assert.Equal(["HOME", "VILLA", "ESSENTIEL", "PROFESSIONNEL", "PREMIUM"], plans.Select(p => p.Code));
+        Assert.Equal(25_000, plans[1].MonthlyPrice.Amount);
         Assert.Equal(8_500, plans[0].MonthlyPrice.Amount);
-        Assert.Equal(3_500_000, plans[3].MonthlyPrice.Amount);
+        Assert.Equal(3_500_000, plans[4].MonthlyPrice.Amount);
         // Regression: every plan keeps its own SLA (instances once shared between plans were lost).
         Assert.All(plans, p => Assert.Equal(3, p.SlaPolicies.Count));
         Assert.Equal(TimeSpan.FromHours(4), plans[0].GetMaxDelay(Urgency.Critical));
         // Business offers differ by data, not code: Premium answers fastest and visits most.
-        Assert.Equal(TimeSpan.FromHours(2), plans[3].GetMaxDelay(Urgency.Critical));
-        Assert.True(plans[3].GetMaxDelay(Urgency.High) < plans[1].GetMaxDelay(Urgency.High));
-        Assert.True(plans[3].IncludedVisitsPerPeriod > plans[1].IncludedVisitsPerPeriod);
+        Assert.Equal(TimeSpan.FromHours(2), plans[4].GetMaxDelay(Urgency.Critical));
+        Assert.True(plans[4].GetMaxDelay(Urgency.High) < plans[2].GetMaxDelay(Urgency.High));
+        Assert.True(plans[4].IncludedVisitsPerPeriod > plans[2].IncludedVisitsPerPeriod);
     }
 
     [DatabaseFact]
@@ -47,7 +48,7 @@ public class SeedTests(DatabaseFixture fixture)
         await new DatabaseSeeder(db, TimeProvider.System, NullLogger<DatabaseSeeder>.Instance).SeedAsync();
 
         Assert.Equal(before, await db.Neighborhoods.CountAsync());
-        Assert.Equal(4, await db.Plans.CountAsync());
+        Assert.Equal(5, await db.Plans.CountAsync());
     }
 }
 

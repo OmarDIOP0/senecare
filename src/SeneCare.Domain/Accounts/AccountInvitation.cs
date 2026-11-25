@@ -74,6 +74,7 @@ public sealed class AccountInvitation : AggregateRoot
         ArgumentNullException.ThrowIfNull(phoneNumber);
         ArgumentException.ThrowIfNullOrWhiteSpace(tokenHash);
 
+        EnsureNotSuspended(account);
         if (account.Kind != AccountKind.Business)
         {
             throw new DomainException("invitation.business_only", "Only business accounts can invite employees.");
@@ -94,6 +95,15 @@ public sealed class AccountInvitation : AggregateRoot
         return invitation;
     }
 
+    /// <summary>A suspended account neither invites nor takes in anyone (its pending ones are withdrawn at the suspension).</summary>
+    private static void EnsureNotSuspended(CustomerAccount account)
+    {
+        if (account.IsSuspended)
+        {
+            throw new DomainException("account.suspended", "This account is suspended.");
+        }
+    }
+
     public bool IsUsable(DateTimeOffset now) => Status == InvitationStatus.Pending && now <= ExpiresAt;
 
     /// <summary>
@@ -105,6 +115,7 @@ public sealed class AccountInvitation : AggregateRoot
         ArgumentNullException.ThrowIfNull(account);
         ArgumentNullException.ThrowIfNull(user);
 
+        EnsureNotSuspended(account);
         if (account.Id != AccountId)
         {
             throw new DomainException("invitation.wrong_account", "This invitation belongs to another account.");

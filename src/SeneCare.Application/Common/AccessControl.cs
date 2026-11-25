@@ -10,6 +10,7 @@ namespace SeneCare.Application.Common;
 /// One instance per request: the answers are kept for the request, so a page made of several blocks (home,
 /// requests, subscription, neighborhood) asks the database once instead of once per block. Changes of access
 /// (new home, invitation, removal) end with a redirect, i.e. a new request: nothing stale is ever read.
+/// A suspended account is out of reach for every member, even one who still signs in for another account or as staff.
 /// </summary>
 public sealed class AccessControl(IApplicationDbContext db)
 {
@@ -20,7 +21,7 @@ public sealed class AccessControl(IApplicationDbContext db)
     {
         if (!_accounts.TryGetValue(userId, out var accounts))
         {
-            accounts = await db.CustomerAccounts.Where(a => a.Members.Any(m => m.UserId == userId)).ToListAsync(cancellationToken);
+            accounts = await db.CustomerAccounts.Where(a => a.SuspendedAt == null && a.Members.Any(m => m.UserId == userId)).ToListAsync(cancellationToken);
             _accounts[userId] = accounts;
         }
 
@@ -57,10 +58,10 @@ public sealed class AccessControl(IApplicationDbContext db)
             return null;
         }
 
-        var account = await db.CustomerAccounts.FirstOrDefaultAsync(a => a.Id == property.AccountId, cancellationToken);
+        var account = await db.CustomerAccounts.FirstOrDefaultAsync(a => a.Id == property.AccountId && a.SuspendedAt == null, cancellationToken);
         return account?.FindMember(userId)?.CanAccess(property.Id) == true ? property : null;
     }
 
     public async Task<bool> CanAccessAccountAsync(Guid userId, Guid accountId, CancellationToken cancellationToken = default) =>
-        await db.CustomerAccounts.AnyAsync(a => a.Id == accountId && a.Members.Any(m => m.UserId == userId), cancellationToken);
+        await db.CustomerAccounts.AnyAsync(a => a.Id == accountId && a.SuspendedAt == null && a.Members.Any(m => m.UserId == userId), cancellationToken);
 }

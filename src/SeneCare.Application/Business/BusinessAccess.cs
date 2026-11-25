@@ -29,7 +29,7 @@ public sealed class BusinessAccess(IApplicationDbContext db)
     public async Task<BusinessMember?> OfAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var account = await db.CustomerAccounts
-            .Where(a => a.Kind == AccountKind.Business && a.Members.Any(m => m.UserId == userId))
+            .Where(a => a.Kind == AccountKind.Business && a.SuspendedAt == null && a.Members.Any(m => m.UserId == userId))
             .OrderBy(a => a.CreatedAt)
             .FirstOrDefaultAsync(cancellationToken);
         return account is null ? null : new BusinessMember(account, account.FindMember(userId)!);

@@ -34,7 +34,7 @@ public sealed partial class DatabaseSeeder(SeneCareDbContext db, TimeProvider cl
     /// <summary>The four offers from the specification. Prices are then managed by admins.</summary>
     internal static IEnumerable<Plan> DefaultPlans()
     {
-        var home = new Plan("HOME", "Maisons & Villas", AccountKind.Household, Money.FromFcfa(10_000), Money.FromFcfa(8_500), 1, diagnosticRequired: false);
+        var home = new Plan("HOME", "Maisons", AccountKind.Household, Money.FromFcfa(10_000), Money.FromFcfa(8_500), 1, diagnosticRequired: false);
         home.SetServiceLevel(priority: 1, includedVisitsPerPeriod: null);
         yield return home;
 

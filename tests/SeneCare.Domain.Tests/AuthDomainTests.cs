@@ -56,6 +56,19 @@ public class AccountInvitationTests
     }
 
     [Fact]
+    public void A_suspended_account_neither_invites_nor_takes_anyone_in()
+    {
+        var account = Business();
+        var invitation = AccountInvitation.Create(account, UserId, EmployeePhone, AccountRole.Reporter, [], "hash", Now);
+        account.Suspend(Now);
+
+        Assert.Equal("account.suspended", Assert.Throws<DomainException>(() =>
+            AccountInvitation.Create(account, UserId, EmployeePhone, AccountRole.Reporter, [], "hash", Now)).Code);
+        Assert.Equal("account.suspended", Assert.Throws<DomainException>(() =>
+            invitation.Accept(account, User.Register(EmployeePhone, Now), Now)).Code);
+    }
+
+    [Fact]
     public void Accepting_adds_the_member_with_the_invited_role_and_scope()
     {
         var account = Business();

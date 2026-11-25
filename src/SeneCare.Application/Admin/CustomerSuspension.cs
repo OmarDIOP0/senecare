@@ -10,7 +10,8 @@ namespace SeneCare.Application.Admin;
 /// Suspend / reactivate a customer account (super-admin, support; user decision of 25/11/2026). Suspended: its members
 /// can no longer sign in (their open sessions close), nothing is deleted (homes, requests, invoices), and the account
 /// leaves the customer list (filter « Archivés »). A member who is also SENECARE staff, or who still belongs to another
-/// active account, keeps signing in. Both actions are audited.
+/// active account, keeps signing in but no longer reaches this one (<see cref="AccessControl"/>, BusinessAccess); its
+/// pending invitations are withdrawn and no new one can be sent or accepted. Both actions are audited.
 /// </summary>
 public sealed class CustomerSuspension(IApplicationDbContext db, IIdentityService identity, TimeProvider clock)
 {
@@ -38,6 +39,10 @@ public sealed class CustomerSuspension(IApplicationDbContext db, IIdentityServic
                 blocked.Add(user.Id);
             }
         }
+
+        // Pending invitations of the account are withdrawn (a manager invites again after the reactivation).
+        (await db.AccountInvitations.Where(i => i.AccountId == account.Id && i.Status == InvitationStatus.Pending).ToListAsync(cancellationToken))
+            .ForEach(i => i.Revoke());
 
         db.AuditLogs.Add(new AuditLog(adminId, "customer.suspend", nameof(CustomerAccount), account.Id.ToString(), false, null, account.DisplayName, now));
         await db.SaveChangesAsync(cancellationToken);

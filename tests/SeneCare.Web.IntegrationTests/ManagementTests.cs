@@ -141,7 +141,7 @@ public sealed class ManagementTests(WebAppFixture app)
             ["Profile"] = "Household",
             ["AcceptsPrivacyPolicy"] = "true",
         });
-        await AddPropertyAsync(customer, "Villa", "Maison de Ngor");
+        await AddPropertyAsync(customer, "House", "Maison de Ngor");
 
         var support = await StaffAsync(PlatformRole.Support);
         var results = WebUtility.HtmlDecode(await support.GetStringAsync(new Uri($"/admin/clients?q={Uri.EscapeDataString(phone.Formatted)}", UriKind.Relative)));
@@ -257,7 +257,7 @@ public sealed class ManagementTests(WebAppFixture app)
             ["Profile"] = "Household",
             ["AcceptsPrivacyPolicy"] = "true",
         });
-        return (client, await AddPropertyAsync(client, "Villa", "Villa des Almadies"));
+        return (client, await AddPropertyAsync(client, "House", "Villa des Almadies"));
     }
 
     private async Task<Guid> AddPropertyAsync(HttpClient client, string kind, string name)

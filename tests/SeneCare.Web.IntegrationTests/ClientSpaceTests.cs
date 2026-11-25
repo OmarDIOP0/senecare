@@ -237,7 +237,7 @@ public partial class ClientSpaceTests(WebAppFixture app)
 
     private static Dictionary<string, string> HomeFields() => new()
     {
-        ["Kind"] = "Villa",
+        ["Kind"] = "House",
         ["Name"] = "Villa des Almadies",
         ["Landmark"] = "Derrière la mosquée, portail vert",
         ["Latitude"] = "14.7456",

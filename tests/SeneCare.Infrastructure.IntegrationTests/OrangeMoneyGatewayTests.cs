@@ -103,6 +103,8 @@ public sealed class OrangeMoneyGatewayTests
         var error = await Assert.ThrowsAsync<OrangeMoneyException>(() => gateway.FindPaymentAsync("x"));
         Assert.Contains("4099", error.Message, StringComparison.Ordinal);
         Assert.DoesNotContain("secret detail", error.Message, StringComparison.Ordinal);
+        // Finance sees Orange's message in Admin › Paiements (not in the logs).
+        Assert.Contains("secret detail", gateway.LastProblem!.Detail, StringComparison.Ordinal);
     }
 
     [Fact]

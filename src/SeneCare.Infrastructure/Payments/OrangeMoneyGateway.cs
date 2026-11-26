@@ -78,6 +78,9 @@ public sealed class OrangeMoneyTokenCache : IDisposable
 
     public void Invalidate() => _token = null;
 
+    /// <summary>Last Orange Money failure (kept here: this cache lives as long as the site, the gateway per request).</summary>
+    public OrangeMoneyProblem? LastProblem { get; set; }
+
     public void Dispose() => _lock.Dispose();
 }
 
@@ -85,6 +88,40 @@ public sealed class OrangeMoneyTokenCache : IDisposable
 public sealed class OrangeMoneyGateway(HttpClient http, IOptions<OrangeMoneyOptions> options, OrangeMoneyTokenCache tokens, TimeProvider clock) : IOrangeMoneyGateway
 {
     private readonly OrangeMoneyOptions _options = options.Value;
+
+    public OrangeMoneyProblem? LastProblem => tokens.LastProblem;
+
+    public async Task TestConnectionAsync(CancellationToken cancellationToken = default)
+    {
+        if (!IsConfigured)
+        {
+            throw Problem("Orange Money is not configured.");
+        }
+
+        tokens.Invalidate();
+        try
+        {
+            await tokens.GetAsync(() => TokenAsync(cancellationToken), clock);
+        }
+        catch (HttpRequestException ex)
+        {
+            throw Problem($"Orange Money unreachable: {ex.Message}", ex);
+        }
+        catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested)
+        {
+            throw Problem("Orange Money did not answer in time.", ex);
+        }
+    }
+
+    /// <summary>
+    /// Kept for Admin › Paiements (the site's logs are hard to read on the host). Orange's own message (<paramref name="shown"/>)
+    /// goes only there, for Finance, never into the exception and the logs.
+    /// </summary>
+    private OrangeMoneyException Problem(string detail, Exception? inner = null, string? shown = null)
+    {
+        tokens.LastProblem = new OrangeMoneyProblem(clock.GetUtcNow(), shown is null ? detail : $"{detail} {shown}");
+        return new OrangeMoneyException(detail, inner);
+    }
 
     public bool IsConfigured =>
         !string.IsNullOrWhiteSpace(_options.ClientId) && !string.IsNullOrWhiteSpace(_options.ClientSecret) && !string.IsNullOrWhiteSpace(_options.MerchantCode);
@@ -152,10 +189,10 @@ public sealed class OrangeMoneyGateway(HttpClient http, IOptions<OrangeMoneyOpti
 
     public async Task RegisterCallbackAsync(CancellationToken cancellationToken = default)
     {
-        var callback = PublicUrl(OrangeMoneyOptions.CallbackPath) ?? throw new OrangeMoneyException("OrangeMoney:PublicBaseUrl is not set.");
+        var callback = PublicUrl(OrangeMoneyOptions.CallbackPath) ?? throw Problem("OrangeMoney:PublicBaseUrl is not set.");
         if (string.IsNullOrWhiteSpace(_options.CallbackApiKey))
         {
-            throw new OrangeMoneyException("OrangeMoney:CallbackApiKey is not set.");
+            throw Problem("OrangeMoney:CallbackApiKey is not set.");
         }
 
         using var message = new HttpRequestMessage(HttpMethod.Post, "/api/notification/v1/merchantcallback")
@@ -189,7 +226,7 @@ public sealed class OrangeMoneyGateway(HttpClient http, IOptions<OrangeMoneyOpti
     {
         if (!IsConfigured)
         {
-            throw new OrangeMoneyException("Orange Money is not configured.");
+            throw Problem("Orange Money is not configured.");
         }
 
         HttpResponseMessage response;
@@ -200,11 +237,11 @@ public sealed class OrangeMoneyGateway(HttpClient http, IOptions<OrangeMoneyOpti
         }
         catch (HttpRequestException ex)
         {
-            throw new OrangeMoneyException("Orange Money unreachable.", ex);
+            throw Problem($"Orange Money unreachable: {ex.Message}", ex);
         }
         catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested)
         {
-            throw new OrangeMoneyException("Orange Money did not answer in time.", ex);
+            throw Problem("Orange Money did not answer in time.", ex);
         }
 
         using (response)
@@ -219,7 +256,7 @@ public sealed class OrangeMoneyGateway(HttpClient http, IOptions<OrangeMoneyOpti
             var content = await response.Content.ReadAsStringAsync(cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
-                throw new OrangeMoneyException($"Orange Money answered {(int)response.StatusCode} (code {ErrorCode(content)}).");
+                throw Problem($"Orange Money answered {(int)response.StatusCode} on {message.RequestUri?.OriginalString} (code {ErrorCode(content)}).", shown: ErrorText(content));
             }
 
             return JsonDocument.Parse(string.IsNullOrWhiteSpace(content) ? "{}" : content);
@@ -238,11 +275,11 @@ public sealed class OrangeMoneyGateway(HttpClient http, IOptions<OrangeMoneyOpti
         var content = await response.Content.ReadAsStringAsync(cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
-            throw new OrangeMoneyException($"Orange Money token refused: {(int)response.StatusCode} (code {ErrorCode(content)}).");
+            throw Problem($"Orange Money token refused: {(int)response.StatusCode} (code {ErrorCode(content)}).", shown: ErrorText(content));
         }
 
         using var json = JsonDocument.Parse(content);
-        var token = Text(json.RootElement, "access_token") ?? throw new OrangeMoneyException("Orange Money token missing.");
+        var token = Text(json.RootElement, "access_token") ?? throw Problem("Orange Money token missing.");
         var expiresIn = json.RootElement.TryGetProperty("expires_in", out var e) && e.TryGetInt32(out var seconds) ? seconds : 3600;
         return (token, expiresIn);
     }
@@ -292,16 +329,33 @@ public sealed class OrangeMoneyGateway(HttpClient http, IOptions<OrangeMoneyOpti
             ? value.ValueKind == JsonValueKind.String ? value.GetString() : value.ToString()
             : null;
 
+    /// <summary>Orange's error code (API: code, OAuth: error).</summary>
     private static string ErrorCode(string content)
     {
         try
         {
             using var json = JsonDocument.Parse(content);
-            return Text(json.RootElement, "code") ?? "?";
+            return Text(json.RootElement, "code") ?? Text(json.RootElement, "error") ?? "?";
         }
         catch (JsonException)
         {
             return "?";
+        }
+    }
+
+    /// <summary>Orange's short message (detail / message / error_description), at most 200 characters.</summary>
+    private static string? ErrorText(string content)
+    {
+        try
+        {
+            using var json = JsonDocument.Parse(content);
+            var root = json.RootElement;
+            var text = Text(root, "detail") ?? Text(root, "message") ?? Text(root, "error_description") ?? Text(root, "title");
+            return text is null ? null : "« " + (text.Length > 200 ? text[..200] : text) + " »";
+        }
+        catch (JsonException)
+        {
+            return null;
         }
     }
 }

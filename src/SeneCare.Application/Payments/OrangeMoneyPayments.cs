@@ -48,7 +48,15 @@ public interface IOrangeMoneyGateway
 
     /// <summary>The callback carries the shared key we registered (« Authorization: Basic {key} », compared in constant time).</summary>
     bool IsTrustedCallback(string? authorizationHeader);
+
+    /// <summary>Last refusal or failure of Orange Money since the site started (status and Orange's code, never a key).</summary>
+    OrangeMoneyProblem? LastProblem { get; }
+
+    /// <summary>Asks Orange for a new access token with the configured keys (Admin › Paiements « Tester la connexion »).</summary>
+    Task TestConnectionAsync(CancellationToken cancellationToken = default);
 }
+
+public sealed record OrangeMoneyProblem(DateTimeOffset At, string Detail);
 
 public enum OrangeMoneyState
 {

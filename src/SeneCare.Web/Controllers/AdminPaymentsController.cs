@@ -29,7 +29,8 @@ public sealed class AdminPaymentsController(
             Uri.TryCreate(orangeMoneyOptions.Value.PublicBaseUrl, UriKind.Absolute, out var site) && site.Scheme == Uri.UriSchemeHttps
                 ? new Uri(site, SeneCare.Infrastructure.Payments.OrangeMoneyOptions.CallbackPath).ToString()
                 : null,
-            !string.IsNullOrWhiteSpace(orangeMoneyOptions.Value.CallbackApiKey));
+            !string.IsNullOrWhiteSpace(orangeMoneyOptions.Value.CallbackApiKey),
+            orangeMoney.LastProblem);
         ViewData["Unpaid"] = await payments.UnpaidAsync(page, cancellationToken);
         return View(await payments.PendingAsync(cancellationToken));
     }
@@ -84,8 +85,25 @@ public sealed class AdminPaymentsController(
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>Asks Orange for a token with the configured keys: tells at once whether the keys and mode are right.</summary>
+    [HttpPost("orange-money/tester")]
+    public async Task<IActionResult> TestOrangeMoney(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await orangeMoney.TestConnectionAsync(cancellationToken);
+            TempData["flash.toast"] = this.Localizer()["AdminPay_OmTestOk"].Value;
+        }
+        catch (OrangeMoneyException)
+        {
+            TempData["flash.toast"] = this.Localizer()["AdminPay_OmTestFailed"].Value;
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
     private string? ClientIp => HttpContext.Connection.RemoteIpAddress?.ToString();
 }
 
 /// <summary>Orange Money API as configured on the server (secrets never shown).</summary>
-public sealed record OrangeMoneyStatus(bool Configured, bool Live, string? MerchantCode, string? CallbackUrl, bool HasCallbackKey);
+public sealed record OrangeMoneyStatus(bool Configured, bool Live, string? MerchantCode, string? CallbackUrl, bool HasCallbackKey, OrangeMoneyProblem? LastProblem = null);

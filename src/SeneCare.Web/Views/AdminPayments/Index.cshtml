@@ -70,6 +70,20 @@
                     <dt class="text-charbon-doux">@L["AdminPay_OmCallback"]</dt>
                     <dd class="min-w-0 font-mono text-sm break-all">@(om.CallbackUrl ?? "—")</dd>
                 </dl>
+                @if (om.LastProblem is { } problem)
+                {
+                    @* Orange's answer (status, code, message): never a key. Cleared when the site restarts. *@
+                    <div class="rounded-2xl border border-rouge/40 bg-rouge-clair px-4 py-3 text-sm text-rouge" role="status">
+                        <p class="font-semibold">@L["AdminPay_OmLastProblem", Formatting.ShortDate(problem.At), problem.At.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture)]</p>
+                        <p class="mt-1 font-mono break-all">@problem.Detail</p>
+                    </div>
+                }
+                @if (om.Configured)
+                {
+                    <form method="post" asp-action="TestOrangeMoney">
+                        <button type="submit" class="sc-btn-secondaire w-full whitespace-normal text-center sm:w-auto">@L["AdminPay_OmTest"]</button>
+                    </form>
+                }
                 @if (!om.Configured)
                 {
                     <p class="sc-aide">@L["AdminPay_OmHowTo"]</p>

@@ -271,6 +271,9 @@ public sealed class AuthController(
         return RedirectToAction(nameof(Code));
     }
 
+    /// <summary>Read by app.js on the next page: clear what this phone keeps of the session, then removed.</summary>
+    public const string SignedOutCookie = "sc-signed-out";
+
     [HttpPost("/deconnexion")]
     [AllowWithTemporaryPassword]
     [Authorize(Policy = Policies.Authenticated)]
@@ -278,9 +281,18 @@ public sealed class AuthController(
     {
         await signInManager.SignOutAsync();
 
-        // Shared phones: the browser erases cached pages, offline queue and storage of this site,
-        // even if the service worker message never arrives.
-        Response.Headers["Clear-Site-Data"] = "\"cache\", \"storage\"";
+        // Shared phones: the next page erases the cached personal pages and the offline queue (app.js), even if the
+        // service worker message never arrived. No « Clear-Site-Data » header any more: browsers held the navigation
+        // for seconds while clearing everything, and people tapped « Se déconnecter » a second time.
+        Response.Cookies.Append(SignedOutCookie, "1", new CookieOptions
+        {
+            Path = "/",
+            MaxAge = TimeSpan.FromMinutes(5),
+            SameSite = SameSiteMode.Lax,
+            Secure = Request.IsHttps,
+            HttpOnly = false,
+            IsEssential = true,
+        });
         return LocalRedirect("/");
     }
 

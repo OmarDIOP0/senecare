@@ -72,7 +72,7 @@
                     <button type="button" class="sc-menu-item justify-center text-xs" data-theme-set="system">@L["Shell_ThemeSystem"]</button>
                 </div>
                 <div class="my-1 border-t border-ligne"></div>
-                <form method="post" action="/deconnexion">
+                <form method="post" action="/deconnexion" data-logout>
                     @Html.AntiForgeryToken()
                     <button type="submit" class="sc-menu-item"><sc-icon name="log-out" class="size-4 text-charbon-doux" />@L["Account_SignOut"]</button>
                 </form>

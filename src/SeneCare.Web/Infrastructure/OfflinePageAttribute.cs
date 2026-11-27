@@ -5,7 +5,7 @@ namespace SeneCare.Web.Infrastructure;
 /// <summary>
 /// Lets the service worker keep this page for offline use (header « X-SeneCare-Offline: page »).
 /// Only for pages that must work without network (the report form). Personal pages are not
-/// cached by default, and cached pages are erased at sign-out (Clear-Site-Data).
+/// cached by default, and cached pages are erased at sign-out (service worker message + « sc-signed-out » cookie).
 /// </summary>
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
 public sealed class OfflinePageAttribute : ResultFilterAttribute

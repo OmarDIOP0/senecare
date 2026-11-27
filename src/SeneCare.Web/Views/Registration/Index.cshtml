@@ -18,7 +18,7 @@
 @* Signed in with this number but not registered yet: every page leads here, so offer a way out. *@
 <div class="mb-6 flex flex-wrap items-center justify-between gap-2 rounded-md bg-sourdine px-4 py-2.5 text-sm">
     <span class="text-charbon-doux">@L["Register_SignedInAs", Model.Phone is { } current ? "+221 " + current : ""]</span>
-    <form method="post" action="/deconnexion">
+    <form method="post" action="/deconnexion" data-logout>
         @Html.AntiForgeryToken()
         <button type="submit" class="sc-lien sc-tap font-semibold">@L["Register_OtherNumber"]</button>
     </form>

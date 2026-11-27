@@ -437,6 +437,17 @@
     showConnection();
   });
 
+  // ---- Just signed out (cookie set by /deconnexion): forget cached personal pages and unsent forms. ----
+  if (document.cookie.split("; ").includes("sc-signed-out=1")) {
+    document.cookie = "sc-signed-out=; Max-Age=0; Path=/";
+    navigator.serviceWorker?.controller?.postMessage({ type: "SIGNED_OUT" });
+    if (window.caches) {
+      caches.delete("sc-pages").catch(() => {});
+      caches.delete("sc-data").catch(() => {});
+    }
+    Promise.resolve(self.scOutbox?.clear?.()).catch(() => {});
+  }
+
   // ---- Signing out: forget cached personal pages and unsent forms on this phone. ----
   document.addEventListener("submit", (event) => {
     if (event.target.closest("form[data-logout]")) {

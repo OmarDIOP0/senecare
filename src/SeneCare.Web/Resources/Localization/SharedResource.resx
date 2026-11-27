@@ -1621,4 +1621,6 @@
   <data name="AdminPay_OmTestOk" xml:space="preserve"><value>Connexion Orange Money réussie : les clés sont acceptées.</value></data>
   <data name="AdminPay_OmTestFailed" xml:space="preserve"><value>Orange Money refuse la connexion. Le détail est affiché sur la carte Orange Money.</value></data>
   <data name="AdminPay_OmLastProblem" xml:space="preserve"><value>Dernière erreur Orange Money ({0} à {1}) :</value></data>
+  <data name="Om_TimeLeft" xml:space="preserve"><value>Temps restant pour payer</value></data>
+  <data name="Om_ExpiredNow" xml:space="preserve"><value>Le temps est écoulé : ce QR code et ce lien ne marchent plus. Si vous avez payé juste avant, cliquez sur « J'ai payé, vérifier » ; sinon, recommencez depuis votre abonnement.</value></data>
 </root>

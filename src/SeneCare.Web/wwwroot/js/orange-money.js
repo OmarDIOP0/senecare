@@ -9,6 +9,26 @@
     const until = Number(box.dataset.until || 0);
     let timer = 0;
 
+    // ---- Time left: mm:ss, every second. At zero the QR code and the links go (Orange refuses them), the page keeps
+    // checking for a payment made at the last second. ----
+    const countdown = box.querySelector("[data-om-countdown]");
+    const clock = box.querySelector("[data-om-clock]");
+    const expires = Number(countdown?.dataset.expires || 0);
+    if (countdown && clock && expires) {
+      const tick = () => {
+        const left = Math.max(0, Math.round((expires - Date.now()) / 1000));
+        clock.textContent = `${String(Math.floor(left / 60)).padStart(2, "0")}:${String(left % 60).padStart(2, "0")}`;
+        if (left <= 60) clock.classList.add("text-rouge");
+        if (left === 0) {
+          box.querySelectorAll("[data-om-live]").forEach((el) => (el.hidden = true));
+          box.querySelector("[data-om-expired]")?.removeAttribute("hidden");
+          return;
+        }
+        setTimeout(tick, 1000);
+      };
+      tick();
+    }
+
     // Phones: open Max it at once (amount and merchant already filled in by Orange). Only the first time: coming
     // back from Max it, the page stays here and waits for the confirmation.
     const maxit = box.dataset.maxit;

@@ -39,7 +39,7 @@
     <div class="grid gap-6 p-6 sm:p-8 md:grid-cols-[1fr_auto]">
         @if (checkout is not null && state == OrangeMoneyState.Pending)
         {
-            <div class="grid content-start gap-5">
+            <div class="grid content-start gap-5" data-om-live>
                 <ol class="grid gap-3">
                     @foreach (var (index, text) in new[] { L["Om_Step1"].Value, L["Om_Step2"].Value, L["Om_Step3"].Value }.Index())
                     {
@@ -60,12 +60,18 @@
                         <a href="@om" class="sc-btn-secondaire min-h-12 w-full" rel="noopener">@L["Om_OpenOrangeMoney"]</a>
                     }
                 </div>
-                <p class="flex items-center gap-1.5 text-sm text-charbon-doux"><sc-icon name="clock" class="size-4" />@L["Om_ValidUntil", Formatting.Time(checkout.ExpiresAt)]</p>
+                @* Time left, counted down by orange-money.js (the end time stays for pages without script). *@
+                <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-[15px]" data-om-countdown data-expires="@checkout.ExpiresAt.ToUnixTimeMilliseconds()">
+                    <sc-icon name="clock" class="size-5 text-ocre-texte" />
+                    <span class="text-charbon-doux">@L["Om_TimeLeft"]</span>
+                    <span class="rounded-full bg-[#ff7900]/15 px-3 py-0.5 font-mono text-lg font-bold tabular-nums text-charbon" role="timer" aria-live="off" data-om-clock>@Formatting.Time(checkout.ExpiresAt)</span>
+                </p>
             </div>
+            <p class="text-[15px] text-charbon-doux" hidden data-om-expired>@L["Om_ExpiredNow"]</p>
             @if (checkout.QrCodePng is { } qr)
             {
                 @* Computers: scan with the phone. *@
-                <figure class="hidden w-52 self-start rounded-2xl border border-ligne bg-white p-3 md:block">
+                <figure class="hidden w-52 self-start rounded-2xl border border-ligne bg-white p-3 md:block" data-om-live>
                     <img src="data:image/png;base64,@qr" alt="@L["Om_QrAlt"]" width="200" height="200" class="h-auto w-full" />
                     <figcaption class="mt-2 text-center text-xs font-semibold text-charbon-doux">@L["Om_Scan"]</figcaption>
                 </figure>

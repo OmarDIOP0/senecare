@@ -170,6 +170,8 @@ public sealed partial class WavePaymentTests(WebAppFixture app)
             Assert.Contains("https://sugu.orange-sonatel.com/mp/test-maxit", pay, StringComparison.Ordinal);
             Assert.Contains("data:image/png;base64,", pay, StringComparison.Ordinal);
             Assert.Contains("data-maxit=\"https://sugu.orange-sonatel.com/mp/test-maxit\"", pay, StringComparison.Ordinal);
+            // Time left counted down on the page (end of validity given in milliseconds).
+            Assert.Contains("data-om-countdown data-expires=\"", pay, StringComparison.Ordinal);
 
             // Kept with the payment: reloading the page (or coming back from Max it) still shows the request.
             await using (var db = app.Database.CreateContext())

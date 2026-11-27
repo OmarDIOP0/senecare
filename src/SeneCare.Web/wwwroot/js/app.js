@@ -439,7 +439,9 @@
 
   // ---- Just signed out (cookie set by /deconnexion): forget cached personal pages and unsent forms. ----
   if (document.cookie.split("; ").includes("sc-signed-out=1")) {
-    document.cookie = "sc-signed-out=; Max-Age=0; Path=/";
+    // The server answers with « Clear-Site-Data » (HTTP cache and storage), without holding this page.
+    fetch("/deconnexion/nettoyage", { method: "POST", credentials: "same-origin" })
+      .catch(() => { document.cookie = "sc-signed-out=; Max-Age=0; Path=/"; });
     navigator.serviceWorker?.controller?.postMessage({ type: "SIGNED_OUT" });
     if (window.caches) {
       caches.delete("sc-pages").catch(() => {});

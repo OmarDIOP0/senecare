@@ -274,6 +274,26 @@ public sealed class AuthController(
     /// <summary>Read by app.js on the next page: clear what this phone keeps of the session, then removed.</summary>
     public const string SignedOutCookie = "sc-signed-out";
 
+    /// <summary>
+    /// Called in the background by the page shown after « Se déconnecter »: the browser erases this site's HTTP cache
+    /// (private photos…) and storage (offline copies, queue, service worker). Only right after a sign-out (cookie),
+    /// so another site cannot use it to wipe a visitor's data.
+    /// </summary>
+    [HttpPost("/deconnexion/nettoyage")]
+    [AllowAnonymous]
+    [IgnoreAntiforgeryToken]
+    public IActionResult ClearBrowser()
+    {
+        if (Request.Cookies[SignedOutCookie] != "1")
+        {
+            return NoContent();
+        }
+
+        Response.Cookies.Delete(SignedOutCookie, new CookieOptions { Path = "/" });
+        Response.Headers["Clear-Site-Data"] = "\"cache\", \"storage\"";
+        return NoContent();
+    }
+
     [HttpPost("/deconnexion")]
     [AllowWithTemporaryPassword]
     [Authorize(Policy = Policies.Authenticated)]
@@ -281,9 +301,8 @@ public sealed class AuthController(
     {
         await signInManager.SignOutAsync();
 
-        // Shared phones: the next page erases the cached personal pages and the offline queue (app.js), even if the
-        // service worker message never arrived. No « Clear-Site-Data » header any more: browsers held the navigation
-        // for seconds while clearing everything, and people tapped « Se déconnecter » a second time.
+        // Shared phones: the next page clears this browser (app.js → /deconnexion/nettoyage, « Clear-Site-Data »), in the
+        // background. Sent on this redirect, the header held the navigation for seconds and people tapped twice.
         Response.Cookies.Append(SignedOutCookie, "1", new CookieOptions
         {
             Path = "/",

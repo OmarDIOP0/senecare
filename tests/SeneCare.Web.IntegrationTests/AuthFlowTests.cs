@@ -187,9 +187,19 @@ public class AuthFlowTests(WebAppFixture app)
 
         var signedOut = await client.SubmitAsync("/compte", "/deconnexion", new Dictionary<string, string>());
         Assert.Equal("/", signedOut.Location());
-        // No « Clear-Site-Data » (it held the page for seconds): the next page clears this phone, told by a short cookie.
+        // « Clear-Site-Data » comes from a background call of the next page (on the redirect it held the page for
+        // seconds), and only right after a sign-out.
         Assert.False(signedOut.Headers.Contains("Clear-Site-Data"));
         Assert.Contains(signedOut.Headers.GetValues("Set-Cookie"), c => c.StartsWith("sc-signed-out=1", StringComparison.Ordinal));
+        using (var clear = new HttpRequestMessage(HttpMethod.Post, "/deconnexion/nettoyage"))
+        {
+            clear.Headers.Add("Cookie", "sc-signed-out=1");
+            var cleared = await app.CreateClient().SendAsync(clear);
+            Assert.Equal("\"cache\", \"storage\"", Assert.Single(cleared.Headers.GetValues("Clear-Site-Data")));
+        }
+
+        var stranger = await app.CreateClient().PostAsync(new Uri("/deconnexion/nettoyage", UriKind.Relative), null);
+        Assert.False(stranger.Headers.Contains("Clear-Site-Data"));
 
         var compte = await client.GetAsync(new Uri("/compte", UriKind.Relative));
         Assert.StartsWith("/connexion", compte.Location(), StringComparison.Ordinal);

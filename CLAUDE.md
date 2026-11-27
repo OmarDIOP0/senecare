@@ -215,6 +215,10 @@ Parcours client :
   vérification par la Finance (notification), activation et message WhatsApp / SMS au client. Factures et
   reçus PDF. Pas de bouton de simulation dans l'interface.
 
+Paiement au premier plan (décision du 27/11/2026) : tant qu'une facture est due, le bloc « À payer » est en tête de
+`/abonnement` (ancre `#payer`), Orange Money et Wave côte à côte avec le même poids, une ligne d'aide chacun ; bandeau
+« Activez votre abonnement / Payer maintenant » en tête de l'accueil client ; l'étape « Vérification par SeneCare » ne
+s'affiche que pour un paiement Wave déclaré.
 Espace connecté : même palette ; sidebar + topbar desktop, barre d'onglets mobile ; « Abonnement » dans la
 navigation des particuliers ; actions destructrices en rouge, en haut à droite (ex. « Annuler la demande »).
 Accessibilité : contrastes AA dans les deux thèmes, focus visible, `alt` sur les images, libellés ARIA.

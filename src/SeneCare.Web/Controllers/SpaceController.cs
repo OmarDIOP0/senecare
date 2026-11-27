@@ -9,6 +9,7 @@ using SeneCare.Application.Properties;
 using SeneCare.Application.Requests;
 using SeneCare.Application.Subscriptions;
 using SeneCare.Application.Users;
+using SeneCare.Domain.Billing;
 using SeneCare.Infrastructure.Identity;
 using SeneCare.Web.Infrastructure;
 using SeneCare.Web.Localization;
@@ -79,11 +80,18 @@ public sealed class SpaceController(
                 active.AppointmentAt,
                 localizer);
 
+        var subs = await subscriptions.ListAsync(userId, cancellationToken);
+        var due = subs
+            .SelectMany(sub => sub.Invoices.Where(i => i.Status is InvoiceStatus.Issued or InvoiceStatus.Overdue).Select(i => (Sub: sub, Invoice: i)))
+            .OrderBy(x => x.Invoice.DueDate)
+            .FirstOrDefault();
         return new ClientHomeModel
         {
             PropertyCount = homes.Count,
             RequestCount = all.Count,
-            Subscription = (await subscriptions.ListAsync(userId, cancellationToken)) is { Count: > 0 } subs ? subs[0] : null,
+            Subscription = subs.Count > 0 ? subs[0] : null,
+            Due = due.Invoice,
+            DueStartsSubscription = due.Sub?.Status == SubscriptionStatus.PendingRegistration,
             ActiveRequest = active,
             ActiveTimeline = timeline,
             Neighborhood = await subscriptions.NeighborhoodAsync(userId, cancellationToken),

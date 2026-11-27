@@ -1623,4 +1623,11 @@
   <data name="AdminPay_OmLastProblem" xml:space="preserve"><value>Dernière erreur Orange Money ({0} à {1}) :</value></data>
   <data name="Om_TimeLeft" xml:space="preserve"><value>Temps restant pour payer</value></data>
   <data name="Om_ExpiredNow" xml:space="preserve"><value>Le temps est écoulé : ce QR code et ce lien ne marchent plus. Si vous avez payé juste avant, cliquez sur « J'ai payé, vérifier » ; sinon, recommencez depuis votre abonnement.</value></data>
+  <data name="Pay_Wave_Hint" xml:space="preserve"><value>Payez dans Wave, puis revenez ici saisir la référence de la transaction (facture {0}) : SeneCare vérifie et active votre abonnement.</value></data>
+  <data name="Om_Pay_Hint" xml:space="preserve"><value>Max it s'ouvre avec le montant (QR code sur ordinateur) : validez avec votre code secret, l'abonnement s'active tout seul.</value></data>
+  <data name="Space_PayBanner_Start" xml:space="preserve"><value>Activez votre abonnement</value></data>
+  <data name="Space_PayBanner_Renewal" xml:space="preserve"><value>Votre prochaine période est à payer</value></data>
+  <data name="Space_PayBanner_Overdue" xml:space="preserve"><value>Paiement en retard</value></data>
+  <data name="Space_PayBanner_Ways" xml:space="preserve"><value>Orange Money ou Wave</value></data>
+  <data name="Space_PayBanner_Button" xml:space="preserve"><value>Payer maintenant</value></data>
 </root>

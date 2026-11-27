@@ -72,6 +72,12 @@ public sealed class ClientHomeModel
 {
     public SubscriptionSummary? Subscription { get; init; }
 
+    /// <summary>The oldest invoice still to pay (any home), shown first on the home page with « Payer ».</summary>
+    public InvoiceSummary? Due { get; init; }
+
+    /// <summary>The subscription of <see cref="Due"/> has not started yet (first payment).</summary>
+    public bool DueStartsSubscription { get; init; }
+
     public RequestSummary? ActiveRequest { get; init; }
 
     public IReadOnlyList<TimelineStep> ActiveTimeline { get; init; } = [];

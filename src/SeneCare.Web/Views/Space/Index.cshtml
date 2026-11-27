@@ -47,6 +47,23 @@ else if (Model.Client is { } client)
     var done = steps.Count(s => s.Done);
 
     <div class="mt-6 grid gap-6">
+        @* Something to pay: first on the page (nothing can be reported until the subscription is active). *@
+        @if (client.Due is { } toPay)
+        {
+            var overdue = toPay.Status == InvoiceStatus.Overdue;
+            <section class="flex flex-wrap items-center justify-between gap-4 rounded-3xl border-2 @(overdue ? "border-rouge/50 bg-rouge-clair" : "border-ambre/60 bg-ocre-clair") p-5" aria-labelledby="a-payer-titre">
+                <div class="flex min-w-0 items-center gap-3">
+                    <span class="grid size-12 shrink-0 place-items-center rounded-2xl bg-surface text-laterite [--icon-fond:var(--ambre)]"><sc-icon name="wallet" class="size-6" /></span>
+                    <div class="min-w-0">
+                        <h2 id="a-payer-titre" class="text-base font-bold">@(client.DueStartsSubscription ? L["Space_PayBanner_Start"] : overdue ? L["Space_PayBanner_Overdue"] : L["Space_PayBanner_Renewal"])</h2>
+                        <p class="font-display text-lg"><sc-amount value="@toPay.Total.Amount" /></p>
+                        <p class="text-sm text-charbon-doux">@L["Space_PayBanner_Ways"]</p>
+                    </div>
+                </div>
+                <a href="/abonnement#payer" class="sc-btn-primaire min-h-12 w-full sm:w-auto"><sc-icon name="wallet" class="size-5" />@L["Space_PayBanner_Button"]</a>
+            </section>
+        }
+
         @if (done < steps.Length && client.ActiveRequest is null)
         {
             <partial name="Ui/_Checklist" model='new ChecklistModel(L["Start_Title"].Value, [.. steps.Select(s => new ChecklistStep(s.Label, s.Url, s.Done))])' />

@@ -25,6 +25,10 @@
 }
 <title>@(ViewData["SeoTitle"] as string ?? $"{ViewData["Title"]} · {L["App_Name"]}")</title>
 <link rel="manifest" href="/manifest.webmanifest" />
+@* Icons: Google search results need a square icon of 48 px or a multiple (PNG / ICO); browsers take the SVG. *@
+<link rel="icon" href="/favicon.ico" sizes="48x48" />
+<link rel="icon" href="~/img/icons/icon-96.png" sizes="96x96" type="image/png" />
+<link rel="icon" href="~/img/icons/icon-192.png" sizes="192x192" type="image/png" />
 <link rel="icon" href="~/img/icons/favicon.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="~/img/icons/apple-touch-icon.png" />
 <meta name="apple-mobile-web-app-title" content="SeneCare" />

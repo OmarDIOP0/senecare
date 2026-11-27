@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using SeneCare.Application.Payments;
 using SeneCare.Infrastructure.Identity;
 using SeneCare.Web.Infrastructure;
@@ -14,9 +13,8 @@ namespace SeneCare.Web.Controllers;
 /// </summary>
 [Authorize(Policy = Policies.Billing)]
 [Route("/abonnement")]
-public sealed class OrangeMoneyController(OrangeMoneyPayments payments, IMemoryCache cache) : Controller
+public sealed class OrangeMoneyController(OrangeMoneyPayments payments) : Controller
 {
-    private static string Key(Guid paymentId) => "om-checkout:" + paymentId.ToString("N");
 
     /// <summary>« Payer avec Orange Money »: a new payment request for what the invoice still owes.</summary>
     [HttpPost("factures/{invoiceId:guid}/orange-money")]
@@ -29,10 +27,8 @@ public sealed class OrangeMoneyController(OrangeMoneyPayments payments, IMemoryC
             return Redirect("/abonnement");
         }
 
-        // The QR code and links live as long as Orange Money accepts them (nothing stored in the database).
-        var start = result.Value!;
-        cache.Set(Key(start.PaymentId), start, start.Checkout.ExpiresAt);
-        return Redirect($"/abonnement/orange-money/{start.PaymentId}");
+        // The QR code and links are kept with the payment until Orange Money's request expires.
+        return Redirect(OrangeMoneyPayments.PayPagePath(result.Value!.PaymentId));
     }
 
     [HttpGet("orange-money/{paymentId:guid}")]
@@ -52,7 +48,7 @@ public sealed class OrangeMoneyController(OrangeMoneyPayments payments, IMemoryC
 
         ViewData["State"] = state;
         ViewData["PaymentId"] = paymentId;
-        return View(cache.TryGetValue(Key(paymentId), out OrangeMoneyStart? start) ? start : null);
+        return View(await payments.CheckoutAsync(User.GetUserId()!.Value, paymentId, cancellationToken));
     }
 
     /// <summary>« Vérifier mon paiement »: asks Orange Money now.</summary>

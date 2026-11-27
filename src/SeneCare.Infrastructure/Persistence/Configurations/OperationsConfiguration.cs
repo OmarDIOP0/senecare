@@ -78,6 +78,10 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.HasOne<Invoice>().WithMany().HasForeignKey(p => p.InvoiceId).OnDelete(DeleteBehavior.Restrict);
         builder.Property(p => p.ProviderReference).HasMaxLength(Payment.ReferenceMaxLength);
         builder.Property(p => p.CustomerReference).HasMaxLength(Payment.ReferenceMaxLength);
+        builder.Property(p => p.CheckoutLink).HasMaxLength(Payment.LinkMaxLength);
+        builder.Property(p => p.CheckoutAltLink).HasMaxLength(Payment.LinkMaxLength);
+        // A PNG in Base64: several kilobytes (the default text length would cut it).
+        builder.Property(p => p.CheckoutQrCode).HasColumnType("nvarchar(max)");
         // Finance queue: declared payments waiting for verification.
         builder.HasIndex(p => new { p.Status, p.DeclaredByUserId });
         builder.Ignore(p => p.IsAwaitingVerification);

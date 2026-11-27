@@ -163,11 +163,23 @@ public sealed partial class WavePaymentTests(WebAppFixture app)
             Assert.StartsWith("/abonnement/orange-money/", started.Location(), StringComparison.Ordinal);
             var paymentId = Guid.Parse(started.Location().Split('/')[^1]);
             var reference = paymentId.ToString("N");
-            Assert.Contains(app.OrangeMoney.Requests, r => r.Reference == reference && r.Amount.Amount == 18_500);
+            // Max it sends the person back to this payment page.
+            Assert.Contains(app.OrangeMoney.Requests, r => r.Reference == reference && r.Amount.Amount == 18_500 && r.ReturnPath == started.Location());
 
             var pay = WebUtility.HtmlDecode(await customer.GetStringAsync(new Uri(started.Location(), UriKind.Relative)));
             Assert.Contains("https://sugu.orange-sonatel.com/mp/test-maxit", pay, StringComparison.Ordinal);
             Assert.Contains("data:image/png;base64,", pay, StringComparison.Ordinal);
+            Assert.Contains("data-maxit=\"https://sugu.orange-sonatel.com/mp/test-maxit\"", pay, StringComparison.Ordinal);
+
+            // Kept with the payment: reloading the page (or coming back from Max it) still shows the request.
+            await using (var db = app.Database.CreateContext())
+            {
+                var saved = await db.Payments.SingleAsync(p => p.Id == paymentId);
+                Assert.Equal("https://sugu.orange-sonatel.com/mp/test-maxit", saved.CheckoutLink);
+                Assert.NotNull(saved.CheckoutQrCode);
+            }
+
+            Assert.Contains("https://sugu.orange-sonatel.com/mp/test-maxit", WebUtility.HtmlDecode(await customer.GetStringAsync(new Uri(started.Location(), UriKind.Relative))), StringComparison.Ordinal);
 
             var orange = app.CreateClient();
             // Not Orange Money (wrong key): refused, nothing changes.

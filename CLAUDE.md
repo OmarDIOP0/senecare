@@ -201,7 +201,9 @@ Parcours client :
 - Paiement réel : Wave (lien marchand, réglé dans `/admin/paiements`, « J'ai payé » + référence vérifiés par la
   Finance) et Orange Money par l'API Sonatel (décision du 24/11/2026, remplace le code marchand manuel) :
   `OrangeMoneyPayments` + `IOrangeMoneyGateway` (`OrangeMoney:*` dans user-secrets / appsettings.Server.json,
-  Sandbox puis Live) → QR code (ordinateur) ou lien Max it (téléphone), page `/abonnement/orange-money/{id}` ;
+  Sandbox puis Live, en ligne depuis le 27/11/2026) → QR code (ordinateur) ou lien Max it (téléphone, ouvert tout seul
+  une fois), gardés avec le paiement (`Payment.Checkout*`), page `/abonnement/orange-money/{id}` où Max it renvoie le
+  client ; Admin › Paiements : « Tester la connexion » + dernière erreur Orange affichée ;
   notification `POST /paiements/orange-money/notification` (clé partagée « Basic », jamais crue seule) → le paiement
   n'est crédité qu'après lecture de l'état chez Orange (SUCCESS, montant, code marchand), une seule fois, puis
   activation automatique + Finance informée ; « Vérifier mon paiement » en secours ; adresse de notification

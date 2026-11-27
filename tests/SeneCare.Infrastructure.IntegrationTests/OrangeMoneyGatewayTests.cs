@@ -44,18 +44,20 @@ public sealed class OrangeMoneyGatewayTests
     public async Task Checkout_sends_the_merchant_amount_and_callback_and_reads_the_links()
     {
         var (gateway, server) = Create();
-        server.Answer = _ => (HttpStatusCode.OK, """
+        var end = DateTimeOffset.UtcNow.AddMinutes(10);
+        var endText = end.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", System.Globalization.CultureInfo.InvariantCulture);
+        server.Answer = _ => (HttpStatusCode.OK, $$$"""
             {"deepLink":"https://sugu.orange-sonatel.com/mp/1","deepLinks":{"MAXIT":"https://sugu.orange-sonatel.com/mp/maxit","OM":"https://sugu.orange-sonatel.com/mp/om"},
              "qrCode":"iVBORw0KGgo=","shortLink":"https://s.orange-sonatel.com/a","qrId":"q1",
-             "validFor":{"startDateTime":"2026-11-24T09:00:00Z","endDateTime":"2026-11-24T09:15:00Z"}}
+             "validFor":{"startDateTime":"2026-11-24T09:00:00Z","endDateTime":"{{{endText}}}"}}
             """);
 
-        var checkout = await gateway.CreateCheckoutAsync(new OrangeMoneyCheckoutRequest("ref1", Money.FromFcfa(18_500), "FAC-1"));
+        var checkout = await gateway.CreateCheckoutAsync(new OrangeMoneyCheckoutRequest("ref1", Money.FromFcfa(18_500), "FAC-1", "/abonnement/orange-money/p1"));
 
         Assert.Equal("https://sugu.orange-sonatel.com/mp/maxit", checkout.MaxItLink);
         Assert.Equal("https://sugu.orange-sonatel.com/mp/om", checkout.OrangeMoneyLink);
         Assert.Equal("iVBORw0KGgo=", checkout.QrCodePng);
-        Assert.Equal(new DateTimeOffset(2026, 11, 24, 9, 15, 0, TimeSpan.Zero), checkout.ExpiresAt);
+        Assert.Equal(DateTimeOffset.Parse(endText, System.Globalization.CultureInfo.InvariantCulture), checkout.ExpiresAt);
         var call = server.Calls.Single(c => c.Path == "/api/eWallet/v4/qrcode");
         Assert.Equal("Bearer tok-1", call.Auth);
         Assert.Equal("https://senecare.net/paiements/orange-money/notification", call.Callback);
@@ -63,6 +65,22 @@ public sealed class OrangeMoneyGatewayTests
         Assert.Contains("\"value\":18500", call.Body, StringComparison.Ordinal);
         Assert.Contains("\"unit\":\"XOF\"", call.Body, StringComparison.Ordinal);
         Assert.Contains("\"reference\":\"ref1\"", call.Body, StringComparison.Ordinal);
+        // Back from Max it: our payment page.
+        Assert.Contains("\"callbackSuccessUrl\":\"https://senecare.net/abonnement/orange-money/p1\"", call.Body, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task An_end_of_validity_already_past_falls_back_to_the_requested_one()
+    {
+        var (gateway, server) = Create();
+        server.Answer = _ => (HttpStatusCode.OK, """
+            {"deepLinks":{"MAXIT":"https://sugu.orange-sonatel.com/mp/maxit"},"qrCode":"iVBORw0KGgo=",
+             "validFor":{"startDateTime":"2020-01-01T09:00:00Z","endDateTime":"2020-01-01T09:15:00Z"}}
+            """);
+
+        var checkout = await gateway.CreateCheckoutAsync(new OrangeMoneyCheckoutRequest("ref2", Money.FromFcfa(8_500), "FAC-2"));
+
+        Assert.True(checkout.ExpiresAt > DateTimeOffset.UtcNow.AddMinutes(10));
     }
 
     [Fact]

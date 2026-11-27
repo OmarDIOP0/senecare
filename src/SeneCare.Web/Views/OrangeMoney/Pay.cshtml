@@ -20,7 +20,8 @@
 }
 
 <div class="mt-6 overflow-hidden rounded-3xl border border-ligne bg-surface shadow-carte"
-     data-om-payment data-state-url="/abonnement/orange-money/@paymentId/etat" data-paid-url="/abonnement" data-until="@(checkout?.ExpiresAt.AddMinutes(10).ToUnixTimeMilliseconds())">
+     data-om-payment data-payment="@paymentId" data-maxit="@(state == OrangeMoneyState.Pending ? checkout?.MaxItLink : null)"
+     data-state-url="/abonnement/orange-money/@paymentId/etat" data-paid-url="/abonnement" data-until="@(checkout?.ExpiresAt.AddMinutes(10).ToUnixTimeMilliseconds())">
     <div class="flex items-center gap-3 border-b border-ligne bg-[#ff7900]/10 px-6 py-4">
         <img src="~/images/orange-money-logo.webp" alt="Orange Money" width="44" height="44" class="size-11 rounded-xl" />
         <p class="flex items-center gap-2 font-semibold" role="status" aria-live="polite" data-om-status>

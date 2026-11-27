@@ -11,7 +11,8 @@ using SeneCare.Domain.Platform;
 namespace SeneCare.Application.Payments;
 
 /// <summary>A payment request sent to Orange Money: our own reference (the payment id), the amount, a label.</summary>
-public sealed record OrangeMoneyCheckoutRequest(string Reference, Money Amount, string Label);
+/// <summary>Request for a payment; <paramref name="ReturnPath"/> is where Max it sends the person back (our payment page).</summary>
+public sealed record OrangeMoneyCheckoutRequest(string Reference, Money Amount, string Label, string? ReturnPath = null);
 
 /// <summary>What Orange Money gives back to pay: a QR code (PNG, Base64) and the Max it / Orange Money links.</summary>
 public sealed record OrangeMoneyCheckout(string? QrCodePng, string? MaxItLink, string? OrangeMoneyLink, string? ShortLink, DateTimeOffset ExpiresAt);
@@ -133,7 +134,10 @@ public sealed partial class OrangeMoneyPayments(
 
         try
         {
-            var checkout = await gateway.CreateCheckoutAsync(new OrangeMoneyCheckoutRequest(Reference(payment.Id), payment.Amount, invoice.Number), cancellationToken);
+            var checkout = await gateway.CreateCheckoutAsync(
+                new OrangeMoneyCheckoutRequest(Reference(payment.Id), payment.Amount, invoice.Number, PayPagePath(payment.Id)), cancellationToken);
+            payment.AttachCheckout(checkout.MaxItLink, checkout.OrangeMoneyLink, checkout.QrCodePng, checkout.ExpiresAt);
+            await db.SaveChangesAsync(cancellationToken);
             return Result<OrangeMoneyStart>.Success(new OrangeMoneyStart(payment.Id, invoice.Number, payment.Amount, checkout));
         }
         catch (OrangeMoneyException ex)
@@ -165,6 +169,29 @@ public sealed partial class OrangeMoneyPayments(
     }
 
     /// <summary>The state as recorded here (no call to Orange Money): polled by the payment page.</summary>
+    /// <summary>Our payment page: Max it sends the person back there, and it follows the payment until confirmed.</summary>
+    public static string PayPagePath(Guid paymentId) => $"/abonnement/orange-money/{paymentId}";
+
+    /// <summary>The payment request (links, QR code) as given by Orange Money, for the customer's own payments.</summary>
+    public async Task<OrangeMoneyStart?> CheckoutAsync(Guid userId, Guid paymentId, CancellationToken cancellationToken = default)
+    {
+        if (!await OwnsAsync(userId, paymentId, cancellationToken))
+        {
+            return null;
+        }
+
+        var row = await (
+                from p in db.Payments
+                join i in db.Invoices on p.InvoiceId equals i.Id
+                where p.Id == paymentId
+                select new { p.Amount, i.Number, p.CheckoutLink, p.CheckoutAltLink, p.CheckoutQrCode, p.CheckoutExpiresAt })
+            .AsNoTracking()
+            .FirstAsync(cancellationToken);
+        return row.CheckoutExpiresAt is { } expires && expires > clock.GetUtcNow() && (row.CheckoutLink is not null || row.CheckoutQrCode is not null)
+            ? new OrangeMoneyStart(paymentId, row.Number, row.Amount, new OrangeMoneyCheckout(row.CheckoutQrCode, row.CheckoutLink, row.CheckoutAltLink, null, expires))
+            : null;
+    }
+
     public async Task<OrangeMoneyState?> StateAsync(Guid userId, Guid paymentId, CancellationToken cancellationToken = default)
     {
         if (!await OwnsAsync(userId, paymentId, cancellationToken))

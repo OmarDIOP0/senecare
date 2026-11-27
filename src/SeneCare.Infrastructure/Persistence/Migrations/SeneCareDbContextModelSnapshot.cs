@@ -424,6 +424,25 @@ namespace SeneCare.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(40)")
                         .HasColumnName("channel");
 
+                    b.Property<string>("CheckoutAltLink")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnName("checkout_alt_link");
+
+                    b.Property<DateTimeOffset?>("CheckoutExpiresAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("checkout_expires_at");
+
+                    b.Property<string>("CheckoutLink")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnName("checkout_link");
+
+                    b.Property<string>("CheckoutQrCode")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("checkout_qr_code");
+
                     b.Property<DateTimeOffset?>("CompletedAt")
                         .HasColumnType("datetimeoffset")
                         .HasColumnName("completed_at");

@@ -149,6 +149,31 @@ public sealed class Payment : AggregateRoot
         return payment;
     }
 
+    public const int LinkMaxLength = 512;
+
+    /// <summary>Max it link of the payment request (Orange Money), opened on phones.</summary>
+    public string? CheckoutLink { get; private set; }
+
+    /// <summary>Orange Money app link, when different from Max it.</summary>
+    public string? CheckoutAltLink { get; private set; }
+
+    /// <summary>QR code (PNG, Base64) scanned from a computer.</summary>
+    public string? CheckoutQrCode { get; private set; }
+
+    public DateTimeOffset? CheckoutExpiresAt { get; private set; }
+
+    /// <summary>
+    /// What the customer needs to pay (kept with the payment: the page can be reloaded, the site restarted, and the
+    /// person comes back from Max it to the same request).
+    /// </summary>
+    public void AttachCheckout(string? link, string? altLink, string? qrCode, DateTimeOffset expiresAt)
+    {
+        CheckoutLink = Guard.Optional(link, "payment.link", LinkMaxLength);
+        CheckoutAltLink = Guard.Optional(altLink, "payment.link", LinkMaxLength);
+        CheckoutQrCode = string.IsNullOrWhiteSpace(qrCode) ? null : qrCode.Trim();
+        CheckoutExpiresAt = expiresAt;
+    }
+
     public void AttachProviderReference(string reference)
     {
         ProviderReference = Guard.Required(reference, "payment.reference", ReferenceMaxLength);

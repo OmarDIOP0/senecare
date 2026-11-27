@@ -143,10 +143,11 @@ public sealed class OrangeMoneyGateway(HttpClient http, IOptions<OrangeMoneyOpti
             ["reference"] = request.Reference,
             ["metadata"] = new { invoice = request.Label },
         };
-        if (PublicUrl("/abonnement?orange-money=ok") is { } success)
+        // Back from Max it: our payment page, which sees the confirmation and moves on by itself.
+        if (PublicUrl(request.ReturnPath ?? "/abonnement") is { } back)
         {
-            body["callbackSuccessUrl"] = success;
-            body["callbackCancelUrl"] = PublicUrl("/abonnement?orange-money=annule");
+            body["callbackSuccessUrl"] = back;
+            body["callbackCancelUrl"] = back;
         }
 
         using var message = new HttpRequestMessage(HttpMethod.Post, "/api/eWallet/v4/qrcode") { Content = JsonContent.Create(body) };
@@ -158,9 +159,14 @@ public sealed class OrangeMoneyGateway(HttpClient http, IOptions<OrangeMoneyOpti
         using var json = await SendAsync(message, cancellationToken);
         var root = json.RootElement;
         var links = root.TryGetProperty("deepLinks", out var l) && l.ValueKind == JsonValueKind.Object ? l : default;
-        var expires = root.TryGetProperty("validFor", out var v) && v.TryGetProperty("endDateTime", out var end) && end.TryGetDateTimeOffset(out var at)
+        // Orange's end of validity when it makes sense; otherwise (missing, already past, read in another time zone)
+        // the validity we asked for. A request that seemed expired at once hid the links from the customer.
+        var now = clock.GetUtcNow();
+        var expires = root.TryGetProperty("validFor", out var v) && v.ValueKind == JsonValueKind.Object
+            && v.TryGetProperty("endDateTime", out var end) && end.TryGetDateTimeOffset(out var at)
+            && at > now.AddMinutes(1) && at <= now.AddSeconds(validity).AddMinutes(5)
             ? at
-            : clock.GetUtcNow().AddSeconds(validity);
+            : now.AddSeconds(validity);
         return new OrangeMoneyCheckout(
             Text(root, "qrCode"),
             Text(links, "MAXIT") ?? Text(root, "deepLink"),
